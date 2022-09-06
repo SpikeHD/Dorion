@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::{time::Duration, fs};
+use std::{fs, time::Duration};
 
 #[tauri::command]
 fn eval(window: tauri::Window, contents: String) {
@@ -29,7 +29,7 @@ fn load_plugins() -> String {
 
   for path in plugin_folders {
     if let Err(_path) = path {
-        continue;
+      continue;
     }
 
     let folder = path.unwrap().file_name().clone();
@@ -37,13 +37,13 @@ fn load_plugins() -> String {
     let index_file = plugin_dir.join("index.js");
 
     if folder.to_str().unwrap_or("").starts_with("_") {
-        continue;
+      continue;
     }
 
     if fs::metadata(&index_file).is_ok() {
-        let plugin_contents = fs::read_to_string(&index_file).unwrap();
-        
-        contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
+      let plugin_contents = fs::read_to_string(&index_file).unwrap();
+
+      contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
     }
   }
 
@@ -52,10 +52,7 @@ fn load_plugins() -> String {
 
 fn main() {
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![
-        eval,
-        load_plugins
-    ])
+    .invoke_handler(tauri::generate_handler![eval, load_plugins])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
