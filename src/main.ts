@@ -1,7 +1,9 @@
 const { invoke } = window.__TAURI__;
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   console.log('Ready!')
+
+  const plugins = await invoke('load_plugins')
 
   invoke('eval', {
     contents: `
@@ -18,8 +20,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
           onClientLoad()
 
-          const nameAndDecorators = document.querySelector('div[class*="nameAndDecorators"]')
-          nameAndDecorators.innerHTML = 'Welcome to Taurcord!'
+          // Exec plugins
+          ${plugins}
         } else {
           console.log('Discord not loaded...')
         }
