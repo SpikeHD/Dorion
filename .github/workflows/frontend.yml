@@ -27,4 +27,4 @@ jobs:
       - name: Run tsc
         run: yarn tsc --noEmit
       - name: Run ESLint
-        run: yarn eslint src
+        run: yarn eslint ./src
