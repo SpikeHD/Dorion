@@ -1,0 +1,30 @@
+name: Check frontend
+
+on:
+  push:
+    paths-ignore:
+      - '**.lock'
+      - '**.rs'
+      - '**.toml'
+  pull_request:
+    paths-ignore:
+      - '**.lock'
+      - '**.rs'
+      - '**.toml'
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  prettier-tsc-eslint-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install modules
+        run: yarn
+      - name: Run tsc
+        run: yarn tsc --noEmit
+      - name: Run ESLint
+        run: yarn eslint src
