@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "Taucord",
+    "productName": "Dorion",
     "version": "0.0.0"
   },
   "tauri": {
@@ -25,7 +25,7 @@
       "icon": [
         "icon/icon.ico"
       ],
-      "identifier": "com.taucord.dev",
+      "identifier": "com.dorion.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -54,7 +54,7 @@
         "fullscreen": false,
         "height": 720,
         "resizable": true,
-        "title": "Taucord",
+        "title": "Dorion",
         "width": 1280
       }
     ]

@@ -1,5 +1,5 @@
 [package]
-name = "taucord"
+name = "dorion"
 version = "0.0.0"
 description = "Repackaged Discord Web Client"
 authors = ["SpikeHD"]
