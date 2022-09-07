@@ -3,8 +3,8 @@
   windows_subsystem = "windows"
 )]
 
+use std::{fs, path::PathBuf, time::Duration};
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
-use std::{fs, time::Duration, path::PathBuf};
 
 #[tauri::command]
 fn load_injection_js(window: tauri::Window, contents: String) {
@@ -62,15 +62,15 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins])
     .setup(move |app| {
-        let win = WindowBuilder::new(app, "main", win_url)
-            .title("Dorion")
-            .maximized(true)
-            .resizable(true)
-            .build()?;
+      let win = WindowBuilder::new(app, "main", win_url)
+        .title("Dorion")
+        .maximized(true)
+        .resizable(true)
+        .build()?;
 
-        set_user_agent(win);
+      set_user_agent(win);
 
-        Ok(())
+      Ok(())
     })
     .run(context)
     .expect("error while running tauri application");
@@ -79,47 +79,45 @@ fn main() {
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
 fn set_user_agent(window: Window) {
-    let user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Dorion/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
+  let user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Dorion/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
 
-    window.with_webview(move |webview| {
-        #[cfg(windows)]
-        unsafe {
-            use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-            use windows::core::Interface;
+  window
+    .with_webview(move |webview| {
+      #[cfg(windows)]
+      unsafe {
+        use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+        use windows::core::Interface;
 
-            let settings: ICoreWebView2Settings2 = webview
-                .controller()
-                .CoreWebView2()
-                .unwrap()
-                .Settings()
-                .unwrap()
-                .cast()
-                .unwrap();
+        let settings: ICoreWebView2Settings2 = webview
+          .controller()
+          .CoreWebView2()
+          .unwrap()
+          .Settings()
+          .unwrap()
+          .cast()
+          .unwrap();
 
-            settings
-                .SetUserAgent(user_agent)
-                .unwrap();
+        settings.SetUserAgent(user_agent).unwrap();
 
-            settings
-                .SetIsZoomControlEnabled(true)
-                .unwrap();
-        }
+        settings.SetIsZoomControlEnabled(true).unwrap();
+      }
 
-        #[cfg(target_os = "linux")]
-        {
-            use webkit2gtk::{WebViewExt, SettingsExt};
-            let webview = webview.inner();
-            let settings = webview.settings().unwrap();
-            settings.set_user_agent(Some(user_agent));
-        }
+      #[cfg(target_os = "linux")]
+      {
+        use webkit2gtk::{SettingsExt, WebViewExt};
+        let webview = webview.inner();
+        let settings = webview.settings().unwrap();
+        settings.set_user_agent(Some(user_agent));
+      }
 
-        // untested
-        #[cfg(target_os = "macos")]
-        unsafe {
-            use objc::{msg_send, sel, sel_impl};
-            use objc_foundation::{NSString, INSString};
-            let agent = NSString::from_str(user_agent);
-            let () = msg_send![webview.inner(), setCustomUserAgent: agent];
-        }
-    }).unwrap();
+      // untested
+      #[cfg(target_os = "macos")]
+      unsafe {
+        use objc::{msg_send, sel, sel_impl};
+        use objc_foundation::{INSString, NSString};
+        let agent = NSString::from_str(user_agent);
+        let () = msg_send![webview.inner(), setCustomUserAgent: agent];
+      }
+    })
+    .unwrap();
 }
