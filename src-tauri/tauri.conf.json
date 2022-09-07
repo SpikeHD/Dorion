@@ -23,7 +23,8 @@
       },
       "externalBin": [],
       "icon": [
-        "icons/icon.ico"
+        "icons/icon.ico",
+        "icons/icon.png"
       ],
       "identifier": "com.dorion.dev",
       "longDescription": "",
