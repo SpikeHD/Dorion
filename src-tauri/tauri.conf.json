@@ -49,15 +49,6 @@
     },
     "updater": {
       "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 720,
-        "resizable": true,
-        "title": "Dorion",
-        "width": 1280
-      }
-    ]
+    }
   }
 }
