@@ -18,7 +18,9 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
       std::thread::sleep(Duration::from_secs(2));
 
       // Check if window.dorion exists
-      window.eval(format!("!window.dorion && (() => {{ {} }})()", injection_code).as_str()).unwrap();
+      window
+        .eval(format!("!window.dorion && (() => {{ {} }})()", injection_code).as_str())
+        .unwrap();
     }
   });
 }
