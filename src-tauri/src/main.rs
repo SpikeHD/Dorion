@@ -9,7 +9,7 @@ use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 #[tauri::command]
 fn load_injection_js(window: tauri::Window, contents: String) {
   window.eval(contents.as_str()).unwrap();
-  periodic_injection_check(window, contents.clone());
+  periodic_injection_check(window, contents);
 }
 
 fn periodic_injection_check(window: tauri::Window, injection_code: String) {
@@ -33,7 +33,7 @@ fn load_plugins() -> String {
 
   let plugins_dir = exe_dir.join("plugins");
 
-  if !fs::metadata(&plugins_dir).is_ok() {
+  if fs::metadata(&plugins_dir).is_err() {
     fs::create_dir_all(&plugins_dir).unwrap();
   }
 
@@ -48,7 +48,7 @@ fn load_plugins() -> String {
     let plugin_dir = plugins_dir.join(&folder);
     let index_file = plugin_dir.join("index.js");
 
-    if folder.to_str().unwrap_or("").starts_with("_") {
+    if folder.to_str().unwrap_or("").starts_with('_') {
       continue;
     }
 
