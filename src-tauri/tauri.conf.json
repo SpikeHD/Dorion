@@ -1,6 +1,6 @@
 {
   "build": {
-    "beforeDevCommand": "yarn build",
+    "beforeDevCommand": "",
     "beforeBuildCommand": "yarn build",
     "devPath": "../dist",
     "distDir": "../dist",

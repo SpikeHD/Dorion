@@ -2,6 +2,33 @@ html {
   background: #2f3136
 }
 
+body {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#container {
+  position: relative;
+  left: -50%;
+}
+
 #title {
-  font-size: 2rem;
+  font-size: 5rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+#subtitle {
+  font-size: 1rem;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
 }
