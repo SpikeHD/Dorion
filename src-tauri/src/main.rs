@@ -7,7 +7,7 @@ use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 use std::{fs, time::Duration, path::PathBuf};
 
 #[tauri::command]
-fn eval(window: tauri::Window, contents: String) {
+fn load_injection_js(window: tauri::Window, contents: String) {
   std::thread::spawn(move || {
     std::thread::sleep(Duration::from_millis(1000));
     window.eval(contents.as_str()).unwrap();
@@ -60,7 +60,7 @@ fn main() {
 
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
-    .invoke_handler(tauri::generate_handler![eval, load_plugins])
+    .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins])
     .setup(move |app| {
         let win = WindowBuilder::new(app, "main", win_url)
             .title("Dorion")
@@ -79,7 +79,7 @@ fn main() {
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
 fn set_user_agent(window: Window) {
-    let user_agent = "Dorion";
+    let user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Dorion/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
 
     window.with_webview(move |webview| {
         #[cfg(windows)]
@@ -98,6 +98,10 @@ fn set_user_agent(window: Window) {
 
             settings
                 .SetUserAgent(user_agent)
+                .unwrap();
+
+            settings
+                .SetIsZoomControlEnabled(true)
                 .unwrap();
         }
 

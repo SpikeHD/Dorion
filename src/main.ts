@@ -3,20 +3,30 @@ const { invoke } = window.__TAURI__;
 const TITLE = 'Dorion'
 
 window.addEventListener("DOMContentLoaded", async () => {
+  const plugins = await invoke('load_plugins')
   const version = await window.__TAURI__.app.getVersion()
   const subtitle = document.querySelector('#subtitle')
 
-  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}`
+  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
 
   typingAnim()
 
-  const plugins = await invoke('load_plugins')
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'f') {
+      // Interrupt the loading and put us in settings
+      window.location.assign('/settings.html')
+    }
+  })
 
   // Wait just a couple seconds in case the user wants to enter the settings menu
   await new Promise(r => setTimeout(r, 2000))
 
-  invoke('eval', {
+  return
+
+  invoke('load_injection_js', {
     contents: `
+      window.dorion = true
+
       let loaded = false
 
       let observer = new MutationObserver((mutations, obs) => {
