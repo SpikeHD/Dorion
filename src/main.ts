@@ -21,8 +21,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   // Wait just a couple seconds in case the user wants to enter the settings menu
   await new Promise(r => setTimeout(r, 2000))
 
-  return
-
   invoke('load_injection_js', {
     contents: `
       window.dorion = true
