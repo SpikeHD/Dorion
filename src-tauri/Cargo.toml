@@ -1,6 +1,6 @@
 [package]
 name = "dorion"
-version = "0.0.0"
+version = "0.1.0"
 description = "Repackaged Discord Web Client"
 authors = ["SpikeHD"]
 license = ""

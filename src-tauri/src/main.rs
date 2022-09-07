@@ -73,8 +73,9 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins])
     .setup(move |app| {
+      let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", win_url)
-        .title("Dorion")
+        .title(title.as_str())
         .maximized(true)
         .resizable(true)
         .build()?;
