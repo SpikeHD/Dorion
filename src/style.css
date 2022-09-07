@@ -1,5 +1,6 @@
 html {
-  background: #2f3136
+  background: #2f3136;
+  user-select: none;
 }
 
 body {
