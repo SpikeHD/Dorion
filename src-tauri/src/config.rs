@@ -1,4 +1,12 @@
 use std::fs;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+struct Config {
+  theme: String,
+  zoom: String,
+  client_type: String,
+}
 
 pub fn init() {
   let mut exe_dir = std::env::current_exe().unwrap();
@@ -38,4 +46,12 @@ pub fn write_config_file(contents: String) {
   let config_file = exe_dir.join("config.json");
 
   fs::write(config_file, contents).unwrap()
+}
+
+pub fn get_zoom() -> f64 {
+  init();
+  
+  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap();
+
+  parsed.zoom.parse().unwrap()
 }

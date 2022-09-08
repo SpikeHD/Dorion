@@ -33,8 +33,8 @@ function prefillConfig(config: Config) {
   }
 
   if (zoomSelect) {
-    zoomSelect.value = `${config.zoom}`
-    if (zoomPct) zoomPct.innerHTML = `${config.zoom}%`
+    zoomSelect.value = `${Number(config.zoom) * 100}`
+    if (zoomPct) zoomPct.innerHTML = `${Number(config.zoom) * 100}%`
   }
 
   if (clientType) {
@@ -54,7 +54,11 @@ function initOnchangeHandlers() {
 
   zoomSelect?.addEventListener('change', (evt) => {
     const tgt = <HTMLSelectElement>evt.target
-    setConfigValue('zoom', tgt.value)
+    setConfigValue('zoom', String(Number(tgt.value) / 100))
+
+    invoke('change_zoom', {
+      zoom: Number(tgt.value) / 100
+    })
   })
 
   clientType?.addEventListener('change', (evt) => {

@@ -65,6 +65,19 @@ fn load_plugins() -> String {
   contents
 }
 
+#[cfg(target_os = "windows")]
+#[tauri::command]
+fn change_zoom(window: tauri::Window, zoom: f64) {
+  window.with_webview(move |webview| {
+    unsafe {
+      webview.controller().SetZoomFactor(zoom).unwrap_or(());
+    }
+  }).unwrap_or(());
+}
+
+#[cfg(not(target_os = "windows"))]
+fn change_zoom(window: tauri::Window, zoom: f64) {}
+
 fn main() {
   let mut context = tauri::generate_context!("tauri.conf.json");
   let win_url = tauri::WindowUrl::App(PathBuf::from("../dist"));
@@ -80,6 +93,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       load_injection_js,
       load_plugins,
+      change_zoom,
       config::read_config_file,
       config::write_config_file,
       theme::get_theme,
@@ -123,8 +137,12 @@ fn set_user_agent(window: Window) {
           .unwrap();
 
         settings.SetUserAgent(user_agent).unwrap();
-
         settings.SetIsZoomControlEnabled(true).unwrap();
+
+        // Grab and set this config option, it's fine if it silently fails
+        webview.controller().SetZoomFactor(
+          config::get_zoom()
+        ).unwrap_or(());
       }
 
       #[cfg(target_os = "linux")]
