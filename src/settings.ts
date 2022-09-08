@@ -1,3 +1,5 @@
+import { invoke } from "@tauri-apps/api";
+
 document.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
   const themes = await invoke("get_theme_names") as string[]
@@ -12,19 +14,75 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     themeSelect?.appendChild(opt)
   })
+
+  prefillConfig(
+    JSON.parse(await invoke('read_config_file'))
+  )
+
+  initOnchangeHandlers()
 })
 
-// Prevent any fuckery within themes
-function css_sanitize(css: string) {
-  const style = document.createElement('style');
-  style.innerHTML = css;
+function prefillConfig(config: Config) {
+  const themeSelect = <HTMLSelectElement>document.querySelector("#themeSelect")
+  const zoomSelect = <HTMLInputElement>document.querySelector("#zoomLevel")
+  const zoomPct = document.querySelector('#zoomLevelValue')
+  const clientType = <HTMLSelectElement>document.querySelector("#clientType")
 
-  document.head.appendChild(style);
+  if (themeSelect) {
+    themeSelect.value = config.theme
+  }
 
-  if (!style.sheet) return
+  if (zoomSelect) {
+    zoomSelect.value = `${config.zoom}`
+    if (zoomPct) zoomPct.innerHTML = `${config.zoom}%`
+  }
 
-  const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
-
-  document.head.removeChild(style);
-  return result;
+  if (clientType) {
+    clientType.value = config.client_type
+  }
 }
+
+function initOnchangeHandlers() {
+  const themeSelect = document.querySelector("#themeSelect")
+  const zoomSelect = document.querySelector("#zoomLevel")
+  const clientType = document.querySelector("#clientType")
+
+  themeSelect?.addEventListener('change', (evt) => {
+    const tgt = <HTMLSelectElement>evt.target
+    setConfigValue('theme', tgt.value)
+  })
+
+  zoomSelect?.addEventListener('change', (evt) => {
+    const tgt = <HTMLSelectElement>evt.target
+    setConfigValue('zoom', tgt.value)
+  })
+
+  clientType?.addEventListener('change', (evt) => {
+    const tgt = <HTMLSelectElement>evt.target
+    setConfigValue('client_type', tgt.value)
+  })
+}
+
+async function setConfigValue(key: keyof Config, val: string) {
+  const cfg = JSON.parse(await invoke('read_config_file')) as Config
+  cfg[key] = val
+
+  await invoke('write_config_file', {
+    contents: JSON.stringify(cfg)
+  })
+}
+
+// // Prevent any fuckery within themes
+// function css_sanitize(css: string) {
+//   const style = document.createElement('style');
+//   style.innerHTML = css;
+
+//   document.head.appendChild(style);
+
+//   if (!style.sheet) return
+
+//   const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
+
+//   document.head.removeChild(style);
+//   return result;
+// }

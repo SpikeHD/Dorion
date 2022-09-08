@@ -9,34 +9,35 @@
   </head>
 
   <body>
-    <div id="container">
-      <span id="title">
-        Settings
-      </span>
-      <div id="innerContainer">
-        <div class="settingsGroup">
-          <div class="settingInnerHeader">Display</div>
-          <div class="settingItem">
-            <div class="settingLabel">Theme</div>
-            <div class="settingValue">
-              <select id="themeSelect">
-                <option value="none">None</option>
-              </select>
+    <div id="main">
+      <div id="container">
+        <span id="title">
+          Settings
+        </span>
+        <div id="innerContainer">
+          <div class="settingsGroup">
+            <div class="settingInnerHeader">Display</div>
+            <div class="settingItem">
+              <div class="settingLabel">Theme</div>
+              <div class="settingValue">
+                <select id="themeSelect">
+                  <option value="none">None</option>
+                </select>
+              </div>
+            </div>
+            <div class="settingItem">
+              <div class="settingLabel">Zoom Level</div>
+              <div class="settingValue">
+                <input type="range" step="25" min="50" max="200" id="zoomLevel" oninput="zoomLevelChange(this)">
+                <div id="zoomLevelValue">0%</div>
+              </div>
             </div>
           </div>
-          <div class="settingItem">
-            <div class="settingLabel">Zoom Level</div>
-            <div class="settingValue">
-              <input type="range" step="25" min="50" max="200" id="zoomLevel" oninput="zoomLevelChange(this)">
-              <div id="zoomLevelValue">0%</div>
-            </div>
-          </div>
-        </div>
-        <div class="settingsGroup">
-          <div class="settingInnerHeader">Client</div>
-          <div class="settingItem">
-            <div class="settingLabel">Client Type</div>
-            <div class="settingValue">
+          <div class="settingsGroup">
+            <div class="settingInnerHeader">Client</div>
+            <div class="settingItem">
+              <div class="settingLabel">Client Type</div>
+              <div class="settingValue">
               <select>
                 <option value="default">Default</option>
                 <option value="canary">Canary</option>
@@ -47,6 +48,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id="finishBtnContainer">
+    <button id="finishBtn" onclick="window.location.assign('index.html')">Save and Continue</button>
+  </div>
   </body>
   <script>
     function zoomLevelChange(e) {

@@ -4,7 +4,37 @@ html {
   overflow: hidden;
 }
 
-body {
+button {
+  font-size: 1.5rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+
+  background-color: #8c9eff;
+  padding: 8px;
+  border-radius: 6px;
+
+  transition: background-color ease-in-out 0.1s;
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: #798dff;
+}
+
+#finishBtn {
+  position: absolute;
+  position: relative;
+  left: -50%;
+}
+
+#finishBtnContainer {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+}
+
+#main {
   position: absolute;
   left: 50%;
   top: 20%;
@@ -44,7 +74,7 @@ body {
   padding: 10px;
   border-radius: 5px;
 
-  margin: 10px;
+  margin: 10px 0;
 }
 
 .settingInnerHeader {

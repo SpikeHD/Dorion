@@ -2,13 +2,14 @@ const TITLE = 'Dorion'
 
 interface Config {
   theme: string
-  zoom: number
+  zoom: string
   client_type: string
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
 
+  const config = JSON.parse(await invoke('read_config_file')) as Config
   const plugins = await invoke('load_plugins')
   const version = await window.__TAURI__.app.getVersion()
   const subtitle = document.querySelector('#subtitle')
@@ -64,7 +65,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     `
   })
 
-  window.location.assign('https://discord.com/app')
+  if (config.client_type !== 'default') {
+    window.location.assign(`https://${config.client_type}.discord.com/app`)
+  } else window.location.assign('https://discord.com/app')
 });
 
 async function typingAnim() {

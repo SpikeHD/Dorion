@@ -10,7 +10,7 @@ pub fn init() {
   if fs::metadata(&config_file).is_err() {
     fs::write(
       config_file,
-      r#"{ "theme": "none", "zoom": 100, client_type: "default" }"#,
+      r#"{ "theme": "none", "zoom": 100, "client_type": "default" }"#,
     )
     .unwrap();
   }
