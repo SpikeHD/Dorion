@@ -26,6 +26,32 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
 }
 
 #[tauri::command]
+fn get_theme_names() -> Vec<String> {
+  let mut exe_dir = std::env::current_exe().unwrap();
+  exe_dir.pop();
+
+  let themes_dir = exe_dir.join("themes");
+
+  if fs::metadata(&themes_dir).is_err() {
+    fs::create_dir_all(&themes_dir).unwrap();
+  }
+
+  let theme_folders = fs::read_dir(&themes_dir).unwrap();
+  let mut names = vec![] as Vec<String>;
+
+  for path in theme_folders {
+    if let Err(_path) = path {
+      continue;
+    }
+
+    let folder = path.unwrap().file_name().clone();
+    names.push(format!("{:?}", folder.clone()));
+  }
+
+  names
+}
+
+#[tauri::command]
 fn load_plugins() -> String {
   let mut contents = "".to_string();
   let mut exe_dir = std::env::current_exe().unwrap();
@@ -71,7 +97,7 @@ fn main() {
 
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
-    .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins])
+    .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins, get_theme_names])
     .setup(move |app| {
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", win_url)

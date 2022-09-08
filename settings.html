@@ -17,10 +17,18 @@
         <div class="settingsGroup">
           <div class="settingInnerHeader">Display</div>
           <div class="settingItem">
+            <div class="settingLabel">Theme</div>
+            <div class="settingValue">
+              <select id="themeSelect">
+                <option value="none">None</option>
+              </select>
+            </div>
+          </div>
+          <div class="settingItem">
             <div class="settingLabel">Zoom Level</div>
             <div class="settingValue">
               <input type="range" step="25" min="50" max="200" id="zoomLevel" oninput="zoomLevelChange(this)">
-              <div id="zoomLevelValue">0</div>
+              <div id="zoomLevelValue">0%</div>
             </div>
           </div>
         </div>
@@ -46,7 +54,7 @@
 
       if (!val) return
 
-      val.innerHTML = e.value
+      val.innerHTML = e.value + '%'
     }
   </script>
 </html>
