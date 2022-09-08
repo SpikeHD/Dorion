@@ -1,5 +1,5 @@
-use std::fs;
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 #[derive(Serialize, Deserialize)]
 struct Config {
@@ -50,7 +50,7 @@ pub fn write_config_file(contents: String) {
 
 pub fn get_zoom() -> f64 {
   init();
-  
+
   let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap();
 
   parsed.zoom.parse().unwrap()

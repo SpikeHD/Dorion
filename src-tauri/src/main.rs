@@ -7,6 +7,7 @@ use std::{fs, path::PathBuf, time::Duration};
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
+mod helpers;
 mod theme;
 
 #[tauri::command]
@@ -68,11 +69,11 @@ fn load_plugins() -> String {
 #[cfg(target_os = "windows")]
 #[tauri::command]
 fn change_zoom(window: tauri::Window, zoom: f64) {
-  window.with_webview(move |webview| {
-    unsafe {
+  window
+    .with_webview(move |webview| unsafe {
       webview.controller().SetZoomFactor(zoom).unwrap_or(());
-    }
-  }).unwrap_or(());
+    })
+    .unwrap_or(());
 }
 
 #[cfg(not(target_os = "windows"))]
@@ -97,13 +98,14 @@ fn main() {
       config::read_config_file,
       config::write_config_file,
       theme::get_theme,
-      theme::get_theme_names
+      theme::get_theme_names,
+      helpers::open_themes,
+      helpers::open_plugins
     ])
     .setup(move |app| {
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", win_url)
         .title(title.as_str())
-        .maximized(true)
         .resizable(true)
         .build()?;
 
@@ -140,9 +142,10 @@ fn set_user_agent(window: Window) {
         settings.SetIsZoomControlEnabled(true).unwrap();
 
         // Grab and set this config option, it's fine if it silently fails
-        webview.controller().SetZoomFactor(
-          config::get_zoom()
-        ).unwrap_or(());
+        webview
+          .controller()
+          .SetZoomFactor(config::get_zoom())
+          .unwrap_or(());
       }
 
       #[cfg(target_os = "linux")]

@@ -4,6 +4,19 @@ html {
   overflow: hidden;
 }
 
+img {
+  height: 20px;
+  width: 20px;
+}
+
+img.icon {
+  filter: invert(100);
+}
+
+img.icon:hover {
+  cursor: pointer;
+}
+
 button {
   font-size: 1.5rem;
   color: #fff;
@@ -52,7 +65,7 @@ button:hover {
   position: relative;
   left: -50%;
 
-  width: 40%;
+  width: 70%;
 }
 
 #title {
@@ -67,6 +80,12 @@ button:hover {
 /* settings */
 #innerContainer {
   margin-top: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
 }
 
 .settingsGroup {
@@ -74,7 +93,8 @@ button:hover {
   padding: 10px;
   border-radius: 5px;
 
-  margin: 10px 0;
+  margin: 10px;
+  width: 40%; 
 }
 
 .settingInnerHeader {

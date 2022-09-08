@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   )
 
   initOnchangeHandlers()
+  initOnclickHandlers()
 })
 
 function prefillConfig(config: Config) {
@@ -65,6 +66,23 @@ function initOnchangeHandlers() {
     const tgt = <HTMLSelectElement>evt.target
     setConfigValue('client_type', tgt.value)
   })
+}
+
+function initOnclickHandlers() {
+  const openPlugins = document.querySelector("#openPlugins")
+  const openThemes = document.querySelector("#openThemes")
+
+  if (openPlugins) {
+    openPlugins.addEventListener('click', () => {
+      invoke('open_plugins')
+    })
+  }
+
+  if (openThemes) {
+    openThemes.addEventListener('click', () => {
+      invoke('open_themes')
+    })
+  }
 }
 
 async function setConfigValue(key: keyof Config, val: string) {
