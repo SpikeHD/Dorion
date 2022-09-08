@@ -1,0 +1,71 @@
+html {
+  background: #2f3136;
+  user-select: none;
+  overflow: hidden;
+}
+
+body {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+
+  width: 80%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#container {
+  position: relative;
+  left: -50%;
+
+  width: 40%;
+}
+
+#title {
+  font-size: 3rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-align: left;
+  float: left;
+}
+
+/* settings */
+#innerContainer {
+  margin-top: 60px;
+}
+
+.settingsGroup {
+  background: #282b30;
+  padding: 10px;
+  border-radius: 5px;
+
+  margin: 10px;
+}
+
+.settingInnerHeader {
+  font-size: 2rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-align: center;
+  margin: 8px;
+  text-decoration: underline;
+}
+
+.settingItem {
+  font-size: 1rem;
+  font-weight: normal;
+  color: white;
+  font-family: 'Courier New', monospace;
+
+  margin: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
