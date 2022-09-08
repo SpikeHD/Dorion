@@ -7,6 +7,7 @@ use std::{fs, path::PathBuf, time::Duration};
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
+mod theme;
 
 #[tauri::command]
 fn load_injection_js(window: tauri::Window, contents: String) {
@@ -25,32 +26,6 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
         .unwrap();
     }
   });
-}
-
-#[tauri::command]
-fn get_theme_names() -> Vec<String> {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let themes_dir = exe_dir.join("themes");
-
-  if fs::metadata(&themes_dir).is_err() {
-    fs::create_dir_all(&themes_dir).unwrap();
-  }
-
-  let theme_folders = fs::read_dir(&themes_dir).unwrap();
-  let mut names = vec![] as Vec<String>;
-
-  for path in theme_folders {
-    if let Err(_path) = path {
-      continue;
-    }
-
-    let folder = path.unwrap().file_name().clone();
-    names.push(format!("{:?}", folder.clone()));
-  }
-
-  names
 }
 
 #[tauri::command]
@@ -105,9 +80,10 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       load_injection_js,
       load_plugins,
-      get_theme_names,
       config::read_config_file,
-      config::write_config_file
+      config::write_config_file,
+      theme::get_theme,
+      theme::get_theme_names
     ])
     .setup(move |app| {
       let title = format!("Dorion - v{}", app.package_info().version);

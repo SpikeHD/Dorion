@@ -28,6 +28,28 @@ window.addEventListener("DOMContentLoaded", async () => {
   // Wait just a couple seconds in case the user wants to enter the settings menu
   await new Promise(r => setTimeout(r, 2000))
 
+  // Get theme if it exists
+  let themeInjection = ''
+
+  if (config.theme !== 'none') {
+    const themeContents = await invoke('get_theme', {
+      name: config.theme
+    }) as string
+
+    const cleanContents = cssSanitize(themeContents)
+
+    // Write theme injection code
+    themeInjection = `;(() => {
+      const ts = document.createElement('style')
+
+      ts.textContent = \`
+        ${cleanContents?.replace(/`/g, '\\`')}
+      \`
+
+      document.head.append(ts)
+    })()`
+  }
+
   invoke('load_injection_js', {
     contents: `
       window.dorion = true
@@ -35,10 +57,10 @@ window.addEventListener("DOMContentLoaded", async () => {
       let loaded = false
 
       let observer = new MutationObserver((mutations, obs) => {
-        const innerApp = document.querySelector('div[class*="notDevTools"]').querySelector('div[class*="app-"]')
+        const innerApp = document?.querySelector('div[class*="notDevTools"]')?.querySelector('div[class*="app-"]')
         const loading = Array.from(
-          innerApp.children
-        ).length === 2 || !innerApp.querySelector('div').className.includes('app')
+          innerApp?.children || []
+        ).length === 2 || !innerApp?.querySelector('div').className.includes('app')
 
         if (!loading && !loaded) {
           console.log('Discord is loaded!')
@@ -47,6 +69,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 
           // Exec plugins
           ${plugins}
+
+          // Load theme
+          ${themeInjection}
         } else {
           console.log('Discord not loaded...')
         }
@@ -100,4 +125,19 @@ async function typingAnim() {
 
 async function timeout(ms: number) {
   return new Promise(r => setTimeout(r, ms))
+}
+
+// Prevent any fuckery within themes
+function cssSanitize(css: string) {
+  const style = document.createElement('style');
+  style.innerHTML = css;
+
+  document.head.appendChild(style);
+
+  if (!style.sheet) return
+
+  const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
+
+  document.head.removeChild(style);
+  return result;
 }

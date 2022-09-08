@@ -71,18 +71,3 @@ async function setConfigValue(key: keyof Config, val: string) {
     contents: JSON.stringify(cfg)
   })
 }
-
-// // Prevent any fuckery within themes
-// function css_sanitize(css: string) {
-//   const style = document.createElement('style');
-//   style.innerHTML = css;
-
-//   document.head.appendChild(style);
-
-//   if (!style.sheet) return
-
-//   const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
-
-//   document.head.removeChild(style);
-//   return result;
-// }
