@@ -1,8 +1,14 @@
 const TITLE = 'Dorion'
 
+interface Config {
+  theme: string
+  zoom: number
+  client_type: string
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
-  
+
   const plugins = await invoke('load_plugins')
   const version = await window.__TAURI__.app.getVersion()
   const subtitle = document.querySelector('#subtitle')

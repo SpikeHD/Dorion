@@ -6,6 +6,8 @@
 use std::{fs, path::PathBuf, time::Duration};
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
+mod config;
+
 #[tauri::command]
 fn load_injection_js(window: tauri::Window, contents: String) {
   window.eval(contents.as_str()).unwrap();
@@ -92,12 +94,21 @@ fn main() {
   let mut context = tauri::generate_context!("tauri.conf.json");
   let win_url = tauri::WindowUrl::App(PathBuf::from("../dist"));
 
+  // For ensuring config exists
+  config::init();
+
   context.config_mut().build.dist_dir = AppUrl::Url(win_url.clone());
   context.config_mut().build.dev_path = AppUrl::Url(win_url.clone());
 
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
-    .invoke_handler(tauri::generate_handler![load_injection_js, load_plugins, get_theme_names])
+    .invoke_handler(tauri::generate_handler![
+      load_injection_js,
+      load_plugins,
+      get_theme_names,
+      config::read_config_file,
+      config::write_config_file
+    ])
     .setup(move |app| {
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", win_url)
