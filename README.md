@@ -10,7 +10,9 @@
  <img src="https://img.shields.io/github/stars/SpikeHD/Dorion" />
 </div>
 
+<div align="center">
 Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
+</div>
 
 # Table of Contents
 
