@@ -1,4 +1,14 @@
-# Dorion
+<h1 align="center">Dorion</h1>
+<div align="center">
+ <img src="https://img.shields.io/github/workflow/status/SpikeHD/Dorion/Build" />
+ <img src="https://img.shields.io/github/package-json/v/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/repo-size/SpikeHD/Dorion" />
+</div>
+<div align="center">
+ <img src="https://img.shields.io/github/commit-activity/m/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/release-date/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/stars/SpikeHD/Dorion" />
+</div>
 
 Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
 
