@@ -76,7 +76,10 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
     .unwrap_or(());
 }
 
-#[cfg(not(target_os = "windows"))]
+#[cfg(target_os = "linux")]
+fn change_zoom(window: tauri::Window, zoom: f64) {}
+
+#[cfg(target_os = "macos")]
 fn change_zoom(window: tauri::Window, zoom: f64) {}
 
 fn main() {
