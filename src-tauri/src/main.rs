@@ -125,7 +125,7 @@ fn main() {
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
 fn modify_window(window: Window) {
-  let user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
+  let _user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
 
   window
     .with_webview(move |webview| {
