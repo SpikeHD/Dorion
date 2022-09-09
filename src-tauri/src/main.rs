@@ -77,9 +77,11 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 }
 
 #[cfg(target_os = "linux")]
+#[tauri::command]
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 #[cfg(target_os = "macos")]
+#[tauri::command]
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 fn main() {
