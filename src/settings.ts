@@ -55,7 +55,7 @@ function initOnchangeHandlers() {
 
   zoomSelect?.addEventListener('change', (evt) => {
     const tgt = <HTMLSelectElement>evt.target
-    setConfigValue('zoom', String(Number(tgt.value) / 100))
+    setConfigValue('zoom', String((Number(tgt.value) / 100).toFixed(2)))
 
     invoke('change_zoom', {
       zoom: Number(tgt.value) / 100
