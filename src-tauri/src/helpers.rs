@@ -28,10 +28,10 @@ fn open_folder(path: PathBuf) {
 
 #[cfg(target_os = "macos")]
 fn open_folder(path: PathBuf) {
-  Command::new("open").arg(path).spawn().unwrap_or(());
+  Command::new("open").arg(path).spawn().unwrap();
 }
 
 #[cfg(target_os = "linux")]
 fn open_folder(path: PathBuf) {
-  Command::new("xdg-open").arg(path).spawn().unwrap_or(());
+  Command::new("xdg-open").arg(path).spawn().unwrap();
 }
