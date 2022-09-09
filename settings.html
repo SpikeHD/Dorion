@@ -32,41 +32,41 @@
                 <div id="zoomLevelValue">0%</div>
               </div>
             </div>
+            </div>
+            <div class="settingsGroup">
+              <div class="settingInnerHeader">Client</div>
+              <div class="settingItem">
+                <div class="settingLabel">Client Type</div>
+                <div class="settingValue">
+                <select id="clientType">
+                  <option value="default">Default</option>
+                  <option value="canary">Canary</option>
+                  <option value="ptb">PTB</option>
+                </select>
+              </div>
+            </div>
           </div>
           <div class="settingsGroup">
-            <div class="settingInnerHeader">Client</div>
+            <div class="settingInnerHeader">Folders</div>
             <div class="settingItem">
-              <div class="settingLabel">Client Type</div>
+              <div class="settingLabel">Open Plugins Folder</div>
               <div class="settingValue">
-              <select id="clientType">
-                <option value="default">Default</option>
-                <option value="canary">Canary</option>
-                <option value="ptb">PTB</option>
-              </select>
+                <img class="icon" id="openPlugins" src="./src/assets/icons/folder.svg" />
+              </div>
+            </div>
+            <div class="settingItem">
+              <div class="settingLabel">Open Themes Folder</div>
+              <div class="settingValue">
+                <img class="icon" id="openThemes" src="./src/assets/icons/folder.svg" />
+              </div>
             </div>
           </div>
         </div>
-        <div class="settingsGroup">
-          <div class="settingInnerHeader">Folders</div>
-          <div class="settingItem">
-            <div class="settingLabel">Open Plugins Folder</div>
-            <div class="settingValue">
-              <img class="icon" id="openPlugins" src="./src/assets/icons/folder.svg" />
-            </div>
-          </div>
-          <div class="settingItem">
-            <div class="settingLabel">Open Themes Folder</div>
-            <div class="settingValue">
-              <img class="icon" id="openThemes" src="./src/assets/icons/folder.svg" />
-            </div>
-          </div>
+        <div id="finishBtnContainer">
+          <button id="finishBtn" onclick="window.location.assign('index.html')">Save and Continue</button>
         </div>
       </div>
     </div>
-  </div>
-  <div id="finishBtnContainer">
-    <button id="finishBtn" onclick="window.location.assign('index.html')">Save and Continue</button>
-  </div>
   </body>
   <script>
     function zoomLevelChange(e) {

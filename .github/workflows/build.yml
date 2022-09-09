@@ -74,12 +74,12 @@ jobs:
       - name: Compress build
         uses: vimtor/action-zip@v1
         with:
-          files: src-tauri/target/release/bundle/appimage/dorion.AppImage src-tauri/target/release/bundle/deb/dorion.deb src-tauri/target/release/dorion
+          files: src-tauri/target/release/bundle/appimage/dorion*.AppImage src-tauri/target/release/bundle/deb/dorion*.deb src-tauri/target/release/dorion
           recursive: true
           dest: Dorion.zip
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: DorionAppImage
+          name: DorionLinux
           path: Dorion.zip

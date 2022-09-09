@@ -20,7 +20,7 @@ pub fn init() {
       config_file,
       r#"{ "theme": "none", "zoom": "1.0", "client_type": "default" }"#,
     )
-    .unwrap();
+    .unwrap_or(());
   }
 }
 
@@ -33,7 +33,7 @@ pub fn read_config_file() -> String {
 
   let config_file = exe_dir.join("config.json");
 
-  fs::read_to_string(config_file).unwrap()
+  fs::read_to_string(config_file).expect("Config does not exist!")
 }
 
 #[tauri::command]
@@ -45,7 +45,7 @@ pub fn write_config_file(contents: String) {
 
   let config_file = exe_dir.join("config.json");
 
-  fs::write(config_file, contents).unwrap()
+  fs::write(config_file, contents).expect("Error writing config!")
 }
 
 pub fn get_zoom() -> f64 {

@@ -36,15 +36,13 @@ button:hover {
 }
 
 #finishBtn {
-  position: absolute;
+  border: none;
   position: relative;
   left: -50%;
 }
 
 #finishBtnContainer {
-  position: absolute;
-  left: 50%;
-  top: 70%;
+  margin-left: 50%;
 }
 
 #main {

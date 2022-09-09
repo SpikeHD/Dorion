@@ -78,7 +78,13 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 
 #[cfg(target_os = "linux")]
 #[tauri::command]
-fn change_zoom(_window: tauri::Window, _zoom: f64) {}
+fn change_zoom(window: tauri::Window, zoom: f64) {
+  use webkit2gtk::WebViewExt;
+
+  window.with_webview(move |webview| {
+    webview.inner().set_zoom_level(zoom);
+  }).unwrap_or(());
+}
 
 #[cfg(target_os = "macos")]
 #[tauri::command]
@@ -125,8 +131,6 @@ fn main() {
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
 fn modify_window(window: Window) {
-  let _user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.1018 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36";
-
   window
     .with_webview(move |webview| {
       #[cfg(windows)]
@@ -155,10 +159,11 @@ fn modify_window(window: Window) {
 
       #[cfg(target_os = "linux")]
       {
-        use webkit2gtk::{SettingsExt, WebViewExt};
+        use webkit2gtk::{WebViewExt};
         let webview = webview.inner();
-        let settings = webview.settings().unwrap();
-        settings.set_user_agent(Some(user_agent));
+        //let settings = webview.settings().unwrap();
+
+        webview.set_zoom_level(config::get_zoom());
       }
 
       // untested
@@ -167,7 +172,8 @@ fn modify_window(window: Window) {
         use objc::{msg_send, sel, sel_impl};
         use objc_foundation::{INSString, NSString};
         let agent = NSString::from_str(user_agent);
-        let () = msg_send![webview.inner(), setCustomUserAgent: agent];
+        
+        // TODO: zoom level n stuff
       }
     })
     .unwrap();
