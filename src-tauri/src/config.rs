@@ -54,7 +54,7 @@ pub fn get_zoom() -> f64 {
   let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(Config {
     theme: "none".to_string(),
     zoom: "1.0".to_string(),
-    client_type: "default".to_string()
+    client_type: "default".to_string(),
   });
 
   parsed.zoom.parse().unwrap_or(1.0)

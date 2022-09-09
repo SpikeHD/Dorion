@@ -77,10 +77,10 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 }
 
 #[cfg(target_os = "linux")]
-fn change_zoom(window: tauri::Window, zoom: f64) {}
+fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 #[cfg(target_os = "macos")]
-fn change_zoom(window: tauri::Window, zoom: f64) {}
+fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 fn main() {
   let mut context = tauri::generate_context!("tauri.conf.json");
