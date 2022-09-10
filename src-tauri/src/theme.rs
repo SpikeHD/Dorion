@@ -7,7 +7,7 @@ pub fn get_theme(name: String) -> String {
 
   let config_file = exe_dir.join("themes").join(name).join("index.css");
 
-  fs::read_to_string(config_file).unwrap_or("".to_string())
+  fs::read_to_string(config_file).unwrap_or_else(|_| "".to_string())
 }
 
 #[tauri::command]

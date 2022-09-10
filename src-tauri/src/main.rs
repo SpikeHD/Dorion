@@ -81,9 +81,11 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 fn change_zoom(window: tauri::Window, zoom: f64) {
   use webkit2gtk::WebViewExt;
 
-  window.with_webview(move |webview| {
-    webview.inner().set_zoom_level(zoom);
-  }).unwrap_or(());
+  window
+    .with_webview(move |webview| {
+      webview.inner().set_zoom_level(zoom);
+    })
+    .unwrap_or(());
 }
 
 #[cfg(target_os = "macos")]
@@ -159,7 +161,7 @@ fn modify_window(window: Window) {
 
       #[cfg(target_os = "linux")]
       {
-        use webkit2gtk::{WebViewExt};
+        use webkit2gtk::WebViewExt;
         let webview = webview.inner();
         //let settings = webview.settings().unwrap();
 
@@ -172,7 +174,7 @@ fn modify_window(window: Window) {
         use objc::{msg_send, sel, sel_impl};
         use objc_foundation::{INSString, NSString};
         let agent = NSString::from_str(user_agent);
-        
+
         // TODO: zoom level n stuff
       }
     })
