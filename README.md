@@ -28,6 +28,7 @@ Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Win
 
 # Benefits
 
+* Portable (mostly)
 * Plugins
 * Themes
 * Extremely small installation size (~7mb!)
