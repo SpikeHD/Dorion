@@ -169,14 +169,14 @@ fn modify_window(window: Window) {
       }
 
       // untested
-      #[cfg(target_os = "macos")]
-      unsafe {
-        use objc::{msg_send, sel, sel_impl};
-        use objc_foundation::{INSString, NSString};
-        let agent = NSString::from_str(user_agent);
+      // #[cfg(target_os = "macos")]
+      // unsafe {
+      //   use objc::{msg_send, sel, sel_impl};
+      //   use objc_foundation::{INSString, NSString};
+      //   let agent = NSString::from_str(user_agent);
 
-        // TODO: zoom level n stuff
-      }
+      //   // TODO: zoom level n stuff
+      // }
     })
     .unwrap();
 }
