@@ -1,6 +1,18 @@
-# Dorion
+<h1 align="center">Dorion</h1>
+<div align="center">
+ <img src="https://img.shields.io/github/workflow/status/SpikeHD/Dorion/Build" />
+ <img src="https://img.shields.io/github/package-json/v/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/repo-size/SpikeHD/Dorion" />
+</div>
+<div align="center">
+ <img src="https://img.shields.io/github/commit-activity/m/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/release-date/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/stars/SpikeHD/Dorion" />
+</div>
 
+<div align="center">
 Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
+</div>
 
 # Table of Contents
 
@@ -12,18 +24,19 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 
 # Setup
 
-Download a [release](/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.AppImage` for Linux, etc.) and install!
+Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.AppImage` for Linux, etc.) and install!
 
 # Benefits
 
+* Portable (mostly)
 * Plugins
 * Themes
 * Extremely small installation size (~7mb!)
-  * This is because unlike the Discord client, we do *not* bundle an entire Chromium engine
+  * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine
 * Often loads slightly faster
 * Made by me (automatically makes it cooler)
 
-I know I made the program 'n all, but I actually use this on my laptop as opposed to the official client.
+I know I made the program 'n all, but I actually use this on my laptop as opposed to the official client, so I can vouch 😎
 
 # Limitations
 
