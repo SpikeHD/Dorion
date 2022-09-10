@@ -55,7 +55,7 @@ jobs:
           working-directory: src-tauri
 
       - name: Build frontend (creates '../dist')
-        run: yarn build
+        run: yarn && yarn build
 
       - uses: actions-rs/clippy-check@v1
         with:
