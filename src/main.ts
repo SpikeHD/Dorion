@@ -50,44 +50,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     })()`
   }
 
+  const injectionJs = await invoke('get_injection_js', {
+    pluginJs: plugins,
+    themeJs: themeInjection,
+    origin: window.location.origin
+  })
+
   invoke('load_injection_js', {
-    contents: `
-      window.dorion = true
-
-      let loaded = false
-
-      let observer = new MutationObserver((mutations, obs) => {
-        const innerApp = document?.querySelector('div[class*="notDevTools"]')?.querySelector('div[class*="app-"]')
-        const loading = Array.from(
-          innerApp?.children || []
-        ).length === 2 || !innerApp?.querySelector('div').className.includes('app')
-
-        if (!loading && !loaded) {
-          console.log('Discord is loaded!')
-
-          onClientLoad()
-
-          // Exec plugins
-          ${plugins}
-
-          // Load theme
-          ${themeInjection}
-        } else {
-          console.log('Discord not loaded...')
-        }
-      });
-
-      observer.observe(document, {
-        childList: true,
-        subtree: true
-      });
-
-      function onClientLoad() {
-        observer.disconnect()
-        observer = null
-        loaded = true
-      }
-    `
+    contents: injectionJs
   })
 
   if (config.client_type !== 'default') {

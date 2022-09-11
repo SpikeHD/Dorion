@@ -18,7 +18,14 @@ pub fn get_theme_names() -> Vec<String> {
   let themes_dir = exe_dir.join("themes");
 
   if fs::metadata(&themes_dir).is_err() {
-    fs::create_dir_all(&themes_dir).unwrap();
+    match fs::create_dir_all(&themes_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating themes dir: {}", e);
+
+        return vec![String::new()]
+      }
+    };
   }
 
   let theme_folders = fs::read_dir(&themes_dir).unwrap();

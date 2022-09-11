@@ -35,7 +35,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": [
+        "injection/injection.js"
+      ],
       "shortDescription": "",
       "targets": "all",
       "windows": {

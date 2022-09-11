@@ -4,11 +4,25 @@
 )]
 
 use std::{fs, path::PathBuf, time::Duration};
-use tauri::{utils::config::AppUrl, Window, WindowBuilder};
+use tauri::{utils::config::AppUrl, Window, WindowBuilder, regex::Regex};
 
 mod config;
 mod helpers;
 mod theme;
+
+#[tauri::command]
+fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String {
+  let plugin_rxg = Regex::new(r"/\* __PLUGINS__ \*/").unwrap();
+  let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
+  let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
+  let injection_js = fs::read_to_string(PathBuf::from("injection/injection.js")).unwrap();
+
+  let rewritten_just_plugins = plugin_rxg.replace_all(injection_js.as_str(), plugin_js).to_string();
+  let rewritten_with_origin = origin_rxg.replace_all(rewritten_just_plugins.as_str(), origin).to_string();
+  let rewritten_all = theme_rxg.replace_all(rewritten_with_origin.as_str(), theme_js).to_string();
+
+  rewritten_all
+}
 
 #[tauri::command]
 fn load_injection_js(window: tauri::Window, contents: String) {
@@ -31,14 +45,21 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
 
 #[tauri::command]
 fn load_plugins() -> String {
-  let mut contents = "".to_string();
+  let mut contents = String::new();
   let mut exe_dir = std::env::current_exe().unwrap();
   exe_dir.pop();
 
   let plugins_dir = exe_dir.join("plugins");
 
   if fs::metadata(&plugins_dir).is_err() {
-    fs::create_dir_all(&plugins_dir).unwrap();
+    match fs::create_dir_all(&plugins_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating plugins dir: {}", e);
+
+        return String::new()
+      }
+    };
   }
 
   let plugin_folders = fs::read_dir(&plugins_dir).unwrap();
@@ -105,6 +126,7 @@ fn main() {
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![
+      get_injection_js,
       load_injection_js,
       load_plugins,
       change_zoom,
