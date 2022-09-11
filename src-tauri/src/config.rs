@@ -40,10 +40,8 @@ pub fn read_config_file() -> String {
 pub fn write_config_file(contents: String) {
   init();
 
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let config_file = exe_dir.join("config.json");
+  let appdata = tauri::api::path::data_dir().unwrap();
+  let config_file = appdata.join("dorion").join("config.json");
 
   fs::write(config_file, contents).expect("Error writing config!")
 }
