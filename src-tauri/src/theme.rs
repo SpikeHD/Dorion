@@ -23,7 +23,7 @@ pub fn get_theme_names() -> Vec<String> {
       Err(e) => {
         println!("Error creating themes dir: {}", e);
 
-        return vec![String::new()]
+        return vec![String::new()];
       }
     };
   }

@@ -4,7 +4,7 @@
 )]
 
 use std::{fs, path::PathBuf, time::Duration};
-use tauri::{utils::config::AppUrl, Window, WindowBuilder, regex::Regex};
+use tauri::{regex::Regex, utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod helpers;
@@ -17,9 +17,15 @@ fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String {
   let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
   let injection_js = fs::read_to_string(PathBuf::from("injection/injection_min.js")).unwrap();
 
-  let rewritten_just_plugins = plugin_rxg.replace_all(injection_js.as_str(), plugin_js).to_string();
-  let rewritten_with_origin = origin_rxg.replace_all(rewritten_just_plugins.as_str(), origin).to_string();
-  let rewritten_all = theme_rxg.replace_all(rewritten_with_origin.as_str(), theme_js).to_string();
+  let rewritten_just_plugins = plugin_rxg
+    .replace_all(injection_js.as_str(), plugin_js)
+    .to_string();
+  let rewritten_with_origin = origin_rxg
+    .replace_all(rewritten_just_plugins.as_str(), origin)
+    .to_string();
+  let rewritten_all = theme_rxg
+    .replace_all(rewritten_with_origin.as_str(), theme_js)
+    .to_string();
 
   rewritten_all
 }
@@ -57,7 +63,7 @@ fn load_plugins() -> String {
       Err(e) => {
         println!("Error creating plugins dir: {}", e);
 
-        return String::new()
+        return String::new();
       }
     };
   }

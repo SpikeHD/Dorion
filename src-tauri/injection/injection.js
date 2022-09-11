@@ -3,7 +3,7 @@ window.dorion = true
 
 let loaded = false
 
-let observer = new MutationObserver((mutations, obs) => {
+let observer = new MutationObserver(() => {
   const innerApp = document?.querySelector('div[class*="notDevTools"]')?.querySelector('div[class*="app-"]')
   const loading = Array.from(
     innerApp?.children || []
@@ -39,7 +39,7 @@ function onClientLoad() {
 function settingInserter() {
   let insertedSetting = false
 
-  observer = new MutationObserver((mutations, obs) => {
+  observer = new MutationObserver(() => {
     // Shove a new option in settings when it's open to go back to Dorion settings
     const appSettings = document.querySelectorAll('div[aria-label="User Settings"] div[class*="header-"]')[2]
     
