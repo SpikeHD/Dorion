@@ -40,7 +40,7 @@ I know I made the program 'n all, but I actually use this on my laptop as oppose
 
 # Limitations
 
-Dorion simply runs the web-based version of Discord within it's own client. This means that things Discord web doesn't support, like screen sharing (which is stupid, because Google Meets supports it), will not work.
+Dorion simply runs the web-based version of Discord within it's own client. This means that things Discord web doesn't support will not work. I am unaware of any significant feature that is missing.
 
 # Using Plugins and Themes
 
