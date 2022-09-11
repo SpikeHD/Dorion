@@ -35,6 +35,7 @@ Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Win
 * Extremely small installation size (~7mb!)
   * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine
 * Often loads slightly faster
+* Switch between Stable, Canary and PTB clients straight from the settings
 * Made by me (automatically makes it cooler)
 
 I know I made the program 'n all, but I actually use this on my laptop as opposed to the official client, so I can vouch 😎
