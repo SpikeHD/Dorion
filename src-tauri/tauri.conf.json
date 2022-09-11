@@ -36,7 +36,7 @@
         "signingIdentity": null
       },
       "resources": [
-        "injection/injection.js"
+        "injection/injection_min.js"
       ],
       "shortDescription": "",
       "targets": "all",

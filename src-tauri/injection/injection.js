@@ -55,7 +55,7 @@ function settingInserter() {
       // There needs to be a small delay for some reason, or else the client just freezes up
       setTimeout(() => {
         appSettings.parentNode.insertBefore(dorionTab, appSettings.nextSibling)
-      }, 200)
+      }, 100)
 
       insertedSetting = true
     } else if (!appSettings) {
