@@ -9,10 +9,12 @@ struct Config {
 }
 
 pub fn init() {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
+  let appdata = tauri::api::path::data_dir().unwrap();
+  let config_file = appdata.join("dorion").join("config.json");
 
-  let config_file = exe_dir.join("config.json");
+  if fs::metadata(appdata.join("dorion")).is_err() {
+    fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
+  }
 
   // Write default config if it doesn't exist
   if fs::metadata(&config_file).is_err() {
@@ -28,10 +30,8 @@ pub fn init() {
 pub fn read_config_file() -> String {
   init();
 
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let config_file = exe_dir.join("config.json");
+  let appdata = tauri::api::path::data_dir().unwrap();
+  let config_file = appdata.join("dorion").join("config.json");
 
   fs::read_to_string(config_file).expect("Config does not exist!")
 }
