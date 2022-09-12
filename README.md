@@ -44,6 +44,12 @@ I know I made the program 'n all, but I actually use this on my laptop as oppose
 
 Dorion simply runs the web-based version of Discord within it's own client. This means that things Discord web doesn't support will not work. I am unaware of any significant feature that is missing.
 
+# TODO
+
+* Desktop notifications
+* Rich presence
+* Helper API methods and events for plugins
+
 # Using Plugins and Themes
 
 *See the `examples` directory for examples of plugins and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some existing ones with actual use.*
