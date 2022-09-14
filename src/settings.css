@@ -1,7 +1,23 @@
 html {
-  background: #2f3136;
+  background: #36393e;
   user-select: none;
   overflow: hidden;
+}
+
+li {
+  list-style: none;
+  font-size: 1rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+}
+
+.settingFullBlock li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  margin: 2px;
 }
 
 img {
@@ -35,6 +51,14 @@ button:hover {
   background-color: #798dff;
 }
 
+.settingFullBlock {
+  background: #1e2124;
+  border-radius: 6px;
+  
+  margin: 4px;
+  height: 60%;
+}
+
 #finishBtn {
   border: none;
   position: relative;
@@ -43,6 +67,7 @@ button:hover {
 
 #finishBtnContainer {
   margin-left: 50%;
+  margin-top: 10px;
 }
 
 #main {
@@ -51,6 +76,7 @@ button:hover {
   top: 20%;
 
   width: 80%;
+  height: 80%;
 
   display: flex;
   flex-direction: column;
@@ -60,9 +86,13 @@ button:hover {
 }
 
 #container {
+  display: flex;
+  flex-direction: column;
   position: relative;
   left: -50%;
+  bottom: 10%;
 
+  height: 100%;
   width: 70%;
 }
 
@@ -77,7 +107,6 @@ button:hover {
 
 /* settings */
 #innerContainer {
-  margin-top: 60px;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -87,7 +116,7 @@ button:hover {
 }
 
 .settingsGroup {
-  background: #282b30;
+  background: #2f3136;
   padding: 10px;
   border-radius: 5px;
 
