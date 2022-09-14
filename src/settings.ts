@@ -1,5 +1,10 @@
 import { invoke } from "@tauri-apps/api";
 
+interface Plugin {
+  name: string
+  disabled: boolean
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
   const themes = await invoke("get_theme_names") as string[]
@@ -21,6 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initOnchangeHandlers()
   initOnclickHandlers()
+  createPluginList()
 })
 
 function prefillConfig(config: Config) {
@@ -91,5 +97,34 @@ async function setConfigValue(key: keyof Config, val: string) {
 
   await invoke('write_config_file', {
     contents: JSON.stringify(cfg)
+  })
+}
+
+async function createPluginList() {
+  const plugins = await invoke('get_plugin_list') as Plugin[]
+  const list = document.querySelector('.settingFullBlock')
+
+  plugins.forEach(plugin => {
+    const li = document.createElement('li')
+    const nameDisplay = document.createElement('div')
+    const input = document.createElement('input') as HTMLInputElement
+
+    nameDisplay.innerHTML = plugin.name
+    nameDisplay.className = 'pluginName'
+
+    input.type = 'checkbox'
+    input.checked = !plugin.disabled
+    input.onchange = () => {
+      invoke('toggle_plugin', {
+        name: plugin.name
+      })
+    }
+
+    li.appendChild(nameDisplay)
+    li.appendChild(input)
+
+    list?.appendChild(li);
+
+    console.log(plugin)
   })
 }

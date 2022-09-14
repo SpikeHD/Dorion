@@ -53,6 +53,8 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       change_zoom,
       plugin::load_plugins,
+      plugin::get_plugin_list,
+      plugin::toggle_plugin,
       injection::get_injection_js,
       injection::load_injection_js,
       config::read_config_file,

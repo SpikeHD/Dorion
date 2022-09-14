@@ -54,6 +54,9 @@ button:hover {
 .settingFullBlock {
   background: #1e2124;
   border-radius: 6px;
+
+  overflow-y: auto;
+  scrollbar-width: 0;
   
   margin: 4px;
   height: 60%;
