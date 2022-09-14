@@ -1,5 +1,5 @@
-use tauri::{regex::Regex};
-use std::{fs, time::Duration, path::PathBuf};
+use std::{fs, path::PathBuf, time::Duration};
+use tauri::regex::Regex;
 
 #[tauri::command]
 pub fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String {

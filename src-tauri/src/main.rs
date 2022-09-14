@@ -3,14 +3,14 @@
   windows_subsystem = "windows"
 )]
 
-use std::{path::PathBuf};
+use std::path::PathBuf;
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod helpers;
-mod theme;
-mod plugin;
 mod injection;
+mod plugin;
+mod theme;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]

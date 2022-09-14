@@ -1,5 +1,4 @@
-
-use std::{fs};
+use std::fs;
 
 #[tauri::command]
 pub fn load_plugins() -> String {
