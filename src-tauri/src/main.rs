@@ -3,51 +3,13 @@
   windows_subsystem = "windows"
 )]
 
-use std::{fs, path::PathBuf, time::Duration};
-use tauri::{regex::Regex, utils::config::AppUrl, Window, WindowBuilder};
+use std::{fs, path::PathBuf};
+use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod helpers;
 mod theme;
-
-#[tauri::command]
-fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String {
-  let plugin_rxg = Regex::new(r"/\* __PLUGINS__ \*/").unwrap();
-  let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
-  let injection_js = fs::read_to_string(PathBuf::from("injection/injection_min.js")).unwrap();
-
-  let rewritten_just_plugins = plugin_rxg
-    .replace_all(injection_js.as_str(), plugin_js)
-    .to_string();
-  let rewritten_with_origin = origin_rxg
-    .replace_all(rewritten_just_plugins.as_str(), origin)
-    .to_string();
-  let rewritten_all = theme_rxg
-    .replace_all(rewritten_with_origin.as_str(), theme_js)
-    .to_string();
-
-  rewritten_all
-}
-
-#[tauri::command]
-fn load_injection_js(window: tauri::Window, contents: String) {
-  window.eval(contents.as_str()).unwrap();
-  periodic_injection_check(window, contents);
-}
-
-fn periodic_injection_check(window: tauri::Window, injection_code: String) {
-  std::thread::spawn(move || {
-    loop {
-      std::thread::sleep(Duration::from_secs(2));
-
-      // Check if window.dorion exists
-      window
-        .eval(format!("!window.dorion && (() => {{ {} }})()", injection_code).as_str())
-        .unwrap();
-    }
-  });
-}
+mod injection;
 
 #[tauri::command]
 fn load_plugins() -> String {
@@ -132,10 +94,10 @@ fn main() {
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![
-      get_injection_js,
-      load_injection_js,
       load_plugins,
       change_zoom,
+      injection::get_injection_js,
+      injection::load_injection_js,
       config::read_config_file,
       config::write_config_file,
       theme::get_theme,
