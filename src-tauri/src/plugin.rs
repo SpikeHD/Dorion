@@ -34,7 +34,7 @@ pub fn load_plugins() -> String {
   let plugin_folders = fs::read_dir(&plugins_dir).unwrap();
 
   for path in plugin_folders {
-    if let Err(_) = path {
+    if path.is_err() {
       continue;
     }
 
@@ -63,7 +63,7 @@ pub fn get_plugin_list() -> Vec<Plugin> {
   let mut plugin_list: Vec<Plugin> = Vec::new();
 
   for path in plugin_folders {
-    if let Err(_) = path {
+    if path.is_err() {
       continue;
     }
 
@@ -95,7 +95,7 @@ pub fn toggle_plugin(name: String) {
   let folders = fs::read_dir(&plugins_dir).unwrap();
 
   for path in folders {
-    if let Err(_) = path {
+    if path.is_err() {
       continue;
     }
 

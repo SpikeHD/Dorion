@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all",
-    "lint": "eslint ./src ./src-tauri/injection/injection.js"
+    "lint": "eslint ./src ./src-tauri/injection/injection.js",
+    "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
+    "codefix": "yarn format && yarn clippy && yarn lint"
   },
   "dependencies": {},
   "devDependencies": {
