@@ -1,10 +1,10 @@
+use serde::{Deserialize, Serialize};
 use std::fs;
-use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Plugin {
   name: String,
-  disabled: bool
+  disabled: bool,
 }
 
 fn get_plugin_dir() -> std::path::PathBuf {
@@ -81,7 +81,7 @@ pub fn get_plugin_list() -> Vec<Plugin> {
     if fs::metadata(&index_file).is_ok() {
       plugin_list.push(Plugin {
         name: plugin_name,
-        disabled: disabled
+        disabled,
       });
     }
   }
