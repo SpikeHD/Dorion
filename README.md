@@ -50,6 +50,7 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 * Desktop notifications
 * Rich presence
 * Helper API methods and events for plugins
+* Dorion settings editable within regular client (iFrame probably)
 
 # Using Plugins and Themes
 
