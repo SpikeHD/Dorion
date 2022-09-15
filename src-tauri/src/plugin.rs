@@ -31,7 +31,14 @@ fn get_plugin_dir() -> std::path::PathBuf {
 pub fn load_plugins() -> String {
   let mut contents = String::new();
   let plugins_dir = get_plugin_dir();
-  let plugin_folders = fs::read_dir(&plugins_dir).unwrap();
+  let plugin_folders = match fs::read_dir(&plugins_dir) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Error: {}", e);
+
+      return String::new();
+    }
+  };
 
   for path in plugin_folders {
     if path.is_err() {
@@ -59,8 +66,15 @@ pub fn load_plugins() -> String {
 #[tauri::command]
 pub fn get_plugin_list() -> Vec<Plugin> {
   let plugins_dir = get_plugin_dir();
-  let plugin_folders = fs::read_dir(&plugins_dir).unwrap();
   let mut plugin_list: Vec<Plugin> = Vec::new();
+  let plugin_folders = match fs::read_dir(&plugins_dir) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Error: {}", e);
+
+      return plugin_list;
+    }
+  };
 
   for path in plugin_folders {
     if path.is_err() {
