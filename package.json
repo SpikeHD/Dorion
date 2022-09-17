@@ -4,7 +4,7 @@
   "version": "0.2.4",
   "type": "module",
   "scripts": {
-    "prebuild": "uglifyjs --mangle --compress --comments -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js",
+    "prebuild": "uglifyjs --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js",
     "dev": "yarn build && tauri dev",
     "build": "tsc && vite build",
     "preview": "vite preview",
