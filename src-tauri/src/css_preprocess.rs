@@ -5,7 +5,6 @@ use reqwest;
 pub async fn localize_imports(css: String) -> String {
   let reg = Regex::new(r"@import url\(.*\);").unwrap();
   let url_reg = Regex::new(r"\((.*)\)").unwrap();
-  // let matches = reg.find_iter(&css);
   let mut new_css = css.clone();
 
   while reg.is_match(new_css.clone().as_str()) {
@@ -21,6 +20,7 @@ pub async fn localize_imports(css: String) -> String {
       Err(e) => {
         println!("Request failed: {}", e);
 
+        new_css = new_css.replace(first_match.as_str(), "");
         continue;
       }
     };
