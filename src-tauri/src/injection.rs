@@ -18,7 +18,7 @@ pub fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String
     .replace_all(rewritten_with_origin.as_str(), theme_js)
     .to_string();
 
-  println!("{}", rewritten_all);
+  // std::fs::write("test.js", &rewritten_all);
 
   rewritten_all
 }

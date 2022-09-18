@@ -36,17 +36,27 @@ window.addEventListener("DOMContentLoaded", async () => {
       name: config.theme
     }) as string
 
-    const cleanContents = cssSanitize(themeContents)
+    const localized = await invoke('localize_imports', {
+      css: themeContents
+    }) as string
+
+    const cleanContents = cssSanitize(localized)
 
     // Write theme injection code
     themeInjection = `;(() => {
       const ts = document.createElement('style')
 
       ts.textContent = \`
-        ${cleanContents?.replace(/`/g, '\\`')}
+        ${cleanContents?.replace(/`/g, '\\`')
+            .replace(/\\8/g, '')
+            .replace(/\\9/g, '')
+          }
       \`
 
-      document.head.append(ts)
+      document.head.appendChild(ts)
+      
+      console.log("Created style tag")
+      console.log(document.head)
     })()`
   }
 

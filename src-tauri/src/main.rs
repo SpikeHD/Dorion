@@ -11,6 +11,7 @@ mod helpers;
 mod injection;
 mod plugin;
 mod theme;
+mod css_preprocess;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
@@ -52,6 +53,7 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![
       change_zoom,
+      css_preprocess::localize_imports,
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,
