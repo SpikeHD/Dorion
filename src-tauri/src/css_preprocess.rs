@@ -31,3 +31,7 @@ pub async fn localize_imports(css: String) -> String {
 
   new_css
 }
+
+pub fn localize_images(css: String) -> String {
+  String::new()
+}

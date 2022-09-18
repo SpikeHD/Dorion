@@ -54,9 +54,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       \`
 
       document.head.appendChild(ts)
-      
-      console.log("Created style tag")
-      console.log(document.head)
     })()`
   }
 
