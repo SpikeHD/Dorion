@@ -21,6 +21,7 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 * [Limitations](#limitations)
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
+* [Contributing](#contributing)
 * [Screenshots](#screenshots)
 
 # Setup
@@ -71,6 +72,10 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 ```
 
 so if you download a plugin or theme, just pop it into it's own folder in the `plugins`/`themes` folder!
+
+# Contributing
+
+Issues, PRs, etc. are all welcome!
 
 # Screenshots
 
