@@ -7,11 +7,11 @@ use std::path::PathBuf;
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
+mod css_preprocess;
 mod helpers;
 mod injection;
 mod plugin;
 mod theme;
-mod css_preprocess;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]

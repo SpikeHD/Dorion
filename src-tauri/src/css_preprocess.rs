@@ -1,5 +1,5 @@
-use tauri::regex::{Regex};
 use reqwest;
+use tauri::regex::Regex;
 
 #[tauri::command]
 pub async fn localize_imports(css: String) -> String {
@@ -12,16 +12,25 @@ pub async fn localize_imports(css: String) -> String {
 
   while reg.is_match(new_css.clone().as_str()) {
     let first_match = reg.find_iter(&new_css).next().unwrap();
-    let url = url_reg.captures(first_match.as_str()).unwrap().get(1).unwrap().as_str();
+    let url = url_reg
+      .captures(first_match.as_str())
+      .unwrap()
+      .get(1)
+      .unwrap()
+      .as_str()
+      // Remove quotes
+      .replace("'", "")
+      .replace("\"", "");
 
     if url.is_empty() {
       continue;
     }
 
-    let response = match reqwest::get(url).await {
+    let response = match reqwest::get(&url).await {
       Ok(r) => r,
       Err(e) => {
         println!("Request failed: {}", e);
+        println!("URL: {}", &url);
 
         new_css = new_css.replace(first_match.as_str(), "");
         continue;
@@ -52,6 +61,7 @@ pub async fn localize_images(css: String) -> String {
       Ok(r) => r,
       Err(e) => {
         println!("Request failed: {}", e);
+        println!("URL: {}", &url);
 
         continue;
       }
@@ -59,7 +69,10 @@ pub async fn localize_images(css: String) -> String {
     let bytes = response.bytes().await.unwrap();
     let b64 = base64::encode(bytes);
 
-    new_css = new_css.replace(url, format!("data:image/{};base64,{}", filetype, b64).as_str())
+    new_css = new_css.replace(
+      url,
+      format!("data:image/{};base64,{}", filetype, b64).as_str(),
+    )
   }
 
   new_css
