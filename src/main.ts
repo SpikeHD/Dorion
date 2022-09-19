@@ -9,10 +9,16 @@ interface Config {
 window.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
 
-  const config = JSON.parse(await invoke('read_config_file')) as Config
   const plugins = await invoke('load_plugins')
+  const config = JSON.parse(await invoke('read_config_file')) as Config
   const version = await window.__TAURI__.app.getVersion()
+  const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
+  const loadEvent = new CustomEvent('dorionLoaded', {
+    detail: {
+      client_type: config.client_type
+    }
+  })
 
   if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
 
@@ -25,6 +31,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
   })
 
+  if (midtitle) midtitle.innerHTML = "Waiting..."
+
   // Wait just a couple seconds in case the user wants to enter the settings menu
   await new Promise(r => setTimeout(r, 2000))
 
@@ -32,10 +40,13 @@ window.addEventListener("DOMContentLoaded", async () => {
   let themeInjection = ''
 
   if (config.theme !== 'none') {
+    if (midtitle) midtitle.innerHTML = "Loading theme CSS..."
+
     const themeContents = await invoke('get_theme', {
       name: config.theme
     }) as string
 
+    if (midtitle) midtitle.innerHTML = "Localizing CSS imports..."
     const localized = await invoke('localize_imports', {
       css: themeContents
     }) as string
@@ -57,6 +68,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     })()`
   }
 
+  if (midtitle) midtitle.innerHTML = "Getting injection JS..."
+
   const injectionJs = await invoke('get_injection_js', {
     pluginJs: plugins,
     themeJs: themeInjection,
@@ -67,10 +80,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     contents: injectionJs
   })
 
-  if (config.client_type !== 'default') {
-    window.location.assign(`https://${config.client_type}.discord.com/app`)
-  } else window.location.assign('https://discord.com/app')
+  if (midtitle) midtitle.innerHTML = "Done!"
+
+  document.dispatchEvent(loadEvent)
 });
+
+document.addEventListener('dorionLoaded', (e: CustomEventInit) => {
+  if (e.detail.client_type !== 'default') {
+    window.location.assign(`https://${e.detail.client_type}.discord.com/app`)
+  } else window.location.assign('https://discord.com/app')
+})
 
 async function typingAnim() {
   const title = document.querySelector('#title')

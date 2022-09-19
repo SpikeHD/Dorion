@@ -27,9 +27,19 @@ body {
   font-weight: bold;
 }
 
+#midtitle {
+  font-size: 2rem;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  margin: 20px;
+  padding: 6px;
+}
+
 #subtitle {
   font-size: 1rem;
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: normal;
 }
+
