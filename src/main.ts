@@ -51,7 +51,8 @@ window.addEventListener("DOMContentLoaded", async () => {
       css: themeContents
     }) as string
 
-    const cleanContents = cssSanitize(localized)
+    // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
+    const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
 
     // Write theme injection code
     themeInjection = `;(() => {

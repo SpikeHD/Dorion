@@ -45,7 +45,7 @@ pub async fn localize_imports(css: String) -> String {
 }
 
 pub async fn localize_images(css: String) -> String {
-  let img_reg = Regex::new(r"url\((.*(jpg|png|jpeg))\)").unwrap();
+  let img_reg = Regex::new(r"url\((.*(jpg|png|jpeg|gif))\)").unwrap();
   let matches = img_reg.captures_iter(&css);
   let mut new_css = css.clone();
 

@@ -5,9 +5,26 @@ pub fn get_theme(name: String) -> String {
   let mut exe_dir = std::env::current_exe().unwrap();
   exe_dir.pop();
 
-  let config_file = exe_dir.join("themes").join(name).join("index.css");
+  let theme_file = exe_dir.join("themes").join(name);
 
-  fs::read_to_string(config_file).unwrap_or_else(|_| "".to_string())
+  if !theme_file.is_dir() {
+    return fs::read_to_string(theme_file).unwrap_or_else(|_| "".to_string());
+  }
+
+  // Find the first CSS file in the dir
+  let mut css_file = String::new();
+
+  for file in fs::read_dir(&theme_file).unwrap() {
+    let filename = file.unwrap().file_name();
+    let name_string = filename.clone().to_str().unwrap().to_string();
+
+    if name_string.ends_with(".css") {
+      css_file = name_string;
+      break;
+    }
+  }
+
+  fs::read_to_string(theme_file.join(&css_file)).unwrap_or_else(|_| "".to_string())
 }
 
 #[tauri::command]
