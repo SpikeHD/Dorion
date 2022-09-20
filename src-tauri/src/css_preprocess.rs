@@ -1,4 +1,3 @@
-use reqwest;
 use tauri::regex::Regex;
 
 #[tauri::command]
@@ -19,8 +18,8 @@ pub async fn localize_imports(css: String) -> String {
       .unwrap()
       .as_str()
       // Remove quotes
-      .replace("'", "")
-      .replace("\"", "");
+      .replace('\'', "")
+      .replace('\"', "");
 
     if url.is_empty() {
       continue;
@@ -51,7 +50,7 @@ pub async fn localize_images(css: String) -> String {
 
   for groups in matches {
     let url = groups.get(1).unwrap().as_str();
-    let filetype = url.split(".").last().unwrap();
+    let filetype = url.split('.').last().unwrap();
 
     if url.is_empty() {
       continue;
