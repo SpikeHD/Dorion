@@ -7,6 +7,25 @@ pub struct Plugin {
   disabled: bool,
 }
 
+#[cfg(target_os = "linux")]
+fn get_plugin_dir() -> std::path::PathBuf {
+  let plugins_dir = tauri::api::path::home_dir().unwrap().join("dorion").join("plugins");
+
+  if fs::metadata(&plugins_dir).is_err() {
+    match fs::create_dir_all(&plugins_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating plugins dir: {}", e);
+
+        return plugins_dir;
+      }
+    };
+  }
+
+  plugins_dir
+}
+
+#[cfg(target_os = "windows")]
 fn get_plugin_dir() -> std::path::PathBuf {
   let mut exe_dir = std::env::current_exe().unwrap();
   exe_dir.pop();
