@@ -23,7 +23,7 @@ pub fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String
   rewritten_all
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn load_injection_js(window: tauri::Window, contents: String) {
   window.eval(contents.as_str()).unwrap();
   periodic_injection_check(window, contents);
