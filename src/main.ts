@@ -35,6 +35,14 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // Wait just a couple seconds in case the user wants to enter the settings menu
   await new Promise(r => setTimeout(r, 2000))
+  
+  if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
+
+  const imports = await invoke('localize_all_js', {
+    urls: await invoke('get_plugin_import_urls', {
+      pluginJs: plugins
+    })
+  })
 
   // Get theme if it exists
   let themeInjection = ''
@@ -78,6 +86,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   })
 
   invoke('load_injection_js', {
+    imports,
     contents: injectionJs
   })
 

@@ -1,8 +1,10 @@
 use std::{fs, path::PathBuf, time::Duration};
 use tauri::regex::Regex;
 
+use crate::js_preprocess::eval_js_imports;
+
 #[tauri::command]
-pub fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String {
+pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> Result<String, ()> {
   let plugin_rxg = Regex::new(r"/\* __PLUGINS__ \*/").unwrap();
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
   let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
@@ -18,14 +20,14 @@ pub fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> String
     .replace_all(rewritten_with_origin.as_str(), theme_js)
     .to_string();
 
-  // std::fs::write("test.js", &rewritten_all);
-
-  rewritten_all
+  Ok(rewritten_all)
 }
 
 #[tauri::command]
-pub fn load_injection_js(window: tauri::Window, contents: String) {
+pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String) {
+  eval_js_imports(&window, imports);
   window.eval(contents.as_str()).unwrap();
+  
   periodic_injection_check(window, contents);
 }
 

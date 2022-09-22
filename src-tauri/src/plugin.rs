@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 
+use crate::js_preprocess::get_js_imports;
+
 #[derive(Serialize, Deserialize)]
 pub struct Plugin {
   name: String,
@@ -28,7 +30,7 @@ fn get_plugin_dir() -> std::path::PathBuf {
 }
 
 #[tauri::command]
-pub fn load_plugins() -> String {
+pub async fn load_plugins() -> String {
   let mut contents = String::new();
   let plugins_dir = get_plugin_dir();
   let plugin_folders = match fs::read_dir(&plugins_dir) {
@@ -56,11 +58,26 @@ pub fn load_plugins() -> String {
     if fs::metadata(&index_file).is_ok() {
       let plugin_contents = fs::read_to_string(&index_file).unwrap();
 
+
       contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
     }
   }
 
+  println!("Done loading script URLS");
+
   contents
+}
+
+#[tauri::command]
+pub async fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
+  let mut script_imports: Vec<String> = vec![];
+  let url_imports = get_js_imports(&plugin_js).await;
+
+  for s in &url_imports {
+    script_imports.push(s.to_string());
+  }
+
+  script_imports
 }
 
 #[tauri::command]

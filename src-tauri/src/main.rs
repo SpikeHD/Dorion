@@ -8,6 +8,7 @@ use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod css_preprocess;
+mod js_preprocess;
 mod helpers;
 mod injection;
 mod plugin;
@@ -54,9 +55,11 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       change_zoom,
       css_preprocess::localize_imports,
+      js_preprocess::localize_all_js,
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,
+      plugin::get_plugin_import_urls,
       injection::get_injection_js,
       injection::load_injection_js,
       config::read_config_file,
