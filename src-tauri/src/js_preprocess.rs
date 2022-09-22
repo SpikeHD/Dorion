@@ -1,17 +1,17 @@
 use tauri::regex::Regex;
 
 #[tauri::command]
-pub async fn get_js_imports(js: &String) -> Vec<String> {
+pub async fn get_js_imports(js: &str) -> Vec<String> {
   let reg = Regex::new(r"//[ ]?URL_IMPORT (.*)").unwrap();
   let mut imports: Vec<String> = vec![];
 
-  let captures = reg.captures_iter(&js).next();
+  let captures = reg.captures_iter(js).next();
 
   if captures.is_none() {
     return imports;
   }
 
-  for capture in captures.unwrap().get(1) {
+  if let Some(capture) = captures.unwrap().get(1) {
     let first_match = capture.as_str();
 
     imports.push(first_match.to_string());
@@ -43,9 +43,7 @@ pub async fn localize_all_js(urls: Vec<String>) -> Vec<String> {
   let mut localized: Vec<String> = vec![];
 
   for url in urls {
-    localized.push(
-      localize_js(url).await
-    )
+    localized.push(localize_js(url).await)
   }
 
   localized

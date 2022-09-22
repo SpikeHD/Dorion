@@ -11,7 +11,10 @@ pub struct Plugin {
 
 #[cfg(target_os = "linux")]
 fn get_plugin_dir() -> std::path::PathBuf {
-  let plugins_dir = tauri::api::path::home_dir().unwrap().join("dorion").join("plugins");
+  let plugins_dir = tauri::api::path::home_dir()
+    .unwrap()
+    .join("dorion")
+    .join("plugins");
 
   if fs::metadata(&plugins_dir).is_err() {
     match fs::create_dir_all(&plugins_dir) {
@@ -76,7 +79,6 @@ pub async fn load_plugins() -> String {
 
     if fs::metadata(&index_file).is_ok() {
       let plugin_contents = fs::read_to_string(&index_file).unwrap();
-
 
       contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
     }

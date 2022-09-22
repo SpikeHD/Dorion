@@ -8,9 +8,9 @@ use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod css_preprocess;
-mod js_preprocess;
 mod helpers;
 mod injection;
+mod js_preprocess;
 mod plugin;
 mod theme;
 
