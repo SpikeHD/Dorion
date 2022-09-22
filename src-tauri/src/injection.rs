@@ -8,7 +8,14 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
   let plugin_rxg = Regex::new(r"/\* __PLUGINS__ \*/").unwrap();
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
   let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
-  let injection_js = fs::read_to_string(PathBuf::from("injection/injection_min.js")).unwrap();
+  let injection_js = match fs::read_to_string(PathBuf::from("injection/injection_min.js")) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Failed to read injection JS: {}", e);
+
+      return Ok(String::new());
+    }
+  };
 
   let rewritten_just_plugins = plugin_rxg
     .replace_all(injection_js.as_str(), plugin_js)
@@ -27,7 +34,7 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
 pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String) {
   eval_js_imports(&window, imports);
   window.eval(contents.as_str()).unwrap();
-  
+
   periodic_injection_check(window, contents);
 }
 

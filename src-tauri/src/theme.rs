@@ -1,11 +1,47 @@
 use std::fs;
 
-#[tauri::command]
-pub fn get_theme(name: String) -> String {
+#[cfg(target_os = "linux")]
+fn get_theme_dir() -> std::path::PathBuf {
+  let theme_dir = tauri::api::path::home_dir().unwrap().join("dorion").join("themes");
+
+  if fs::metadata(&theme_dir).is_err() {
+    match fs::create_dir_all(&theme_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating theme dir: {}", e);
+
+        return theme_dir;
+      }
+    };
+  }
+
+  theme_dir
+}
+
+#[cfg(target_os = "windows")]
+fn get_theme_dir() -> std::path::PathBuf {
   let mut exe_dir = std::env::current_exe().unwrap();
   exe_dir.pop();
 
-  let theme_file = exe_dir.join("themes").join(name);
+  let theme_dir = exe_dir.join("themes");
+
+  if fs::metadata(&theme_dir).is_err() {
+    match fs::create_dir_all(&theme_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating theme dir: {}", e);
+
+        return theme_dir;
+      }
+    };
+  }
+
+  theme_dir
+}
+
+#[tauri::command]
+pub fn get_theme(name: String) -> String {
+  let theme_file = get_theme_dir().join(name);
 
   if !theme_file.is_dir() {
     return fs::read_to_string(theme_file).unwrap_or_else(|_| "".to_string());
@@ -29,22 +65,7 @@ pub fn get_theme(name: String) -> String {
 
 #[tauri::command]
 pub fn get_theme_names() -> Vec<String> {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let themes_dir = exe_dir.join("themes");
-
-  if fs::metadata(&themes_dir).is_err() {
-    match fs::create_dir_all(&themes_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        println!("Error creating themes dir: {}", e);
-
-        return vec![String::new()];
-      }
-    };
-  }
-
+  let themes_dir = get_theme_dir();
   let theme_folders = fs::read_dir(&themes_dir).unwrap();
   let mut names = vec![] as Vec<String>;
 
