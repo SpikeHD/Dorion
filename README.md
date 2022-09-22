@@ -57,20 +57,31 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 
 # Using Plugins and Themes
 
-*See the `examples` directory for examples of plugins and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some existing ones with actual use.*
+*See the `examples` directory for examples of plugins, including how to include external code, and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some existing ones with actual use.*
 
-Plugins and themes are relatively simple to use, the file structure looks like so:
+Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
 ```
 .
-└── /path/to/Dorion/
-    ├── Dorion.exe or whatever
+└── C:/path/to/Dorion
+    ├── Dorion.exe
     ├── plugins/
     |   └── plugin_name/
     |       └── index.js
     └── themes/
-        └── theme_name/
-            └── index.css
+        └── theme.css
+```
+
+and like so on Linux:
+
+```
+.
+└── ~/dorion
+    ├── plugins/
+    |   └── plugin_name/
+    |       └── index.js
+    └── themes/
+        └── theme.css
 ```
 
 so if you download a plugin or theme, just pop it into it's own folder in the `plugins`/`themes` folder!
