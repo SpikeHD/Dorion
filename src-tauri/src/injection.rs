@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf, time::Duration};
-use tauri::{regex::Regex, Manager};
+use tauri::{regex::Regex};
 
 use crate::js_preprocess::eval_js_imports;
 
