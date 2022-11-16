@@ -11,9 +11,17 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
   let injection_js = match fs::read_to_string(PathBuf::from("injection/injection_min.js")) {
     Ok(f) => f,
     Err(e) => {
-      println!("Failed to read injection JS: {}", e);
+      println!("Failed to read injection JS in local dir: {}", e);
+      println!("Checking usr/lib");
 
-      return Ok(String::new());
+      match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
+        Ok(f) => f,
+        Err(e) => {
+          println!("Failed to read injection JS: {}", e);
+
+          String::new()
+        }
+      }
     }
   };
 
@@ -49,8 +57,6 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
       std::thread::sleep(Duration::from_secs(2));
 
       let is_injected = std::env::var("TAURI_INJECTED").unwrap_or("0".to_string());
-
-      println!("{}", is_injected);
 
       if is_injected.eq("1") {
         break;
