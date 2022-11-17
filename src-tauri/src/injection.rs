@@ -14,6 +14,7 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
       println!("Failed to read injection JS in local dir: {}", e);
       println!("Checking usr/lib");
 
+      // This is where the .deb installer throws it.
       match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
         Ok(f) => f,
         Err(e) => {
@@ -65,13 +66,6 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
       // Check if window.dorion exists
       window
         .eval(format!("!window.dorion && (() => {{
-          // Ensure we don't fire more than we have to
-          window.ipc.postMessage(JSON.stringify({{
-            cmd: \"is_injected\",
-            callback: 0,
-            error: 0,
-            inner: {{}}
-          }}));
           {}
         }})()", injection_code).as_str())
         .unwrap();
