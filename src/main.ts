@@ -14,11 +14,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
-  const loadEvent = new CustomEvent('dorionLoaded', {
-    detail: {
-      client_type: config.client_type
-    }
-  })
+  const loadEvent = new CustomEvent('dorionLoaded')
 
   if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
 
@@ -90,10 +86,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   document.dispatchEvent(loadEvent)
 });
 
-document.addEventListener('dorionLoaded', (e: CustomEventInit) => {
-  if (e.detail.client_type !== 'default') {
-    window.location.assign(`https://${e.detail.client_type}.discord.com/app`)
-  } else window.location.assign('https://discord.com/app')
+document.addEventListener('dorionLoaded', () => {
+  console.log("DORION LOADED")
+  //invoke('settings_to_main')
 })
 
 async function typingAnim() {

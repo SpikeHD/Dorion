@@ -39,6 +39,28 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
   Ok(rewritten_all)
 }
 
+pub fn preinject(window: &tauri::Window) {
+  let injection_js = match fs::read_to_string(PathBuf::from("injection/preinject_min.js")) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Failed to read preinject JS in local dir: {}", e);
+      println!("Checking usr/lib");
+
+      // This is where the .deb installer throws it.
+      match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
+        Ok(f) => f,
+        Err(e) => {
+          println!("Failed to read preinject JS: {}", e);
+
+          String::new()
+        }
+      }
+    }
+  };
+
+  window.eval(injection_js.as_str()).unwrap_or(())
+}
+
 #[tauri::command]
 pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String) {
   eval_js_imports(&window, imports);

@@ -5,6 +5,12 @@ interface Plugin {
   disabled: boolean
 }
 
+interface Config {
+  theme: string
+  zoom: string
+  client_type: string
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const { invoke } = window.__TAURI__;
   const themes = await invoke("get_theme_names") as string[]
