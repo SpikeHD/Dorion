@@ -58,7 +58,7 @@ const { invoke } = window.__TAURI__
   })
 
   // Remove loading container
-  document.querySelector('#loadingContainer')?.remove()
+  //document.querySelector('#loadingContainer')?.remove()
 })()
 
 async function displayLoadingTop() {
@@ -67,6 +67,7 @@ async function displayLoadingTop() {
   loadingContainer.id = 'loadingContainer'
   loadingContainer.innerHTML = html
 
+  loadingContainer.style.zIndex = 99999
   loadingContainer.style.position = 'absolute'
   loadingContainer.style.top = '0'
   loadingContainer.style.left = '0'

@@ -91,11 +91,16 @@ fn main() {
         .build()?;
 
       win.open_devtools();
-      injection::preinject(&win);
 
-      win.eval("console.log('THIS IS A TEST')");
+      modify_window(&win);
+      
+      std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(2));
 
-      modify_window(win);
+        injection::preinject(&win);
+
+        println!("Evalled JS")
+      });
 
       Ok(())
     })
@@ -105,7 +110,7 @@ fn main() {
 
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
-fn modify_window(window: Window) {
+fn modify_window(window: &Window) {
   window
     .with_webview(move |webview| {
       #[cfg(windows)]
