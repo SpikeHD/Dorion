@@ -40,9 +40,10 @@ let observer = new MutationObserver(() => {
 
     // The comments ahead are read by tauri and used to insert plugin/theme injection code
     
+    /* __THEMES__ */
+    
     /* __PLUGINS__ */
 
-    /* __THEMES__ */
   } else {
     console.log('Discord not loaded...')
   }
@@ -110,7 +111,7 @@ async function showSettings() {
   const themeSelect = document.querySelector('#themeSelect')
 
   themes.forEach(theme => {
-    theme = theme.replace(/'/g, '')
+    theme = theme.replace(/"/g, '')
     const opt = document.createElement('option')
 
     opt.value = theme

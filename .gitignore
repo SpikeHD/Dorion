@@ -25,3 +25,4 @@ dist-ssr
 
 src-tauri/injection/injection_min.js
 src-tauri/injection/preinject_min.js
+src-tauri/html

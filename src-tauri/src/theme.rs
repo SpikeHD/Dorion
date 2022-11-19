@@ -1,6 +1,5 @@
 use std::fs;
 
-#[cfg(target_os = "linux")]
 fn get_theme_dir() -> std::path::PathBuf {
   let theme_dir = tauri::api::path::home_dir()
     .unwrap()
@@ -12,33 +11,11 @@ fn get_theme_dir() -> std::path::PathBuf {
       Ok(()) => (),
       Err(e) => {
         println!("Error creating theme dir: {}", e);
-
         return theme_dir;
       }
     };
   }
-
-  theme_dir
-}
-
-#[cfg(target_os = "windows")]
-fn get_theme_dir() -> std::path::PathBuf {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let theme_dir = exe_dir.join("themes");
-
-  if fs::metadata(&theme_dir).is_err() {
-    match fs::create_dir_all(&theme_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        println!("Error creating theme dir: {}", e);
-
-        return theme_dir;
-      }
-    };
-  }
-
+  
   theme_dir
 }
 

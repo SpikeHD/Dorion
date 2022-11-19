@@ -2,8 +2,8 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "yarn build",
-    "devPath": "../dist",
-    "distDir": "../dist",
+    "devPath": "https://discord.com/app",
+    "distDir": "https://discord.com/app",
     "withGlobalTauri": true
   },
   "package": {
@@ -37,7 +37,9 @@
       },
       "resources": [
         "injection/preinject_min.js",
-        "injection/injection_min.js"
+        "injection/injection_min.js",
+        "html/index.html",
+        "html/settings.html"
       ],
       "shortDescription": "",
       "targets": "all",
