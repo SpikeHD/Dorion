@@ -90,7 +90,7 @@ fn main() {
         .build()?;
 
       modify_window(&win);
-      
+
       // Gotta make sure the window location is where it needs to be
       std::thread::spawn(move || {
         std::thread::sleep(std::time::Duration::from_secs(2));

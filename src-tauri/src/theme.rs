@@ -15,7 +15,7 @@ fn get_theme_dir() -> std::path::PathBuf {
       }
     };
   }
-  
+
   theme_dir
 }
 

@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf, time::Duration};
-use tauri::{regex::Regex};
+use tauri::regex::Regex;
 
 use crate::js_preprocess::eval_js_imports;
 
@@ -65,7 +65,7 @@ pub fn preinject(window: &tauri::Window) {
 pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String) {
   eval_js_imports(&window, imports);
   window.eval(contents.as_str()).unwrap();
-  
+
   periodic_injection_check(window, contents);
 }
 
@@ -79,7 +79,7 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
     loop {
       std::thread::sleep(Duration::from_secs(1));
 
-      let is_injected = std::env::var("TAURI_INJECTED").unwrap_or("0".to_string());
+      let is_injected = std::env::var("TAURI_INJECTED").unwrap_or_else(|_| "0".to_string());
 
       if is_injected.eq("1") {
         break;
@@ -87,9 +87,15 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
 
       // Check if window.dorion exists
       window
-        .eval(format!("!window.dorion && (() => {{
+        .eval(
+          format!(
+            "!window.dorion && (() => {{
           {}
-        }})()", injection_code).as_str())
+        }})()",
+            injection_code
+          )
+          .as_str(),
+        )
         .unwrap();
     }
   });

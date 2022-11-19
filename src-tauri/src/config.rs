@@ -46,7 +46,6 @@ pub fn write_config_file(contents: String) {
   fs::write(config_file, contents).expect("Error writing config!")
 }
 
-
 pub fn default_config() -> Config {
   Config {
     theme: "none".to_string(),
@@ -58,12 +57,17 @@ pub fn default_config() -> Config {
 pub fn get_zoom() -> f64 {
   init();
 
-  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(default_config());
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
 
   parsed.zoom.parse().unwrap_or(1.0)
 }
 
 pub fn get_client_type() -> String {
-  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(default_config());
-  parsed.client_type.parse().unwrap_or("default".to_string())
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed
+    .client_type
+    .parse()
+    .unwrap_or_else(|_| "default".to_string())
 }

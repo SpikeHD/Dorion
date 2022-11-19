@@ -24,7 +24,7 @@ fn get_plugin_dir() -> std::path::PathBuf {
       }
     };
   }
-  
+
   plugin_dir
 }
 
