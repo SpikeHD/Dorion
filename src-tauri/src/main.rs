@@ -61,6 +61,7 @@ fn main() {
       plugin::toggle_plugin,
       plugin::get_plugin_import_urls,
       injection::get_injection_js,
+      injection::is_injected,
       injection::load_injection_js,
       config::read_config_file,
       config::write_config_file,

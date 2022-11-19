@@ -1,7 +1,7 @@
 {
   "name": "dorion",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "scripts": {
     "prebuild": "uglifyjs --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js",

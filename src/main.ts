@@ -30,11 +30,6 @@ window.addEventListener("DOMContentLoaded", async () => {
       window.location.assign('/settings.html')
     }
   })
-
-  if (midtitle) midtitle.innerHTML = "Waiting..."
-
-  // Wait just a couple seconds in case the user wants to enter the settings menu
-  await new Promise(r => setTimeout(r, 2000))
   
   if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
 

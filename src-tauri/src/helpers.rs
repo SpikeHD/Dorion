@@ -3,20 +3,20 @@ use std::process::Command;
 
 #[tauri::command]
 pub fn open_plugins() {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let plugin_folder = exe_dir.join("plugins");
+  let plugin_folder = tauri::api::path::home_dir()
+    .unwrap()
+    .join("dorion")
+    .join("plugins");
 
   open_folder(plugin_folder)
 }
 
 #[tauri::command]
 pub fn open_themes() {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let theme_folder = exe_dir.join("themes");
+  let theme_folder = tauri::api::path::home_dir()
+    .unwrap()
+    .join("dorion")
+    .join("themes");
 
   open_folder(theme_folder)
 }

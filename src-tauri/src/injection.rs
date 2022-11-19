@@ -1,5 +1,5 @@
 use std::{fs, path::PathBuf, time::Duration};
-use tauri::regex::Regex;
+use tauri::{regex::Regex};
 
 use crate::js_preprocess::eval_js_imports;
 
@@ -11,9 +11,18 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
   let injection_js = match fs::read_to_string(PathBuf::from("injection/injection_min.js")) {
     Ok(f) => f,
     Err(e) => {
-      println!("Failed to read injection JS: {}", e);
+      println!("Failed to read injection JS in local dir: {}", e);
+      println!("Checking usr/lib");
 
-      return Ok(String::new());
+      // This is where the .deb installer throws it.
+      match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
+        Ok(f) => f,
+        Err(e) => {
+          println!("Failed to read injection JS: {}", e);
+
+          String::new()
+        }
+      }
     }
   };
 
@@ -34,8 +43,13 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
 pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String) {
   eval_js_imports(&window, imports);
   window.eval(contents.as_str()).unwrap();
-
+  
   periodic_injection_check(window, contents);
+}
+
+#[tauri::command]
+pub fn is_injected() {
+  std::env::set_var("TAURI_INJECTED", "1");
 }
 
 fn periodic_injection_check(window: tauri::Window, injection_code: String) {
@@ -43,9 +57,17 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String) {
     loop {
       std::thread::sleep(Duration::from_secs(2));
 
+      let is_injected = std::env::var("TAURI_INJECTED").unwrap_or("0".to_string());
+
+      if is_injected.eq("1") {
+        break;
+      }
+
       // Check if window.dorion exists
       window
-        .eval(format!("!window.dorion && (() => {{ {} }})()", injection_code).as_str())
+        .eval(format!("!window.dorion && (() => {{
+          {}
+        }})()", injection_code).as_str())
         .unwrap();
     }
   });

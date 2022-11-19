@@ -1,3 +1,24 @@
+// Ensure we don't fire more than we have to
+window.ipc.postMessage(JSON.stringify({
+  cmd: "is_injected",
+  callback: 0,
+  error: 0,
+  inner: {}
+}));
+
+// Create URL opener which will open links in the default system browser
+// TODO: Don't resort to using this yet
+window.openURL = (url) => {
+  window.ipc.postMessage(JSON.stringify({
+    cmd: "open_url",
+    callback: 0,
+    error: 0,
+    inner: {
+      url
+    }
+  }));
+}
+
 window.dorionOrigin = '/* __ORIGIN__ */'
 window.dorion = true
 
