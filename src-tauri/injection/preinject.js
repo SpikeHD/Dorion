@@ -1,4 +1,5 @@
 const { invoke } = window.__TAURI__
+const TITLE = 'Dorion'
 
 ;(async () => {
   await displayLoadingTop()
@@ -11,13 +12,6 @@ const { invoke } = window.__TAURI__
   if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
 
   typingAnim()
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f') {
-      // Interrupt the loading and put us in settings
-      window.location.assign('/settings.html')
-    }
-  })
   
   if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
 
@@ -68,7 +62,7 @@ const { invoke } = window.__TAURI__
     origin: window.location.origin
   })
 
-  invoke('load_injection_js', {
+  await invoke('load_injection_js', {
     imports,
     contents: injectionJs
   })
@@ -76,7 +70,11 @@ const { invoke } = window.__TAURI__
   if (midtitle) midtitle.innerHTML = "Done!"
 
   // Remove loading container
-  document.querySelector('#loadingContainer')?.remove()
+  document.querySelector('#loadingContainer').style.opacity = 0
+
+  setTimeout(() => {
+    document.querySelector('#loadingContainer')?.remove()
+  }, 200)
 })()
 
 async function displayLoadingTop() {
@@ -105,7 +103,7 @@ async function typingAnim() {
 
   if (!title) return
 
-  for (const letter of title.split('')) {
+  for (const letter of TITLE.split('')) {
     title.innerHTML = title.innerHTML.replace('|', '') + letter + '|'
 
     await timeout(100)

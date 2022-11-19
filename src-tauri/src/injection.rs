@@ -77,7 +77,7 @@ pub fn is_injected() {
 fn periodic_injection_check(window: tauri::Window, injection_code: String) {
   std::thread::spawn(move || {
     loop {
-      std::thread::sleep(Duration::from_secs(2));
+      std::thread::sleep(Duration::from_secs(1));
 
       let is_injected = std::env::var("TAURI_INJECTED").unwrap_or("0".to_string());
 
