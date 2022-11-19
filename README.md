@@ -47,12 +47,17 @@ I know I made the program 'n all, but I actually use this on my laptop as oppose
 
 Dorion simply runs the web-based version of Discord within it's own client. This means that things Discord web doesn't support will not work. I am unaware of any significant feature that is missing.
 
+# Known Issues
+
+* Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
+* Links open in a Dorion window instead of in the default system browser ([#2](https://github.com/SpikeHD/Dorion/issues/2))
+
 # TODO
 
 * Desktop notifications
-* Rich presence
+  * AND displaying the number of notifs in the desktop icon
+* Rich presence(?)
 * Helper API methods and events for plugins
-* Dorion settings editable within regular client (iFrame probably)
 * Backup localized themes
 
 # Using Plugins and Themes
