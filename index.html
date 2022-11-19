@@ -1,24 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./src/style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dorion</title>
-    <script type="module" src="/src/main.ts" defer></script>
-  </head>
+<div id="container">
+  <div id="title">
+    <!-- This is autofilled by JS -->
+  </div>
+  <div id="midtitle">
+    <!-- This is autofilled by JS -->
+  </div>
+  <div id="subtitle">
+    <!-- This is autofilled by JS -->
+  </div>
+</div>
+<!-- I'm just gonna be super lazy and put this here since I can get away with it -->
+<style>
+#loadingContainer {
+  transition: opacity 0.2s ease;
+}
 
-  <body>
-    <div id="container">
-      <div id="title">
-        <!-- This is autofilled by JS -->
-      </div>
-      <div id="midtitle">
-        <!-- This is autofilled by JS -->
-      </div>
-      <div id="subtitle">
-        <!-- This is autofilled by JS -->
-      </div>
-    </div>
-  </body>
-</html>
+#container {
+  position: relative;
+
+  background: #2f3136;
+  user-select: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  height: 100%;
+  width: 100%;
+}
+
+#title {
+  font-size: 5rem;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+#midtitle {
+  font-size: 2rem;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  margin: 20px;
+  padding: 6px;
+}
+
+#subtitle {
+  font-size: 1rem;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+}
+</style>

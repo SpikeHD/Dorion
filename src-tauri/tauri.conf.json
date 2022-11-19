@@ -2,13 +2,13 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "yarn build",
-    "devPath": "../dist",
-    "distDir": "../dist",
+    "devPath": "https://discord.com/app",
+    "distDir": "https://discord.com/app",
     "withGlobalTauri": true
   },
   "package": {
     "productName": "Dorion",
-    "version": "0.3.2"
+    "version": "0.4.0"
   },
   "tauri": {
     "allowlist": {
@@ -36,7 +36,10 @@
         "signingIdentity": null
       },
       "resources": [
-        "injection/injection_min.js"
+        "injection/preinject_min.js",
+        "injection/injection_min.js",
+        "html/index.html",
+        "html/settings.html"
       ],
       "shortDescription": "",
       "targets": "all",

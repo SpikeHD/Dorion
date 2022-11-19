@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 
 #[derive(Serialize, Deserialize)]
-struct Config {
+pub struct Config {
   theme: String,
   zoom: String,
   client_type: String,
@@ -46,14 +46,24 @@ pub fn write_config_file(contents: String) {
   fs::write(config_file, contents).expect("Error writing config!")
 }
 
-pub fn get_zoom() -> f64 {
-  init();
 
-  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(Config {
+pub fn default_config() -> Config {
+  Config {
     theme: "none".to_string(),
     zoom: "1.0".to_string(),
     client_type: "default".to_string(),
-  });
+  }
+}
+
+pub fn get_zoom() -> f64 {
+  init();
+
+  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(default_config());
 
   parsed.zoom.parse().unwrap_or(1.0)
+}
+
+pub fn get_client_type() -> String {
+  let parsed: Config = serde_json::from_str(read_config_file().as_str()).unwrap_or(default_config());
+  parsed.client_type.parse().unwrap_or("default".to_string())
 }

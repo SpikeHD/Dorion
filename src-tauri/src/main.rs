@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::path::PathBuf;
+use config::get_client_type;
 use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
@@ -11,6 +11,7 @@ mod css_preprocess;
 mod helpers;
 mod injection;
 mod js_preprocess;
+mod local_html;
 mod plugin;
 mod theme;
 
@@ -41,14 +42,23 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 fn main() {
-  let mut context = tauri::generate_context!("tauri.conf.json");
-  let win_url = tauri::WindowUrl::App(PathBuf::from("../dist"));
-
-  // For ensuring config exists
+  // Ensure config is created
   config::init();
 
-  context.config_mut().build.dist_dir = AppUrl::Url(win_url.clone());
-  context.config_mut().build.dev_path = AppUrl::Url(win_url.clone());
+  let mut context = tauri::generate_context!("tauri.conf.json");
+  let client_type = get_client_type();
+  let mut url = String::new();
+
+  if client_type == "default" {
+    url += "https://discord.com/app";
+  } else {
+    url = format!("https://{}.discord.com/app", client_type);
+  }
+
+  let url_ext = tauri::WindowUrl::External(reqwest::Url::parse(&url).unwrap());
+
+  context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
+  context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
 
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -56,6 +66,8 @@ fn main() {
       change_zoom,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
+      local_html::get_index,
+      local_html::get_settings,
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,
@@ -72,12 +84,19 @@ fn main() {
     ])
     .setup(move |app| {
       let title = format!("Dorion - v{}", app.package_info().version);
-      let win = WindowBuilder::new(app, "main", win_url)
+      let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .resizable(true)
         .build()?;
 
-      modify_window(win);
+      modify_window(&win);
+      
+      // Gotta make sure the window location is where it needs to be
+      std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(2));
+
+        injection::preinject(&win);
+      });
 
       Ok(())
     })
@@ -87,7 +106,7 @@ fn main() {
 
 // Big fat credit to icidasset & FabianLars
 // https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
-fn modify_window(window: Window) {
+fn modify_window(window: &Window) {
   window
     .with_webview(move |webview| {
       #[cfg(windows)]

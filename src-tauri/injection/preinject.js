@@ -1,35 +1,22 @@
 const TITLE = 'Dorion'
 
-interface Config {
-  theme: string
-  zoom: string
-  client_type: string
-}
+/**
+ * This is a bunch of scaffolding stuff that is run before the actuall injection script is run.
+ * This will localize imports for JS and CSS, as well as some other things
+ */
+;(async () => {
+  await displayLoadingTop()
 
-window.addEventListener("DOMContentLoaded", async () => {
-  const { invoke } = window.__TAURI__;
-
-  const plugins = await invoke('load_plugins')
-  const config = JSON.parse(await invoke('read_config_file')) as Config
+  const { invoke } = window.__TAURI__
+  const config = JSON.parse(await invoke('read_config_file'))
+  const plugins = await invoke('load_plugins');
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
-  const loadEvent = new CustomEvent('dorionLoaded', {
-    detail: {
-      client_type: config.client_type
-    }
-  })
-
-  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
+  
+  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}`
 
   typingAnim()
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f') {
-      // Interrupt the loading and put us in settings
-      window.location.assign('/settings.html')
-    }
-  })
   
   if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
 
@@ -47,12 +34,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     const themeContents = await invoke('get_theme', {
       name: config.theme
-    }) as string
+    })
 
     if (midtitle) midtitle.innerHTML = "Localizing CSS imports..."
     const localized = await invoke('localize_imports', {
       css: themeContents
-    }) as string
+    })
 
     // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
     const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
@@ -80,22 +67,44 @@ window.addEventListener("DOMContentLoaded", async () => {
     origin: window.location.origin
   })
 
-  invoke('load_injection_js', {
+  await invoke('load_injection_js', {
     imports,
     contents: injectionJs
   })
 
   if (midtitle) midtitle.innerHTML = "Done!"
 
-  document.dispatchEvent(loadEvent)
-});
+  // Remove loading container
+  document.querySelector('#loadingContainer').style.opacity = 0
 
-document.addEventListener('dorionLoaded', (e: CustomEventInit) => {
-  if (e.detail.client_type !== 'default') {
-    window.location.assign(`https://${e.detail.client_type}.discord.com/app`)
-  } else window.location.assign('https://discord.com/app')
-})
+  setTimeout(() => {
+    document.querySelector('#loadingContainer')?.remove()
+  }, 200)
+})()
 
+/**
+ * Display the splashscreen
+ */
+async function displayLoadingTop() {
+  const { invoke } = window.__TAURI__
+  const html = await invoke('get_index')
+  const loadingContainer = document.createElement('div')
+  loadingContainer.id = 'loadingContainer'
+  loadingContainer.innerHTML = html
+
+  loadingContainer.style.zIndex = 99999
+  loadingContainer.style.position = 'absolute'
+  loadingContainer.style.top = '0'
+  loadingContainer.style.left = '0'
+  loadingContainer.style.width = '100vw'
+  loadingContainer.style.height = '100vh'
+
+  document.body.appendChild(loadingContainer)
+}
+
+/**
+ * Play the little typing animation in the splash screen
+ */
 async function typingAnim() {
   const title = document.querySelector('#title')
 
@@ -124,12 +133,23 @@ async function typingAnim() {
   }, 500)
 }
 
-async function timeout(ms: number) {
+/**
+ * Small helper to wait a couple seconds before doing something
+ * 
+ * @param {Number} ms 
+ * @returns 
+ */
+async function timeout(ms) {
   return new Promise(r => setTimeout(r, ms))
 }
 
-// Prevent any fuckery within themes
-function cssSanitize(css: string) {
+/**
+ * Prevent any fuckery within themes
+ * 
+ * @param {String} css 
+ * @returns The sanitized CSS
+ */
+function cssSanitize(css) {
   const style = document.createElement('style');
   style.innerHTML = css;
 

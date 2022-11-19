@@ -9,46 +9,23 @@ pub struct Plugin {
   disabled: bool,
 }
 
-#[cfg(target_os = "linux")]
 fn get_plugin_dir() -> std::path::PathBuf {
-  let plugins_dir = tauri::api::path::home_dir()
+  let plugin_dir = tauri::api::path::home_dir()
     .unwrap()
     .join("dorion")
     .join("plugins");
 
-  if fs::metadata(&plugins_dir).is_err() {
-    match fs::create_dir_all(&plugins_dir) {
+  if fs::metadata(&plugin_dir).is_err() {
+    match fs::create_dir_all(&plugin_dir) {
       Ok(()) => (),
       Err(e) => {
         println!("Error creating plugins dir: {}", e);
-
-        return plugins_dir;
+        return plugin_dir;
       }
     };
   }
-
-  plugins_dir
-}
-
-#[cfg(target_os = "windows")]
-fn get_plugin_dir() -> std::path::PathBuf {
-  let mut exe_dir = std::env::current_exe().unwrap();
-  exe_dir.pop();
-
-  let plugins_dir = exe_dir.join("plugins");
-
-  if fs::metadata(&plugins_dir).is_err() {
-    match fs::create_dir_all(&plugins_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        println!("Error creating plugins dir: {}", e);
-
-        return plugins_dir;
-      }
-    };
-  }
-
-  plugins_dir
+  
+  plugin_dir
 }
 
 #[tauri::command]
@@ -83,8 +60,6 @@ pub async fn load_plugins() -> String {
       contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
     }
   }
-
-  println!("Done loading script URLS");
 
   contents
 }

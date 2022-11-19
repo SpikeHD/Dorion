@@ -26,6 +26,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         settings: resolve(__dirname, 'settings.html')
       }
-    }
+    },
+    outDir: 'src-tauri/html'
   },
 });
