@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs};
 
 #[tauri::command]
 pub fn get_index() -> String {

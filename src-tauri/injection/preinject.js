@@ -1,15 +1,20 @@
-const { invoke } = window.__TAURI__
 const TITLE = 'Dorion'
 
+/**
+ * This is a bunch of scaffolding stuff that is run before the actuall injection script is run.
+ * This will localize imports for JS and CSS, as well as some other things
+ */
 ;(async () => {
   await displayLoadingTop()
 
+  const { invoke } = window.__TAURI__
   const config = JSON.parse(await invoke('read_config_file'))
   const plugins = await invoke('load_plugins');
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
-  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}</br></br>Press 'F' to enter settings`
+  
+  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}`
 
   typingAnim()
   
@@ -77,7 +82,11 @@ const TITLE = 'Dorion'
   }, 200)
 })()
 
+/**
+ * Display the splashscreen
+ */
 async function displayLoadingTop() {
+  const { invoke } = window.__TAURI__
   const html = await invoke('get_index')
   const loadingContainer = document.createElement('div')
   loadingContainer.id = 'loadingContainer'
@@ -93,11 +102,9 @@ async function displayLoadingTop() {
   document.body.appendChild(loadingContainer)
 }
 
-document.addEventListener('dorionLoaded', () => {
-  console.log("DORION LOADED")
-  //invoke('settings_to_main')
-})
-
+/**
+ * Play the little typing animation in the splash screen
+ */
 async function typingAnim() {
   const title = document.querySelector('#title')
 
@@ -126,11 +133,22 @@ async function typingAnim() {
   }, 500)
 }
 
+/**
+ * Small helper to wait a couple seconds before doing something
+ * 
+ * @param {Number} ms 
+ * @returns 
+ */
 async function timeout(ms) {
   return new Promise(r => setTimeout(r, ms))
 }
 
-// Prevent any fuckery within themes
+/**
+ * Prevent any fuckery within themes
+ * 
+ * @param {String} css 
+ * @returns The sanitized CSS
+ */
 function cssSanitize(css) {
   const style = document.createElement('style');
   style.innerHTML = css;

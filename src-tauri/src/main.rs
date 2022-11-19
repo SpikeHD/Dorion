@@ -3,9 +3,8 @@
   windows_subsystem = "windows"
 )]
 
-use std::path::PathBuf;
 use config::get_client_type;
-use tauri::{utils::config::AppUrl, Window, WindowBuilder, Manager};
+use tauri::{utils::config::AppUrl, Window, WindowBuilder};
 
 mod config;
 mod css_preprocess;
@@ -90,16 +89,13 @@ fn main() {
         .resizable(true)
         .build()?;
 
-      win.open_devtools();
-
       modify_window(&win);
       
+      // Gotta make sure the window location is where it needs to be
       std::thread::spawn(move || {
         std::thread::sleep(std::time::Duration::from_secs(2));
 
         injection::preinject(&win);
-
-        println!("Evalled JS")
       });
 
       Ok(())

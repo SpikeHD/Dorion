@@ -84,8 +84,6 @@ pub async fn load_plugins() -> String {
     }
   }
 
-  println!("Done loading script URLS");
-
   contents
 }
 
