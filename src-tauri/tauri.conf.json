@@ -36,6 +36,7 @@
         "signingIdentity": null
       },
       "resources": [
+        "injection/preinject_min.js",
         "injection/injection_min.js"
       ],
       "shortDescription": "",
