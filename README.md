@@ -70,13 +70,14 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 
 ```
 .
-└── C:/path/to/Dorion
-    ├── Dorion.exe
+└── C:/Users/USERNAME/dorion
     ├── plugins/
     |   └── plugin_name/
     |       └── index.js
     └── themes/
         └── theme.css
+        └── Theme2
+            └── theme2.css
 ```
 
 and like so on Linux:
@@ -89,6 +90,8 @@ and like so on Linux:
     |       └── index.js
     └── themes/
         └── theme.css
+        └── Theme2
+            └── theme2.css
 ```
 
 so if you download a plugin or theme, just pop it into it's own folder in the `plugins`/`themes` folder!
