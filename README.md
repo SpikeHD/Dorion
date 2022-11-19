@@ -51,7 +51,6 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 # Known Issues
 
 * Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
-* Links open in a Dorion window instead of in the default system browser ([#2](https://github.com/SpikeHD/Dorion/issues/2))
 
 # TODO
 
