@@ -51,6 +51,7 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 # Known Issues
 
 * Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
+* A couple bugs with CSS & image importt related stuff
 
 # TODO
 
@@ -101,11 +102,12 @@ Issues, PRs, etc. are all welcome!
 
 # Screenshots
 
-![image](https://user-images.githubusercontent.com/25207995/189257838-dbac8460-2c2a-4ca4-a456-b971808b2ab3.png)
+![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
+Loading screen. So cool!
 
-![image](https://user-images.githubusercontent.com/25207995/189257875-bce1bb0c-2f53-492b-a253-82eb6dd3e314.png)
+![image](https://user-images.githubusercontent.com/25207995/202835284-910be0cb-a4fc-4272-b8ae-1a6187d68062.png)
+Theme: [Dark Matter](https://betterdiscord.app/theme/Dark%20Matter)
 
-![image](https://user-images.githubusercontent.com/25207995/189258008-3fd45402-fb32-4e0f-bbf1-629697bc8685.png)
-
-![image](https://user-images.githubusercontent.com/25207995/189258064-13548647-3b83-4ea4-80a9-06d1e485226a.png)
+![image](https://user-images.githubusercontent.com/25207995/202835451-31432fbd-69f1-4564-8830-59ebfcfde7fe.png)
+Theme: [Dark Neon](https://betterdiscord.app/theme/Dark%20Neon)
 
