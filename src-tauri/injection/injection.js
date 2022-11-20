@@ -52,6 +52,21 @@ function onClientLoad() {
   observer.disconnect()
 
   settingInserter()
+  createLocalStorage()
+}
+
+/**
+ * Discord wipes `window.localStorage`, so we have to recreate it in case plugins require it
+ * 
+ * https://github.com/SpikeHD/Dorion/issues/7#issuecomment-1320861432
+ */
+function createLocalStorage() {
+  const iframe = document.createElement('iframe');
+  document.head.append(iframe);
+  const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
+  iframe.remove();
+  
+  Object.defineProperty(window, 'localStorage', pd)
 }
 
 /**
