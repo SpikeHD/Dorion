@@ -13,8 +13,6 @@ window.__TAURI__.invoke('is_injected')
 //     }
 //   }));
 // }
-
-window.dorionOrigin = '/* __ORIGIN__ */'
 window.dorion = true
 
 let loaded = false

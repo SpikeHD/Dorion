@@ -4,10 +4,9 @@ use tauri::regex::Regex;
 use crate::js_preprocess::eval_js_imports;
 
 #[tauri::command]
-pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> Result<String, ()> {
+pub async fn get_injection_js(plugin_js: &str, theme_js: &str) -> Result<String, ()> {
   let plugin_rxg = Regex::new(r"/\* __PLUGINS__ \*/").unwrap();
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let origin_rxg = Regex::new(r"/\* __ORIGIN__ \*/").unwrap();
   let injection_js = match fs::read_to_string(PathBuf::from("injection/injection_min.js")) {
     Ok(f) => f,
     Err(e) => {
@@ -29,11 +28,8 @@ pub async fn get_injection_js(plugin_js: &str, theme_js: &str, origin: &str) -> 
   let rewritten_just_plugins = plugin_rxg
     .replace_all(injection_js.as_str(), plugin_js)
     .to_string();
-  let rewritten_with_origin = origin_rxg
-    .replace_all(rewritten_just_plugins.as_str(), origin)
-    .to_string();
   let rewritten_all = theme_rxg
-    .replace_all(rewritten_with_origin.as_str(), theme_js)
+    .replace_all(rewritten_just_plugins.as_str(), theme_js)
     .to_string();
 
   Ok(rewritten_all)

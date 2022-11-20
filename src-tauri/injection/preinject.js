@@ -64,7 +64,6 @@ const TITLE = 'Dorion'
   const injectionJs = await invoke('get_injection_js', {
     pluginJs: plugins,
     themeJs: themeInjection,
-    origin: window.location.origin
   })
 
   await invoke('load_injection_js', {
