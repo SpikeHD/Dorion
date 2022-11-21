@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
+use std::{fs, collections::HashMap};
 
 use crate::js_preprocess::get_js_imports;
 
@@ -29,15 +29,15 @@ fn get_plugin_dir() -> std::path::PathBuf {
 }
 
 #[tauri::command]
-pub async fn load_plugins() -> String {
-  let mut contents = String::new();
+pub async fn load_plugins() -> HashMap<String, String> {
+  let mut plugin_list = HashMap::new();
   let plugins_dir = get_plugin_dir();
   let plugin_folders = match fs::read_dir(&plugins_dir) {
     Ok(f) => f,
     Err(e) => {
       println!("Error: {}", e);
 
-      return String::new();
+      return HashMap::new();
     }
   };
 
@@ -57,11 +57,11 @@ pub async fn load_plugins() -> String {
     if fs::metadata(&index_file).is_ok() {
       let plugin_contents = fs::read_to_string(&index_file).unwrap();
 
-      contents = format!("{};(() => {{ {} }})()", contents, plugin_contents);
+      plugin_list.insert(format!("{:?}", folder), plugin_contents);
     }
   }
 
-  contents
+  plugin_list
 }
 
 #[tauri::command]

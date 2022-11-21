@@ -34,9 +34,6 @@ let observer = new MutationObserver(() => {
     // The comments ahead are read by tauri and used to insert plugin/theme injection code
     
     /* __THEMES__ */
-    
-    /* __PLUGINS__ */
-
   } else {
     console.log('Discord not loaded...')
   }

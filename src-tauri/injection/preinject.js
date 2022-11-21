@@ -20,10 +20,17 @@ const TITLE = 'Dorion'
   
   if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
 
+  let importUrls = []
+
+  // Iterate through the values of "plugins" (which is all of the plugin JS)
+  for (const js in Object.values(plugins)) {
+    importUrls = [ ...importUrls, ...(await invoke('get_plugin_import_urls', {
+      pluginJs: js
+    }))]
+  }
+
   const imports = await invoke('localize_all_js', {
-    urls: await invoke('get_plugin_import_urls', {
-      pluginJs: plugins
-    })
+    urls: importUrls
   })
 
   // Get theme if it exists
@@ -62,13 +69,13 @@ const TITLE = 'Dorion'
   if (midtitle) midtitle.innerHTML = "Getting injection JS..."
 
   const injectionJs = await invoke('get_injection_js', {
-    pluginJs: plugins,
     themeJs: themeInjection,
   })
 
   await invoke('load_injection_js', {
     imports,
-    contents: injectionJs
+    contents: injectionJs,
+    plugins
   })
 
   if (midtitle) midtitle.innerHTML = "Done!"
