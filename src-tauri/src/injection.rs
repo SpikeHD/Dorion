@@ -1,4 +1,4 @@
-use std::{fs, path::PathBuf, time::Duration, collections::HashMap, env, thread};
+use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::regex::Regex;
 
 use crate::js_preprocess::eval_js_imports;
@@ -53,7 +53,12 @@ pub fn preinject(window: &tauri::Window) {
 }
 
 #[tauri::command]
-pub fn load_injection_js(window: tauri::Window, imports: Vec<String>, contents: String, plugins: HashMap<String, String>) {
+pub fn load_injection_js(
+  window: tauri::Window,
+  imports: Vec<String>,
+  contents: String,
+  plugins: HashMap<String, String>,
+) {
   eval_js_imports(&window, imports);
   window.eval(contents.as_str()).unwrap_or(());
 
@@ -65,7 +70,11 @@ pub fn is_injected() {
   env::set_var("TAURI_INJECTED", "1");
 }
 
-fn periodic_injection_check(window: tauri::Window, injection_code: String, plugins: HashMap<String, String>) {
+fn periodic_injection_check(
+  window: tauri::Window,
+  injection_code: String,
+  plugins: HashMap<String, String>,
+) {
   std::thread::spawn(move || {
     loop {
       thread::sleep(Duration::from_secs(1));
@@ -77,18 +86,26 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String, plugi
         for (name, js) in &plugins {
           // Scuffed logging solution.
           // TODO: make not dogshit (not that it really matters)
-          window.eval(format!("console.log('Executing plugin: {}')", name).as_str()).unwrap_or_else(|_| ());
+          window
+            .eval(format!("console.log('Executing plugin: {}')", name).as_str())
+            .unwrap_or(());
 
           // Execute the plugin in a try/catch, so we can capture whatever error occurs
-          window.eval(
-            format!("
+          window
+            .eval(
+              format!(
+                "
             try {{
               {}
             }} catch(e) {{
               console.error(`Plugin {} failed to load with error: ${{e}}`)
             }}
-            ", js, name).as_str()
-          ).unwrap_or_else(|_| ());
+            ",
+                js, name
+              )
+              .as_str(),
+            )
+            .unwrap_or(());
         }
 
         // No longer wait for injection
@@ -106,7 +123,7 @@ fn periodic_injection_check(window: tauri::Window, injection_code: String, plugi
           )
           .as_str(),
         )
-        .unwrap_or_else(|_| ());
+        .unwrap_or(());
     }
   });
 }

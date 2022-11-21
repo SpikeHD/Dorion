@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{fs, collections::HashMap};
+use std::{collections::HashMap, fs};
 
 use crate::js_preprocess::get_js_imports;
 
