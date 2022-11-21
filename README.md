@@ -36,7 +36,7 @@ Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Win
 * Themes
   * Including support for BetterDiscord themes!
 * Low - if any - cache footprint (compared to [the PTB client](https://user-images.githubusercontent.com/25207995/189549033-b372ca74-5f30-4864-b71a-10a88405537a.png))
-* Extremely small installation size (~7mb!) on Windows
+* Extremely small installation size (~10mb!) on Windows
   * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine
 * Often loads slightly faster (vanilla)
 * Switch between Stable, Canary and PTB clients straight from the settings
@@ -101,6 +101,9 @@ so if you download a plugin or theme, just pop it into it's own folder in the `p
 Issues, PRs, etc. are all welcome!
 
 # Screenshots
+
+![image](https://user-images.githubusercontent.com/25207995/202989727-e467e711-b916-42d8-ad0c-4cbbb645a133.png)
+Installation size.
 
 ![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
 Loading screen. So cool!
