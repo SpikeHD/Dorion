@@ -51,7 +51,7 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 # Known Issues
 
 * Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
-* A couple bugs with CSS & image importt related stuff
+* A couple bugs with CSS & image import related stuff
 
 # TODO
 
@@ -70,7 +70,7 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 
 ```
 .
-└── C:/Users/USERNAME/dorion
+└── C:/Users/USERNAME/dorion/
     ├── plugins/
     |   └── plugin_name/
     |       └── index.js
@@ -84,7 +84,7 @@ and like so on Linux:
 
 ```
 .
-└── ~/dorion
+└── ~/dorion/
     ├── plugins/
     |   └── plugin_name/
     |       └── index.js
