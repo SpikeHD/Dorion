@@ -29,7 +29,8 @@ fn get_plugin_dir() -> std::path::PathBuf {
 }
 
 #[tauri::command]
-pub async fn load_plugins() -> HashMap<String, String> {
+pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
+  let pl_only = preload_only.unwrap_or(false);
   let mut plugin_list = HashMap::new();
   let plugins_dir = get_plugin_dir();
   let plugin_folders = match fs::read_dir(&plugins_dir) {
@@ -54,6 +55,10 @@ pub async fn load_plugins() -> HashMap<String, String> {
       continue;
     }
 
+    if pl_only && !folder.to_str().unwrap_or("").starts_with("PRELOAD") {
+      continue;
+    }
+
     if fs::metadata(&index_file).is_ok() {
       let plugin_contents = fs::read_to_string(&index_file).unwrap();
 
@@ -65,9 +70,9 @@ pub async fn load_plugins() -> HashMap<String, String> {
 }
 
 #[tauri::command]
-pub async fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
+pub fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
   let mut script_imports: Vec<String> = vec![];
-  let url_imports = get_js_imports(&plugin_js).await;
+  let url_imports = get_js_imports(&plugin_js);
 
   for s in &url_imports {
     script_imports.push(s.to_string());

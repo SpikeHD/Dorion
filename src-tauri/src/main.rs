@@ -83,12 +83,21 @@ fn main() {
       helpers::open_plugins
     ])
     .setup(move |app| {
+      // First, grab preload plugins
+      let preload_plugins = plugin::load_plugins(Option::Some(true));
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .resizable(true)
         .build()?;
 
+      // Execute preload scripts
+      for (name, script) in &preload_plugins {
+        win
+          .eval(script)
+          .unwrap_or(());
+      }
+      
       modify_window(&win);
 
       // Gotta make sure the window location is where it needs to be

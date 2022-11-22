@@ -83,7 +83,7 @@ fn periodic_injection_check(
 
       if is_injected.eq("1") {
         // After running our injection code, we can iterate through the plugins and load them as well
-        for (name, js) in &plugins {
+        for (name, script) in &plugins {
           // Scuffed logging solution.
           // TODO: make not dogshit (not that it really matters)
           window
@@ -98,10 +98,11 @@ fn periodic_injection_check(
             try {{
               {}
             }} catch(e) {{
-              console.error(`Plugin {} failed to load with error: ${{e}}`)
+              console.error(`Plugin {} returned error: ${{e}}`)
+              console.log('The plugin could still work! Just don\\'t expect it to.')
             }}
             ",
-                js, name
+                script, name
               )
               .as_str(),
             )

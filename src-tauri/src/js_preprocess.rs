@@ -1,7 +1,7 @@
 use tauri::regex::Regex;
 
 #[tauri::command]
-pub async fn get_js_imports(js: &str) -> Vec<String> {
+pub fn get_js_imports(js: &str) -> Vec<String> {
   let reg = Regex::new(r"//[ ]?URL_IMPORT (.*)").unwrap();
   let mut imports: Vec<String> = vec![];
 
