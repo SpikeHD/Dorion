@@ -112,6 +112,10 @@ pub fn get_plugin_list() -> Vec<Plugin> {
       plugin_name = plugin_name.replacen('_', "", 1);
     }
 
+    if plugin_name.contains("PRELOAD_") {
+      plugin_name = plugin_name.replace("PRELOAD_", "");
+    }
+
     if fs::metadata(&index_file).is_ok() {
       plugin_list.push(Plugin {
         name: plugin_name,
