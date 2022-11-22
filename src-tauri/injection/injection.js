@@ -242,22 +242,41 @@ async function createPluginList() {
   plugins.forEach(plugin => {
     const li = document.createElement('li')
     const nameDisplay = document.createElement('div')
-    const input = document.createElement('input')
+    const inputWrapperToggle = document.createElement('div')
+    const inputWrapperPreload = document.createElement('div')
+    const plToggle = document.createElement('input')
+    const plPreload = document.createElement('input')
+
+    inputWrapperToggle.className = 'pluginSetting'
+    inputWrapperPreload.className = 'pluginSetting'
 
     nameDisplay.innerHTML = plugin.name
     nameDisplay.className = 'pluginName'
 
-    input.type = 'checkbox'
-    input.checked = !plugin.disabled
-    input.onchange = () => {
+    plToggle.type = 'checkbox'
+    plPreload.type = 'checkbox'
+
+    plToggle.checked = !plugin.disabled
+    plPreload.checked = plugin.preload
+    plToggle.onchange = () => {
       invoke('toggle_plugin', {
+        name: plugin.name
+      })
+    }
+    plPreload.onchange = () => {
+      invoke('toggle_preload', {
         name: plugin.name
       })
     }
 
     li.appendChild(nameDisplay)
-    li.appendChild(input)
 
-    list?.appendChild(li);
+    inputWrapperToggle.appendChild(plToggle)
+    inputWrapperPreload.appendChild(plPreload)
+
+    li.appendChild(inputWrapperToggle)
+    li.appendChild(inputWrapperPreload)
+
+    list.appendChild(li);
   })
 }

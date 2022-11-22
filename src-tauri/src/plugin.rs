@@ -7,6 +7,7 @@ use crate::js_preprocess::get_js_imports;
 pub struct Plugin {
   name: String,
   disabled: bool,
+  preload: bool,
 }
 
 fn get_plugin_dir() -> std::path::PathBuf {
@@ -103,6 +104,7 @@ pub fn get_plugin_list() -> Vec<Plugin> {
     let plugin_dir = plugins_dir.join(&folder);
     let index_file = plugin_dir.join("index.js");
     let disabled = folder.to_str().unwrap_or("").starts_with('_');
+    let preload = folder.to_string_lossy().contains("PRELOAD");
 
     let mut plugin_name = folder.into_string().unwrap();
 
@@ -114,6 +116,7 @@ pub fn get_plugin_list() -> Vec<Plugin> {
       plugin_list.push(Plugin {
         name: plugin_name,
         disabled,
+        preload,
       });
     }
   }
@@ -148,6 +151,48 @@ pub fn toggle_plugin(name: String) {
       }
 
       // Disable the folder
+      fs::rename(plugins_dir.join(folder_name), plugins_dir.join(new_name)).unwrap();
+    }
+  }
+}
+
+#[tauri::command]
+pub fn toggle_preload(name: String) {
+  let plugins_dir = get_plugin_dir();
+  let folders = fs::read_dir(&plugins_dir).unwrap();
+
+  for path in folders {
+    if path.is_err() {
+      continue;
+    }
+
+    let folder = path.unwrap().file_name().clone();
+    let folder_name = folder.to_str().unwrap();
+    let mut plugin_name = String::from(&name);
+    let disabled = folder_name.starts_with('_');
+
+    // Use this name to ensure that, if a name with PRELOAD is provided, we remove that before comparison
+    if plugin_name.contains("PRELOAD") {
+      plugin_name = folder_name.replace("PRELOAD_", "").replacen('_', "", 1);
+    }
+
+    if folder_name.contains(&plugin_name) {
+      let mut new_name = plugin_name;
+      let preloaded = folder_name.contains("PRELOAD");
+
+      // Disable if enabled, otherwise enable if disabled
+      if preloaded {
+        new_name = new_name.replace("PRELOAD_", "");
+      } else {
+        new_name = String::from("PRELOAD_") + &new_name;
+      }
+
+      // Ensure we keep disabled state
+      if disabled {
+        new_name = String::from("_") + &new_name;
+      }
+
+      // Disable/enable preload
       fs::rename(plugins_dir.join(folder_name), plugins_dir.join(new_name)).unwrap();
     }
   }

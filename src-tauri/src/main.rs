@@ -71,6 +71,7 @@ fn main() {
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,
+      plugin::toggle_preload,
       plugin::get_plugin_import_urls,
       injection::get_injection_js,
       injection::is_injected,
@@ -90,15 +91,13 @@ fn main() {
         .title(title.as_str())
         .resizable(true)
         .build()?;
-
-      // Execute preload scripts
-      for (name, script) in &preload_plugins {
-        win
-          .eval(script)
-          .unwrap_or(());
-      }
       
       modify_window(&win);
+
+      // Execute preload scripts
+      for (_name, script) in &preload_plugins {
+        win.eval(script).unwrap_or(());
+      }
 
       // Gotta make sure the window location is where it needs to be
       std::thread::spawn(move || {

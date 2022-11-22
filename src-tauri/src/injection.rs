@@ -84,6 +84,11 @@ fn periodic_injection_check(
       if is_injected.eq("1") {
         // After running our injection code, we can iterate through the plugins and load them as well
         for (name, script) in &plugins {
+          // Don't load preload plugins
+          if name.contains("PRELOAD_") {
+            continue;
+          }
+
           // Scuffed logging solution.
           // TODO: make not dogshit (not that it really matters)
           window

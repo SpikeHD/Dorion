@@ -52,8 +52,10 @@
     <div class="settingsGroup">
       <div class="settingInnerHeader">Plugins</div>
       <div class="settingFullBlock">
-        <li>
-          <!-- This will be populated by JavaScript -->
+        <li class="pluginsHeader">
+          <div class="pluginName">Plugin Name</div>
+          <div class="pluginSetting">Enabled?</div>
+          <div class="pluginSetting">Preload?</div>
         </li>
       </div>
     </div>
@@ -72,13 +74,30 @@
   .settingFullBlock li {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: left;
     align-items: center;
 
     background: transparent;
     backdrop-filter: blur(5px);
 
     margin: 2px 10%;
+  }
+
+  .pluginSetting {
+    width: 20%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .pluginsHeader {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  .pluginName {
+    width: 50%;
   }
 
   #settings-container img {
