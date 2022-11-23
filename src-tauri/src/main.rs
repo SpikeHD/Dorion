@@ -4,7 +4,10 @@
 )]
 
 use config::get_client_type;
-use tauri::{utils::config::{AppUrl}, Window, WindowBuilder, SystemTray, CustomMenuItem, SystemTrayMenu, SystemTrayEvent, Manager};
+use tauri::{
+  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  Window, WindowBuilder,
+};
 
 mod config;
 mod css_preprocess;
@@ -44,9 +47,8 @@ fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 fn create_systray() -> SystemTray {
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
   let tray_menu = SystemTrayMenu::new().add_item(quit_btn);
-  let menu = SystemTray::new().with_menu(tray_menu);
 
-  menu
+  SystemTray::new().with_menu(tray_menu)
 }
 
 fn main() {
@@ -68,6 +70,7 @@ fn main() {
   context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
   context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
 
+  #[allow(clippy::single_match)]
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .system_tray(create_systray())
@@ -103,12 +106,16 @@ fn main() {
       _ => {}
     })
     .on_system_tray_event(|app, event| match event {
-      SystemTrayEvent::LeftClick { position: _, size: _, .. } => {
+      SystemTrayEvent::LeftClick {
+        position: _,
+        size: _,
+        ..
+      } => {
         // Reopen the window if the tray menu icon is clicked
         app.get_window("main").unwrap().show().unwrap();
       }
-      SystemTrayEvent::MenuItemClick {id, ..} => {
-        if id == "quit".to_string() {
+      SystemTrayEvent::MenuItemClick { id, .. } => {
+        if id == "quit" {
           // Close the process
           std::process::exit(0);
         }
@@ -123,11 +130,11 @@ fn main() {
         .title(title.as_str())
         .resizable(true)
         .build()?;
-      
+
       modify_window(&win);
 
       // Execute preload scripts
-      for (_name, script) in &preload_plugins {
+      for script in preload_plugins.values() {
         win.eval(script).unwrap_or(());
       }
 
