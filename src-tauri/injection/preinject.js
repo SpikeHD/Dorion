@@ -1,7 +1,12 @@
 const TITLE = 'Dorion'
 
+// Tell tauri to re-inject as we unload, in the case of a refresh
+window.onbeforeunload = () => {
+  window.__TAURI__.invoke('do_injection')
+}
+
 /**
- * This is a bunch of scaffolding stuff that is run before the actuall injection script is run.
+ * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
  * This will localize imports for JS and CSS, as well as some other things
  */
 ;(async () => {

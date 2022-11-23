@@ -44,6 +44,23 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 #[tauri::command]
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
+#[tauri::command]
+fn do_injection(win: tauri::Window) {
+  let preload_plugins = plugin::load_plugins(Option::Some(true));
+
+  // Execute preload scripts
+  for script in preload_plugins.values() {
+    win.eval(script).unwrap_or(());
+  }
+
+  // Gotta make sure the window location is where it needs to be
+  std::thread::spawn(move || {
+    std::thread::sleep(std::time::Duration::from_secs(2));
+
+    injection::preinject(&win);
+  });
+}
+
 fn create_systray() -> SystemTray {
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
   let tray_menu = SystemTrayMenu::new().add_item(quit_btn);
@@ -76,6 +93,7 @@ fn main() {
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
       change_zoom,
+      do_injection,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
       local_html::get_index,
@@ -124,7 +142,6 @@ fn main() {
     })
     .setup(move |app| {
       // First, grab preload plugins
-      let preload_plugins = plugin::load_plugins(Option::Some(true));
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
@@ -133,17 +150,7 @@ fn main() {
 
       modify_window(&win);
 
-      // Execute preload scripts
-      for script in preload_plugins.values() {
-        win.eval(script).unwrap_or(());
-      }
-
-      // Gotta make sure the window location is where it needs to be
-      std::thread::spawn(move || {
-        std::thread::sleep(std::time::Duration::from_secs(2));
-
-        injection::preinject(&win);
-      });
+      do_injection(win);
 
       Ok(())
     })
