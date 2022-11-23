@@ -139,6 +139,7 @@ function prefillConfig(config) {
   const zoomSelect = document.querySelector('#zoomLevel')
   const zoomPct = document.querySelector('#zoomLevelValue')
   const clientType = document.querySelector('#clientType')
+  const systray = document.querySelector('#systray')
 
   if (themeSelect) {
     themeSelect.value = config.theme
@@ -152,6 +153,10 @@ function prefillConfig(config) {
   if (clientType) {
     clientType.value = config.client_type
   }
+
+  if (systray) {
+    systray.checked = config.sys_tray
+  }
 }
 
 /**
@@ -162,6 +167,7 @@ function initOnchangeHandlers() {
   const themeSelect = document.querySelector('#themeSelect')
   const zoomSelect = document.querySelector('#zoomLevel')
   const clientType = document.querySelector('#clientType')
+  const systray = document.querySelector('#systray')
 
   themeSelect?.addEventListener('change', (evt) => {
     const tgt = evt.target
@@ -184,6 +190,11 @@ function initOnchangeHandlers() {
   clientType?.addEventListener('change', (evt) => {
     const tgt = evt.target
     setConfigValue('client_type', tgt.value)
+  })
+
+  systray?.addEventListener('change', (evt) => {
+    const tgt = evt.target
+    setConfigValue('sys_tray', tgt.checked)
   })
 }
 

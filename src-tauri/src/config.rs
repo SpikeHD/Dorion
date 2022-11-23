@@ -6,6 +6,7 @@ pub struct Config {
   theme: String,
   zoom: String,
   client_type: String,
+  sys_tray: bool,
 }
 
 pub fn init() {
@@ -51,6 +52,7 @@ pub fn default_config() -> Config {
     theme: "none".to_string(),
     zoom: "1.0".to_string(),
     client_type: "default".to_string(),
+    sys_tray: true,
   }
 }
 
@@ -70,4 +72,11 @@ pub fn get_client_type() -> String {
     .client_type
     .parse()
     .unwrap_or_else(|_| "default".to_string())
+}
+
+pub fn get_systray() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed
+    .sys_tray
 }

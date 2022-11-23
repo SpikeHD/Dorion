@@ -4,7 +4,7 @@
 )]
 
 use config::get_client_type;
-use tauri::{utils::config::AppUrl, Window, WindowBuilder};
+use tauri::{utils::config::{AppUrl}, Window, WindowBuilder, SystemTray, CustomMenuItem, SystemTrayMenu, SystemTrayEvent, Manager};
 
 mod config;
 mod css_preprocess;
@@ -41,6 +41,14 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 #[tauri::command]
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
+fn create_systray() -> SystemTray {
+  let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
+  let tray_menu = SystemTrayMenu::new().add_item(quit_btn);
+  let menu = SystemTray::new().with_menu(tray_menu);
+
+  menu
+}
+
 fn main() {
   // Ensure config is created
   config::init();
@@ -62,6 +70,7 @@ fn main() {
 
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
+    .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
       change_zoom,
       css_preprocess::localize_imports,
@@ -83,6 +92,29 @@ fn main() {
       helpers::open_themes,
       helpers::open_plugins
     ])
+    .on_window_event(|event| match event.event() {
+      tauri::WindowEvent::CloseRequested { api, .. } => {
+        // Close to tray if the config calls for it
+        if config::get_systray() {
+          event.window().hide().unwrap();
+          api.prevent_close();
+        }
+      }
+      _ => {}
+    })
+    .on_system_tray_event(|app, event| match event {
+      SystemTrayEvent::LeftClick { position: _, size: _, .. } => {
+        // Reopen the window if the tray menu icon is clicked
+        app.get_window("main").unwrap().show().unwrap();
+      }
+      SystemTrayEvent::MenuItemClick {id, ..} => {
+        if id == "quit".to_string() {
+          // Close the process
+          std::process::exit(0);
+        }
+      }
+      _ => {}
+    })
     .setup(move |app| {
       // First, grab preload plugins
       let preload_plugins = plugin::load_plugins(Option::Some(true));
