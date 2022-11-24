@@ -62,8 +62,9 @@ fn do_injection(win: tauri::Window) {
 }
 
 fn create_systray() -> SystemTray {
+  let open_btn = CustomMenuItem::new("open".to_string(), "Open");
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
-  let tray_menu = SystemTrayMenu::new().add_item(quit_btn);
+  let tray_menu = SystemTrayMenu::new().add_item(open_btn).add_item(quit_btn);
 
   SystemTray::new().with_menu(tray_menu)
 }
@@ -136,6 +137,11 @@ fn main() {
         if id == "quit" {
           // Close the process
           std::process::exit(0);
+        }
+
+        if id == "open" {
+          // Reopen the window
+          app.get_window("main").unwrap().show().unwrap();
         }
       }
       _ => {}
