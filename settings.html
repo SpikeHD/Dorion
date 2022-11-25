@@ -101,10 +101,10 @@
     </span>
     <div class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
       <table id="plugin_table">
-        <thead>
+        <thead style="font-weight: bold;">
           <td style="width: 50%">Plugin</td>
-          <td>Enabled?</td>
-          <td>Preload?</td>
+          <td style="width: 25%">Enabled?</td>
+          <td style="width: 25%">Preload?</td>
         </thead>
         <tbody></tbody>
       </table>
@@ -116,6 +116,7 @@
   </div>
 </div>
 <style>
+  /* Non-discord styling */
   #finishBtn {
     border: none;
   }
@@ -128,6 +129,13 @@
   #plugin_table {
     border: none;
     background: none;
+
+    width: 100%;
+    color: var(--text-normal);
+  }
+
+  #plugin_table td {
+    padding: 10px;
   }
 
   .select_arrow {
@@ -144,10 +152,6 @@
     background-color: rgba(var(--accentcolor), 0.8)  !important;
   }
 
-  .dividerDefault-3C2-ws {
-    margin-bottom: 20px;
-  }
-
   .icon {
     height: 20px;
     width: 20px;
@@ -159,6 +163,13 @@
     cursor: pointer;
   }
 
+  #zoomLevelValue {
+    display: flex;
+    justify-content: center;
+
+    font-size: 20px;
+  }
+
   .flex_spread {
     color: #fff;
 
@@ -166,7 +177,13 @@
     justify-content: space-between;
     text-align: left;
   }
-  
+
+  /* Discord styling */
+
+  .dividerDefault-3C2-ws {
+    margin-bottom: 20px;
+  }
+
   .labelRow-2jl9gK {
     color: var(--text-normal);
 

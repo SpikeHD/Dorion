@@ -272,52 +272,77 @@ async function setConfigValue(key, val) {
   })
 }
 
+function createSlider(label, id, onchange) {
+  const div = document.createElement('div')
+  const htmlStr = `
+  <label for="${id}">${label}</label>
+  <div class="control-1fl03-">
+    <div class="container-2nx-BQ" style="opacity: 1;">
+      <!-- Checkbox/slider SVG -->
+      <svg class="slider-32CRPX" viewBox="0 0 28 20" preserveAspectRatio="xMinYMid meet" style="left: 12px;">
+        <rect fill="white" x="4" y="0" height="20" width="20" rx="10"></rect>
+        <svg viewBox="0 0 20 20" fill="none">
+          <path fill="rgba(59, 165, 92, 1)" d="M7.89561 14.8538L6.30462 13.2629L14.3099 5.25755L15.9009 6.84854L7.89561 14.8538Z"></path>
+          <path fill="rgba(59, 165, 92, 1)" d="M4.08643 11.0903L5.67742 9.49929L9.4485 13.2704L7.85751 14.8614L4.08643 11.0903Z"></path>
+        </svg>
+      </svg>
+      <!-- End SVG -->
+      <input type="checkbox" class="input-2XRLou" id="${id}" name="${id}" />
+    </div>
+  </div>`
+
+  div.innerHTML = htmlStr
+
+  div.querySelector('input').onchange = onchange
+
+  return div;
+}
+
 /**
  * Hot-create the list of plugins
  */
 async function createPluginList() {
   const { invoke } = window.__TAURI__
   const plugins = await invoke('get_plugin_list')
-  const list = document.querySelector('.settingFullBlock')
+  const table = document.querySelector('#plugin_table tbody')
 
   plugins.forEach(plugin => {
-    const li = document.createElement('li')
-    const nameDisplay = document.createElement('div')
-    const inputWrapperToggle = document.createElement('div')
-    const inputWrapperPreload = document.createElement('div')
-    const plToggle = document.createElement('input')
-    const plPreload = document.createElement('input')
+    const trow = document.createElement('tr')
+    const plId = `plugin_${plugin.name}`
+    const plToggle = createSlider('', `${plId}_enable`, (e) => {
+      setSlider(e.target.id, e.target.checked)
 
-    inputWrapperToggle.className = 'pluginSetting'
-    inputWrapperPreload.className = 'pluginSetting'
-
-    nameDisplay.innerHTML = plugin.name
-    nameDisplay.className = 'pluginName'
-
-    plToggle.type = 'checkbox'
-    plPreload.type = 'checkbox'
-
-    plToggle.checked = !plugin.disabled
-    plPreload.checked = plugin.preload
-    plToggle.onchange = () => {
       invoke('toggle_plugin', {
         name: plugin.name
       })
-    }
-    plPreload.onchange = () => {
-      invoke('toggle_preload', {
+    })
+    const plPreload = createSlider('', `${plId}_preload`, (e) => {
+      setSlider(e.target.id, e.target.checked)
+
+      invoke('toggle_plugin', {
         name: plugin.name
       })
-    }
+    })
 
-    li.appendChild(nameDisplay)
+    const tdName = document.createElement('td')
+    tdName.innerHTML = plugin.name
 
-    inputWrapperToggle.appendChild(plToggle)
-    inputWrapperPreload.appendChild(plPreload)
+    const tdEnabled = document.createElement('td')
+    tdEnabled.appendChild(plToggle)
 
-    li.appendChild(inputWrapperToggle)
-    li.appendChild(inputWrapperPreload)
+    const tdPreload = document.createElement('td')
+    tdPreload.appendChild(plPreload)
 
-    list.appendChild(li);
+    trow.appendChild(tdName)
+    trow.appendChild(tdEnabled)
+    trow.appendChild(tdPreload)
+    table.appendChild(trow)
+
+    console.log(plugin)
+    console.log(`${plId}_enable`)
+
+    // Toggle the sliders
+    setSlider(`${plId}_enable`, !plugin.disabled)
+    setSlider(`${plId}_preload`, plugin.preload)
   })
 }
