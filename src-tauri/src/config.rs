@@ -3,11 +3,11 @@ use std::fs;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-  theme: String,
-  zoom: String,
-  client_type: String,
-  sys_tray: bool,
-  block_telemetry: bool
+  theme: Option<String>,
+  zoom: Option<String>,
+  client_type: Option<String>,
+  sys_tray: Option<bool>,
+  block_telemetry: Option<bool>
 }
 
 pub fn init() {
@@ -50,11 +50,11 @@ pub fn write_config_file(contents: String) {
 
 pub fn default_config() -> Config {
   Config {
-    theme: "none".to_string(),
-    zoom: "1.0".to_string(),
-    client_type: "default".to_string(),
-    sys_tray: false,
-    block_telemetry: false,
+    theme: Option::from("none".to_string()),
+    zoom: Option::from("1.0".to_string()),
+    client_type: Option::from("default".to_string()),
+    sys_tray: Option::from(false),
+    block_telemetry: Option::from(false),
   }
 }
 
@@ -64,7 +64,7 @@ pub fn get_zoom() -> f64 {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
 
-  parsed.zoom.parse().unwrap_or(1.0)
+  parsed.zoom.unwrap_or("1.0".to_string()).parse().unwrap_or(1.0)
 }
 
 pub fn get_client_type() -> String {
@@ -72,6 +72,7 @@ pub fn get_client_type() -> String {
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed
     .client_type
+    .unwrap_or("default".to_string())
     .parse()
     .unwrap_or_else(|_| "default".to_string())
 }
@@ -79,5 +80,5 @@ pub fn get_client_type() -> String {
 pub fn get_systray() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
-  parsed.sys_tray
+  parsed.sys_tray.unwrap_or(false)
 }

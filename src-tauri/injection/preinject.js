@@ -5,6 +5,9 @@ window.onbeforeunload = () => {
   window.__TAURI__.invoke('do_injection')
 }
 
+// Needs to be done ASAP
+interceptEventListeners()
+
 /**
  * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
  * This will localize imports for JS and CSS, as well as some other things
@@ -85,6 +88,7 @@ window.onbeforeunload = () => {
 
   // Disable telemetry
   if (!config.block_telemetry) blockTelemetry()
+  createFileDropHandler()
 
   if (midtitle) midtitle.innerHTML = "Done!"
 
@@ -197,5 +201,25 @@ function blockTelemetry() {
 
       console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
     }
+  }
+}
+
+/**
+ * Make all events "trusted", preventing Discord from discarding them
+ * 
+ * https://stackoverflow.com/a/64991159
+ */
+function interceptEventListeners() {
+  Element.prototype._addEventListener = Element.prototype.addEventListener;
+  Element.prototype.addEventListener = function () {
+    let args = [...arguments]
+    let temp = args[1];
+    args[1] = function () {
+      let args2 = [...arguments];
+      args2[0] = Object.assign({}, args2[0])
+      args2[0].isTrusted = true;
+      return temp(...args2);
+    }
+    return this._addEventListener(...args);
   }
 }

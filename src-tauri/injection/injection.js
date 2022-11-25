@@ -220,7 +220,7 @@ function initOnchangeHandlers() {
     const tgt = evt.target
 
     setSlider(evt.target.id, tgt.checked)
-    setConfigValue('telemetry', tgt.checked)
+    setConfigValue('block_telemetry', tgt.checked)
   })
 }
 
