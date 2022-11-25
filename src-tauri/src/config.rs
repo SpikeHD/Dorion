@@ -7,6 +7,7 @@ pub struct Config {
   zoom: String,
   client_type: String,
   sys_tray: bool,
+  block_telemetry: bool
 }
 
 pub fn init() {
@@ -21,7 +22,7 @@ pub fn init() {
   if fs::metadata(&config_file).is_err() {
     fs::write(
       config_file,
-      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default" }"#,
+      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default", sys_tray: false, block_telemetry: false }"#,
     )
     .unwrap_or(());
   }
@@ -52,7 +53,8 @@ pub fn default_config() -> Config {
     theme: "none".to_string(),
     zoom: "1.0".to_string(),
     client_type: "default".to_string(),
-    sys_tray: true,
+    sys_tray: false,
+    block_telemetry: false,
   }
 }
 

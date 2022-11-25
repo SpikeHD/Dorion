@@ -83,6 +83,9 @@ window.onbeforeunload = () => {
     plugins
   })
 
+  // Disable telemetry
+  if (!config.block_telemetry) blockTelemetry()
+
   if (midtitle) midtitle.innerHTML = "Done!"
 
   // Remove loading container
@@ -172,4 +175,29 @@ function cssSanitize(css) {
 
   document.head.removeChild(style);
   return result;
+}
+
+/**
+ * Block Discord telemetry
+ */
+function blockTelemetry() {
+  console.log('Blocking telemetry')
+
+  const open = XMLHttpRequest.prototype.open;
+  
+  XMLHttpRequest.prototype.open = function(method, url) {
+    open.apply(this, arguments)
+
+    const send = this.send
+
+    this.send = function() {
+      const rgx = /\/api\/v.*\/(science|track)/g
+      
+      if (!String(url).match(rgx)) {
+        return send.apply(this, arguments)
+      }
+
+      console.log('blocked request')
+    }
+  }
 }

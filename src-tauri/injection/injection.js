@@ -44,6 +44,9 @@ observer.observe(document, {
   subtree: true
 });
 
+/**
+ * Run when the client is "loaded"
+ */
 function onClientLoad() {
   loaded = true
   observer.disconnect()
@@ -134,12 +137,18 @@ async function showSettings() {
   createPluginList()
 }
 
+/**
+ * Fill up the config page with the existing config
+ * 
+ * @param {Object} config 
+ */
 function prefillConfig(config) {
   const themeSelect = document.querySelector('#themeSelect')
   const zoomSelect = document.querySelector('#zoomLevel')
   const zoomPct = document.querySelector('#zoomLevelValue')
   const clientType = document.querySelector('#clientType')
   const systray = document.querySelector('#systray')
+  const telemetry = document.querySelector('#telemetry')
 
   if (themeSelect) {
     themeSelect.value = config.theme
@@ -158,6 +167,11 @@ function prefillConfig(config) {
     systray.checked = config.sys_tray
     setSlider('systray', config.sys_tray)
   }
+
+  if (telemetry) {
+    telemetry.checked = config.block_telemetry
+    setSlider('telemetry', config.block_telemetry)
+  }
 }
 
 /**
@@ -169,6 +183,7 @@ function initOnchangeHandlers() {
   const zoomSelect = document.querySelector('#zoomLevel')
   const clientType = document.querySelector('#clientType')
   const systray = document.querySelector('#systray')
+  const telemetry = document.querySelector('#telemetry')
 
   themeSelect?.addEventListener('change', (evt) => {
     const tgt = evt.target
@@ -200,8 +215,22 @@ function initOnchangeHandlers() {
     setSlider(evt.target.id, tgt.checked)
     setConfigValue('sys_tray', tgt.checked)
   })
+
+  telemetry?.addEventListener('change', (evt) => {
+    const tgt = evt.target
+
+    setSlider(evt.target.id, tgt.checked)
+    setConfigValue('telemetry', tgt.checked)
+  })
 }
 
+/**
+ * Set a sliders position based on whether its checked or not
+ * 
+ * @param {String} id 
+ * @param {Boolean} enabled 
+ * @returns 
+ */
 function setSlider(id, enabled) {
   const elm = document.querySelector('#' + id).parentElement
   const svg = elm.querySelector('svg')
@@ -213,7 +242,6 @@ function setSlider(id, enabled) {
     <path fill="rgba(114, 118, 125, 1)" d="M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z"></path>
     <path fill="rgba(114, 118, 125, 1)" d="M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z"></path>
   `
-
   
   if (enabled) {
     svg.style.left = '12px'
@@ -274,6 +302,14 @@ async function setConfigValue(key, val) {
   })
 }
 
+/**
+ * Dynamically create a slider checkbox
+ * 
+ * @param {String} label 
+ * @param {String} id 
+ * @param {Function} onchange 
+ * @returns 
+ */
 function createSlider(label, id, onchange) {
   const div = document.createElement('div')
   const htmlStr = `
