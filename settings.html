@@ -9,6 +9,9 @@
       Theme
     </h3>
     <div class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
+      <svg class="select_arrow" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path>
+      </svg>
       <select style="appearance: none;" class="select-1Ia3hD lookFilled-1GseHa selectPositionTop-1Xy1Sp wrapper-1b33hy" id="themeSelect">
         <option value="none">None</option>
       </select>
@@ -33,6 +36,9 @@
       Client Type
     </h3>
     <div class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
+      <svg class="select_arrow" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z"></path>
+      </svg>
       <select id="clientType" style="appearance: none;" class="select-1Ia3hD lookFilled-1GseHa selectPositionTop-1Xy1Sp wrapper-1b33hy">
         <option value="default">Default</option>
         <option value="canary">Canary</option>
@@ -49,7 +55,7 @@
       <div class="labelRow-2jl9gK">
         <label for="systray">Close to System Tray</label>
         <div class="control-1fl03-">
-          <div class="container-2nx-BQ" style="opacity: 1; background-color: rgb(59, 165, 92);">
+          <div class="container-2nx-BQ" style="opacity: 1;">
             <!-- Checkbox/slider SVG -->
             <svg class="slider-32CRPX" viewBox="0 0 28 20" preserveAspectRatio="xMinYMid meet" style="left: 12px;">
               <rect fill="white" x="4" y="0" height="20" width="20" rx="10"></rect>
@@ -166,6 +172,20 @@
 -->
 </div>
 <style>
+  .select_arrow {
+    position: absolute;
+    margin-top: 6px;
+    right: 50px;
+
+    filter: invert(0.6);
+
+    pointer-events: none;
+  }
+
+  .enabled {
+    background-color: rgba(var(--accentcolor), 0.8)  !important;
+  }
+
   .dividerDefault-3C2-ws {
     margin-bottom: 20px;
   }

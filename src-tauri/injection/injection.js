@@ -156,6 +156,7 @@ function prefillConfig(config) {
 
   if (systray) {
     systray.checked = config.sys_tray
+    setSlider('systray', config.sys_tray)
   }
 }
 
@@ -189,13 +190,42 @@ function initOnchangeHandlers() {
 
   clientType?.addEventListener('change', (evt) => {
     const tgt = evt.target
+
     setConfigValue('client_type', tgt.value)
   })
 
   systray?.addEventListener('change', (evt) => {
     const tgt = evt.target
+
+    setSlider(evt.target.id, tgt.checked)
     setConfigValue('sys_tray', tgt.checked)
   })
+}
+
+function setSlider(id, enabled) {
+  const elm = document.querySelector('#' + id).parentElement
+  const svg = elm.querySelector('svg')
+  const svgEnabled = `
+    <path fill="rgba(59, 165, 92, 1)" d="M7.89561 14.8538L6.30462 13.2629L14.3099 5.25755L15.9009 6.84854L7.89561 14.8538Z"></path>
+    <path fill="rgba(59, 165, 92, 1)" d="M4.08643 11.0903L5.67742 9.49929L9.4485 13.2704L7.85751 14.8614L4.08643 11.0903Z"></path>
+  `
+  const svgDisabled = `
+    <path fill="rgba(114, 118, 125, 1)" d="M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z"></path>
+    <path fill="rgba(114, 118, 125, 1)" d="M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z"></path>
+  `
+
+  
+  if (enabled) {
+    svg.style.left = '12px'
+    svg.querySelector('svg').innerHTML = svgEnabled
+    elm.classList.add('enabled')
+
+    return
+  }
+
+  svg.style.left = '-4px'
+  svg.querySelector('svg').innerHTML = svgDisabled
+  elm.classList.remove('enabled')
 }
 
 /**
