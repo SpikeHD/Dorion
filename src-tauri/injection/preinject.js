@@ -181,8 +181,6 @@ function cssSanitize(css) {
  * Block Discord telemetry
  */
 function blockTelemetry() {
-  console.log('Blocking telemetry')
-
   const open = XMLHttpRequest.prototype.open;
   
   XMLHttpRequest.prototype.open = function(method, url) {
@@ -192,12 +190,12 @@ function blockTelemetry() {
 
     this.send = function() {
       const rgx = /\/api\/v.*\/(science|track)/g
-      
+
       if (!String(url).match(rgx)) {
         return send.apply(this, arguments)
       }
 
-      console.log('blocked request')
+      console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
     }
   }
 }
