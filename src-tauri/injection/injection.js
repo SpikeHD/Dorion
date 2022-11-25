@@ -219,6 +219,7 @@ function setSlider(id, enabled) {
     svg.style.left = '12px'
     svg.querySelector('svg').innerHTML = svgEnabled
     elm.classList.add('enabled')
+    elm.classList.remove('disabled')
 
     return
   }
@@ -226,6 +227,7 @@ function setSlider(id, enabled) {
   svg.style.left = '-4px'
   svg.querySelector('svg').innerHTML = svgDisabled
   elm.classList.remove('enabled')
+  elm.classList.add('disabled')
 }
 
 /**
