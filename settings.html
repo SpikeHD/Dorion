@@ -93,85 +93,32 @@
 
     <div class="divider-_0um2u dividerDefault-3C2-ws"></div>
 
-    <h3 class="h5-2RwDNl title-3hptVQ marginBottom8-emkd0_">
-      System Tray
-    </h3>
+    <!--Plugins-->
+    <span class="sectionTitle-3j2YI1" id="settings-title">
+      <h2 class="h1-34Txb0 title-3hptVQ defaultColor-2cKwKo defaultMarginh1-EURXsm">
+        Plugins
+      </h2>
+    </span>
     <div class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
-
+      <table id="plugin_table">
+        <thead>
+          <td style="width: 50%">Plugin</td>
+          <td>Enabled?</td>
+          <td>Preload?</td>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-  </div>
-  <!--
-  <div id="innerContainer">
-    <div class="settingsGroup">
-      <div class="settingInnerHeader">Display</div>
-      <div class="settingItem">
-        <div class="settingLabel">Theme</div>
-        <div class="settingValue">
-          <select id="themeSelect">
-            <option value="none">None</option>
-          </select>
-        </div>
-      </div>
-      <div class="settingItem">
-        <div class="settingLabel">Zoom Level</div>
-        <div class="settingValue">
-          <input type="range" step="5" min="50" max="125" id="zoomLevel">
-          <div id="zoomLevelValue">0%</div>
-        </div>
-      </div>
-    </div>
-    <div class="settingsGroup">
-      <div class="settingInnerHeader">Client</div>
-      <div class="settingItem">
-        <div class="settingLabel">Client Type</div>
-        <div class="settingValue">
-          <select id="clientType">
-            <option value="default">Default</option>
-            <option value="canary">Canary</option>
-            <option value="ptb">PTB</option>
-          </select>
-        </div>
-      </div>
-      <div class="settingItem">
-        <div class="settingLabel">Close to Tray</div>
-        <div class="settingValue">
-          <input type="checkbox" id="systray">
-        </div>
-      </div>
-    </div>
-    <div class="settingsGroup">
-      <div class="settingInnerHeader">Folders</div>
-      <div class="settingItem">
-        <div class="settingLabel">Open Plugins Folder</div>
-        <div class="settingValue">
-          <img class="icon" id="openPlugins" src="https://media.discordapp.net/attachments/716778723990306937/1043353487028793414/folder.png" />
-        </div>
-      </div>
-      <div class="settingItem">
-        <div class="settingLabel">Open Themes Folder</div>
-        <div class="settingValue">
-          <img class="icon" id="openThemes" src="https://media.discordapp.net/attachments/716778723990306937/1043353487028793414/folder.png" />
-        </div>
-      </div>
-    </div>
-    <div class="settingsGroup">
-      <div class="settingInnerHeader">Plugins</div>
-      <div class="settingFullBlock">
-        <li class="pluginsHeader">
-          <div class="pluginName">Plugin Name</div>
-          <div class="pluginSetting">Enabled?</div>
-          <div class="pluginSetting">Preload?</div>
-        </li>
-      </div>
-    </div>
-    
     <button id="finishBtn">Save and Restart</button>
   </div>
-  
--->
 </div>
 <style>
+  #plugin_table {
+    border: none;
+    background: none;
+  }
+
   .select_arrow {
     position: absolute;
     margin-top: 6px;
