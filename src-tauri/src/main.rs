@@ -5,8 +5,8 @@
 
 use config::get_client_type;
 use tauri::{
-  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  Window, WindowBuilder,
+  api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
+  SystemTrayMenu, Window, WindowBuilder,
 };
 
 mod config;
@@ -16,6 +16,7 @@ mod injection;
 mod js_preprocess;
 mod local_html;
 mod plugin;
+mod process;
 mod theme;
 
 #[cfg(target_os = "windows")]
@@ -74,6 +75,7 @@ fn main() {
   config::init();
 
   let mut context = tauri::generate_context!("tauri.conf.json");
+  let dorion_open = process::process_already_exists();
   let client_type = get_client_type();
   let mut url = String::new();
 
@@ -87,6 +89,23 @@ fn main() {
 
   context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
   context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
+
+  // If another process of Dorion is already open, show a dialog
+  // in the future I want to actually *reveal* the other runnning process
+  // instead of showing a popup, but this is fine for now
+  if dorion_open {
+    // We want this to be blocking so that we don't do anything else until this dialog is closed
+    let msg_builder = dialog::blocking::MessageDialogBuilder::new(
+      "Dorion Already Running",
+      "Another instance of Dorion is already running. Would you like to kill this one?\n\n(you can open the existing window from the system tray)"
+    ).buttons(dialog::MessageDialogButtons::YesNo);
+
+    let kill = msg_builder.show();
+
+    if kill {
+      std::process::exit(0);
+    }
+  }
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -112,7 +131,7 @@ fn main() {
       theme::get_theme,
       theme::get_theme_names,
       helpers::open_themes,
-      helpers::open_plugins
+      helpers::open_plugins,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {

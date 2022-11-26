@@ -7,7 +7,7 @@ pub struct Config {
   zoom: Option<String>,
   client_type: Option<String>,
   sys_tray: Option<bool>,
-  block_telemetry: Option<bool>
+  block_telemetry: Option<bool>,
 }
 
 pub fn init() {
@@ -64,7 +64,11 @@ pub fn get_zoom() -> f64 {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
 
-  parsed.zoom.unwrap_or("1.0".to_string()).parse().unwrap_or(1.0)
+  parsed
+    .zoom
+    .unwrap_or_else(|| "1.0".to_string())
+    .parse()
+    .unwrap_or(1.0)
 }
 
 pub fn get_client_type() -> String {
@@ -72,7 +76,7 @@ pub fn get_client_type() -> String {
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed
     .client_type
-    .unwrap_or("default".to_string())
+    .unwrap_or_else(|| "default".to_string())
     .parse()
     .unwrap_or_else(|_| "default".to_string())
 }

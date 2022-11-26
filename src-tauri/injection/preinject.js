@@ -88,7 +88,6 @@ interceptEventListeners()
 
   // Disable telemetry
   if (!config.block_telemetry) blockTelemetry()
-  createFileDropHandler()
 
   if (midtitle) midtitle.innerHTML = "Done!"
 
