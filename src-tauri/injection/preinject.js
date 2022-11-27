@@ -6,7 +6,7 @@ window.onbeforeunload = () => {
 }
 
 // Needs to be done ASAP
-interceptEventListeners()
+// interceptEventListeners()
 
 /**
  * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
