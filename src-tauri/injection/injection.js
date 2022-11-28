@@ -50,9 +50,17 @@ observer.observe(document, {
 function onClientLoad() {
   loaded = true
   observer.disconnect()
+  
+  // Assign notification count
+  applyNotificationCount()
 
+  // Insert settings tab
   settingInserter()
+
+  // Recreate window.localStorage
   createLocalStorage()
+
+  // Notifcation watcher
   notifGetter()
 }
 
@@ -106,29 +114,33 @@ function settingInserter() {
   });
 }
 
-function notifGetter() {
+function applyNotificationCount() {
   const { invoke } = window.__TAURI__
+  const title = document.querySelector('title')
+  const notifs = title.innerHTML.match(/\((.*)\)/)
 
-  const notifObserver = new MutationObserver(() => {
-    const title = document.querySelector('title')
-    const notifs = title.innerHTML.match(/\((.*)\)/)
+  console.log(notifs)
 
-    if (!notifs) {
-      invoke('notif_count', {
-        amount: 0
-      })
-
-      return
-    }
-
+  if (!notifs) {
     invoke('notif_count', {
-      amount: Number(notifs[1])
+      amount: 0
     })
+
+    return
+  }
+
+  invoke('notif_count', {
+    amount: Number(notifs[1])
   })
+}
+
+function notifGetter() {
+  const notifObserver = new MutationObserver(applyNotificationCount)
 
   notifObserver.observe(document.querySelector('title'), {
     subtree: true,
-    characterData: true
+    childList: true,
+    attributes: true
   })
 }
 
