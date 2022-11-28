@@ -114,7 +114,7 @@ function notifGetter() {
     const notifs = title.innerHTML.match(/\((.*)\)/)
 
     if (!notifs) {
-      invoke('notfi_count', {
+      invoke('notif_count', {
         amount: 0
       })
 
