@@ -15,6 +15,7 @@ mod helpers;
 mod injection;
 mod js_preprocess;
 mod local_html;
+mod notifications;
 mod plugin;
 mod process;
 mod theme;
@@ -118,6 +119,7 @@ fn main() {
       js_preprocess::localize_all_js,
       local_html::get_index,
       local_html::get_settings,
+      notifications::notif_count,
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,

@@ -249,6 +249,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cfb"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d38f2da7a0a2c4ccf0065be06397cc26a81f4e528be095826eee9d4adbb8c60f"
+dependencies = [
+ "byteorder",
+ "fnv",
+ "uuid 1.1.2",
+]
+
+[[package]]
 name = "cfg-expr"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1343,7 +1354,16 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "20b2b533137b9cad970793453d4f921c2e91312a6d88b1085c07bc15fc51bb3b"
 dependencies = [
- "cfb",
+ "cfb 0.6.1",
+]
+
+[[package]]
+name = "infer"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e035cede526e0b21d5adffc9fa0eb4ef5d6026fe9c5b0bfe8084b9472b587a55"
+dependencies = [
+ "cfb 0.7.3",
 ]
 
 [[package]]
@@ -3026,7 +3046,9 @@ dependencies = [
  "gtk",
  "heck 0.4.0",
  "http",
+ "ico",
  "ignore",
+ "infer 0.8.1",
  "notify-rust",
  "objc",
  "once_cell",
@@ -3034,6 +3056,7 @@ dependencies = [
  "os_info",
  "os_pipe",
  "percent-encoding",
+ "png 0.17.6",
  "rand 0.8.5",
  "raw-window-handle",
  "regex",
@@ -3137,7 +3160,7 @@ dependencies = [
  "gtk",
  "http",
  "http-range",
- "infer",
+ "infer 0.7.0",
  "raw-window-handle",
  "serde",
  "serde_json",

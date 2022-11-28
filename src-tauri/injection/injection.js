@@ -53,6 +53,7 @@ function onClientLoad() {
 
   settingInserter()
   createLocalStorage()
+  notifGetter()
 }
 
 /**
@@ -103,6 +104,32 @@ function settingInserter() {
     childList: true,
     subtree: true
   });
+}
+
+function notifGetter() {
+  const { invoke } = window.__TAURI__
+
+  const notifObserver = new MutationObserver(() => {
+    const title = document.querySelector('title')
+    const notifs = title.innerHTML.match(/\((.*)\)/)
+
+    if (!notifs) {
+      invoke('notfi_count', {
+        amount: 0
+      })
+
+      return
+    }
+
+    invoke('notif_count', {
+      amount: Number(notifs[1])
+    })
+  })
+
+  notifObserver.observe(document.querySelector('title'), {
+    subtree: true,
+    characterData: true
+  })
 }
 
 /*
