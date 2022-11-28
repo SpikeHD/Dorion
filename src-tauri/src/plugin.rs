@@ -44,27 +44,28 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
   };
 
   for path in plugin_folders {
-    if path.is_err() {
+    let full_path = path.unwrap();
+    let meta = full_path.metadata().unwrap();
+    let name = full_path.file_name();
+
+    // If it's just the file, load just the file contens
+    if meta.is_dir() {
+      // No more folder plugins. Ew yuck gross.
       continue;
     }
 
-    let folder = path.unwrap().file_name().clone();
-    let plugin_dir = plugins_dir.join(&folder);
-    let index_file = plugin_dir.join("index.js");
-
-    if folder.to_str().unwrap_or("").starts_with('_') {
+    // Disabled
+     if name.to_str().unwrap().starts_with("_") {
       continue;
     }
 
-    if pl_only && !folder.to_str().unwrap_or("").starts_with("PRELOAD") {
+    // Preload-only
+    if !name.to_str().unwrap().starts_with("PRELOAD_") && pl_only {
       continue;
     }
-
-    if fs::metadata(&index_file).is_ok() {
-      let plugin_contents = fs::read_to_string(&index_file).unwrap();
-
-      plugin_list.insert(format!("{:?}", folder), plugin_contents);
-    }
+    
+    let contents = fs::read_to_string(full_path.path()).unwrap();
+    plugin_list.insert(format!("{:?}", name), contents);
   }
 
   plugin_list
@@ -96,27 +97,32 @@ pub fn get_plugin_list() -> Vec<Plugin> {
   };
 
   for path in plugin_folders {
-    if path.is_err() {
+    let full_path = path.unwrap();
+    let meta = full_path.metadata().unwrap();
+    let name = full_path.file_name();
+
+    // If it's just the file, load just the file contens
+    if meta.is_dir() {
+      // No more plugin folders grr
       continue;
     }
 
-    let folder = path.unwrap().file_name().clone();
-    let plugin_dir = plugins_dir.join(&folder);
-    let index_file = plugin_dir.join("index.js");
-    let disabled = folder.to_str().unwrap_or("").starts_with('_');
-    let preload = folder.to_string_lossy().contains("PRELOAD");
+    let disabled = name.to_str().unwrap_or("").starts_with('_');
+    let preload = name.to_str().unwrap_or("").contains("PRELOAD");
 
-    let mut plugin_name = folder.into_string().unwrap();
+    let mut plugin_name = name.to_str().unwrap_or("").to_string();
 
-    if plugin_name.starts_with('_') {
+    if disabled {
       plugin_name = plugin_name.replacen('_', "", 1);
     }
 
-    if plugin_name.contains("PRELOAD_") {
+    if preload {
       plugin_name = plugin_name.replace("PRELOAD_", "");
     }
 
-    if fs::metadata(&index_file).is_ok() {
+    plugin_name = plugin_name.replace(".js", "");
+
+    if fs::metadata(&full_path.path()).is_ok() {
       plugin_list.push(Plugin {
         name: plugin_name,
         disabled,
@@ -129,60 +135,74 @@ pub fn get_plugin_list() -> Vec<Plugin> {
 }
 
 #[tauri::command]
-pub fn toggle_plugin(name: String) {
+pub fn toggle_plugin(name: String) -> bool {
   let plugins_dir = get_plugin_dir();
   let folders = fs::read_dir(&plugins_dir).unwrap();
 
   for path in folders {
-    if path.is_err() {
+    let full_path = path.unwrap();
+    let meta = full_path.metadata().unwrap();
+    let file_name_os = full_path.file_name();
+    let file_name = file_name_os.to_str().unwrap();
+
+    // If it's just the file, load just the file contens
+    if meta.is_dir() {
+      // No more plugin folders grr
       continue;
     }
 
-    let folder = path.unwrap().file_name().clone();
-    let folder_name = folder.to_str().unwrap();
     let mut plugin_name = String::from(&name);
 
     // Use this name to ensure that, if a name with _ is provided, we remove that before comparison
     if plugin_name.starts_with('_') {
-      plugin_name = folder_name.replacen('_', "", 1);
+      plugin_name = file_name.replacen('_', "", 1);
     }
 
-    if folder_name.contains(&plugin_name) {
-      let mut new_name = String::from('_') + folder_name;
+    if file_name.contains(&plugin_name) {
+      let mut new_name = String::from('_') + file_name;
 
-      if folder_name.starts_with('_') {
-        new_name = folder_name.replacen('_', "", 1);
+      if file_name.starts_with('_') {
+        new_name = file_name.replacen('_', "", 1);
       }
 
       // Disable the folder
-      fs::rename(plugins_dir.join(folder_name), plugins_dir.join(new_name)).unwrap();
+      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name)).unwrap();
+
+      return file_name.starts_with('_');
     }
   }
+
+  false
 }
 
 #[tauri::command]
-pub fn toggle_preload(name: String) {
+pub fn toggle_preload(name: String) -> bool {
   let plugins_dir = get_plugin_dir();
   let folders = fs::read_dir(&plugins_dir).unwrap();
 
   for path in folders {
-    if path.is_err() {
+    let full_path = path.unwrap();
+    let meta = full_path.metadata().unwrap();
+    let file_name_os = full_path.file_name();
+    let file_name = file_name_os.to_str().unwrap();
+
+    // If it's just the file, load just the file contens
+    if meta.is_dir() {
+      // No more plugin folders grr
       continue;
     }
 
-    let folder = path.unwrap().file_name().clone();
-    let folder_name = folder.to_str().unwrap();
     let mut plugin_name = String::from(&name);
-    let disabled = folder_name.starts_with('_');
+    let disabled = file_name.starts_with('_');
+    let preloaded = file_name.contains("PRELOAD");
 
     // Use this name to ensure that, if a name with PRELOAD is provided, we remove that before comparison
     if plugin_name.contains("PRELOAD") {
-      plugin_name = folder_name.replace("PRELOAD_", "").replacen('_', "", 1);
+      plugin_name = file_name.replace("PRELOAD_", "").replacen('_', "", 1);
     }
 
-    if folder_name.contains(&plugin_name) {
+    if file_name.contains(&plugin_name) {
       let mut new_name = plugin_name;
-      let preloaded = folder_name.contains("PRELOAD");
 
       // Disable if enabled, otherwise enable if disabled
       if preloaded {
@@ -195,9 +215,15 @@ pub fn toggle_preload(name: String) {
       if disabled {
         new_name = String::from("_") + &new_name;
       }
+      
+      new_name = new_name + ".js";
 
       // Disable/enable preload
-      fs::rename(plugins_dir.join(folder_name), plugins_dir.join(new_name)).unwrap();
+      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name)).unwrap();
+
+      return !preloaded;
     }
   }
+
+  false
 }

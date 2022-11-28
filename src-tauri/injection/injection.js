@@ -269,6 +269,14 @@ function setSlider(id, enabled) {
     <path fill="rgba(114, 118, 125, 1)" d="M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z"></path>
     <path fill="rgba(114, 118, 125, 1)" d="M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z"></path>
   `
+
+  elm.checked = enabled
+
+  console.log('===')
+  console.log(id)
+  console.log('enabled? ' + enabled)
+  console.log('checked? ' + elm.checked)
+  console.log('===')
   
   if (enabled) {
     svg.style.left = '12px'
@@ -374,19 +382,19 @@ async function createPluginList() {
   plugins.forEach(plugin => {
     const trow = document.createElement('tr')
     const plId = `plugin_${plugin.name}`
-    const plToggle = createSlider('', `${plId}_enable`, (e) => {
-      setSlider(e.target.id, e.target.checked)
-
-      invoke('toggle_plugin', {
+    const plToggle = createSlider('', `${plId}_enable`, async (e) => {
+      const enabled = await invoke('toggle_plugin', {
         name: plugin.name
       })
+
+      setSlider(e.target.id, enabled)
     })
-    const plPreload = createSlider('', `${plId}_preload`, (e) => {
-      setSlider(e.target.id, e.target.checked)
-
-      invoke('toggle_plugin', {
+    const plPreload = createSlider('', `${plId}_preload`, async (e) => {
+      const preload = await invoke('toggle_preload', {
         name: plugin.name
       })
+
+      setSlider(e.target.id, preload)
     })
 
     const tdName = document.createElement('td')
@@ -402,9 +410,6 @@ async function createPluginList() {
     trow.appendChild(tdEnabled)
     trow.appendChild(tdPreload)
     table.appendChild(trow)
-
-    console.log(plugin)
-    console.log(`${plId}_enable`)
 
     // Toggle the sliders
     setSlider(`${plId}_enable`, !plugin.disabled)
