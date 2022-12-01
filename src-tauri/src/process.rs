@@ -8,6 +8,7 @@ pub fn process_already_exists() -> bool {
   for p in system.processes_by_name("Dorion") {
     if std::process::id() != p.pid().as_u32() {
       exists = true;
+      break;
     }
   }
 
