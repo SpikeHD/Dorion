@@ -208,7 +208,7 @@ function blockTelemetry() {
  * 
  * https://stackoverflow.com/a/64991159
  */
-function interceptEventListeners() {
+function _interceptEventListeners() {
   Element.prototype._addEventListener = Element.prototype.addEventListener;
   Element.prototype.addEventListener = function () {
     let args = [...arguments]

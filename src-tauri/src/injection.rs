@@ -1,26 +1,18 @@
-use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
+use std::{collections::HashMap, env, fs, thread, time::Duration};
 use tauri::regex::Regex;
 
-use crate::js_preprocess::eval_js_imports;
+use crate::{helpers::resource_folder, js_preprocess::eval_js_imports};
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let injection_js = match fs::read_to_string(PathBuf::from("injection/injection_min.js")) {
+  let injection_js = match fs::read_to_string(resource_folder().join("injection/injection_min.js"))
+  {
     Ok(f) => f,
     Err(e) => {
       println!("Failed to read injection JS in local dir: {}", e);
-      println!("Checking usr/lib");
 
-      // This is where the .deb installer throws it.
-      match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
-        Ok(f) => f,
-        Err(e) => {
-          println!("Failed to read injection JS: {}", e);
-
-          String::new()
-        }
-      }
+      return Ok(String::new());
     }
   };
   let rewritten_all = theme_rxg
@@ -31,21 +23,12 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
 }
 
 pub fn preinject(window: &tauri::Window) {
-  let injection_js = match fs::read_to_string(PathBuf::from("injection/preinject_min.js")) {
+  let injection_js = match fs::read_to_string(resource_folder().join("injection/preinject_min.js"))
+  {
     Ok(f) => f,
     Err(e) => {
       println!("Failed to read preinject JS in local dir: {}", e);
-      println!("Checking usr/lib");
-
-      // This is where the .deb installer throws it.
-      match fs::read_to_string(PathBuf::from("/usr/lib/dorion/injection/injection_min.js")) {
-        Ok(f) => f,
-        Err(e) => {
-          println!("Failed to read preinject JS: {}", e);
-
-          String::new()
-        }
-      }
+      return;
     }
   };
 

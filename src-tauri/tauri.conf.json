@@ -43,7 +43,8 @@
         "injection/preinject_min.js",
         "injection/injection_min.js",
         "html/index.html",
-        "html/settings.html"
+        "html/settings.html",
+        "icons/icon*.ico"
       ],
       "shortDescription": "",
       "targets": "all",

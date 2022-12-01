@@ -3056,7 +3056,6 @@ dependencies = [
  "os_info",
  "os_pipe",
  "percent-encoding",
- "png 0.17.6",
  "rand 0.8.5",
  "raw-window-handle",
  "regex",

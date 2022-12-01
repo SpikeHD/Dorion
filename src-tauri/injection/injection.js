@@ -51,9 +51,6 @@ function onClientLoad() {
   loaded = true
   observer.disconnect()
   
-  // Assign notification count
-  applyNotificationCount()
-
   // Insert settings tab
   settingInserter()
 
@@ -62,6 +59,9 @@ function onClientLoad() {
 
   // Notifcation watcher
   notifGetter()
+
+  // Assign notification count
+  applyNotificationCount()
 }
 
 /**
@@ -140,7 +140,8 @@ function notifGetter() {
   notifObserver.observe(document.querySelector('title'), {
     subtree: true,
     childList: true,
-    attributes: true
+    attributes: true,
+    characterData: true
   })
 }
 

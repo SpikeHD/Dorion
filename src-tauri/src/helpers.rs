@@ -35,3 +35,16 @@ fn open_folder(path: PathBuf) {
 fn open_folder(path: PathBuf) {
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
+
+#[cfg(target_os = "windows")]
+pub fn resource_folder() -> PathBuf {
+  let mut path = std::env::current_exe().unwrap();
+  path.pop();
+
+  path
+}
+
+#[cfg(target_os = "linux")]
+pub fn resource_folder() -> PathBuf {
+  PathBuf::from("/usr/lib/dorion/")
+}

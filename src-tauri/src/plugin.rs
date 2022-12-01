@@ -55,7 +55,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
     }
 
     // Disabled
-     if name.to_str().unwrap().starts_with("_") {
+    if name.to_str().unwrap().starts_with('_') {
       continue;
     }
 
@@ -63,7 +63,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
     if !name.to_str().unwrap().starts_with("PRELOAD_") && pl_only {
       continue;
     }
-    
+
     let contents = fs::read_to_string(full_path.path()).unwrap();
     plugin_list.insert(format!("{:?}", name), contents);
   }
@@ -215,8 +215,8 @@ pub fn toggle_preload(name: String) -> bool {
       if disabled {
         new_name = String::from("_") + &new_name;
       }
-      
-      new_name = new_name + ".js";
+
+      new_name += ".js";
 
       // Disable/enable preload
       fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name)).unwrap();
