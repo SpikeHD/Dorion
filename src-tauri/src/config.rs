@@ -22,7 +22,7 @@ pub fn init() {
   if fs::metadata(&config_file).is_err() {
     fs::write(
       config_file,
-      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default", sys_tray: false, block_telemetry: false }"#,
+      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default", "sys_tray": false, "block_telemetry": false }"#,
     )
     .unwrap_or(());
   }
