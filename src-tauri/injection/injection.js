@@ -86,7 +86,7 @@ function settingInserter() {
 
   observer = new MutationObserver(() => {
     // Shove a new option in settings when it's open to go back to Dorion settings
-    const appSettings = document.querySelectorAll('div[aria-label="User Settings"] div[class*="header-"]')[2]
+    const appSettings = document.querySelectorAll('div[class*="header-"')[2]
     
     if (appSettings && !insertedSetting) {
       // Yoink the next tabs styling
