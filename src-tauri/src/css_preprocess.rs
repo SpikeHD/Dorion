@@ -2,7 +2,7 @@ use tauri::regex::Regex;
 
 #[tauri::command]
 pub async fn localize_imports(css: String) -> String {
-  let reg = Regex::new(r"@import url\(.*\);").unwrap();
+  let reg = Regex::new(r#"@import url\((?:"|'|)http.*?\.css(?:"|'|)\);"#).unwrap();
   let url_reg = Regex::new(r"\((.*)\)").unwrap();
   let mut new_css = css.clone();
 
@@ -35,6 +35,17 @@ pub async fn localize_imports(css: String) -> String {
         continue;
       }
     };
+    
+    let status = response.status();
+
+    if status != 200 {
+      println!("Request failed: {}", status);
+      println!("URL: {}", &url);
+
+      new_css = new_css.replace(first_match.as_str(), "");
+      continue;
+    }
+
     let text = response.text().await.unwrap();
 
     new_css = new_css.replace(first_match.as_str(), text.as_str());
