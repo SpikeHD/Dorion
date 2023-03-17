@@ -8,11 +8,37 @@ window.onbeforeunload = () => {
 // Needs to be done ASAP
 // interceptEventListeners()
 
+function safemodeTimer(elm) {
+  setTimeout(() => {
+    elm.classList.add('show')
+  }, 10000)
+
+  const tmpKeydown = (evt) => {
+    // If loading container doesn't exist, we made it through and should stop watching key events
+    if (!document.querySelector('#loadingContainer')) {
+      document.removeEventListener('keydown', tmpKeydown)
+      return
+    }
+
+    // If spacebar, remove #loadingContainer
+    if (evt.code === 'Space') {
+      document.querySelector('#loadingContainer')?.remove()
+    }
+
+    // If F, open plugins folder
+    if (evt.code === 'KeyF') {
+      window.__TAURI__.invoke('open_themes')
+    }
+  }
+  
+  document.addEventListener('keydown', tmpKeydown)
+}
+
 /**
  * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
  * This will localize imports for JS and CSS, as well as some other things
  */
-;(async () => {
+(async () => {
   await displayLoadingTop()
 
   const { invoke } = window.__TAURI__
@@ -21,6 +47,10 @@ window.onbeforeunload = () => {
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
+  const safemode = document.querySelector('#safemode')
+
+  // Start safemode timer and event listener right away, just in case
+  safemodeTimer(safemode)
   
   if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}`
 

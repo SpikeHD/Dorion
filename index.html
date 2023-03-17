@@ -8,6 +8,11 @@
   <div id="subtitle">
     <!-- This is autofilled by JS -->
   </div>
+
+  <div id="safemode">
+    <p>I this seems frozen, press "space" to remove this overlay and continue.</p>
+    <p>You can also press "F" to open your themes/plugins folder, in case any of those broke something.</p>
+  </div>
 </div>
 <!-- I'm just gonna be super lazy and put this here since I can get away with it -->
 <style>
@@ -52,5 +57,20 @@
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: normal;
+}
+
+#safemode {
+  opacity: 0;
+
+  margin: 20px;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+
+  transition: all 1s ease;
+}
+
+.show {
+  opacity: 1 !important
 }
 </style>
