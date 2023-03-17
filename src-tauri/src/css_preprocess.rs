@@ -1,5 +1,3 @@
-use std::panic;
-
 use tauri::regex::Regex;
 
 #[tauri::command]
