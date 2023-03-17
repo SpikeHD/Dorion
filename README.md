@@ -61,6 +61,8 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 * Rich presence(?)
 * Helper API methods and events for plugins
 * Backup localized themes
+* Localization timeout
+* Safemode key (disable themes and plugins)
 
 # Using Plugins and Themes
 
