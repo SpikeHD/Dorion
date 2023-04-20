@@ -83,3 +83,35 @@ jobs:
         with:
           name: DorionLinux
           path: Dorion.zip
+  
+  build-macos:
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install deps and build
+        run: yarn && yarn build &&  yarn tauri build
+
+      - name: Compress build
+        uses: vimtor/action-zip@v1
+        with:
+          files: src-tauri/target/release/bundle/dmg/dorion*.dmg src-tauri/target/release/bundle/macOS/dorion*.pkg
+          recursive: true
+          dest: Dorion.zip
+
+      - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: DorionMacOS
+          path: Dorion.zip
