@@ -1,4 +1,8 @@
-<h1 align="center">Dorion</h1>
+<h1 align="center">
+ <img height="100px" src="https://user-images.githubusercontent.com/25207995/233253555-7f398710-bf80-4241-9397-b01930e56714.png" />
+ <br />
+ Dorion
+</h1>
 <div align="center">
  <img src="https://img.shields.io/github/workflow/status/SpikeHD/Dorion/Build" />
  <img src="https://img.shields.io/github/package-json/v/SpikeHD/Dorion" />
@@ -64,7 +68,7 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 * [ ] Backup localized themes
 * [ ] Localization timeout
 * [x] Safemode key (disable themes and plugins)
-* [ ] New release notifications
+* [x] New release notifications
 
 # Using Plugins and Themes
 
