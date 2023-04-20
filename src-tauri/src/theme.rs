@@ -40,13 +40,13 @@ pub fn get_theme(name: String) -> String {
     }
   }
 
-  fs::read_to_string(theme_file.join(&css_file)).unwrap_or_else(|_| "".to_string())
+  fs::read_to_string(theme_file.join(css_file)).unwrap_or_else(|_| "".to_string())
 }
 
 #[tauri::command]
 pub fn get_theme_names() -> Vec<String> {
   let themes_dir = get_theme_dir();
-  let theme_folders = fs::read_dir(&themes_dir).unwrap();
+  let theme_folders = fs::read_dir(themes_dir).unwrap();
   let mut names = vec![] as Vec<String>;
 
   for path in theme_folders {

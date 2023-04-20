@@ -18,8 +18,7 @@ pub async fn localize_imports(css: String) -> String {
       .unwrap()
       .as_str()
       // Remove quotes
-      .replace('\'', "")
-      .replace('\"', "");
+      .replace(['\'', '\"'], "");
 
     if url.is_empty() {
       continue;

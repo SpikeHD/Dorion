@@ -34,7 +34,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
   let pl_only = preload_only.unwrap_or(false);
   let mut plugin_list = HashMap::new();
   let plugins_dir = get_plugin_dir();
-  let plugin_folders = match fs::read_dir(&plugins_dir) {
+  let plugin_folders = match fs::read_dir(plugins_dir) {
     Ok(f) => f,
     Err(e) => {
       println!("Error: {}", e);
@@ -87,7 +87,7 @@ pub fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
 pub fn get_plugin_list() -> Vec<Plugin> {
   let plugins_dir = get_plugin_dir();
   let mut plugin_list: Vec<Plugin> = Vec::new();
-  let plugin_folders = match fs::read_dir(&plugins_dir) {
+  let plugin_folders = match fs::read_dir(plugins_dir) {
     Ok(f) => f,
     Err(e) => {
       println!("Error: {}", e);
@@ -122,7 +122,7 @@ pub fn get_plugin_list() -> Vec<Plugin> {
 
     plugin_name = plugin_name.replace(".js", "");
 
-    if fs::metadata(&full_path.path()).is_ok() {
+    if fs::metadata(full_path.path()).is_ok() {
       plugin_list.push(Plugin {
         name: plugin_name,
         disabled,
