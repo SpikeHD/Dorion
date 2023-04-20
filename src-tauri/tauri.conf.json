@@ -45,6 +45,7 @@
         "html/index.html",
         "html/settings.html",
         "html/top.html",
+        "html/notification.html",
         "icons/icon*.ico"
       ],
       "shortDescription": "",

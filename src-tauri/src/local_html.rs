@@ -27,3 +27,8 @@ pub fn get_settings() -> String {
 pub fn get_top_bar() -> String {
   get_html("html/top.html")
 }
+
+#[tauri::command]
+pub fn get_notif() -> String {
+  get_html("html/notification.html")
+}

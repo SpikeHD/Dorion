@@ -1,0 +1,39 @@
+<div id="dorion_notif">
+  <span id="notif_title">
+    <!-- Filled in  with JS -->
+  </span>
+  <span id="notif_body">
+    <!-- Filled in  with JS -->
+  </span>
+</div>
+<style>
+  #dorion_notif {
+    position: absolute;
+
+    top: 5%;
+    right: 5%;
+
+    height: 7%;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9998;
+
+    background-color: var(--background-tertiary);
+
+    border-radius: 4px;
+    color: var(--text-normal);
+
+    transition: top 0.5s ease-in-out;
+  }
+
+  #notif_title  {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+</style>

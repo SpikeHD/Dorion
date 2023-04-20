@@ -18,6 +18,7 @@ mod local_html;
 mod notifications;
 mod plugin;
 mod process;
+mod release;
 mod theme;
 mod top_bar;
 
@@ -124,12 +125,14 @@ fn main() {
       local_html::get_index,
       local_html::get_settings,
       local_html::get_top_bar,
+      local_html::get_notif,
       notifications::notif_count,
       plugin::load_plugins,
       plugin::get_plugin_list,
       plugin::toggle_plugin,
       plugin::toggle_preload,
       plugin::get_plugin_import_urls,
+      release::get_latest_release,
       injection::get_injection_js,
       injection::is_injected,
       injection::load_injection_js,
