@@ -206,7 +206,12 @@ fn maximize(win: Window) {
 // Close
 #[tauri::command]
 fn close(win: Window) {
-  win.close().unwrap();
+  // Ensure we minimize to tray if the config calls for it
+  if config::get_systray() {
+    win.hide().unwrap();
+  } else {
+    win.close().unwrap();
+  }
 }
 
 // Big fat credit to icidasset & FabianLars
