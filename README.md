@@ -76,6 +76,7 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 .
 └── C:/Users/USERNAME/dorion/
     ├── plugins/
+    |   └── plugin.js
     |   └── plugin_name/
     |       └── index.js
     └── themes/
@@ -90,6 +91,7 @@ and like so on Linux:
 .
 └── ~/dorion/
     ├── plugins/
+    |   └── plugin.js
     |   └── plugin_name/
     |       └── index.js
     └── themes/
@@ -98,7 +100,7 @@ and like so on Linux:
             └── theme2.css
 ```
 
-so if you download a plugin or theme, just pop it into it's own folder in the `plugins`/`themes` folder!
+so if you download a plugin or theme, just pop it into the `plugins`/`themes` folder!
 
 # Contributing
 
