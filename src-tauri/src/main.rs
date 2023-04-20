@@ -19,6 +19,7 @@ mod notifications;
 mod plugin;
 mod process;
 mod theme;
+mod top_bar;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
@@ -119,6 +120,7 @@ fn main() {
       js_preprocess::localize_all_js,
       local_html::get_index,
       local_html::get_settings,
+      local_html::get_top_bar,
       notifications::notif_count,
       plugin::load_plugins,
       plugin::get_plugin_list,
@@ -134,6 +136,7 @@ fn main() {
       theme::get_theme_names,
       helpers::open_themes,
       helpers::open_plugins,
+      top_bar::remove_top_bar,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {

@@ -1,0 +1,45 @@
+<div data-tauri-drag-region id="topbar">
+  <div id="topright">
+    <!-- This will get filled in with JS -->
+    Dorion
+  </div>
+  <div id="topleft">
+    <!-- TODO close/min/max -->
+  </div>
+</div>
+
+<style>
+  #topbar {
+    background-color: var(--background-secondary);
+    height: 30px;
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    color: var(--text-normal);
+  }
+
+  #topright {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 6px;
+
+    font-weight: bolder;
+    font-family: 'Courier New', monospace;
+  }
+
+  #topleft {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+</style>
