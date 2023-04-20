@@ -35,7 +35,7 @@ pub async fn localize_imports(css: String) -> String {
         continue;
       }
     };
-    
+
     let status = response.status();
 
     if status != 200 {
