@@ -114,6 +114,9 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
+      minimize,
+      maximize,
+      close,
       change_zoom,
       do_injection,
       css_preprocess::localize_imports,
@@ -186,6 +189,24 @@ fn main() {
     })
     .run(context)
     .expect("error while running tauri application");
+}
+
+// Minimize
+#[tauri::command]
+fn minimize(win: Window) {
+  win.minimize().unwrap();
+}
+
+// Maximize
+#[tauri::command]
+fn maximize(win: Window) {
+  win.maximize().unwrap();
+}
+
+// Close
+#[tauri::command]
+fn close(win: Window) {
+  win.close().unwrap();
 }
 
 // Big fat credit to icidasset & FabianLars

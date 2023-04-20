@@ -62,6 +62,30 @@ function onClientLoad() {
 
   // Assign notification count
   applyNotificationCount()
+
+  // Initialize top bar events
+  initTopBarEvents()
+}
+
+function close() {
+  window.__TAURI__.invoke('close')
+}
+
+function minimize() {
+  window.__TAURI__.invoke('minimize')
+}
+
+function maximize() {
+  window.__TAURI__.invoke('maximize')
+}
+
+/**
+ * Give events to the top bar buttons
+ */
+function initTopBarEvents() {
+  document.querySelector('#topclose').onclick = close
+  document.querySelector('#topmin').onclick = minimize
+  document.querySelector('#topmax').onclick = maximize
 }
 
 /**
