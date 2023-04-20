@@ -44,6 +44,7 @@
         "injection/injection_min.js",
         "html/index.html",
         "html/settings.html",
+        "html/top.html",
         "icons/icon*.ico"
       ],
       "shortDescription": "",

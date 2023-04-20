@@ -2,12 +2,11 @@ use std::fs;
 
 use crate::helpers::resource_folder;
 
-#[tauri::command]
-pub fn get_index() -> String {
-  match fs::read_to_string(resource_folder().join("html/index.html")) {
+pub fn get_html(dir: &str) -> String {
+  match fs::read_to_string(resource_folder().join(dir)) {
     Ok(f) => f,
     Err(e) => {
-      println!("Failed to read index.html in local dir: {}", e);
+      println!("Failed to read {} in local dir: {}", dir, e);
 
       String::new()
     }
@@ -15,13 +14,16 @@ pub fn get_index() -> String {
 }
 
 #[tauri::command]
-pub fn get_settings() -> String {
-  match fs::read_to_string(resource_folder().join("html/settings.html")) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Failed to read settings.html in local dir: {}", e);
+pub fn get_index() -> String {
+  get_html("html/index.html")
+}
 
-      String::new()
-    }
-  }
+#[tauri::command]
+pub fn get_settings() -> String {
+  get_html("html/settings.html")
+}
+
+#[tauri::command]
+pub fn get_top_bar() -> String {
+  get_html("html/top.html")
 }

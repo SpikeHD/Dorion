@@ -19,6 +19,7 @@ mod notifications;
 mod plugin;
 mod process;
 mod theme;
+mod top_bar;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
@@ -113,12 +114,16 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
+      minimize,
+      maximize,
+      close,
       change_zoom,
       do_injection,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
       local_html::get_index,
       local_html::get_settings,
+      local_html::get_top_bar,
       notifications::notif_count,
       plugin::load_plugins,
       plugin::get_plugin_list,
@@ -134,6 +139,7 @@ fn main() {
       theme::get_theme_names,
       helpers::open_themes,
       helpers::open_plugins,
+      top_bar::remove_top_bar,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
@@ -183,6 +189,29 @@ fn main() {
     })
     .run(context)
     .expect("error while running tauri application");
+}
+
+// Minimize
+#[tauri::command]
+fn minimize(win: Window) {
+  win.minimize().unwrap();
+}
+
+// Maximize
+#[tauri::command]
+fn maximize(win: Window) {
+  win.maximize().unwrap();
+}
+
+// Close
+#[tauri::command]
+fn close(win: Window) {
+  // Ensure we minimize to tray if the config calls for it
+  if config::get_systray() {
+    win.hide().unwrap();
+  } else {
+    win.close().unwrap();
+  }
 }
 
 // Big fat credit to icidasset & FabianLars
