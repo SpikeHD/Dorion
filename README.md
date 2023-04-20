@@ -57,13 +57,13 @@ Dorion simply runs the web-based version of Discord within it's own client. This
 
 # TODO
 
-[ ] Desktop notifications
-  [ ] AND displaying the number of notifs in the desktop icon
-[ ] Rich presence(?)
-[ ] Helper API methods and events for plugins
-[ ] Backup localized themes
-[ ] Localization timeout
-[x] Safemode key (disable themes and plugins)
+* [ ] Desktop notifications
+  * [ ] AND displaying the number of notifs in the desktop icon
+* [ ] Rich presence(?)
+* [ ] Helper API methods and events for plugins
+* [ ] Backup localized themes
+* [ ] Localization timeout
+* [x] Safemode key (disable themes and plugins)
 
 # Using Plugins and Themes
 
