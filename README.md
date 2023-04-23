@@ -21,8 +21,9 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 # Table of Contents
 
 * [Setup](#setup)
-* [Benefits](#benefits)
-* [Limitations](#limitations)
+* [Why use Dorion?](#why-use-dorion)
+  * [Plugins](#plugins)
+  * [Themes](#themes)
 * [Known Issues](#known-issues)
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
@@ -33,12 +34,9 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 
 Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.deb` for Linux, etc.) and install!
 
-# Benefits
+# Why use Dorion?
 
 * Portable (mostly)
-* Plugins
-* Themes
-  * Including support for BetterDiscord themes!
 * Low - if any - cache footprint (compared to [the PTB client](https://user-images.githubusercontent.com/25207995/189549033-b372ca74-5f30-4864-b71a-10a88405537a.png))
 * Extremely small installation size (~10mb!) on Windows
   * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine
@@ -47,11 +45,15 @@ Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Win
 * Built-in telemetry blocking option
 * Made by me (automatically makes it cooler)
 
-I know I made the program 'n all, but I actually use this on my laptop as opposed to the official client, so I can vouch 😎
+## Plugins
 
-# Limitations
+While Dorion does *not* support BetterDiscord plugins (or other mods that use modified `.asar`s), it *does* support browser-based ones. This includes popular plugins like [Vencord](https://github.com/Vendicated/Vencord)!
 
-Dorion simply runs the web-based version of Discord within it's own client. This means that things Discord web doesn't support will not work. I am unaware of any significant feature that is missing.
+## Themes
+
+Dorion supports all themes, BetterDiscord and others
+
+[Jump to "Using Plugins and Themes"](#using-plugins-and-themes)
 
 # Known Issues
 
