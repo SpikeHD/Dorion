@@ -4,7 +4,7 @@
  Dorion
 </h1>
 <div align="center">
- <img src="https://img.shields.io/github/workflow/status/SpikeHD/Dorion/Build" />
+ <img src="https://img.shields.io/github/actions/workflow/status/SpikeHD/Dorion/build.yml" />
  <img src="https://img.shields.io/github/package-json/v/SpikeHD/Dorion" />
  <img src="https://img.shields.io/github/repo-size/SpikeHD/Dorion" />
 </div>
