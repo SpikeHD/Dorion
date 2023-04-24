@@ -134,7 +134,7 @@ jobs:
 
       # Move built to its  own folder for compression
       - name: Move build
-        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/html src-tauri/target/release/artifacts/html && mv src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && mv src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
+        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/html src-tauri/target/release/artifacts/html && mv src-tauri/injection/*_min.js src-tauri/target/release/artifacts/injection && mv src-tauri/icons src-tauri/target/release/artifacts/icons
 
       # Zip artifact folder
       - name: Compress build
