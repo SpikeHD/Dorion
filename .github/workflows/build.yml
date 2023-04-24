@@ -20,6 +20,9 @@ jobs:
   build-win:
     runs-on: windows-latest
     steps:
+      - name: Install zip
+        uses: montudor/action-zip@v1.0.0
+      
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -37,17 +40,18 @@ jobs:
         run: yarn && yarn build &&  yarn tauri build
 
       - name: Compress build
-        uses: vimtor/action-zip@v1
-        with:
-          files: src-tauri/target/debug/Dorion.exe src-tauri/target/debug/bundle/msi/
-          recursive: true
-          dest: Dorion.zip
+        run: zip -qq -r Dorion.zip Dorion.exe html/ injection/ icons/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: DorionWindows
+          name: Dorion_Win64_Portable.zip
           path: Dorion.zip
+
+      - name: Upload MSI
+        uses: actions/upload-artifact@v3
+        with:
+          path: src-tauri/target/release/bundle/msi/*.msi
 
   build-ubuntu:
     runs-on: ubuntu-latest
