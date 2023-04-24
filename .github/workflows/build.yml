@@ -124,7 +124,7 @@ jobs:
 
       # Add arch target
       - name: Add arch target
-        run: rustup target add aarch64-apple-darwi
+        run: rustup target add aarch64-apple-darwin
 
       - name: Install deps and build
         run: yarn && yarn build &&  yarn tauri build --target universal-apple-darwin
