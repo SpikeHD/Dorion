@@ -109,48 +109,48 @@ jobs:
           name: Dorion_Amd64.AppImage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
   
-  build-macos:
-    runs-on: macos-12
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # build-macos:
+  #   runs-on: macos-12
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
+  #     - name: setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 16
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+  #     - name: Install Rust
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
 
-      # Add arch target
-      - name: Add arch64 target
-        run: rustup target add aarch64-apple-darwin
+  #     # Add arch target
+  #     - name: Add arch64 target
+  #       run: rustup target add aarch64-apple-darwin
 
-      - name: Install deps and build
-        run: yarn && yarn build &&  yarn tauri build --target universal-apple-darwin
+  #     - name: Install deps and build
+  #       run: yarn && yarn build &&  yarn tauri build --target universal-apple-darwin
 
-      - name: Make dirs
-        run: mkdir src-tauri/target/release/artifacts && mkdir src-tauri/target/release/artifacts/injection && mkdir src-tauri/target/release/artifacts/icons && mkdir src-tauri/target/release/artifacts/html
+  #     - name: Make dirs
+  #       run: mkdir src-tauri/target/release/artifacts && mkdir src-tauri/target/release/artifacts/injection && mkdir src-tauri/target/release/artifacts/icons && mkdir src-tauri/target/release/artifacts/html
 
-      # Move built to its  own folder for compression
-      - name: Move build
-        run: mv src-tauri/html src-tauri/target/release/artifacts/html && mv src-tauri/injection/*_min.js src-tauri/target/release/artifacts/injection && mv src-tauri/icons src-tauri/target/release/artifacts/icons
+  #     # Move built to its  own folder for compression
+  #     - name: Move build
+  #       run: mv src-tauri/html src-tauri/target/release/artifacts/s && mv src-tauri/injection/*_min.js src-tauri/target/release/artifacts/ && mv src-tauri/icons src-tauri/target/release/artifacts/
 
-      # Zip artifact folder
-      - name: Compress build
-        run: zip -r Dorion.zip src-tauri/target/release/
+  #     # Zip artifact folder
+  #     - name: Compress build
+  #       run: zip -r Dorion.zip src-tauri/target/release/
 
-      - name: Upload build
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_MacOS_Portable.zip
-          path: Dorion.zip
+  #     - name: Upload build
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: Dorion_MacOS_Portable.zip
+  #         path: Dorion.zip
 
-      # Upload dmg
-      - name: Upload dmg
-        uses: actions/upload-artifact@v3
-        with:
-          path: src-tauri/target/release/bundle/dmg/*.dmg
+  #     # Upload dmg
+  #     - name: Upload dmg
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: src-tauri/target/release/bundle/dmg/*.dmg
