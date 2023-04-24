@@ -21,7 +21,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Install zip
-        uses: montudor/action-zip@v1.0.0
+        uses: edgarrc/action-7z@v1
       
       - name: Checkout
         uses: actions/checkout@v2
