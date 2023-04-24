@@ -48,3 +48,11 @@ pub fn resource_folder() -> PathBuf {
 pub fn resource_folder() -> PathBuf {
   PathBuf::from("/usr/lib/dorion/")
 }
+
+#[cfg(target_os = "macos")]
+pub fn resource_folder() -> PathBuf {
+  let mut path = std::env::current_exe().unwrap();
+  path.pop();
+
+  path
+}
