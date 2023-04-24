@@ -43,7 +43,7 @@ jobs:
       - name: Compress build
         uses: ksm2/archive-action@v1
         with:
-          root-directory: src-tauri/target/release/
+          root-directory: src-tauri/target/release/artifacts
           format: "zip"
           name: "Dorion"
 
@@ -56,6 +56,7 @@ jobs:
       - name: Upload MSI
         uses: actions/upload-artifact@v3
         with:
+          name: Dorion_Win64.msi
           path: src-tauri/target/release/bundle/msi/*.msi
 
   build-ubuntu:
@@ -98,12 +99,14 @@ jobs:
       - name: Upload deb
         uses: actions/upload-artifact@v3
         with:
+          name: Dorion_Amd64.deb
           path: src-tauri/target/release/bundle/deb/*.deb
 
       # Upload AppImage
       - name: Upload AppImage
         uses: actions/upload-artifact@v3
         with:
+          name: Dorion_Amd64.AppImage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
   
   build-macos:
@@ -123,7 +126,7 @@ jobs:
           toolchain: stable
 
       # Add arch target
-      - name: Add arch target
+      - name: Add arch64 target
         run: rustup target add aarch64-apple-darwin
 
       - name: Install deps and build
@@ -131,11 +134,11 @@ jobs:
 
       # Move built to its  own folder for compression
       - name: Move build
-        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/dorion src-tauri/target/release/artifacts/dorion && mv src-tauri/target/release/html src-tauri/target/release/artifacts/html && mv src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && mv src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
+        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/html src-tauri/target/release/artifacts/html && mv src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && mv src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
 
       # Zip artifact folder
       - name: Compress build
-        run: zip -r Dorion.zip src-tauri/target/release/artifacts
+        run: zip -r Dorion.zip src-tauri/target/release/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
