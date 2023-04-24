@@ -20,9 +20,6 @@ jobs:
   build-win:
     runs-on: windows-latest
     steps:
-      - name: Install zip
-        uses: edgarrc/action-7z@v1
-      
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -40,7 +37,12 @@ jobs:
         run: yarn && yarn build &&  yarn tauri build
 
       - name: Compress build
-        run: zip -qq -r Dorion.zip Dorion.exe html/ injection/ icons/
+        uses: ksm2/archive-action@v1
+        with:
+          root-directory: src-tauri/target/release/
+          format: "zip"
+          name: "Dorion"
+          include: Dorion.exe html/ injection/ icons/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
