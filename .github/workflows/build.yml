@@ -132,9 +132,12 @@ jobs:
       - name: Install deps and build
         run: yarn && yarn build &&  yarn tauri build --target universal-apple-darwin
 
+      - name: Make dirs
+        run: mkdir src-tauri/target/release/artifacts && mkdir src-tauri/target/release/artifacts/injection && mkdir src-tauri/target/release/artifacts/icons && mkdir src-tauri/target/release/artifacts/html
+
       # Move built to its  own folder for compression
       - name: Move build
-        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/html src-tauri/target/release/artifacts/html && mv src-tauri/injection/*_min.js src-tauri/target/release/artifacts/injection && mv src-tauri/icons src-tauri/target/release/artifacts/icons
+        run: mv src-tauri/html src-tauri/target/release/artifacts/html && mv src-tauri/injection/*_min.js src-tauri/target/release/artifacts/injection && mv src-tauri/icons src-tauri/target/release/artifacts/icons
 
       # Zip artifact folder
       - name: Compress build
