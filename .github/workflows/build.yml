@@ -36,13 +36,16 @@ jobs:
       - name: Install deps and build
         run: yarn && yarn build &&  yarn tauri build
 
+      # Move built to its  own folder for compression
+      - name: Move build
+        run: mkdir src-tauri/target/release/artifacts && move src-tauri/target/release/*.exe src-tauri/target/release/artifacts && move src-tauri/target/release/html src-tauri/target/release/artifacts/html && move src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && move src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
+
       - name: Compress build
         uses: ksm2/archive-action@v1
         with:
           root-directory: src-tauri/target/release/
           format: "zip"
           name: "Dorion"
-          include: Dorion.exe html/ injection/ icons/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
@@ -77,18 +80,31 @@ jobs:
       - name: Install deps and build
         run: yarn && yarn build &&  yarn tauri build
 
+      # Move built to its  own folder for compression
+      - name: Move build
+        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/dorion src-tauri/target/release/artifacts/dorion && mv src-tauri/target/release/html src-tauri/target/release/artifacts/html && mv src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && mv src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
+
+      # Zip artifact folder
       - name: Compress build
-        uses: vimtor/action-zip@v1
-        with:
-          files: src-tauri/target/release/bundle/appimage/dorion*.AppImage src-tauri/target/release/bundle/deb/dorion*.deb src-tauri/target/release/dorion
-          recursive: true
-          dest: Dorion.zip
+        run: zip -r Dorion.zip src-tauri/target/release/artifacts
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: DorionLinux
+          name: Dorion_Amd64_Portable.zip
           path: Dorion.zip
+
+      # Upload deb
+      - name: Upload deb
+        uses: actions/upload-artifact@v3
+        with:
+          path: src-tauri/target/release/bundle/deb/*.deb
+
+      # Upload AppImage
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v3
+        with:
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
   
   build-macos:
     runs-on: macos-12
@@ -107,17 +123,24 @@ jobs:
           toolchain: stable
 
       - name: Install deps and build
-        run: yarn && yarn build &&  yarn tauri build
+        run: yarn && yarn build &&  yarn tauri build --target universal-apple-darwin
 
+      # Move built to its  own folder for compression
+      - name: Move build
+        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/dorion src-tauri/target/release/artifacts/dorion && mv src-tauri/target/release/html src-tauri/target/release/artifacts/html && mv src-tauri/target/release/injection src-tauri/target/release/artifacts/injection && mv src-tauri/target/release/icons src-tauri/target/release/artifacts/icons
+
+      # Zip artifact folder
       - name: Compress build
-        uses: vimtor/action-zip@v1
-        with:
-          files: src-tauri/target/release/bundle/dmg/dorion*.dmg src-tauri/target/release/bundle/macOS/dorion*.pkg
-          recursive: true
-          dest: Dorion.zip
+        run: zip -r Dorion.zip src-tauri/target/release/artifacts
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: DorionMacOS
+          name: Dorion_MacOS_Portable.zip
           path: Dorion.zip
+
+      # Upload dmg
+      - name: Upload dmg
+        uses: actions/upload-artifact@v3
+        with:
+          path: src-tauri/target/release/bundle/dmg/*.dmg
