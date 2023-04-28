@@ -32,7 +32,9 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 
 # Setup
 
-Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.deb` for Linux, etc.) and install!
+Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.deb` for Debian, etc.) and install!
+
+If you'd like to be on the cutting edge, you can also grab an artifact from the [actions tab!](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml)
 
 # Why use Dorion?
 
