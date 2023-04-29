@@ -2,6 +2,7 @@
 window.__TAURI__.invoke('is_injected')
 
 // Keys for PTT key thing
+let keyCapturing = false
 let pttKeysCaptured = []
 const keyClass = 'key-RP8gj3'
 
@@ -268,6 +269,7 @@ function prefillConfig(config) {
   const systray = document.querySelector('#systray')
   const telemetry = document.querySelector('#telemetry')
   const ptt = document.querySelector('#ptt')
+  const pttKeys = document.querySelector('#ptt-key-section')
 
   if (themeSelect) {
     themeSelect.value = config.theme
@@ -300,6 +302,18 @@ function prefillConfig(config) {
     if (config.ptt) {
       document.querySelector('#ptt-keys').style.display = 'block'
     }
+  }
+
+  if (pttKeys) {
+    // Fill with keys
+    const keys = config.push_to_talk_keys
+
+    keys.forEach(key => {
+      pttKeys.innerHTML = ''
+      pttKeys.innerHTML += `
+      <span class="${keyClass}">${key}</span>
+      `
+    })
   }
 }
 
@@ -540,7 +554,9 @@ async function createPluginList() {
  * Used to capture the key combo for PTT
  */
 function pttKeyFunc(evt) {
-  const keyClass = 'key-RP8gj3'
+  if (keyCapturing) return
+
+  keyCapturing = true
 
   // Clear existing content
   evt.target.innerHTML = ''
@@ -593,6 +609,8 @@ function pttKeyCapture(evt) {
 function pttEndCapture(evt) {
   document.removeEventListener('keydown', pttKeyCapture)
   document.removeEventListener('keyup', pttEndCapture)
+
+  keyCapturing = false
 
   console.log('Final key combo: ', pttKeysCaptured)
 
