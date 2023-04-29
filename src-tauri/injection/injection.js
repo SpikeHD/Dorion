@@ -1,6 +1,10 @@
 // Ensure we don't fire more than we have to
 window.__TAURI__.invoke('is_injected')
 
+// Keys for PTT key thing
+let pttKeysCaptured = []
+const keyClass = 'key-RP8gj3'
+
 // Create URL opener which will open links in the default system browser
 // TODO: Don't resort to using this yet
 // window.openURL = (url) => {
@@ -162,7 +166,7 @@ function settingInserter() {
 
   observer = new MutationObserver(() => {
     // Shove a new option in settings when it's open to go back to Dorion settings
-    const appSettings = document.querySelectorAll('div[class*="header-"')[2]
+    const appSettings = document.querySelectorAll('nav[class*="sidebar-"] div[class*="header"]')[4]
     
     if (appSettings && !insertedSetting) {
       // Yoink the next tabs styling
@@ -194,8 +198,6 @@ function applyNotificationCount() {
   const { invoke } = window.__TAURI__
   const title = document.querySelector('title')
   const notifs = title.innerHTML.match(/\((.*)\)/)
-
-  console.log(notifs)
 
   if (!notifs) {
     invoke('notif_count', {
@@ -408,6 +410,7 @@ function initOnclickHandlers() {
   const { invoke } = window.__TAURI__
   const openPlugins = document.querySelector('#openPlugins')
   const openThemes = document.querySelector('#openThemes')
+  const pttKeys = document.querySelector('#ptt-key-section')
   const finishBtn = document.querySelector('#finishBtn')
 
   if (openPlugins) {
@@ -420,6 +423,10 @@ function initOnclickHandlers() {
     openThemes.addEventListener('click', () => {
       invoke('open_themes')
     })
+  }
+
+  if (pttKeys) {
+    pttKeys.addEventListener('click', pttKeyFunc)
   }
 
   if (finishBtn) {
@@ -527,4 +534,68 @@ async function createPluginList() {
     setSlider(`${plId}_enable`, !plugin.disabled)
     setSlider(`${plId}_preload`, plugin.preload)
   })
+}
+
+/**
+ * Used to capture the key combo for PTT
+ */
+function pttKeyFunc(evt) {
+  const keyClass = 'key-RP8gj3'
+
+  // Clear existing content
+  evt.target.innerHTML = ''
+
+  // Insert text with instructions
+  evt.target.innerHTML = `
+  <span class="${keyClass}">Press any combination of keys</span>
+  `
+
+  // Clear the array
+  pttKeysCaptured = []
+
+  // Begin capturing key presses
+  document.addEventListener('keydown', pttKeyCapture)
+  document.addEventListener('keyup', pttEndCapture)
+}
+
+function pttKeyCapture(evt) {
+  const pttKeys = document.querySelector('#ptt-key-section')
+  let key = ''
+
+  if (pttKeysCaptured.includes(evt.keyCode) || !evt.keyCode) {
+    return
+  }
+
+  if (pttKeysCaptured.length <= 0) {
+    pttKeys.innerHTML = ``
+  }
+
+  // Differentiate from left and right control
+  key = evt.key === 'Control' ? evt.location === 1 ? 'LControl' : 'RControl' : evt.key
+
+  // ...and left/right Alt
+  key = evt.key === 'Alt' ? evt.location === 1 ? 'LAlt' : 'RAlt' : evt.key
+
+  // ...and left/right Shift
+  key = evt.key === 'Shift' ? evt.location === 1 ? 'LShift' : 'RShift' : evt.key
+
+  pttKeysCaptured.push(key)
+
+  // Add the key to the ptt keys section element
+  pttKeys.innerHTML += `
+  <span class="${keyClass}">${key}</span>
+  `
+}
+
+/**
+ * When the user releases keys from a key combo, clelar both event listeners
+ */
+function pttEndCapture(evt) {
+  document.removeEventListener('keydown', pttKeyCapture)
+  document.removeEventListener('keyup', pttEndCapture)
+
+  console.log('Final key combo: ', pttKeysCaptured)
+
+  // Save the key combo to the config
+  setConfigValue('push_to_talk_keys', pttKeysCaptured)
 }
