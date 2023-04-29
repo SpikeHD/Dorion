@@ -8,6 +8,8 @@ pub struct Config {
   client_type: Option<String>,
   sys_tray: Option<bool>,
   block_telemetry: Option<bool>,
+  push_to_talk: Option<bool>,
+  push_to_talk_keys: Option<Vec<String>>,
 }
 
 pub fn init() {
@@ -55,6 +57,8 @@ pub fn default_config() -> Config {
     client_type: Option::from("default".to_string()),
     sys_tray: Option::from(false),
     block_telemetry: Option::from(false),
+    push_to_talk: Option::from(false),
+    push_to_talk_keys: Option::from(vec!["RControl".to_string()]),
   }
 }
 

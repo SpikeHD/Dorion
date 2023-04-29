@@ -87,8 +87,8 @@
             <!-- Checkbox/slider SVG -->
             <svg class="slider-HJFN2i" viewBox="0 0 28 20" preserveAspectRatio="xMinYMid meet" aria-hidden="true"
               style="left: -3px;">
-              <rect fill="white" x="4" y="0" height="20" width="20" rx="10"></rect><svg viewBox="0 0 20 20"
-                fill="none">
+              <rect fill="white" x="4" y="0" height="20" width="20" rx="10"></rect>
+              <svg viewBox="0 0 20 20" fill="none">
                 <path fill="rgba(128, 132, 142, 1)"
                   d="M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z"></path>
                 <path fill="rgba(128, 132, 142, 1)"
@@ -97,6 +97,43 @@
             </svg>
             <!-- End SVG -->
             <input type="checkbox" class="input-125oad" id="telemetry" name="telemetry" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="h5-2feg8J eyebrow-2wJAoF defaultMarginh5-3THN2O">
+      Push-to--talk
+    </h3>
+    <div class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
+      <div class="labelRow-NnoUIp">
+        <label for="ptt">Push-to-talk</label>
+        <div class="control-10qYax">
+          <div class="container-1QtPKm default-colors" style="opacity: 1; background-color: rgb(128, 132, 142);">
+            <!-- Checkbox/slider SVG -->
+            <svg class="slider-HJFN2i" viewBox="0 0 28 20" preserveAspectRatio="xMinYMid meet" aria-hidden="true"
+              style="left: -3px;">
+              <rect fill="white" x="4" y="0" height="20" width="20" rx="10"></rect>
+              <svg viewBox="0 0 20 20" fill="none">
+                <path fill="rgba(128, 132, 142, 1)"
+                  d="M5.13231 6.72963L6.7233 5.13864L14.855 13.2704L13.264 14.8614L5.13231 6.72963Z"></path>
+                <path fill="rgba(128, 132, 142, 1)"
+                  d="M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z"></path>
+              </svg>
+            </svg>
+            <!-- End SVG -->
+            <input type="checkbox" class="input-125oad" id="ptt" name="ptt" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ptt-keys" style="display:none;" class="container-1zDvAE marginTop8-24uXGp marginBottom20-315RVT">
+      <div class="labelRow-NnoUIp">
+        <label for="ptt">Push-to-talk key(s)</label>
+        <div class="control-10qYax">
+          <div class="ptt-keys">
+            <!-- Autofilled with javascript -->
           </div>
         </div>
       </div>
@@ -149,6 +186,12 @@
   </div>
 </div>
 <style>
+  .ptt-keys {
+    padding: 10px;
+    border-radius: 4px;
+    background-color: var(--background-secondary);
+  }
+
   .select-Zz0IcO {
     width: 100%;
   }

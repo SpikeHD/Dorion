@@ -265,6 +265,7 @@ function prefillConfig(config) {
   const clientType = document.querySelector('#clientType')
   const systray = document.querySelector('#systray')
   const telemetry = document.querySelector('#telemetry')
+  const ptt = document.querySelector('#ptt')
 
   if (themeSelect) {
     themeSelect.value = config.theme
@@ -288,6 +289,16 @@ function prefillConfig(config) {
     telemetry.checked = config.block_telemetry
     setSlider('telemetry', config.block_telemetry)
   }
+
+  if (ptt) {
+    ptt.checked = config.ptt
+    setSlider('ptt', config.ptt)
+
+    // If true, enable ptt-keys
+    if (config.ptt) {
+      document.querySelector('#ptt-keys').style.display = 'block'
+    }
+  }
 }
 
 /**
@@ -300,6 +311,7 @@ function initOnchangeHandlers() {
   const clientType = document.querySelector('#clientType')
   const systray = document.querySelector('#systray')
   const telemetry = document.querySelector('#telemetry')
+  const ptt = document.querySelector('#ptt')
 
   themeSelect?.addEventListener('change', (evt) => {
     const tgt = evt.target
@@ -338,6 +350,19 @@ function initOnchangeHandlers() {
     setSlider(evt.target.id, tgt.checked)
     setConfigValue('block_telemetry', tgt.checked)
   })
+
+  ptt?.addEventListener('change', (evt) => {
+    const tgt = evt.target
+
+    setSlider(evt.target.id, tgt.checked)
+    setConfigValue('ptt', tgt.checked)
+
+    // Also make ptt-keys appear if checked
+    const pttKeys = document.querySelector('#ptt-keys')
+    if (pttKeys) {
+      pttKeys.style.display = tgt.checked ? 'block' : 'none'
+    }
+  })
 }
 
 /**
@@ -360,12 +385,6 @@ function setSlider(id, enabled) {
   `
 
   elm.checked = enabled
-
-  console.log('===')
-  console.log(id)
-  console.log('enabled? ' + enabled)
-  console.log('checked? ' + elm.checked)
-  console.log('===')
   
   if (enabled) {
     svg.style.left = '12px'

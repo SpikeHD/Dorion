@@ -187,6 +187,8 @@ fn main() {
 
       modify_window(&win);
 
+      hotkeys::start_hotkey_watcher();
+
       do_injection(win);
 
       Ok(())

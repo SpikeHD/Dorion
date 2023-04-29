@@ -1,13 +1,16 @@
+use std::{thread, time::Duration};
 use device_query::{DeviceQuery, DeviceState, MouseState, Keycode, DeviceEvents};
 
 pub fn start_hotkey_watcher() {
-  let device_state = DeviceState::new();
+  thread::spawn(move || {    
+    let device_state = DeviceState::new();    
+    loop {    
+        let keys: Vec<Keycode> = device_state.get_keys();    
 
-  let _guard = device_state.on_key_down(|key| {
-    println!("Keyboard key down: {:#?}", key);
-  });
+        //println!("keys: {:?}", keys);
 
-  let _guard = device_state.on_key_up(|key| {
-    println!("Keyboard key up: {:#?}", key);
-  });
+        // pick whatever timeout works for you in here    
+        thread::sleep(Duration::from_millis(1));    
+    }    
+});    
 }
