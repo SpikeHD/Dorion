@@ -19,7 +19,7 @@ pub async fn get_latest_release() -> Release {
   // Parse "tag_name" from JSON
   let json: serde_json::Value = serde_json::from_str(&text).unwrap();
   let tag_name = json["tag_name"].as_str().unwrap();
-  
+
   // Parse "html_url"
   let link = json["html_url"].as_str().unwrap();
 

@@ -100,5 +100,7 @@ pub fn get_ptt() -> bool {
 pub fn get_ptt_keys() -> Vec<String> {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
-  parsed.push_to_talk_keys.unwrap_or(vec!["RControl".to_string()])
+  parsed
+    .push_to_talk_keys
+    .unwrap_or_else(|| vec!["RControl".to_string()])
 }
