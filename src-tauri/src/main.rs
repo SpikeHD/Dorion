@@ -12,6 +12,7 @@ use tauri::{
 mod config;
 mod css_preprocess;
 mod helpers;
+mod hotkeys;
 mod injection;
 mod js_preprocess;
 mod local_html;
