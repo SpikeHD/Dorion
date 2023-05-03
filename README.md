@@ -24,6 +24,9 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 * [Why use Dorion?](#why-use-dorion)
   * [Plugins](#plugins)
   * [Themes](#themes)
+* [Building](#building)
+  * [Prerequisites](#prerequisites)
+  * [Steps](#steps)
 * [Known Issues](#known-issues)
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
@@ -57,6 +60,43 @@ Dorion supports all themes, BetterDiscord and others
 
 [Jump to "Using Plugins and Themes"](#using-plugins-and-themes)
 
+# Building
+
+### Prerequisites
+
+* [NodeJS](https://nodejs.org)
+* [Rust and Cargo](https://www.rust-lang.org/tools/install)
+
+### Steps
+
+1. Clone/download the repository
+2. Open a terminal window in the root project folder
+3. Install JS dependencies:
+  ```sh
+  yarn install
+  # or
+  npm install
+  ```
+4. Build the minified versions of the JS/HTML files:
+  ```sh
+  yarn build
+  # or
+  npm run build
+  ```
+5. Install Rust dependencies:
+  ```sh
+  cd ./src-tauri
+  cargo install
+  ```
+6. Navigate back to the root project folder and build!
+  ```sh
+  yarn tauri build
+  # or to debug/open in dev mode
+  yarn tauri dev
+  ```
+
+All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `html`, `icons`, and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/msi`
+
 # Known Issues
 
 * Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
@@ -67,6 +107,8 @@ Dorion supports all themes, BetterDiscord and others
 
 * [ ] Desktop notifications
   * [x] AND displaying the number of notifs in the desktop icon
+* [ ] Webpack stuff
+* [ ] Global push-to-talk
 * [ ] Rich presence(?)
 * [ ] Helper API methods and events for plugins
 * [ ] Backup localized themes
