@@ -28,6 +28,7 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
   * [Prerequisites](#prerequisites)
   * [Steps](#steps)
 * [Known Issues](#known-issues)
+* [Troubleshooting](#troubleshooting)
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
 * [Contributing](#contributing)
@@ -103,6 +104,15 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 * Push-to-talk
 * A couple bugs with CSS & image import related stuff
 
+# Troubleshooting
+
+If you are having problems opening Dorion, or it instantly crashes, or something similar, try the following:
+* Install via MSI instead of the `.zip` file
+* Use the `.zip` file instead of the MSI
+* (If using the `.zip` file) make sure all files were extracted properly (`html`, `injection`, etc.)
+* [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+
+
 # TODO
 
 * [ ] Desktop notifications
@@ -118,7 +128,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 # Using Plugins and Themes
 
-*See the `examples` directory for examples of plugins, including how to include external code, and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some existing ones with actual use.*
+*See the `examples` directory for examples of plugins, including how to include external code and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some existing ones with actual use.*
 
 Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
