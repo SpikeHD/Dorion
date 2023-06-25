@@ -259,14 +259,13 @@ fn modify_window(window: &Window) {
       }
 
       // untested
-      // #[cfg(target_os = "macos")]
-      // unsafe {
-      //   use objc::{msg_send, sel, sel_impl};
-      //   use objc_foundation::{INSString, NSString};
-      //   let agent = NSString::from_str(user_agent);
+      #[cfg(target_os = "macos")]
+      unsafe {
+        // Set zoom level
+        use objc::{msg_send, sel, sel_impl};
 
-      //   // TODO: zoom level n stuff
-      // }
+        let _: () = msg_send![webview.ns_window(), windowRef];
+      }
     })
     .unwrap();
 }

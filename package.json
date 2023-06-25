@@ -14,7 +14,6 @@
     "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
     "codefix": "yarn format && yarn clippy && yarn lint"
   },
-  "dependencies": {},
   "devDependencies": {
     "@tauri-apps/api": "^1.0.2",
     "@tauri-apps/cli": "^1.0.5",
