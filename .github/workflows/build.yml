@@ -130,7 +130,7 @@ jobs:
         run: rustup target add aarch64-apple-darwin
 
       - name: Install deps and build
-        run: yarn && yarn build &&  yarn tauri build #--target universal-apple-darwin
+        run: yarn && yarn update && yarn build &&  yarn tauri build --target universal-apple-darwin
 
       # Zip artifact folder
       - name: Compress build
