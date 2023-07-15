@@ -51,6 +51,7 @@ If you'd like to be on the cutting edge, you can also grab an artifact from the 
 * Often loads slightly faster (vanilla)
 * Switch between Stable, Canary and PTB clients straight from the settings
 * Built-in telemetry blocking option
+* Not only is Vencord included by default, but Dorion uses a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion) with extras specifically for Dorion
 * Made by me (automatically makes it cooler)
 
 ## Plugins
