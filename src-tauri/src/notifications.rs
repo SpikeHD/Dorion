@@ -10,9 +10,15 @@ pub fn set_notif_icon(window: tauri::Window, amount: u16) {
     let mut icon_path = PathBuf::from("icons/icon");
     icon_path.set_extension("ico");
 
-    window.set_icon(Icon::File(
-      window.app_handle().path_resolver().resolve_resource(icon_path).unwrap(),
-    )).unwrap_or(());
+    window
+      .set_icon(Icon::File(
+        window
+          .app_handle()
+          .path_resolver()
+          .resolve_resource(icon_path)
+          .unwrap(),
+      ))
+      .unwrap_or(());
     return;
   }
 
@@ -20,9 +26,15 @@ pub fn set_notif_icon(window: tauri::Window, amount: u16) {
   let mut icon_path = PathBuf::from("icons/").join(icon_name);
   icon_path.set_extension("ico");
 
-  window.set_icon(Icon::File(
-    window.app_handle().path_resolver().resolve_resource(icon_path).unwrap(),
-  )).unwrap_or(());
+  window
+    .set_icon(Icon::File(
+      window
+        .app_handle()
+        .path_resolver()
+        .resolve_resource(icon_path)
+        .unwrap(),
+    ))
+    .unwrap_or(());
 }
 
 #[tauri::command]

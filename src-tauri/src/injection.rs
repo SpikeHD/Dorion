@@ -11,8 +11,7 @@ pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<Stri
     .path_resolver()
     .resolve_resource(PathBuf::from("injection/injection_min.js"))
     .unwrap();
-  let injection_js = match fs::read_to_string(js_path)
-  {
+  let injection_js = match fs::read_to_string(js_path) {
     Ok(f) => f,
     Err(e) => {
       println!("Failed to read injection JS in local dir: {}", e);
@@ -50,8 +49,7 @@ pub fn preinject(window: &tauri::Window) {
     .path_resolver()
     .resolve_resource(PathBuf::from("injection/preinject_min.js"))
     .unwrap();
-  let injection_js = match fs::read_to_string(js_path)
-  {
+  let injection_js = match fs::read_to_string(js_path) {
     Ok(f) => f,
     Err(e) => {
       println!("Failed to read preinject JS in local dir: {}", e);
