@@ -177,7 +177,7 @@ Installation size.
 ![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
 Loading screen. So cool!
 
-![image](https://user-images.githubusercontent.com/25207995/233516070-146c3835-edf1-4fba-96dd-7df57022a06b.png)
+![image](https://github.com/SpikeHD/Dorion/assets/25207995/3958ad8f-6bb3-4e1d-b8a8-aae1d4d07157)
 
 ![image](https://user-images.githubusercontent.com/25207995/202835451-31432fbd-69f1-4564-8830-59ebfcfde7fe.png)
 Theme: [Dark Neon](https://betterdiscord.app/theme/Dark%20Neon)
