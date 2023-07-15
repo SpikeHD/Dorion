@@ -42,6 +42,8 @@
       "resources": [
         "injection/preinject_min.js",
         "injection/injection_min.js",
+        "injection/browser.js",
+        "injection/browser.css",
         "html/index.html",
         "html/top.html",
         "html/notification.html",

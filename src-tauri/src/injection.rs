@@ -1,5 +1,5 @@
-use std::{collections::HashMap, env, fs, thread, time::Duration};
-use tauri::regex::Regex;
+use std::{collections::HashMap, env, fs, thread, time::Duration, path::PathBuf};
+use tauri::{regex::Regex, Manager};
 
 use crate::{helpers::resource_folder, js_preprocess::eval_js_imports};
 
@@ -32,7 +32,40 @@ pub fn preinject(window: &tauri::Window) {
     }
   };
 
-  window.eval(injection_js.as_str()).unwrap_or(())
+  match window.eval(injection_js.as_str()) {
+    Ok(r) => r,
+    Err(e) => {
+      println!("Error evaluating preinject: {}", e)
+    }
+  };
+
+  // Run vencord's preinject script
+  match window.eval(
+    &get_vencord_js_content(&window.app_handle())
+  ) {
+    Ok(r) => r,
+    Err(e) => {
+      println!("Error evaluating vencord preinject: {}", e)
+    }
+  };
+
+  // Inject vencords css
+  match window.eval(
+    format!(
+      "
+      const ts = document.createElement('style')
+
+      ts.textContent = `
+        {}
+      `
+
+      document.head.appendChild(ts)", get_vencord_css_content(&window.app_handle())).as_str()
+  ) {
+    Ok(r) => r,
+    Err(e) => {
+      println!("Error evaluating vencord css: {}", e)
+    }
+  };
 }
 
 #[tauri::command]
@@ -101,7 +134,6 @@ fn periodic_injection_check(
         break;
       }
 
-      // Check if window.dorion exists
       window
         .eval(
           format!(
@@ -115,4 +147,36 @@ fn periodic_injection_check(
         .unwrap_or(());
     }
   });
+}
+
+pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
+  let path = app
+    .path_resolver()
+    .resolve_resource(PathBuf::from("injection/browser.js"))
+    .unwrap();
+
+  match fs::read_to_string(path) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Failed to read browser.js in resource dir: {}", e);
+
+      String::new()
+    }
+  }
+}
+
+pub fn get_vencord_css_content(app: &tauri::AppHandle) -> String {
+  let path = app
+    .path_resolver()
+    .resolve_resource(PathBuf::from("injection/browser.css"))
+    .unwrap();
+
+  match fs::read_to_string(path) {
+    Ok(f) => f,
+    Err(e) => {
+      println!("Failed to read browser.css in resource dir: {}", e);
+
+      String::new()
+    }
+  }
 }

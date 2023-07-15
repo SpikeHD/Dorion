@@ -88,6 +88,8 @@ pub fn get_client_type() -> String {
 pub fn get_systray() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+
+  println!("{:?}", read_config_file().as_str());
   parsed.sys_tray.unwrap_or(false)
 }
 

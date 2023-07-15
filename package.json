@@ -12,7 +12,8 @@
     "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all",
     "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
     "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
-    "codefix": "yarn format && yarn clippy && yarn lint"
+    "codefix": "yarn format && yarn clippy && yarn lint",
+    "update": "curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.css -o src-tauri/injection/browser.css && curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.js -o src-tauri/injection/browser.js"
   },
   "devDependencies": {
     "@tauri-apps/api": "^1.0.2",

@@ -54,6 +54,8 @@ async function createTopBar() {
  * This will localize imports for JS and CSS, as well as some other things
  */
 (async () => {
+  createLocalStorage()
+
   await displayLoadingTop()
   await createTopBar()
 
@@ -270,4 +272,18 @@ function _interceptEventListeners() {
     }
     return this._addEventListener(...args);
   }
+}
+
+/**
+ * Discord wipes `window.localStorage`, so we have to recreate it in case plugins require it
+ * 
+ * https://github.com/SpikeHD/Dorion/issues/7#issuecomment-1320861432
+ */
+function createLocalStorage() {
+  const iframe = document.createElement('iframe');
+  document.head.append(iframe);
+  const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
+  iframe.remove();
+  
+  Object.defineProperty(window, 'localStorage', pd)
 }
