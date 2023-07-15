@@ -16,6 +16,8 @@
 
 <div align="center">
 Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
+ <br />
+ https://discord.gg/agQ9mRdHMZ
 </div>
 
 # Table of Contents
