@@ -3,7 +3,6 @@
   windows_subsystem = "windows"
 )]
 
-use cocoa::appkit::NSImage;
 use config::get_client_type;
 use tauri::{
   api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
@@ -247,9 +246,10 @@ fn modify_window(window: &Window) {
       #[cfg(target_os = "macos")]
       unsafe {
         // Set zoom level
-        use objc::{msg_send, sel, sel_impl};
+        use objc::{msg_send, sel, sel_impl, class};
+        use cocoa::base::id;
 
-        let _: () = msg_send![webview.ns_window(), windowRef];
+        // let _: () = msg_send![webview.ns_window(), windowRef];
       }
     })
     .unwrap();
