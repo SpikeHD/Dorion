@@ -91,7 +91,7 @@ Dorion supports all themes, BetterDiscord and others
   ```sh
   yarn update
   ```
-6. Navigate back to the root project folder and build!
+6. Build!
   ```sh
   yarn tauri build
   # or to debug/open in dev mode
