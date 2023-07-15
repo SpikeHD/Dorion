@@ -115,9 +115,10 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 
 # TODO
 
+* [ ] Use resource files from application itself instead of the filesystem
 * [ ] Desktop notifications
   * [x] AND displaying the number of notifs in the desktop icon
-* [ ] Webpack stuff
+* [x] Webpack stuff
 * [ ] Global push-to-talk
 * [ ] Rich presence(?)
 * [ ] Helper API methods and events for plugins
