@@ -22,9 +22,17 @@ pub fn get_index(win: tauri::Window) -> String {
   get_html(win.app_handle(), "html/index.html")
 }
 
+#[cfg(not(target_os = "macos"))]
 #[tauri::command]
 pub fn get_top_bar(win: tauri::Window) -> String {
   get_html(win.app_handle(), "html/top.html")
+}
+
+// Top bar is broken for MacOS currently
+#[cfg(target_os = "macos")]
+#[tauri::command]
+pub fn get_top_bar(_win: tauri::Window) -> String {
+  String::new()
 }
 
 #[tauri::command]

@@ -3,6 +3,7 @@
   windows_subsystem = "windows"
 )]
 
+use cocoa::appkit::NSImage;
 use config::get_client_type;
 use tauri::{
   api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,

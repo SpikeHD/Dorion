@@ -68,7 +68,8 @@ async function createTopBar() {
   const safemode = document.querySelector('#safemode')
 
   // Set version displlayed in top bar
-  document.querySelector('#dorion_version').innerHTML = `Dorion - v${version}`
+  const versionElm = document.querySelector('#dorion_version')
+  if (versionElm) versionElm.innerHTML = `Dorion - v${version}`
 
   // Start safemode timer and event listener right away, just in case
   safemodeTimer(safemode)
