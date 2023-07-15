@@ -21,7 +21,7 @@ If applicable, add screenshots to help explain your problem.
 
 **System Info (please complete the following information):**
  - OS: [e.g. Windows 11, Ubuntu 22.04]
- - Version: [e.g. v0.5.0]
+ - Version: [e.g. v0.6.0]
  - Any other relevant info: 
 
 **Additional context**

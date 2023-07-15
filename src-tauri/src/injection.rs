@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env, fs, thread, time::Duration, path::PathBuf};
+use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
 use crate::{helpers::resource_folder, js_preprocess::eval_js_imports};
@@ -40,9 +40,7 @@ pub fn preinject(window: &tauri::Window) {
   };
 
   // Run vencord's preinject script
-  match window.eval(
-    &get_vencord_js_content(&window.app_handle())
-  ) {
+  match window.eval(&get_vencord_js_content(&window.app_handle())) {
     Ok(r) => r,
     Err(e) => {
       println!("Error evaluating vencord preinject: {}", e)
@@ -59,7 +57,10 @@ pub fn preinject(window: &tauri::Window) {
         {}
       `
 
-      document.head.appendChild(ts)", get_vencord_css_content(&window.app_handle())).as_str()
+      document.head.appendChild(ts)",
+      get_vencord_css_content(&window.app_handle())
+    )
+    .as_str(),
   ) {
     Ok(r) => r,
     Err(e) => {
