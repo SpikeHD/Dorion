@@ -1,12 +1,17 @@
 use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
-use crate::{helpers::resource_folder, js_preprocess::eval_js_imports, plugin};
+use crate::{js_preprocess::eval_js_imports, plugin};
 
 #[tauri::command]
-pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
+pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let injection_js = match fs::read_to_string(resource_folder().join("injection/injection_min.js"))
+  let js_path = win
+    .app_handle()
+    .path_resolver()
+    .resolve_resource(PathBuf::from("injection/injection_min.js"))
+    .unwrap();
+  let injection_js = match fs::read_to_string(js_path)
   {
     Ok(f) => f,
     Err(e) => {
@@ -33,14 +38,19 @@ pub fn do_injection(win: tauri::Window) {
 
   // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
-    std::thread::sleep(std::time::Duration::from_secs(2));
+    std::thread::sleep(std::time::Duration::from_secs(1));
 
     preinject(&win);
   });
 }
 
 pub fn preinject(window: &tauri::Window) {
-  let injection_js = match fs::read_to_string(resource_folder().join("injection/preinject_min.js"))
+  let js_path = window
+    .app_handle()
+    .path_resolver()
+    .resolve_resource(PathBuf::from("injection/preinject_min.js"))
+    .unwrap();
+  let injection_js = match fs::read_to_string(js_path)
   {
     Ok(f) => f,
     Err(e) => {
