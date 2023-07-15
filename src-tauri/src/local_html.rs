@@ -19,11 +19,6 @@ pub fn get_index() -> String {
 }
 
 #[tauri::command]
-pub fn get_settings() -> String {
-  get_html("html/settings.html")
-}
-
-#[tauri::command]
 pub fn get_top_bar() -> String {
   get_html("html/top.html")
 }

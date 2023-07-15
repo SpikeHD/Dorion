@@ -124,7 +124,6 @@ fn main() {
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
       local_html::get_index,
-      local_html::get_settings,
       local_html::get_top_bar,
       local_html::get_notif,
       notifications::notif_count,
