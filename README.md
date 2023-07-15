@@ -87,10 +87,9 @@ Dorion supports all themes, BetterDiscord and others
   # or
   npm run build
   ```
-5. Install Rust dependencies:
+5. Pull the Vencord fork
   ```sh
-  cd ./src-tauri
-  cargo install
+  yarn update
   ```
 6. Navigate back to the root project folder and build!
   ```sh
