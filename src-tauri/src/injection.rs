@@ -1,7 +1,7 @@
 use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
-use crate::{helpers::resource_folder, js_preprocess::eval_js_imports};
+use crate::{helpers::resource_folder, js_preprocess::eval_js_imports, plugin};
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
@@ -20,6 +20,23 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
     .to_string();
 
   Ok(rewritten_all)
+}
+
+#[tauri::command]
+pub fn do_injection(win: tauri::Window) {
+  let preload_plugins = plugin::load_plugins(Option::Some(true));
+
+  // Execute preload scripts
+  for script in preload_plugins.values() {
+    win.eval(script).unwrap_or(());
+  }
+
+  // Gotta make sure the window location is where it needs to be
+  std::thread::spawn(move || {
+    std::thread::sleep(std::time::Duration::from_secs(2));
+
+    preinject(&win);
+  });
 }
 
 pub fn preinject(window: &tauri::Window) {

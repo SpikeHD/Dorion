@@ -49,23 +49,6 @@ fn change_zoom(window: tauri::Window, zoom: f64) {
 #[tauri::command]
 fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
-#[tauri::command]
-fn do_injection(win: tauri::Window) {
-  let preload_plugins = plugin::load_plugins(Option::Some(true));
-
-  // Execute preload scripts
-  for script in preload_plugins.values() {
-    win.eval(script).unwrap_or(());
-  }
-
-  // Gotta make sure the window location is where it needs to be
-  std::thread::spawn(move || {
-    std::thread::sleep(std::time::Duration::from_secs(2));
-
-    injection::preinject(&win);
-  });
-}
-
 fn create_systray() -> SystemTray {
   let open_btn = CustomMenuItem::new("open".to_string(), "Open");
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
@@ -120,7 +103,6 @@ fn main() {
       maximize,
       close,
       change_zoom,
-      do_injection,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
       local_html::get_index,
@@ -133,6 +115,7 @@ fn main() {
       plugin::toggle_preload,
       plugin::get_plugin_import_urls,
       release::get_latest_release,
+      injection::do_injection,
       injection::get_injection_js,
       injection::is_injected,
       injection::load_injection_js,
@@ -188,7 +171,9 @@ fn main() {
 
       hotkeys::start_hotkey_watcher();
 
-      do_injection(win);
+      //win.open_devtools();
+
+      injection::do_injection(win);
 
       Ok(())
     })
