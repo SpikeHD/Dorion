@@ -82,6 +82,8 @@ async function createTopBar() {
 
   // Once done, remove original top bar
   window.__TAURI__.invoke('remove_top_bar')
+
+  initTopBarEvents()
 }
 
 
@@ -97,9 +99,6 @@ function onClientLoad() {
 
   // Assign notification count
   applyNotificationCount()
-
-  // Initialize top bar events
-  initTopBarEvents()
 
   // Check for updates
   console.log('Checking for updates...')
@@ -154,10 +153,13 @@ async function checkForUpdates() {
     showNotification('Update Available', `<a href="${latest.link}">Dorion v${latestNum}</a> is now available!`)
   }
 }
+
 /**
  * Give events to the top bar buttons
  */
 function initTopBarEvents() {
+  console.log(document.querySelector('#topclose'))
+
   document.querySelector('#topclose').onclick = close
   document.querySelector('#topmin').onclick = minimize
   document.querySelector('#topmax').onclick = maximize

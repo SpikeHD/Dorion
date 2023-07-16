@@ -54,13 +54,15 @@ pub async fn localize_imports(css: String) -> String {
 }
 
 pub async fn localize_images(css: String) -> String {
-  let img_reg = Regex::new(r"url\((.*(jpg|png|jpeg|gif))\)").unwrap();
+  let img_reg = Regex::new(r#"url\((?:"|'|)(http.*?\.png|.jpeg|.jpg|.gif)(?:"|'|)\);"#).unwrap();
   let matches = img_reg.captures_iter(&css);
   let mut new_css = css.clone();
 
   for groups in matches {
     let url = groups.get(1).unwrap().as_str();
     let filetype = url.split('.').last().unwrap();
+
+    println!("{}", url);
 
     if url.is_empty() {
       continue;
