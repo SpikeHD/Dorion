@@ -29,6 +29,9 @@ let observer = new MutationObserver(() => {
   if (loading && !loaded) {
     console.log('Discord is loaded!')
 
+    // This needs to render after discord is loaded
+    createTopBar()
+
     onClientLoad()
 
     // The comments ahead are read by tauri and used to insert plugin/theme injection code
@@ -55,6 +58,32 @@ function minimize() {
 function maximize() {
   window.__TAURI__.invoke('maximize')
 }
+
+
+async function createTopBar() {
+  const topbar = document.createElement("div");
+  const content = await window.__TAURI__.invoke('get_top_bar');
+
+  // If the top bar failed to load, stick to the default
+  if (!content) return;
+
+  topbar.innerHTML = content
+
+  const appMount = document.querySelector('#app-mount')
+
+  if (!appMount) return
+
+  appMount.prepend(topbar);
+
+  // Set version displayed in top bar
+  const version = await window.__TAURI__.app.getVersion()
+  const versionElm = document.querySelector('#dorion_version')
+  if (versionElm) versionElm.innerHTML = `Dorion - v${version}`
+
+  // Once done, remove original top bar
+  window.__TAURI__.invoke('remove_top_bar')
+}
+
 
 /**
  * Run when the client is "loaded"

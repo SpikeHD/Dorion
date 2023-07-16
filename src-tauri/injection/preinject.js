@@ -34,21 +34,6 @@ function safemodeTimer(elm) {
   document.addEventListener('keydown', tmpKeydown)
 }
 
-async function createTopBar() {
-  const topbar = document.createElement("div");
-  const content = await window.__TAURI__.invoke('get_top_bar');
-
-  // If the top bar failed to load, stick to the default
-  if (!content) return;
-
-  topbar.innerHTML = content
-
-  document.body.prepend(topbar);
-
-  // Once done, remove original top bar
-  window.__TAURI__.invoke('remove_top_bar')
-}
-
 /**
  * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
  * This will localize imports for JS and CSS, as well as some other things
@@ -57,7 +42,6 @@ async function createTopBar() {
   createLocalStorage()
 
   await displayLoadingTop()
-  await createTopBar()
 
   const { invoke } = window.__TAURI__
   const config = JSON.parse(await invoke('read_config_file'))
@@ -66,10 +50,6 @@ async function createTopBar() {
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
   const safemode = document.querySelector('#safemode')
-
-  // Set version displlayed in top bar
-  const versionElm = document.querySelector('#dorion_version')
-  if (versionElm) versionElm.innerHTML = `Dorion - v${version}`
 
   // Start safemode timer and event listener right away, just in case
   safemodeTimer(safemode)
