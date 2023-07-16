@@ -62,8 +62,6 @@ pub async fn localize_images(css: String) -> String {
     let url = groups.get(1).unwrap().as_str();
     let filetype = url.split('.').last().unwrap();
 
-    println!("{}", url);
-
     if url.is_empty() {
       continue;
     }
