@@ -37,7 +37,7 @@ pub fn do_injection(win: tauri::Window) {
 
   // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
-    std::thread::sleep(std::time::Duration::from_millis(2000));
+    std::thread::sleep(std::time::Duration::from_millis(100));
 
     preinject(&win);
   });

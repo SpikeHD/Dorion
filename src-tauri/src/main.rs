@@ -211,20 +211,20 @@ fn modify_window(window: &Window) {
     .with_webview(move |webview| {
       #[cfg(windows)]
       unsafe {
-        use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-        use windows::core::Interface;
+        // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+        // use windows::core::Interface;
 
-        let settings: ICoreWebView2Settings2 = webview
-          .controller()
-          .CoreWebView2()
-          .unwrap()
-          .Settings()
-          .unwrap()
-          .cast()
-          .unwrap();
+        // let settings: ICoreWebView2Settings2 = webview
+        //   .controller()
+        //   .CoreWebView2()
+        //   .unwrap()
+        //   .Settings()
+        //   .unwrap()
+        //   .cast()
+        //   .unwrap();
 
-        // settings.SetUserAgent(user_agent).unwrap();
-        settings.SetIsZoomControlEnabled(true).unwrap();
+        // // settings.SetUserAgent(user_agent).unwrap();
+        // settings.SetIsZoomControlEnabled(true).unwrap();
 
         // Grab and set this config option, it's fine if it silently fails
         webview

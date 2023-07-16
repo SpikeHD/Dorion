@@ -60,7 +60,7 @@ pub fn clear_cache(win: tauri::Window) {
 
 #[cfg(target_os = "linux")]
 #[tauri::command]
-pub fn clear_cache(win: tauri::Window) {
+pub fn clear_cache(_win: tauri::Window) {
   // win.with_webview(|webview| {
   //   if let Some(context) = WebViewExt::context(webview) {
   //     use webkit2gtk::WebContextExt;
@@ -79,8 +79,23 @@ pub fn clear_cache(win: tauri::Window) {
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn clear_cache(win: tauri::Window) {
+pub fn clear_cache(_win: tauri::Window) {
   // win.with_webview(|webview| {
-  //   webview.clear_all_browsing_data();
+  //   use webview2_com::ClearBrowsingDataCompletedHandler;
+  //   use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_13, ICoreWebView2Profile2};
+  //   use windows::core::Interface;
+
+  //   let handler = ClearBrowsingDataCompletedHandler::create(Box::new(move |_| Ok(())));
+  //   unsafe {
+  //     webview.controller()
+  //       .cast::<ICoreWebView2_13>()
+  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
+  //       .Profile()
+  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
+  //       .cast::<ICoreWebView2Profile2>()
+  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
+  //       .ClearBrowsingDataAll(&handler)
+  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))
+  //   }
   // });
 }
