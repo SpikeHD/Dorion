@@ -102,7 +102,6 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 # Known Issues
 
-* Drag 'n Drop ([#3](https://github.com/SpikeHD/Dorion/issues/3))
 * Push-to-talk
 * A couple bugs with CSS & image import related stuff
 * (MacOS) Injection JS does not reinject after reloading the page
