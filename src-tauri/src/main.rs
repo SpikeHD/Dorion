@@ -165,6 +165,7 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .resizable(true)
+        .disable_file_drop_handler()
         .build()?;
 
       modify_window(&win);
