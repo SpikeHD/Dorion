@@ -247,8 +247,8 @@ fn modify_window(window: &Window) {
       #[cfg(target_os = "macos")]
       unsafe {
         // Set zoom level
-        use objc::{msg_send, sel, sel_impl, class};
         use cocoa::base::id;
+        use objc::{class, msg_send, sel, sel_impl};
 
         // let _: () = msg_send![webview.ns_window(), windowRef];
       }

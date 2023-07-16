@@ -41,8 +41,8 @@ fn open_folder(path: PathBuf) {
 pub fn clear_cache(win: tauri::Window) {
   unsafe {
     // Set zoom level
-    use objc::{msg_send, sel, sel_impl, class};
     use cocoa::base::id;
+    use objc::{class, msg_send, sel, sel_impl};
 
     // let _: () = msg_send![webview.ns_window(), windowRef];
 
