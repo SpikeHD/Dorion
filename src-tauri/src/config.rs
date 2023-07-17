@@ -31,7 +31,7 @@ pub fn read_config_file() -> String {
 pub fn write_config_file(contents: String) {
   init();
 
-  let config_file =  get_config_dir();
+  let config_file = get_config_dir();
 
   fs::write(config_file, contents).expect("Error writing config!")
 }

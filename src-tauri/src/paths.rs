@@ -65,10 +65,13 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
   plugin_dir
 }
 
-
 pub fn get_theme_dir() -> std::path::PathBuf {
   // First see if there is a local theme dir
-  let local_theme_dir = std::env::current_exe().unwrap().parent().unwrap().join("themes");
+  let local_theme_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("themes");
 
   if fs::metadata(&local_theme_dir).is_ok() {
     return local_theme_dir;
