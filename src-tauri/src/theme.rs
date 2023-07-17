@@ -1,23 +1,6 @@
 use std::fs;
 
-fn get_theme_dir() -> std::path::PathBuf {
-  let theme_dir = tauri::api::path::home_dir()
-    .unwrap()
-    .join("dorion")
-    .join("themes");
-
-  if fs::metadata(&theme_dir).is_err() {
-    match fs::create_dir_all(&theme_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        println!("Error creating theme dir: {}", e);
-        return theme_dir;
-      }
-    };
-  }
-
-  theme_dir
-}
+use crate::paths::get_theme_dir;
 
 #[tauri::command]
 pub fn get_theme(name: String) -> String {

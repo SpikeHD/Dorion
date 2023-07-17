@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 
+use crate::paths::get_config_dir;
+
 #[derive(Serialize, Deserialize)]
 pub struct Config {
   theme: Option<String>,
@@ -13,29 +15,14 @@ pub struct Config {
 }
 
 pub fn init() {
-  let appdata = tauri::api::path::data_dir().unwrap();
-  let config_file = appdata.join("dorion").join("config.json");
-
-  if fs::metadata(appdata.join("dorion")).is_err() {
-    fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
-  }
-
-  // Write default config if it doesn't exist
-  if fs::metadata(&config_file).is_err() {
-    fs::write(
-      config_file,
-      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default", "sys_tray": false, "block_telemetry": false }"#,
-    )
-    .unwrap_or(());
-  }
+  get_config_dir();
 }
 
 #[tauri::command]
 pub fn read_config_file() -> String {
   init();
 
-  let appdata = tauri::api::path::data_dir().unwrap();
-  let config_file = appdata.join("dorion").join("config.json");
+  let config_file = get_config_dir();
 
   fs::read_to_string(config_file).expect("Config does not exist!")
 }
@@ -44,8 +31,7 @@ pub fn read_config_file() -> String {
 pub fn write_config_file(contents: String) {
   init();
 
-  let appdata = tauri::api::path::data_dir().unwrap();
-  let config_file = appdata.join("dorion").join("config.json");
+  let config_file =  get_config_dir();
 
   fs::write(config_file, contents).expect("Error writing config!")
 }

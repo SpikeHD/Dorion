@@ -1,22 +1,19 @@
 use std::path::*;
 use std::process::Command;
 
+use crate::paths::get_plugin_dir;
+use crate::paths::get_theme_dir;
+
 #[tauri::command]
 pub fn open_plugins() {
-  let plugin_folder = tauri::api::path::home_dir()
-    .unwrap()
-    .join("dorion")
-    .join("plugins");
+  let plugin_folder = get_plugin_dir();
 
   open_folder(plugin_folder)
 }
 
 #[tauri::command]
 pub fn open_themes() {
-  let theme_folder = tauri::api::path::home_dir()
-    .unwrap()
-    .join("dorion")
-    .join("themes");
+  let theme_folder = get_theme_dir();
 
   open_folder(theme_folder)
 }

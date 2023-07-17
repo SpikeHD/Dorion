@@ -2,31 +2,13 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 
 use crate::js_preprocess::get_js_imports;
+use crate::paths::get_plugin_dir;
 
 #[derive(Serialize, Deserialize)]
 pub struct Plugin {
   name: String,
   disabled: bool,
   preload: bool,
-}
-
-fn get_plugin_dir() -> std::path::PathBuf {
-  let plugin_dir = tauri::api::path::home_dir()
-    .unwrap()
-    .join("dorion")
-    .join("plugins");
-
-  if fs::metadata(&plugin_dir).is_err() {
-    match fs::create_dir_all(&plugin_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        println!("Error creating plugins dir: {}", e);
-        return plugin_dir;
-      }
-    };
-  }
-
-  plugin_dir
 }
 
 #[tauri::command]

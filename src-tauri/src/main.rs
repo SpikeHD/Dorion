@@ -17,6 +17,7 @@ mod injection;
 mod js_preprocess;
 mod local_html;
 mod notifications;
+mod paths;
 mod plugin;
 mod process;
 mod release;
