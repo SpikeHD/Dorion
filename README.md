@@ -128,6 +128,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [ ] Localization timeout
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
+* [ ] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
 
 # Using Plugins and Themes
 
