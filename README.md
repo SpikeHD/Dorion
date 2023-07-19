@@ -56,7 +56,7 @@ If you'd like to be on the cutting edge, you can also grab an artifact from the 
 
 ## Plugins
 
-While Dorion does *not* support BetterDiscord plugins (or other mods that use modified `.asar`s), it *does* support browser-based ones. This includes popular plugins like [Vencord](https://github.com/Vendicated/Vencord)!
+While Dorion does *not* support BetterDiscord plugins (or other mods that use modified `.asar`s), it *does* support browser-based ones!
 
 ## Themes
 
