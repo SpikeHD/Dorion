@@ -27,71 +27,70 @@ pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<Stri
 }
 
 #[tauri::command]
-pub fn do_injection(win: tauri::Window) {
+pub fn do_injection(window: tauri::Window) {
   let preload_plugins = plugin::load_plugins(Option::Some(true));
 
   // Execute preload scripts
   for script in preload_plugins.values() {
-    win.eval(script).unwrap_or(());
+    window.eval(script).unwrap_or(());
   }
 
   // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
+    let js_path = window
+      .app_handle()
+      .path_resolver()
+      .resolve_resource(PathBuf::from("injection/preinject_min.js"))
+      .unwrap();
+    let injection_js = match fs::read_to_string(js_path) {
+      Ok(f) => f,
+      Err(e) => {
+        println!("Failed to read preinject JS in local dir: {}", e);
+        return;
+      }
+    };
+
     std::thread::sleep(std::time::Duration::from_millis(100));
 
-    preinject(&win);
+    // Run vencord's preinject script
+    match window.eval(&get_vencord_js_content(&window.app_handle())) {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error evaluating vencord preinject: {}", e)
+      }
+    };
+
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
+    // Exec our injection js
+    match window.eval(injection_js.as_str()) {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error evaluating preinject: {}", e)
+      }
+    };
+
+    // Inject vencords css
+    match window.eval(
+      format!(
+        "
+        const ts = document.createElement('style')
+
+        ts.textContent = `
+          {}
+        `
+
+        document.head.appendChild(ts)",
+        get_vencord_css_content(&window.app_handle())
+      )
+      .as_str(),
+    ) {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error evaluating vencord css: {}", e)
+      }
+    };
   });
-}
-
-pub fn preinject(window: &tauri::Window) {
-  let js_path = window
-    .app_handle()
-    .path_resolver()
-    .resolve_resource(PathBuf::from("injection/preinject_min.js"))
-    .unwrap();
-  let injection_js = match fs::read_to_string(js_path) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Failed to read preinject JS in local dir: {}", e);
-      return;
-    }
-  };
-
-  match window.eval(injection_js.as_str()) {
-    Ok(r) => r,
-    Err(e) => {
-      println!("Error evaluating preinject: {}", e)
-    }
-  };
-
-  // Run vencord's preinject script
-  match window.eval(&get_vencord_js_content(&window.app_handle())) {
-    Ok(r) => r,
-    Err(e) => {
-      println!("Error evaluating vencord preinject: {}", e)
-    }
-  };
-
-  // Inject vencords css
-  match window.eval(
-    format!(
-      "
-      const ts = document.createElement('style')
-
-      ts.textContent = `
-        {}
-      `
-
-      document.head.appendChild(ts)",
-      get_vencord_css_content(&window.app_handle())
-    )
-    .as_str(),
-  ) {
-    Ok(r) => r,
-    Err(e) => {
-      println!("Error evaluating vencord css: {}", e)
-    }
-  };
 }
 
 #[tauri::command]
