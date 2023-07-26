@@ -5,13 +5,13 @@ use crate::paths::get_config_dir;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
-  theme: Option<String>,
-  zoom: Option<String>,
-  client_type: Option<String>,
-  sys_tray: Option<bool>,
-  block_telemetry: Option<bool>,
-  push_to_talk: Option<bool>,
-  push_to_talk_keys: Option<Vec<String>>,
+  pub theme: Option<String>,
+  pub zoom: Option<String>,
+  pub client_type: Option<String>,
+  pub sys_tray: Option<bool>,
+  pub block_telemetry: Option<bool>,
+  pub push_to_talk: Option<bool>,
+  pub push_to_talk_keys: Option<Vec<String>>,
 }
 
 pub fn init() {

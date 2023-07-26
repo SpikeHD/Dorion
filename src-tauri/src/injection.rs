@@ -60,7 +60,7 @@ pub fn do_injection(window: tauri::Window) {
       }
     };
 
-    std::thread::sleep(std::time::Duration::from_millis(500));
+    std::thread::sleep(std::time::Duration::from_millis(200));
 
     // Exec our injection js
     match window.eval(injection_js.as_str()) {

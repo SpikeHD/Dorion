@@ -158,8 +158,6 @@ async function checkForUpdates() {
  * Give events to the top bar buttons
  */
 function initTopBarEvents() {
-  console.log(document.querySelector('#topclose'))
-
   document.querySelector('#topclose').onclick = close
   document.querySelector('#topmin').onclick = minimize
   document.querySelector('#topmax').onclick = maximize
