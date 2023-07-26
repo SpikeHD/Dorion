@@ -172,7 +172,7 @@ fn main() {
 
       modify_window(&win);
 
-      hotkeys::start_hotkey_watcher();
+      hotkeys::start_hotkey_watcher(win.clone());
 
       //win.open_devtools();
 

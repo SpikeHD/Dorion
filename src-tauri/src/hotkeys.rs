@@ -6,7 +6,12 @@ use crate::config;
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
 
-pub fn start_hotkey_watcher() {
+#[derive(serde::Serialize, serde::Deserialize, Clone)]
+pub struct PTTEvent {
+  pub state: bool,
+}
+
+pub fn start_hotkey_watcher(win: tauri::Window) {
   // Get ptt enabled and ptt keys
   let ptt_enabled = crate::config::get_ptt();
   let mut ptt_state = false;
@@ -57,12 +62,11 @@ pub fn start_hotkey_watcher() {
 
       if ptt_held && ptt_state == false {
         // Do PTT
-        println!("PTT is held!");
+        win.emit("ptt_toggle", PTTEvent { state: true }).unwrap();
         ptt_state = true;
       } else if ptt_state == true && !ptt_held {
         // Stop PTT
-        println!("PTT is not held!");
-
+        win.emit("ptt_toggle", PTTEvent { state: false }).unwrap();
         ptt_state = false;
       }
 
