@@ -117,6 +117,7 @@ fn main() {
       plugin::get_plugin_import_urls,
       release::get_latest_release,
       hotkeys::save_ptt_keys,
+      hotkeys::toggle_ptt,
       injection::do_injection,
       injection::get_injection_js,
       injection::is_injected,

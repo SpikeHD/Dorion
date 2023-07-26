@@ -5,6 +5,7 @@ use crate::config;
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
+static mut PTT_ENABLED: bool = false;
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct PTTEvent {
@@ -12,22 +13,22 @@ pub struct PTTEvent {
 }
 
 pub fn start_hotkey_watcher(win: tauri::Window) {
-  // Get ptt enabled and ptt keys
-  let ptt_enabled = crate::config::get_ptt();
   let mut ptt_state = false;
 
   // Set global PTT keys
   unsafe {
     PTT_KEYS = crate::config::get_ptt_keys();
-  }
-
-  if !ptt_enabled {
-    return;
+    PTT_ENABLED = crate::config::get_ptt()
   }
 
   thread::spawn(move || {
     let device_state = DeviceState::new();
     loop {
+      if unsafe { !PTT_ENABLED } {
+        thread::sleep(Duration::from_millis(20));
+        continue;
+      }
+
       let ptt_keys = unsafe { PTT_KEYS.clone() };
       let keys: Vec<Keycode> = device_state.get_keys();
 
@@ -90,5 +91,22 @@ pub fn save_ptt_keys(keys: Vec<String>) {
   // Also set the global PTT keys
   unsafe {
     PTT_KEYS = keys.clone();
+  }
+}
+
+#[tauri::command]
+pub fn toggle_ptt(state: bool) {
+  let config = config::read_config_file();
+  let mut parsed = serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
+
+  parsed.push_to_talk = Option::from(state.clone());
+
+  let new_config = serde_json::to_string(&parsed).unwrap();
+
+  config::write_config_file(new_config);
+
+  // Also set the global PTT keys
+  unsafe {
+    PTT_ENABLED = state.clone();
   }
 }
