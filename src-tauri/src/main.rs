@@ -178,7 +178,7 @@ fn main() {
 
       //win.open_devtools();
 
-      injection::do_injection(win);
+      injection::do_injection(win, Some(true));
 
       Ok(())
     })

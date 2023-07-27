@@ -27,7 +27,7 @@ pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<Stri
 }
 
 #[tauri::command]
-pub fn do_injection(window: tauri::Window) {
+pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
   let preload_plugins = plugin::load_plugins(Option::Some(true));
 
   // Execute preload scripts
@@ -51,10 +51,25 @@ pub fn do_injection(window: tauri::Window) {
     };
 
     #[cfg(not(target_os = "linux"))]
-    std::thread::sleep(std::time::Duration::from_millis(100));
+    std::thread::sleep(std::time::Duration::from_millis(
+      if cold_start.is_some() && cold_start.unwrap() {
+        println!("Cold start, waiting longer for injection...");
+
+        // Cold start wait needs to be somewhat long on Windows
+        #[cfg(target_os = "windows")]
+        { 2500 }
+
+        #[cfg(not(target_os = "windows"))]
+        { 200 }
+      } else {
+        200
+      },
+    ));
 
     #[cfg(target_os = "linux")]
     std::thread::sleep(std::time::Duration::from_millis(2000));
+
+    println!("Injecting...");
 
     // Run vencord's preinject script
     match window.eval(&get_vencord_js_content(&window.app_handle())) {
