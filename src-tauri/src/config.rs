@@ -36,6 +36,7 @@ pub fn write_config_file(contents: String) {
   fs::write(config_file, contents).expect("Error writing config!")
 }
 
+#[tauri::command]
 pub fn default_config() -> Config {
   Config {
     theme: Option::from("none".to_string()),

@@ -124,6 +124,7 @@ fn main() {
       injection::load_injection_js,
       config::read_config_file,
       config::write_config_file,
+      config::default_config,
       theme::get_theme,
       theme::get_theme_names,
       helpers::open_themes,

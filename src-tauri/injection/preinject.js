@@ -44,7 +44,19 @@ function safemodeTimer(elm) {
   await displayLoadingTop()
 
   const { invoke } = window.__TAURI__
-  const config = JSON.parse(await invoke('read_config_file'))
+  let config = JSON.parse(await invoke('read_config_file')) || null
+
+  // If there is an issue with the config, we need to recreate a default one
+  if (!config) {
+    const defaultConf = await invoke('default_config')
+    // Write
+    await invoke('write_config_file', {
+      config: defaultConf
+    })
+
+    config = JSON.parse(defaultConf)
+  }
+
   const plugins = await invoke('load_plugins');
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')

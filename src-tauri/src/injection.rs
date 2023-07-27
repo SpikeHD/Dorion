@@ -50,7 +50,11 @@ pub fn do_injection(window: tauri::Window) {
       }
     };
 
+    #[cfg(not(target_os = "linux"))]
     std::thread::sleep(std::time::Duration::from_millis(100));
+
+    #[cfg(target_os = "linux")]
+    std::thread::sleep(std::time::Duration::from_millis(2000));
 
     // Run vencord's preinject script
     match window.eval(&get_vencord_js_content(&window.app_handle())) {
