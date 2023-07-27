@@ -57,7 +57,7 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
 
         // Cold start wait needs to be somewhat long on Windows
         #[cfg(target_os = "windows")]
-        { 2300 }
+        { 2000 }
 
         #[cfg(not(target_os = "windows"))]
         { 200 }
@@ -109,6 +109,11 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
         println!("Error evaluating vencord css: {}", e)
       }
     };
+
+    // JANKY FIX PLS IGNORE
+    if cold_start.unwrap_or(false) {
+      window.eval("window.location.reload()").unwrap_or(());
+    }
   });
 }
 
