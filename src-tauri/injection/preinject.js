@@ -43,7 +43,7 @@ function safemodeTimer(elm) {
 
   await displayLoadingTop()
 
-  const { invoke } = window.__TAURI__
+  const { invoke, event } = window.__TAURI__
   let config = JSON.parse(await invoke('read_config_file')) || null
 
   // If there is an issue with the config, we need to recreate a default one
@@ -62,6 +62,7 @@ function safemodeTimer(elm) {
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
   const safemode = document.querySelector('#safemode')
+  const logs = document.querySelector('#logContainer')
 
   // Start safemode timer and event listener right away, just in case
   safemodeTimer(safemode)
@@ -80,6 +81,14 @@ function safemodeTimer(elm) {
       pluginJs: js
     }))]
   }
+
+  event.listen('loading_log', (event) => {
+    const log = event.payload
+
+    if (!logs) return
+
+    logs.innerHTML = `${log}`
+  })
 
   const imports = await invoke('localize_all_js', {
     urls: importUrls

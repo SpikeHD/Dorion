@@ -1,13 +1,11 @@
 use tauri::regex::Regex;
 
 #[tauri::command]
-pub async fn localize_imports(css: String) -> String {
-  let reg = Regex::new(r#"@import url\((?:"|'|)http.*?\.css(?:"|'|)\);"#).unwrap();
+pub async fn localize_imports(win: tauri::Window, css: String) -> String {
+  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\);"#).unwrap();
   let url_reg = Regex::new(r"\((.*)\)").unwrap();
+  let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
-
-  // First localize images to base64 data representations
-  new_css = localize_images(new_css).await;
 
   while reg.is_match(new_css.clone().as_str()) {
     let first_match = reg.find_iter(&new_css).next().unwrap();
@@ -23,6 +21,14 @@ pub async fn localize_imports(css: String) -> String {
     if url.is_empty() {
       continue;
     }
+
+    if seen_urls.contains(&url) {
+      // Remove the import statement from the css
+      new_css = new_css.replace(first_match.as_str(), "");
+      continue;
+    }
+
+    println!("Getting: {}", &url);
 
     let response = match reqwest::get(&url).await {
       Ok(r) => r,
@@ -47,13 +53,23 @@ pub async fn localize_imports(css: String) -> String {
 
     let text = response.text().await.unwrap();
 
+    // Emit a loading log
+    win.emit("loading_log", format!("Processed CSS import: {}", url.clone())).unwrap();
+
+    seen_urls.push(url.clone());
+
     new_css = new_css.replace(first_match.as_str(), text.as_str());
   }
+
+  win.emit("loading_log", format!("Finished processing {} CSS imports", seen_urls.len())).unwrap();
+
+  // Now localize images to base64 data representations
+  new_css = localize_images(win, new_css).await;
 
   new_css
 }
 
-pub async fn localize_images(css: String) -> String {
+pub async fn localize_images(win: tauri::Window, css: String) -> String {
   let img_reg = Regex::new(r#"url\((?:"|'|)(http.*?\.png|.jpeg|.jpg|.gif)(?:"|'|)\);"#).unwrap();
   let matches = img_reg.captures_iter(&css);
   let mut new_css = css.clone();
@@ -72,11 +88,15 @@ pub async fn localize_images(css: String) -> String {
         println!("Request failed: {}", e);
         println!("URL: {}", &url);
 
+        win.emit("loading_log", format!("An image failed to import...")).unwrap();
+
         continue;
       }
     };
     let bytes = response.bytes().await.unwrap();
     let b64 = base64::encode(bytes);
+    
+    win.emit("loading_log", format!("Processed image import: {}", &url)).unwrap();
 
     new_css = new_css.replace(
       url,
