@@ -109,6 +109,8 @@ function safemodeTimer(elm) {
       css: themeContents
     })
 
+    console.log(localized)
+
     // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
     const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
 
@@ -283,9 +285,17 @@ function _interceptEventListeners() {
  */
 function createLocalStorage() {
   const iframe = document.createElement('iframe');
-  document.head.append(iframe);
-  const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
-  iframe.remove();
-  
-  Object.defineProperty(window, 'localStorage', pd)
+
+  // Wait for document.head to exist, then append the iframe
+  const interval = setInterval(() => {
+    if (!document.head) return
+
+    document.head.append(iframe);
+    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
+    iframe.remove();
+    
+    Object.defineProperty(window, 'localStorage', pd)
+
+    clearInterval(interval)
+  }, 50)
 }

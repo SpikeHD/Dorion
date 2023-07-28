@@ -57,12 +57,12 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
 
         // Cold start wait needs to be somewhat long on Windows
         #[cfg(target_os = "windows")]
-        { 2000 }
+        { 2300 }
 
         #[cfg(not(target_os = "windows"))]
-        { 200 }
+        { 100 }
       } else {
-        200
+        100
       },
     ));
 
