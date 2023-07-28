@@ -127,8 +127,8 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Global push-to-talk
 * [ ] Rich presence(?)
 * [ ] Helper API methods and events for plugins
-* [ ] Backup localized themes
-* [ ] Localization timeout
+* [x] Backup localized themes
+* [x] Localization timeout
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
 * [ ] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
