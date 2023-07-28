@@ -4,7 +4,7 @@ use async_recursion::async_recursion;
 #[tauri::command]
 #[async_recursion]
 pub async fn localize_imports(win: tauri::Window, css: String) -> String {
-  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\)"#).unwrap();
+  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
 
@@ -146,6 +146,10 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
       win_clone
         .emit("loading_log", format!("Processed image import: {}", &url))
         .unwrap();
+
+      if url.is_empty() {
+        return None;
+      }
 
       Some((url.to_owned(), format!("data:image/{};base64,{}", filetype, b64)))
     }));
