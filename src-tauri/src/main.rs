@@ -104,6 +104,7 @@ fn main() {
       maximize,
       close,
       change_zoom,
+      css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
       local_html::get_index,

@@ -6,6 +6,22 @@ use async_recursion::async_recursion;
 use crate::paths::get_theme_dir;
 
 #[tauri::command]
+pub async fn clear_css_cache() {
+  let cache_path = get_theme_dir().join("cache");
+
+  if fs::metadata(&cache_path).is_ok() {
+    let files = fs::read_dir(&cache_path).unwrap();
+
+    // Remove all files within
+    for file in files {
+      if let Ok(f) = file {
+        fs::remove_file(f.path()).unwrap();
+      }
+    }
+  }
+}
+
+#[tauri::command]
 #[async_recursion]
 pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> String {
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\);"#).unwrap();
