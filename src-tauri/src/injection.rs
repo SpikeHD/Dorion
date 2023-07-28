@@ -112,6 +112,7 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
 
     // JANKY FIX PLS IGNORE
     if cold_start.unwrap_or(false) {
+      #[cfg(target_os = "windows")]
       window.eval("window.location.reload()").unwrap_or(());
     }
   });
