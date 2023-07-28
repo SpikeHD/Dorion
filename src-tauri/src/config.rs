@@ -12,6 +12,7 @@ pub struct Config {
   pub block_telemetry: Option<bool>,
   pub push_to_talk: Option<bool>,
   pub push_to_talk_keys: Option<Vec<String>>,
+  pub cache_css: Option<bool>,
 }
 
 pub fn init() {
@@ -46,6 +47,7 @@ pub fn default_config() -> Config {
     block_telemetry: Option::from(false),
     push_to_talk: Option::from(false),
     push_to_talk_keys: Option::from(vec!["RControl".to_string()]),
+    cache_css: Option::from(false),
   }
 }
 
@@ -90,4 +92,10 @@ pub fn get_ptt_keys() -> Vec<String> {
   parsed
     .push_to_talk_keys
     .unwrap_or_else(|| vec!["RControl".to_string()])
+}
+
+pub fn get_cache_css() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.cache_css.unwrap_or(false)
 }

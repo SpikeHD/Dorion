@@ -1,9 +1,13 @@
+use std::fs;
+
 use tauri::regex::Regex;
 use async_recursion::async_recursion;
 
+use crate::paths::get_theme_dir;
+
 #[tauri::command]
 #[async_recursion]
-pub async fn localize_imports(win: tauri::Window, css: String) -> String {
+pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> String {
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
@@ -11,6 +15,19 @@ pub async fn localize_imports(win: tauri::Window, css: String) -> String {
   let matches = reg.captures_iter(Box::leak(css.into_boxed_str()));
   
   let mut tasks = Vec::new();
+
+  // If we need to cache CSS, first check and use cache if it exists
+  if crate::config::get_cache_css() {
+    let cache_path = get_theme_dir().join("cache");
+  
+    let cache_file = cache_path.join(format!("{}_cache.css", name));
+
+    if fs::metadata(&cache_file).is_ok() {
+      println!("Using cached CSS for {}", name);
+
+      return fs::read_to_string(cache_file).unwrap();
+    }
+  }
 
   for groups in matches {
     let full_import = groups.get(0).unwrap().as_str();
@@ -84,7 +101,7 @@ pub async fn localize_imports(win: tauri::Window, css: String) -> String {
   // If any of this css still contains imports, we need to re-process it
   if reg.is_match(new_css.as_str()) {
     println!("Re-processing CSS imports...");
-    new_css = localize_imports(win.clone(), new_css).await;
+    new_css = localize_imports(win.clone(), new_css, name.clone()).await;
   }
 
   win.emit("loading_log", format!("Finished processing {} CSS imports", seen_urls.len())).unwrap();
@@ -92,6 +109,15 @@ pub async fn localize_imports(win: tauri::Window, css: String) -> String {
   // Now localize images to base64 data representations
   new_css = localize_images(win.clone(), new_css).await;
   new_css = localize_fonts(win.clone(), new_css).await;
+
+  // If we need to cache css, do that
+  if crate::config::get_cache_css() {
+    let cache_path = get_theme_dir().join("cache");
+
+    let cache_file = cache_path.join(format!("{}_cache.css", name));
+
+    fs::write(cache_file, new_css.clone()).unwrap();
+  }
 
   new_css
 }

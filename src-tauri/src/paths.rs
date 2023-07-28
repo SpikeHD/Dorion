@@ -94,5 +94,18 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     };
   }
 
+  // Also create theme cache dir
+  let cache_dir = theme_dir.join("cache");
+
+  if fs::metadata(&cache_dir).is_err() {
+    match fs::create_dir_all(&cache_dir) {
+      Ok(()) => (),
+      Err(e) => {
+        println!("Error creating theme cache dir: {}", e);
+        return theme_dir;
+      }
+    };
+  }
+
   theme_dir
 }

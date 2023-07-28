@@ -106,7 +106,8 @@ function safemodeTimer(elm) {
 
     if (midtitle) midtitle.innerHTML = "Localizing CSS imports..."
     const localized = await invoke('localize_imports', {
-      css: themeContents
+      css: themeContents,
+      name: config.theme
     })
 
     console.log(localized)
