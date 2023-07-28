@@ -99,9 +99,17 @@ pub async fn localize_imports(win: tauri::Window, css: String) -> String {
 pub async fn localize_images(win: tauri::Window, css: String) -> String {
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
-  let matches = img_reg.captures_iter(Box::leak(css.into_boxed_str()));
+  let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
+  let count = img_reg.captures_iter(Box::leak(css.into_boxed_str())).count();
 
   let mut tasks = Vec::new();
+
+  // Check if the matches iter is more than 50
+  // If it is, we should just skip it
+  if count > 50 {
+    win.emit("loading_log", format!("Too many images to process ({}), skipping...", count)).unwrap();
+    return new_css;
+  }
 
   for groups in matches {
     let url = groups.get(1).unwrap().as_str();
@@ -119,8 +127,8 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
 
     // If there are more than 100 tasks, it's safe to say that there are probably too many images
     // to process, so we should just skip it
-    if tasks.len() > 100 {
-      win.emit("loading_log", format!("Too many images to process (>100), skipping the rest...")).unwrap();
+    if groups.len() > 50 {
+      win.emit("loading_log", format!("Too many images to process ({})", groups.len())).unwrap();
       break;
     }
 
@@ -173,9 +181,17 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
 async fn localize_fonts(win: tauri::Window, css: String) -> String {
   let font_reg = Regex::new(r#"@font-face.{0,1}\{(?:.|\n)+?src:.{0,1}url\((?:'|"|)(http.+?)\.([a-zA-Z0-9]{0,5})(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
-  let matches = font_reg.captures_iter(Box::leak(css.into_boxed_str()));
+  let matches = font_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
+  let count = font_reg.captures_iter(Box::leak(css.into_boxed_str())).count();
 
   let mut tasks = Vec::new();
+
+  // Check if the matches iter is more than 50
+  // If it is, we should just skip it
+  if count > 50 {
+    win.emit("loading_log", format!("Too many fonts to process ({}), skipping...", count)).unwrap();
+    return new_css;
+  }
 
   for groups in matches {
     let url = groups.get(1).unwrap().as_str();
@@ -184,13 +200,6 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     // CORS allows discord media
     if url.is_empty() || url.contains("media.discordapp") || url.contains("cdn.discordapp") {
       continue;
-    }
-
-    // If there are more than 100 tasks, it's safe to say that there are probably too many fonts
-    // to process, so we should just skip it
-    if tasks.len() > 100 {
-      win.emit("loading_log", format!("Too many fonts to process (>100), skipping the rest...")).unwrap();
-      break;
     }
 
     let win_clone = win.clone(); // Clone the Window handle for use in the async block

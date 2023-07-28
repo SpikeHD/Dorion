@@ -57,7 +57,7 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
 
         // Cold start wait needs to be somewhat long on Windows
         #[cfg(target_os = "windows")]
-        { 2300 }
+        { 2000 }
 
         #[cfg(not(target_os = "windows"))]
         { 100 }
@@ -71,6 +71,14 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
 
     println!("Injecting...");
 
+    // Exec our injection js
+    match window.eval(injection_js.as_str()) {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error evaluating preinject: {}", e)
+      }
+    };
+
     // Run vencord's preinject script
     match window.eval(&get_vencord_js_content(&window.app_handle())) {
       Ok(r) => r,
@@ -80,14 +88,6 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
     };
 
     std::thread::sleep(std::time::Duration::from_millis(400));
-
-    // Exec our injection js
-    match window.eval(injection_js.as_str()) {
-      Ok(r) => r,
-      Err(e) => {
-        println!("Error evaluating preinject: {}", e)
-      }
-    };
 
     // Inject vencords css
     match window.eval(
