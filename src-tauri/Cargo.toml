@@ -34,6 +34,7 @@ webkit2gtk = "0.18.2"
 objc = "0.2"
 cocoa = "0.25.0"
 block = "0.1.6"
+embed_plist = "1.2.2"
 
 [target.'cfg(windows)'.dependencies]
 webview2-com = "0.16.0"

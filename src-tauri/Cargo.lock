@@ -804,6 +804,7 @@ dependencies = [
  "block",
  "cocoa 0.25.0",
  "device_query",
+ "embed_plist",
  "objc",
  "reqwest",
  "serde",
