@@ -25,9 +25,6 @@ mod release;
 mod theme;
 mod top_bar;
 
-#[cfg(target_os = "macos")]
-embed_plist::embed_info_plist!("Info.plist");
-
 #[cfg(target_os = "windows")]
 #[tauri::command]
 fn change_zoom(window: tauri::Window, zoom: f64) {
