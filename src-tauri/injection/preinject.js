@@ -110,8 +110,6 @@ function safemodeTimer(elm) {
       name: config.theme
     })
 
-    console.log(localized)
-
     // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
     const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
 
