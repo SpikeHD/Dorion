@@ -26,6 +26,7 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 * [Why use Dorion?](#why-use-dorion)
   * [Plugins](#plugins)
   * [Themes](#themes)
+* [Platform Support](#platform-support)
 * [Building](#building)
   * [Prerequisites](#prerequisites)
   * [Steps](#steps)
@@ -63,6 +64,57 @@ While Dorion does *not* support BetterDiscord plugins (or other mods that use mo
 Dorion supports all themes, BetterDiscord and others
 
 [Jump to "Using Plugins and Themes"](#using-plugins-and-themes)
+
+# Platform Support
+
+<div width="100%" align="center">
+ <table width="100%">
+  <tr>
+   <th><i>Feature</i></th>
+   <th>Windows</th>
+   <th>Linux</th>
+   <th>MacOS</th>
+  </tr>
+
+  <tr>
+   <td>Basics (logging in, navigation, text/DMs etc.)</td>
+   <td>✓</td>
+   <td>✓</td>
+   <td>✓</td>
+  </tr>
+
+  <tr>
+   <td>Voice</td>
+   <td>✓</td>
+   <td>❌<sup>[1]</sup></td>
+   <td>❌<sup>[1]</sup></td>
+  </tr>
+
+  <tr>
+   <td>Themes</td>
+   <td>✓</td>
+   <td>✓</td>
+   <td>✓</td>
+  </tr>
+  
+  <tr>
+   <td>Vencord (and included plugins)</td>
+   <td>✓</td>
+   <td>❌<sup>[2]</sup></td>
+   <td>✓</td>
+  </tr>
+
+  <tr>
+   <td>Dorion Plugins</td>
+   <td>✓</td>
+   <td>✓</td>
+   <td>✓</td>
+  </tr>
+ </table>
+</div>
+
+<sup>[1]</sup> Both Webkit2GTK and WKWebview do not support WebRTC. See <a href="https://github.com/SpikeHD/Dorion/issues/30">#30</a> and <a href="https://github.com/SpikeHD/Dorion/issues/44">#44</a>.<br/>
+<sup>[2]</sup> This is due to unsupported RegEx. In order for this to work, Webkit2GTK needs to update to support it, or I need to rewrite all RegEx in Vencord to not use lookbehind/ahead (there is a lot).
 
 # Building
 
@@ -104,7 +156,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 * A couple bugs with CSS & image import related stuff
 * (MacOS) Injection JS does not reinject after reloading the page
-* (Ubuntu) Vencord JS does not inject... at all.
+* (Linux) Vencord JS does not inject... at all.
   * This is due to lookbehind/ahead RegEx not being supported in Webkit2GTK, which is what Dorion uses on Linux. Either I have to replace all lookbehind/ahead RegEx with something else, or wait for Webkit2GTK to support it.
 
 # Troubleshooting
