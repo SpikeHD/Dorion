@@ -13,6 +13,7 @@ mod config;
 mod css_preprocess;
 mod helpers;
 mod hotkeys;
+mod init;
 mod injection;
 mod js_preprocess;
 mod local_html;
@@ -179,7 +180,7 @@ fn main() {
 
       //win.open_devtools();
 
-      injection::do_injection(win, Some(true));
+      init::inject_routine(win.clone());
 
       Ok(())
     })

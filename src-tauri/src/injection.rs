@@ -27,7 +27,7 @@ pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<Stri
 }
 
 #[tauri::command]
-pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
+pub fn do_injection(window: tauri::Window) {
   let preload_plugins = plugin::load_plugins(Option::Some(true));
 
   // Execute preload scripts
@@ -50,25 +50,6 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
       }
     };
 
-    #[cfg(not(target_os = "linux"))]
-    std::thread::sleep(std::time::Duration::from_millis(
-      if cold_start.is_some() && cold_start.unwrap() {
-        println!("Cold start, waiting longer for injection...");
-
-        // Cold start wait needs to be somewhat long on Windows
-        #[cfg(target_os = "windows")]
-        { 2000 }
-
-        #[cfg(not(target_os = "windows"))]
-        { 100 }
-      } else {
-        100
-      },
-    ));
-
-    #[cfg(target_os = "linux")]
-    std::thread::sleep(std::time::Duration::from_millis(2000));
-
     println!("Injecting...");
 
     // Exec our injection js
@@ -87,7 +68,7 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
       }
     };
 
-    std::thread::sleep(std::time::Duration::from_millis(400));
+    std::thread::sleep(std::time::Duration::from_millis(600));
 
     // Inject vencords css
     match window.eval(
@@ -109,11 +90,6 @@ pub fn do_injection(window: tauri::Window, cold_start: Option<bool>) {
         println!("Error evaluating vencord css: {}", e)
       }
     };
-
-    // JANKY FIX PLS IGNORE
-    if cold_start.unwrap_or(false) {
-      window.eval("window.location.reload()").unwrap_or(());
-    }
   });
 }
 
