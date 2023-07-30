@@ -87,7 +87,7 @@ Dorion supports all themes, BetterDiscord and others
    <td>Voice</td>
    <td>✓</td>
    <td>❌<sup>[1]</sup></td>
-   <td>❌<sup>[1]</sup></td>
+   <td>❌<sup>[2]</sup></td>
   </tr>
 
   <tr>
@@ -100,7 +100,7 @@ Dorion supports all themes, BetterDiscord and others
   <tr>
    <td>Vencord (and included plugins)</td>
    <td>✓</td>
-   <td>❌<sup>[2]</sup></td>
+   <td>❌<sup>[3]</sup></td>
    <td>✓</td>
   </tr>
 
@@ -113,8 +113,9 @@ Dorion supports all themes, BetterDiscord and others
  </table>
 </div>
 
-<sup>[1]</sup> Both Webkit2GTK and WKWebview do not support WebRTC. See <a href="https://github.com/SpikeHD/Dorion/issues/30">#30</a> and <a href="https://github.com/SpikeHD/Dorion/issues/44">#44</a>.<br/>
-<sup>[2]</sup> This is due to unsupported RegEx. In order for this to work, Webkit2GTK needs to update to support it, or I need to rewrite all RegEx in Vencord to not use lookbehind/ahead (there is a lot).
+<sup>[1]</sup> Webkit2GTK does not support WebRTC. See <a href="https://github.com/SpikeHD/Dorion/issues/30">#30</a>.<br/>
+<sup>[2]</sup> Currently can connect to VC, but won't pass "RTC Connecting". Needs a bit more coaxing to get working.<br/>
+<sup>[3]</sup> This is due to unsupported RegEx. In order for this to work, Webkit2GTK needs to update to support it, or I need to rewrite all RegEx in Vencord to not use lookbehind/ahead (there is a lot).
 
 # Building
 
