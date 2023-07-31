@@ -53,11 +53,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
       continue;
     }
 
-    // Crummy hack to prevent waiting for hundreds of images to load from usrbg.css
-    //
-    // Under most circumstances this should be fine, but because we pre-process instead of on-demand-process
-    // like a browser would, we just can't have that much shit processing
-    if seen_urls.contains(&url) || url.contains("usrbg.css") {
+    if seen_urls.contains(&url) {
       // Remove the import statement from the css
       new_css = new_css.replace(full_import, "");
       continue;
@@ -165,6 +161,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
       || url.contains("data:image")
       || url.contains("media.discordapp")
       || url.contains("cdn.discordapp")
+      || url.contains("discord.com/assets")
     {
       continue;
     }
@@ -244,7 +241,10 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let filetype = groups.get(2).unwrap().as_str();
 
     // CORS allows discord media
-    if url.is_empty() || url.contains("media.discordapp") || url.contains("cdn.discordapp") {
+    if url.is_empty() 
+      || url.contains("media.discordapp")
+      || url.contains("cdn.discordapp")
+      || url.contains("discord.com/assets") {
       continue;
     }
 
