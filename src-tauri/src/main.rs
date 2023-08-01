@@ -4,6 +4,7 @@
 )]
 
 use config::get_client_type;
+use reqwest::header::HeaderValue;
 use tauri::{
   api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
   SystemTrayMenu, Window, WindowBuilder,

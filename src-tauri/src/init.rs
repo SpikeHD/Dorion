@@ -31,6 +31,10 @@ pub fn inject_routine(win: tauri::Window) {
       // If it succeeds, that means the web context is ready
       win_cln.eval("window.__TAURI__.event.emit('initial_inject')").unwrap();
 
+      #[cfg(target_os = "macos")]
+      std::thread::sleep(Duration::from_millis(50));
+
+      #[cfg(not(target_os = "macos"))]
       std::thread::sleep(Duration::from_millis(100));
     }
   });

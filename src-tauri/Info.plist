@@ -6,5 +6,7 @@
 	<string>Request camera access for WebRTC</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Request microphone access for WebRTC</string>
+  <key>com.apple.ScreenSharing.plist</key>
+  <true />
 </dict>
 </plist>
