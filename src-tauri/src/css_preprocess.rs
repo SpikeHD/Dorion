@@ -239,6 +239,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
   for groups in matches {
     let url = groups.get(1).unwrap().as_str();
     let filetype = groups.get(2).unwrap().as_str();
+    let full_url = format!("{}.{}", url, filetype);
 
     // CORS allows discord media
     if url.is_empty() 
@@ -251,13 +252,13 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let win_clone = win.clone(); // Clone the Window handle for use in the async block
 
     tasks.push(std::thread::spawn(move || {
-      println!("Getting: {}", &url);
+      println!("Getting: {}", &full_url);
 
-      let response = match reqwest::blocking::get(url) { 
+      let response = match reqwest::blocking::get(&full_url) { 
         Ok(r) => r,
         Err(e) => {
           println!("Request failed: {}", e);
-          println!("URL: {}", &url);
+          println!("URL: {}", &full_url);
 
           win_clone.emit("loading_log", format!("A font failed to import...")).unwrap();
 
@@ -271,7 +272,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
         .emit("loading_log", format!("Processed font import: {}", &url))
         .unwrap();
 
-      Some((url.to_owned(), format!("data:application/x-font-{};base64,{}", filetype, b64)))
+      Some((full_url.to_owned(), format!("data:font/{};charset=utf-8;base64,{}", filetype, b64)))
     }));
   }
 
