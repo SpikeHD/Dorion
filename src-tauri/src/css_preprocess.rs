@@ -139,6 +139,8 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
   let mut new_css = css.clone();
   let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
 
+  let mut seen_urls: Vec<String> = vec![];
+
   // This could be pretty computationally expensive for just a count, so I should change this sometime
   let count = img_reg.captures_iter(Box::leak(css.into_boxed_str())).count();
 
@@ -165,8 +167,14 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
     {
       continue;
     }
+    
+    if seen_urls.contains(&url.to_string()) {
+      continue;
+    }
 
-    // If there are more than 100 tasks, it's safe to say that there are probably too many images
+    seen_urls.push(url.clone().to_string());
+
+    // If there are more than 50 tasks, it's safe to say that there are probably too many images
     // to process, so we should just skip it
     if groups.len() > 50 {
       win.emit("loading_log", format!("Too many images to process ({})", groups.len())).unwrap();
