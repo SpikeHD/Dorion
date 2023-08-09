@@ -233,10 +233,10 @@ fn modify_window(window: &Window) {
     .with_webview(move |webview| unsafe {
       #[cfg(windows)]
       {
-        use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceRequest;
-        use webview2_com::WebResourceRequestedEventHandler;
-        use windows::core::HSTRING;
-        use windows::core::PCWSTR;
+        // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceRequest;
+        // use webview2_com::WebResourceRequestedEventHandler;
+        // use windows::core::HSTRING;
+        // use windows::core::PCWSTR;
         // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
         // use windows::core::Interface;
 
@@ -252,26 +252,26 @@ fn modify_window(window: &Window) {
         // // settings.SetUserAgent(user_agent).unwrap();
         // settings.SetIsZoomControlEnabled(true).unwrap();
 
-        let core = webview.controller().CoreWebView2().unwrap();
-        let mut _token = windows::Win32::System::WinRT::EventRegistrationToken::default();
-        // You'd probably use CONTEXT_WEBSOCKET or whatever fits, see https://docs.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2webresourcecontext?view=webview2-dotnet-1.0.1293.44
-        // Also use a fitting glob filter, so that it doesn't trigger for all requests, see https://docs.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2?view=webview2-1.0.1293.44#addwebresourcerequestedfilter
-        core.AddWebResourceRequestedFilter(&HSTRING::from("http*"), webview2_com::Microsoft::Web::WebView2::Win32::COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
-        core.add_WebResourceRequested(
-            &WebResourceRequestedEventHandler::create(Box::new(move |webview, args| {
-                if let Some(args) = args {
-                    let request: ICoreWebView2WebResourceRequest = args.Request().unwrap(); // manual type to make Rust-Analyzer show the types
+        // let core = webview.controller().CoreWebView2().unwrap();
+        // let mut _token = windows::Win32::System::WinRT::EventRegistrationToken::default();
+        // // You'd probably use CONTEXT_WEBSOCKET or whatever fits, see https://docs.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2webresourcecontext?view=webview2-dotnet-1.0.1293.44
+        // // Also use a fitting glob filter, so that it doesn't trigger for all requests, see https://docs.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2?view=webview2-1.0.1293.44#addwebresourcerequestedfilter
+        // core.AddWebResourceRequestedFilter(&HSTRING::from("http*"), webview2_com::Microsoft::Web::WebView2::Win32::COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
+        // core.add_WebResourceRequested(
+        //     &WebResourceRequestedEventHandler::create(Box::new(move |webview, args| {
+        //         if let Some(args) = args {
+        //             let request: ICoreWebView2WebResourceRequest = args.Request().unwrap(); // manual type to make Rust-Analyzer show the types
 
-                    request
-                        .Headers()
-                        .unwrap()
-                        .SetHeader(&"Content-Security-Policy".into(), &"*".into())
-                        .unwrap();
-                }
-                Ok(())
-            })),
-            &mut _token,
-        );
+        //             request
+        //                 .Headers()
+        //                 .unwrap()
+        //                 .SetHeader(&"Content-Security-Policy".into(), &"*".into())
+        //                 .unwrap();
+        //         }
+        //         Ok(())
+        //     })),
+        //     &mut _token,
+        // );
 
         // Grab and set this config option, it's fine if it silently fails
         webview
