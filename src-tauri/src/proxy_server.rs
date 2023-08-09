@@ -1,7 +1,5 @@
-use std::str::FromStr;
-
-use reqwest::header::HeaderMap;
-use tide::{self, http::headers::HeaderValue};
+use reqwest::header::{HeaderMap, HeaderValue};
+use tide::{self, http::headers::HeaderValues};
 use urlencoding::decode;
 
 /**
@@ -31,12 +29,10 @@ pub async fn handle_request(mut req: tide::Request<()>) -> Result<tide::Response
   let response = {
     let method = req.method().to_string();
 
-    println!("Got method: {}", method);
-
     match method.as_str() {
-      "GET" => do_get(url.to_string()),
-      "POST" => do_post(url.to_string(), req.body_bytes().await.unwrap_or(vec![])),
-      "PUT" => do_put(url.to_string(), req.body_bytes().await.unwrap_or(vec![])),
+      "GET" => do_get(url.to_string(), req.header("Authorization")),
+      "POST" => do_post(url.to_string(), req.body_bytes().await.unwrap_or(vec![]), req.header("Authorization")),
+      "PUT" => do_put(url.to_string(), req.body_bytes().await.unwrap_or(vec![]), req.header("Authorization")),
       _ => return Ok(tide::Response::new(400))
     }
   };
@@ -46,27 +42,60 @@ pub async fn handle_request(mut req: tide::Request<()>) -> Result<tide::Response
   
   res.set_body(bytes);
   res.set_content_type(headers.get("content-type").unwrap().to_str().unwrap());
-  res.insert_header("Access-Control-Allow-Origin", HeaderValue::from_str("*").unwrap());
+  res.insert_header("Access-Control-Allow-Origin", "*");
 
   Ok(res)
 }
 
-pub fn do_get(url: String) -> reqwest::blocking::Response {
-  reqwest::blocking::get(url).unwrap()
-}
+pub fn do_get(url: String, auth: Option<&HeaderValues>) -> reqwest::blocking::Response {
+  let mut headers = HeaderMap::new();
 
-pub fn do_post(url: String, body: Vec<u8>) -> reqwest::blocking::Response {
+  if let Some(auth) = auth {
+    let value = auth.as_str();
+    let auth = HeaderValue::from_str(value).unwrap();
+
+    headers.insert("Authorization", auth);
+  }
+
   reqwest::blocking::Client::new()
-    .post(url)
-    .body(body)
+    .get(url)
+    .headers(headers)
     .send()
     .unwrap()
 }
 
-pub fn do_put(url: String, body: Vec<u8>) -> reqwest::blocking::Response {
+pub fn do_post(url: String, body: Vec<u8>, auth: Option<&HeaderValues>) -> reqwest::blocking::Response {
+  let mut headers = HeaderMap::new();
+
+  if let Some(auth) = auth {
+    let value = auth.as_str();
+    let auth = HeaderValue::from_str(value).unwrap();
+
+    headers.insert("Authorization", auth);
+  }
+
+  reqwest::blocking::Client::new()
+    .post(url)
+    .body(body)
+    .headers(headers)
+    .send()
+    .unwrap()
+}
+
+pub fn do_put(url: String, body: Vec<u8>, auth: Option<&HeaderValues>) -> reqwest::blocking::Response {
+  let mut headers = HeaderMap::new();
+
+  if let Some(auth) = auth {
+    let value = auth.as_str();
+    let auth = HeaderValue::from_str(value).unwrap();
+
+    headers.insert("Authorization", auth);
+  }
+
   reqwest::blocking::Client::new()
     .put(url)
     .body(body)
+    .headers(headers)
     .send()
     .unwrap()
 }
