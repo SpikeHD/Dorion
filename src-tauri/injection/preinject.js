@@ -111,8 +111,10 @@ function safemodeTimer(elm) {
     })
 
     // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
-    const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
+    // const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
+    const cleanContents = localized
 
+    console.log(cleanContents)
 
     // Write theme injection code
     themeInjection = `;(() => {
