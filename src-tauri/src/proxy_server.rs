@@ -28,6 +28,7 @@ pub async fn start_server(port: u16) {
   app.at("/url").get(handle_request);
   app.at("/url").post(handle_request);
   app.at("/url").put(handle_request);
+  app.at("/url").delete(handle_request);
 
   println!("Proxy server listening on port {}", port);
 
