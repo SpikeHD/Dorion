@@ -168,6 +168,9 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * Use the `.zip` file instead of the MSI
 * (If using the `.zip` file) make sure all files were extracted properly (`html`, `injection`, etc.)
 * [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+  * Fully uninstall and reinstall.
+  * If you are having trouble uninstalling it, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
+  * You can also try [uninstalling from the Command Prompt](https://superuser.com/a/1743626)
 
 
 # TODO
