@@ -30,7 +30,8 @@ let observer = new MutationObserver(() => {
     console.log('Discord is loaded!')
 
     // This needs to render after discord is loaded
-    createTopBar()
+    console.log(window.DorionConfig)
+    if (!window.DorionConfig.use_native_titlebar) createTopBar()
 
     onClientLoad()
 

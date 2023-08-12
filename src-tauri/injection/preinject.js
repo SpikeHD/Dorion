@@ -46,6 +46,8 @@ function safemodeTimer(elm) {
   const { invoke, event } = window.__TAURI__
   let config = JSON.parse(await invoke('read_config_file')) || null
 
+  window.DorionConfig = config
+
   // If there is an issue with the config, we need to recreate a default one
   if (!config) {
     const defaultConf = await invoke('default_config')
