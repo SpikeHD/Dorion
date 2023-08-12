@@ -7,7 +7,7 @@ use tauri::{
   api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
   SystemTrayMenu, Window, WindowBuilder, async_runtime::block_on,
 };
-use config::get_client_type;
+use config::{get_client_type, get_start_maximized};
 use injection::{local_html, plugin, injection_runner, theme};
 use processors::{css_preprocess, js_preprocess};
 use util::{notifications, process, helpers, window_helpers::{window_zoom_level, self}};
@@ -226,9 +226,17 @@ fn close(win: Window) {
  * Applies various window modifications, most being platform-dependent
  */
 fn modify_window(window: &Window) {
+  if get_start_maximized() {
+    window.maximize().unwrap_or_else(|_| {
+      println!("Failed to maximize window!");
+    });
+  }
+
   window
     .with_webview(move |webview| unsafe {
       window_zoom_level(webview);
+
+
     })
     .unwrap();
 }

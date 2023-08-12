@@ -14,6 +14,7 @@ pub struct Config {
   pub push_to_talk_keys: Option<Vec<String>>,
   pub cache_css: Option<bool>,
   pub use_native_titlebar: Option<bool>,
+  pub start_maximized: Option<bool>,
 }
 
 pub fn init() {
@@ -50,6 +51,7 @@ pub fn default_config() -> Config {
     push_to_talk_keys: Option::from(vec!["RControl".to_string()]),
     cache_css: Option::from(false),
     use_native_titlebar: Option::from(false),
+    start_maximized: Option::from(false),
   }
 }
 
@@ -106,4 +108,10 @@ pub fn get_use_native_titlebar() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.use_native_titlebar.unwrap_or(false)
+}
+
+pub fn get_start_maximized() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.start_maximized.unwrap_or(false)
 }
