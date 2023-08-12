@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use tauri::regex::Regex;
 use std::{collections::HashMap, fs};
+use tauri::regex::Regex;
 
 use crate::util::paths::get_plugin_dir;
 
@@ -30,7 +30,6 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
 
   imports
 }
-
 
 #[tauri::command]
 pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {

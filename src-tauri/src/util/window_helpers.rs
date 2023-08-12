@@ -1,5 +1,5 @@
-use tauri::window::PlatformWebview;
 use crate::config;
+use tauri::window::PlatformWebview;
 
 #[cfg(target_os = "macos")]
 #[tauri::command]

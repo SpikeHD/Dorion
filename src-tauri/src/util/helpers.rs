@@ -1,6 +1,6 @@
+use super::paths::*;
 use std::path::*;
 use std::process::Command;
-use super::paths::*;
 
 #[tauri::command]
 pub fn open_plugins() {

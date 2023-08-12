@@ -43,29 +43,31 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 
       for key in &ptt_keys {
         // if the key is "Control" or "Shift", match both L and R version
-        if key == "Control" {
-          if !keys_str.contains(&"LControl".to_string()) && !keys_str.contains(&"RControl".to_string()) {
-            ptt_held = false;
-          }
-        } else if key == "Shift" {
-          if !keys_str.contains(&"LShift".to_string()) && !keys_str.contains(&"RShift".to_string()) {
-            ptt_held = false;
-          }
+        if key == "Control"
+          && !keys_str.contains(&"LControl".to_string())
+          && !keys_str.contains(&"RControl".to_string())
+        {
+          ptt_held = false;
+        }
+
+        if key == "Shift"
+          && !keys_str.contains(&"LShift".to_string())
+          && !keys_str.contains(&"RShift".to_string())
+        {
+          ptt_held = false;
         }
 
         // If the key is a single regular character, make sure we are comparing an uppercase version of ptt_key
-        if key.len() == 1 {
-          if !keys_str.contains(&key.to_uppercase()) {
-            ptt_held = false;
-          }
+        if key.len() == 1 && !keys_str.contains(&key.to_uppercase()) {
+          ptt_held = false;
         }
       }
 
-      if ptt_held && ptt_state == false {
+      if ptt_held && !ptt_state {
         // Do PTT
         win.emit("ptt_toggle", PTTEvent { state: true }).unwrap();
         ptt_state = true;
-      } else if ptt_state == true && !ptt_held {
+      } else if ptt_state && !ptt_held {
         // Stop PTT
         win.emit("ptt_toggle", PTTEvent { state: false }).unwrap();
         ptt_state = false;
@@ -80,7 +82,8 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 #[tauri::command]
 pub fn save_ptt_keys(keys: Vec<String>) {
   let config = config::read_config_file();
-  let mut parsed = serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
+  let mut parsed =
+    serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
 
   parsed.push_to_talk_keys = Option::from(keys.clone());
 
@@ -90,16 +93,17 @@ pub fn save_ptt_keys(keys: Vec<String>) {
 
   // Also set the global PTT keys
   unsafe {
-    PTT_KEYS = keys.clone();
+    PTT_KEYS = keys;
   }
 }
 
 #[tauri::command]
 pub fn toggle_ptt(state: bool) {
   let config = config::read_config_file();
-  let mut parsed = serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
+  let mut parsed =
+    serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
 
-  parsed.push_to_talk = Option::from(state.clone());
+  parsed.push_to_talk = Option::from(state);
 
   let new_config = serde_json::to_string(&parsed).unwrap();
 
@@ -107,6 +111,6 @@ pub fn toggle_ptt(state: bool) {
 
   // Also set the global PTT keys
   unsafe {
-    PTT_ENABLED = state.clone();
+    PTT_ENABLED = state;
   }
 }

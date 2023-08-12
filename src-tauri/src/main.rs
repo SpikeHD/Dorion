@@ -3,21 +3,24 @@
   windows_subsystem = "windows"
 )]
 
-use tauri::{
-  api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
-  SystemTrayMenu, Window, WindowBuilder, async_runtime::block_on,
-};
 use config::{get_client_type, get_start_maximized};
-use injection::{local_html, plugin, injection_runner, theme};
+use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
-use util::{notifications, process, helpers, window_helpers::{window_zoom_level, self}};
+use tauri::{
+  api::dialog, async_runtime::block_on, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
+  SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
+};
+use util::{
+  helpers, notifications, process,
+  window_helpers::{self, window_zoom_level},
+};
 
 mod config;
 mod hotkeys;
 mod init;
 mod injection;
-mod proxy_server;
 mod processors;
+mod proxy_server;
 mod release;
 mod util;
 
@@ -59,11 +62,12 @@ fn main() {
   // Ensure config is created
   config::init();
 
-  std::env::set_var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--disable-web-security");
+  std::env::set_var(
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+    "--disable-web-security",
+  );
 
   let mut context = tauri::generate_context!("tauri.conf.json");
-  let proxy_thread;
-
   // Still have to actually just make this focus the window lol
   let dorion_open = process::process_already_exists();
   let client_type = get_client_type();
@@ -98,11 +102,7 @@ fn main() {
   }
 
   // Begin the proxy server
-  proxy_thread = std::thread::spawn(|| {
-    block_on(
-      proxy_server::start_server(8678)
-    )
-  });
+  let proxy_thread = std::thread::spawn(|| block_on(proxy_server::start_server(8678)));
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -188,7 +188,7 @@ fn main() {
 
       //win.open_devtools();
 
-      init::inject_routine(win.clone());
+      init::inject_routine(win);
 
       Ok(())
     })
@@ -235,8 +235,6 @@ fn modify_window(window: &Window) {
   window
     .with_webview(move |webview| unsafe {
       window_zoom_level(webview);
-
-
     })
     .unwrap();
 }

@@ -104,7 +104,7 @@ pub fn get_cache_css() -> bool {
   parsed.cache_css.unwrap_or(false)
 }
 
-pub fn get_use_native_titlebar() -> bool {
+pub fn _get_use_native_titlebar() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.use_native_titlebar.unwrap_or(false)

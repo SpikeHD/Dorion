@@ -46,8 +46,8 @@ pub fn get_theme_names() -> Vec<String> {
 
 #[tauri::command]
 pub fn _theme_from_link(link: String) {
-  let mut theme_name = link.split("/").last().unwrap().to_string();
-  
+  let mut theme_name = link.split('/').last().unwrap().to_string();
+
   if theme_name.is_empty() {
     return;
   }
@@ -57,7 +57,7 @@ pub fn _theme_from_link(link: String) {
   }
 
   let theme = reqwest::blocking::get(&link).unwrap().text().unwrap();
-  
+
   let path = get_theme_dir().join(theme_name);
 
   println!("Writing to: {:?}", path);

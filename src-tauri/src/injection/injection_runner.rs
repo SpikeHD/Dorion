@@ -4,7 +4,6 @@ use tauri::{regex::Regex, Manager};
 use super::plugin;
 use crate::processors::js_preprocess::eval_js_imports;
 
-
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
