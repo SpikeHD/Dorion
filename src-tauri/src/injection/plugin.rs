@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
+use tauri::regex::Regex;
 use std::{collections::HashMap, fs};
 
-use crate::js_preprocess::get_js_imports;
-use crate::paths::get_plugin_dir;
+use crate::util::paths::get_plugin_dir;
 
 #[derive(Serialize, Deserialize)]
 pub struct Plugin {
@@ -10,6 +10,27 @@ pub struct Plugin {
   disabled: bool,
   preload: bool,
 }
+
+#[tauri::command]
+pub fn get_js_imports(js: &str) -> Vec<String> {
+  let reg = Regex::new(r"//[ ]?URL_IMPORT (.*)").unwrap();
+  let mut imports: Vec<String> = vec![];
+
+  let captures = reg.captures_iter(js).next();
+
+  if captures.is_none() {
+    return imports;
+  }
+
+  if let Some(capture) = captures.unwrap().get(1) {
+    let first_match = capture.as_str();
+
+    imports.push(first_match.to_string());
+  }
+
+  imports
+}
+
 
 #[tauri::command]
 pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {

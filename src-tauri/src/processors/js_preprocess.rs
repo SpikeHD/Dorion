@@ -1,25 +1,3 @@
-use tauri::regex::Regex;
-
-#[tauri::command]
-pub fn get_js_imports(js: &str) -> Vec<String> {
-  let reg = Regex::new(r"//[ ]?URL_IMPORT (.*)").unwrap();
-  let mut imports: Vec<String> = vec![];
-
-  let captures = reg.captures_iter(js).next();
-
-  if captures.is_none() {
-    return imports;
-  }
-
-  if let Some(capture) = captures.unwrap().get(1) {
-    let first_match = capture.as_str();
-
-    imports.push(first_match.to_string());
-  }
-
-  imports
-}
-
 pub async fn localize_js(url: String) -> String {
   if url.is_empty() {
     return String::new();

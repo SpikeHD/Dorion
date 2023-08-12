@@ -47,7 +47,7 @@ pub async fn handle_request(mut req: tide::Request<()>) -> Result<tide::Response
   let req_body = req.body_bytes().await.unwrap_or(vec![]);
   let req_method = req.method().to_string();
 
-  // Convert tide request headers to reqwest headers WITHOUT usign req.iter()
+  // Convert tide request headers to reqwest headers
   let req_headers = convert_headers(&req);
 
   let response = match req_method.as_str() {

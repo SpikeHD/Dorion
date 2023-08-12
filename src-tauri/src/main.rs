@@ -3,29 +3,23 @@
   windows_subsystem = "windows"
 )]
 
-use config::get_client_type;
-use reqwest::header::HeaderValue;
 use tauri::{
   api::dialog, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent,
   SystemTrayMenu, Window, WindowBuilder, async_runtime::block_on,
 };
+use config::get_client_type;
+use injection::{local_html, plugin, injection_runner, theme};
+use processors::{css_preprocess, js_preprocess};
+use util::{notifications, process, helpers, window_helpers::{window_zoom_level, self}};
 
 mod config;
-mod css_preprocess;
-mod helpers;
 mod hotkeys;
 mod init;
 mod injection;
-mod js_preprocess;
-mod local_html;
-mod notifications;
-mod paths;
-mod plugin;
-mod process;
 mod proxy_server;
+mod processors;
 mod release;
-mod theme;
-mod top_bar;
+mod util;
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
@@ -68,7 +62,9 @@ fn main() {
   std::env::set_var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--disable-web-security");
 
   let mut context = tauri::generate_context!("tauri.conf.json");
-  let mut proxy_thread;
+  let proxy_thread;
+
+  // Still have to actually just make this focus the window lol
   let dorion_open = process::process_already_exists();
   let client_type = get_client_type();
   let mut url = String::new();
@@ -132,10 +128,10 @@ fn main() {
       release::get_latest_release,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
-      injection::do_injection,
-      injection::get_injection_js,
-      injection::is_injected,
-      injection::load_injection_js,
+      injection_runner::do_injection,
+      injection_runner::get_injection_js,
+      injection_runner::is_injected,
+      injection_runner::load_injection_js,
       config::read_config_file,
       config::write_config_file,
       config::default_config,
@@ -143,7 +139,7 @@ fn main() {
       theme::get_theme_names,
       helpers::open_themes,
       helpers::open_plugins,
-      top_bar::remove_top_bar,
+      window_helpers::remove_top_bar,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
@@ -226,78 +222,13 @@ fn close(win: Window) {
   }
 }
 
-// Big fat credit to icidasset & FabianLars
-// https://github.com/icidasset/diffuse/blob/main/src-tauri/src/main.rs
+/**
+ * Applies various window modifications, most being platform-dependent
+ */
 fn modify_window(window: &Window) {
   window
     .with_webview(move |webview| unsafe {
-      #[cfg(windows)]
-      {
-        // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2WebResourceRequest;
-        // use webview2_com::WebResourceRequestedEventHandler;
-        // use windows::core::HSTRING;
-        // use windows::core::PCWSTR;
-        // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-        // use windows::core::Interface;
-
-        // let settings: ICoreWebView2Settings2 = webview
-        //   .controller()
-        //   .CoreWebView2()
-        //   .unwrap()
-        //   .Settings()
-        //   .unwrap()
-        //   .cast()
-        //   .unwrap();
-
-        // // settings.SetUserAgent(user_agent).unwrap();
-        // settings.SetIsZoomControlEnabled(true).unwrap();
-
-        // let core = webview.controller().CoreWebView2().unwrap();
-        // let mut _token = windows::Win32::System::WinRT::EventRegistrationToken::default();
-        // // You'd probably use CONTEXT_WEBSOCKET or whatever fits, see https://docs.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2webresourcecontext?view=webview2-dotnet-1.0.1293.44
-        // // Also use a fitting glob filter, so that it doesn't trigger for all requests, see https://docs.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2?view=webview2-1.0.1293.44#addwebresourcerequestedfilter
-        // core.AddWebResourceRequestedFilter(&HSTRING::from("http*"), webview2_com::Microsoft::Web::WebView2::Win32::COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
-        // core.add_WebResourceRequested(
-        //     &WebResourceRequestedEventHandler::create(Box::new(move |webview, args| {
-        //         if let Some(args) = args {
-        //             let request: ICoreWebView2WebResourceRequest = args.Request().unwrap(); // manual type to make Rust-Analyzer show the types
-
-        //             request
-        //                 .Headers()
-        //                 .unwrap()
-        //                 .SetHeader(&"Content-Security-Policy".into(), &"*".into())
-        //                 .unwrap();
-        //         }
-        //         Ok(())
-        //     })),
-        //     &mut _token,
-        // );
-
-        // Grab and set this config option, it's fine if it silently fails
-        webview
-          .controller()
-          .SetZoomFactor(config::get_zoom())
-          .unwrap_or(());
-      }
-
-      #[cfg(target_os = "linux")]
-      {
-        use webkit2gtk::WebViewExt;
-        let webview = webview.inner();
-        //let settings = webview.settings().unwrap();
-
-        webview.set_zoom_level(config::get_zoom());
-      }
-
-      // untested
-      #[cfg(target_os = "macos")]
-      unsafe {
-        // Set zoom level
-        use cocoa::base::id;
-        use objc::{class, msg_send, sel, sel_impl};
-
-        // let _: () = msg_send![webview.ns_window(), windowRef];
-      }
+      window_zoom_level(webview);
     })
     .unwrap();
 }

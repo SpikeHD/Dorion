@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::paths::get_theme_dir;
+use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
 pub fn get_theme(name: String) -> String {
@@ -45,7 +45,7 @@ pub fn get_theme_names() -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn theme_from_link(link: String) {
+pub fn _theme_from_link(link: String) {
   let mut theme_name = link.split("/").last().unwrap().to_string();
   
   if theme_name.is_empty() {

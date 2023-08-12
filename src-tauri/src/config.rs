@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 
-use crate::paths::get_config_dir;
+use crate::util::paths::get_config_dir;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {

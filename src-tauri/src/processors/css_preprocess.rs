@@ -3,7 +3,7 @@ use std::fs;
 use tauri::regex::Regex;
 use async_recursion::async_recursion;
 
-use crate::paths::get_theme_dir;
+use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
 pub async fn clear_css_cache() {

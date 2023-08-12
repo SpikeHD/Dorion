@@ -53,7 +53,7 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
           }
         }
 
-        // If the key is a single character, make sure we are comparing an uppercase version of ptt_key
+        // If the key is a single regular character, make sure we are comparing an uppercase version of ptt_key
         if key.len() == 1 {
           if !keys_str.contains(&key.to_uppercase()) {
             ptt_held = false;

@@ -1,5 +1,5 @@
 use std::time::Duration;
-use crate::injection;
+use crate::injection::injection_runner;
 
 // Global "is injected" var
 static mut IS_READY: bool = false;
@@ -19,7 +19,7 @@ pub fn inject_routine(win: tauri::Window) {
       unsafe {
         if IS_READY {
           println!("JS context ready!");
-          injection::do_injection(win_cln);
+          injection_runner::do_injection(win_cln);
           break;
         }
       }
