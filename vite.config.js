@@ -3,6 +3,7 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  root: 'src',
   // Vite optons tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors
   clearScreen: false,
@@ -23,9 +24,12 @@ export default defineConfig({
     sourcemap: !!process.env.TAURI_DEBUG,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        bar: resolve(__dirname, 'top.html'),
-        notif: resolve(__dirname, 'notification.html')
+        main: resolve(__dirname, 'src/index.html'),
+        bar: resolve(__dirname, 'src/top.html'),
+        notif: resolve(__dirname, 'src/notification.html')
+      },
+      output: {
+        dir: 'src-tauri/html'
       }
     },
     outDir: 'src-tauri/html'

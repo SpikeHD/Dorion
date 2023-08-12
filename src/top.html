@@ -111,33 +111,31 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
-    padding-right: 4px;
   }
 
   #topclose,
   #topmin,
   #topmax {
-    height: 16px;
-    width: 16px;
+    display: flex;
+    align-items: center;
 
-    margin: 0 6px;
-  }
-
-  #topright svg {
     height: 100%;
     width: 100%;
+
+    padding: 0 6px;
 
     transition: filter 0.1s ease-in-out;
   }
 
-  #topright svg:hover {
+  #topclose:hover,
+  #topmin:hover,
+  #topmax:hover {
     cursor: pointer;
     filter: brightness(0.8);
   }
 
-  /* Required to re-fit app mount with top bar on top of it */
-  /* #app-mount {
-    height: calc(100% - 30px);
-  } */
+  #topright svg {
+    height: 60%;
+    width: 60%;
+  }
 </style>
