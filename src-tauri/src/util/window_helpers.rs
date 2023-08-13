@@ -64,6 +64,19 @@ pub fn _clear_cache(_win: tauri::Window) {
   // });
 }
 
+#[cfg(target_os = "windows")]
+pub fn window_zoom_level(win: &tauri::Window) {
+  win.with_webview(|webview| unsafe {
+    let zoom = config::get_zoom();
+
+    webview
+      .controller()
+      .SetZoomFactor(zoom)
+      .unwrap_or_default();
+  }).unwrap_or_default();
+}
+
+#[cfg(not(target_os = "windows"))]
 pub fn window_zoom_level(win: &tauri::Window) {
   let zoom = config::get_zoom();
 
