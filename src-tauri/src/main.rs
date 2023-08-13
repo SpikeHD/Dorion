@@ -232,9 +232,10 @@ fn modify_window(window: &Window) {
     });
   }
 
-  window
-    .with_webview(move |webview| unsafe {
-      window_zoom_level(webview);
-    })
-    .unwrap();
+  window_zoom_level(window);
+
+  // window
+  //   .with_webview(move |webview| unsafe {
+  //   })
+  //   .unwrap();
 }

@@ -64,31 +64,12 @@ pub fn _clear_cache(_win: tauri::Window) {
   // });
 }
 
-#[cfg(target_os = "windows")]
-pub unsafe fn window_zoom_level(webview: PlatformWebview) {
-  webview
-    .controller()
-    .SetZoomFactor(config::get_zoom())
-    .unwrap_or(());
-}
+pub fn window_zoom_level(win: &tauri::Window) {
+  let zoom = config::get_zoom();
 
-#[cfg(target_os = "linux")]
-pub unsafe fn window_zoom_level(webview: PlatformWebview) {
-  use webkit2gtk::WebViewExt;
-  let webview = webview.inner();
-  //let settings = webview.settings().unwrap();
-
-  webview.set_zoom_level(config::get_zoom());
-}
-
-// untested
-#[cfg(target_os = "macos")]
-pub unsafe fn window_zoom_level(webview: PlatformWebview) {
-  // Set zoom level
-  use cocoa::base::id;
-  use objc::{class, msg_send, sel, sel_impl};
-
-  // let _: () = msg_send![webview.ns_window(), windowRef];
+  win.eval(&format!("
+    document.body.style.zoom = '{}';
+  ", zoom)).expect("Failed to set zoom level!");
 }
 
 #[cfg(not(target_os = "macos"))]
