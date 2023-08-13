@@ -180,6 +180,12 @@ fn main() {
         .title(title.as_str())
         .resizable(true)
         .disable_file_drop_handler()
+        .data_directory(
+          tauri::api::path::data_dir()
+            .unwrap()
+            .join("dorion")
+            .join("webdata"),
+        )
         .build()?;
 
       modify_window(&win);
