@@ -12,7 +12,7 @@ use tauri::{
 };
 use util::{
   helpers, notifications, process,
-  window_helpers::{self, window_zoom_level},
+  window_helpers::{self, window_zoom_level, clear_cache_check}, paths::get_webdata_dir,
 };
 
 mod config;
@@ -66,6 +66,9 @@ fn main() {
     "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
     "--disable-web-security",
   );
+
+  // before anything else, check if the clear_cache file exists
+  clear_cache_check();
 
   let mut context = tauri::generate_context!("tauri.conf.json");
   // Still have to actually just make this focus the window lol
@@ -140,6 +143,7 @@ fn main() {
       helpers::open_themes,
       helpers::open_plugins,
       window_helpers::remove_top_bar,
+      window_helpers::set_clear_cache,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
@@ -181,10 +185,7 @@ fn main() {
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(
-          tauri::api::path::data_dir()
-            .unwrap()
-            .join("dorion")
-            .join("webdata"),
+          get_webdata_dir()
         )
         .build()?;
 

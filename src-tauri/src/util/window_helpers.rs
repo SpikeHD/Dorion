@@ -1,67 +1,53 @@
 use crate::config;
-use tauri::window::PlatformWebview;
 
-#[cfg(target_os = "macos")]
-#[tauri::command]
-pub fn _clear_cache(win: tauri::Window) {
-  unsafe {
-    use cocoa::base::id;
-    use objc::{class, msg_send, sel, sel_impl};
+use super::paths::get_webdata_dir;
 
-    // let _: () = msg_send![webview.ns_window(), windowRef];
+pub fn clear_cache_check() {
+  let appdata = tauri::api::path::data_dir()
+    .unwrap()
+    .join("dorion");
 
-    let _ = win.with_webview(|webview| {
-      // Disable cache for now
-      let config: id = msg_send![webview.inner(), configuration];
-      let store: id = msg_send![config, websiteDataStore];
-      let all_data_types: id = msg_send![class!(WKWebsiteDataStore), allWebsiteDataTypes];
-      let date: id = msg_send![class!(NSDate), dateWithTimeIntervalSince1970: 0.0];
-      let handler = block::ConcreteBlock::new(|| {});
-      let _: () = msg_send![store, removeDataOfTypes:all_data_types modifiedSince:date completionHandler:handler];
-    });
+  if !appdata.exists() {
+    std::fs::create_dir_all(&appdata).unwrap();
+  }
+
+  let cache_file = appdata.join("clear_cache");
+
+  if cache_file.exists() {
+    // Delete the file
+    std::fs::remove_file(&cache_file).unwrap();
+    clear_cache();
   }
 }
 
-#[cfg(target_os = "linux")]
 #[tauri::command]
-pub fn _clear_cache(_win: tauri::Window) {
-  // win.with_webview(|webview| {
-  //   if let Some(context) = WebViewExt::context(webview) {
-  //     use webkit2gtk::WebContextExt;
-  //     if let Some(data_manger) = context.website_data_manager() {
-  //       webkit2gtk::WebsiteDataManagerExtManual::clear(
-  //         &data_manger,
-  //         webkit2gtk::WebsiteDataTypes::ALL,
-  //         glib::TimeSpan::from_seconds(0),
-  //         None::<&Cancellable>,
-  //         |_| {},
-  //       );
-  //     }
-  //   }
-  // });
+pub fn set_clear_cache(win: tauri::Window) {
+  // Create a file called "clear_cache" in the appdata dir
+  // This will be read by the window when it closes
+  let appdata = tauri::api::path::data_dir()
+    .unwrap()
+    .join("dorion");
+
+  if !appdata.exists() {
+    std::fs::create_dir_all(&appdata).unwrap();
+  }
+
+  let cache_file = appdata.join("clear_cache");
+
+  std::fs::write(cache_file, "").unwrap();
+
+  win.close().unwrap_or_default();
 }
 
-#[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn _clear_cache(_win: tauri::Window) {
-  // win.with_webview(|webview| {
-  //   use webview2_com::ClearBrowsingDataCompletedHandler;
-  //   use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_13, ICoreWebView2Profile2};
-  //   use windows::core::Interface;
+pub fn clear_cache() {
+  // Remove %appdata%/dorion/webdata
+  let webdata_dir = get_webdata_dir();
 
-  //   let handler = ClearBrowsingDataCompletedHandler::create(Box::new(move |_| Ok(())));
-  //   unsafe {
-  //     webview.controller()
-  //       .cast::<ICoreWebView2_13>()
-  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
-  //       .Profile()
-  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
-  //       .cast::<ICoreWebView2Profile2>()
-  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))?
-  //       .ClearBrowsingDataAll(&handler)
-  //       .map_err(|e| Error::WebView2Error(webview2_com::Error::WindowsError(e)))
-  //   }
-  // });
+  if webdata_dir.exists() {
+    println!("Deleting cache...");
+    std::fs::remove_dir_all(webdata_dir).unwrap();
+  }
 }
 
 #[cfg(target_os = "windows")]
