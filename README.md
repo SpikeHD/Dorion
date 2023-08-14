@@ -44,11 +44,11 @@ Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Win
 If you'd like to be on the cutting edge, you can also grab an artifact from the [actions tab!](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml)
 
 # Why use Dorion?
-
-* Portable (mostly)
-* Low - if any - cache footprint (compared to [the PTB client](https://user-images.githubusercontent.com/25207995/189549033-b372ca74-5f30-4864-b71a-10a88405537a.png))
-* Extremely small installation size (~10mb!) on Windows
-  * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine
+* Portable
+* Safe to put on a small C:\ drive
+  * Low - if any - cache footprint (compared to [the PTB client](https://user-images.githubusercontent.com/25207995/189549033-b372ca74-5f30-4864-b71a-10a88405537a.png))
+  * Extremely small installation size (~13mb!) on Windows
+    * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine OR NodeJS runtime
 * Often loads slightly faster (vanilla)
 * Switch between Stable, Canary and PTB clients straight from the settings
 * Built-in telemetry blocking option
