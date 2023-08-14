@@ -91,7 +91,6 @@ async function createTopBar() {
  * Run when the client is "loaded"
  */
 function onClientLoad() {
-  loaded = true
   observer.disconnect()
 
   // Notifcation watcher

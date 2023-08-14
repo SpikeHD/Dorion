@@ -3,9 +3,7 @@ use crate::config;
 use super::paths::get_webdata_dir;
 
 pub fn clear_cache_check() {
-  let appdata = tauri::api::path::data_dir()
-    .unwrap()
-    .join("dorion");
+  let appdata = tauri::api::path::data_dir().unwrap().join("dorion");
 
   if !appdata.exists() {
     std::fs::create_dir_all(&appdata).unwrap();
@@ -24,9 +22,7 @@ pub fn clear_cache_check() {
 pub fn set_clear_cache(win: tauri::Window) {
   // Create a file called "clear_cache" in the appdata dir
   // This will be read by the window when it closes
-  let appdata = tauri::api::path::data_dir()
-    .unwrap()
-    .join("dorion");
+  let appdata = tauri::api::path::data_dir().unwrap().join("dorion");
 
   if !appdata.exists() {
     std::fs::create_dir_all(&appdata).unwrap();
@@ -52,23 +48,27 @@ pub fn clear_cache() {
 
 #[cfg(target_os = "windows")]
 pub fn window_zoom_level(win: &tauri::Window) {
-  win.with_webview(|webview| unsafe {
-    let zoom = config::get_zoom();
+  win
+    .with_webview(|webview| unsafe {
+      let zoom = config::get_zoom();
 
-    webview
-      .controller()
-      .SetZoomFactor(zoom)
-      .unwrap_or_default();
-  }).unwrap_or_default();
+      webview.controller().SetZoomFactor(zoom).unwrap_or_default();
+    })
+    .unwrap_or_default();
 }
 
 #[cfg(not(target_os = "windows"))]
 pub fn window_zoom_level(win: &tauri::Window) {
   let zoom = config::get_zoom();
 
-  win.eval(&format!("
+  win
+    .eval(&format!(
+      "
     document.body.style.zoom = '{}';
-  ", zoom)).expect("Failed to set zoom level!");
+  ",
+      zoom
+    ))
+    .expect("Failed to set zoom level!");
 }
 
 #[cfg(not(target_os = "macos"))]

@@ -119,10 +119,7 @@ pub fn get_webdata_dir() -> PathBuf {
     .join("config.json");
 
   if fs::metadata(&local_config_dir).is_ok() {
-    return local_config_dir
-      .parent()
-      .unwrap()
-      .join("webdata");
+    return local_config_dir.parent().unwrap().join("webdata");
   }
 
   let appdata = tauri::api::path::data_dir().unwrap();

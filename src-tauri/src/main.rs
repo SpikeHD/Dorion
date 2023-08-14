@@ -11,8 +11,10 @@ use tauri::{
   SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
 };
 use util::{
-  helpers, notifications, process,
-  window_helpers::{self, window_zoom_level, clear_cache_check}, paths::get_webdata_dir,
+  helpers, notifications,
+  paths::get_webdata_dir,
+  process,
+  window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
 mod config;
@@ -184,9 +186,7 @@ fn main() {
         .title(title.as_str())
         .resizable(true)
         .disable_file_drop_handler()
-        .data_directory(
-          get_webdata_dir()
-        )
+        .data_directory(get_webdata_dir())
         .build()?;
 
       modify_window(&win);

@@ -4,15 +4,15 @@
   "version": "0.8.0",
   "type": "module",
   "scripts": {
-    "prebuild": "uglifyjs --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js && uglifyjs --mangle -o src-tauri/injection/preinject_min.js -- src-tauri/injection/preinject.js",
-    "dev": "yarn build && tauri dev",
+    "prebuild": "terser --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js && terser --mangle -o src-tauri/injection/preinject_min.js -- src-tauri/injection/preinject.js",
+    "dev": "pnpm prebuild && pnpm build && tauri dev",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all",
     "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
     "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
-    "codefix": "yarn format && yarn clippy && yarn lint",
+    "codefix": "pnpm format && pnpm clippy && pnpm lint",
     "update": "curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.css -o src-tauri/injection/browser.css && curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.js -o src-tauri/injection/browser.js"
   },
   "devDependencies": {
@@ -21,8 +21,8 @@
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "eslint": "^8.23.0",
+    "terser": "^5.19.2",
     "typescript": "^4.8.2",
-    "uglify-js": "3",
     "vite": "^3.2.7"
   }
 }

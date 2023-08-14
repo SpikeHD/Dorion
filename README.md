@@ -122,6 +122,7 @@ Dorion supports all themes, BetterDiscord and others
 ### Prerequisites
 
 * [NodeJS](https://nodejs.org)
+* [PNPM](https://pnpm.io/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 
 ### Steps
@@ -130,25 +131,21 @@ Dorion supports all themes, BetterDiscord and others
 2. Open a terminal window in the root project folder
 3. Install JS dependencies:
   ```sh
-  yarn install
-  # or
-  npm install
+  pnpm install
   ```
 4. Build the minified versions of the JS/HTML files:
   ```sh
-  yarn build
-  # or
-  npm run build
+  pnpm build
   ```
 5. Pull the Vencord fork
   ```sh
-  yarn update
+  pnpm update
   ```
 6. Build!
   ```sh
-  yarn tauri build
+  pnpm tauri build
   # or to debug/open in dev mode
-  yarn tauri dev
+  pnpm tauri dev
   ```
 
 All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `html`, `icons`, and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/msi`
