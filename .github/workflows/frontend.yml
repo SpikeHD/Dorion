@@ -25,6 +25,6 @@ jobs:
       - name: Install modules
         run: yarn
       - name: Run tsc
-        run: yarn tsc --noEmit
+        run: pnpm tsc --noEmit
       - name: Run ESLint
-        run: yarn eslint ./src
+        run: pnpm eslint ./src

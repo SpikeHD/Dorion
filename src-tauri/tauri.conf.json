@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "",
-    "beforeBuildCommand": "yarn build",
+    "beforeBuildCommand": "pnpm build",
     "devPath": "https://discord.com/app",
     "distDir": "https://discord.com/app",
     "withGlobalTauri": true
