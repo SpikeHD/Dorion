@@ -20,6 +20,10 @@ jobs:
   build-win:
     runs-on: windows-latest
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.7
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -62,6 +66,10 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.7
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -112,6 +120,10 @@ jobs:
   build-macos:
     runs-on: macos-12
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.7
+
       - name: Checkout
         uses: actions/checkout@v2
 
