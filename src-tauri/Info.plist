@@ -8,5 +8,7 @@
 	<string>Request microphone access for WebRTC</string>
   <key>com.apple.ScreenSharing.plist</key>
   <true />
+  <key>NSHighResolutionCapable</key>
+  <true/>
 </dict>
 </plist>

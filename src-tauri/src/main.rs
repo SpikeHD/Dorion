@@ -191,6 +191,7 @@ fn main() {
 
       modify_window(&win);
 
+      #[cfg(not(target_os = "macos"))]
       hotkeys::start_hotkey_watcher(win.clone());
 
       //win.open_devtools();

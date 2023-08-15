@@ -32,7 +32,7 @@ pub fn inject_routine(win: tauri::Window) {
         .unwrap();
 
       #[cfg(target_os = "macos")]
-      std::thread::sleep(Duration::from_millis(50));
+      std::thread::sleep(Duration::from_millis(100));
 
       #[cfg(not(target_os = "macos"))]
       std::thread::sleep(Duration::from_millis(100));
