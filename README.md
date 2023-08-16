@@ -86,8 +86,8 @@ Dorion supports all themes, BetterDiscord and others
   <tr>
    <td>Voice</td>
    <td>✓</td>
-   <td>✓<sup>[1]</sup></td>
-   <td>❌<sup>[2]</sup></td>
+   <td>✓</td>
+   <td>❌<sup>[1]</sup></td>
   </tr>
 
   <tr>
@@ -100,7 +100,7 @@ Dorion supports all themes, BetterDiscord and others
   <tr>
    <td>Vencord (and included plugins)</td>
    <td>✓</td>
-   <td>✓<sup>[3]</sup></td>
+   <td>✓</td>
    <td>✓</td>
   </tr>
 
