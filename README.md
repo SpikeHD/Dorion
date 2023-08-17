@@ -133,7 +133,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
   ```
 5. Pull the Vencord fork
   ```sh
-  pnpm update
+  pnpm vupdate
   ```
 6. Build!
   ```sh
