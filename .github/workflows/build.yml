@@ -38,7 +38,7 @@ jobs:
           toolchain: stable
 
       - name: Install deps and build
-        run: pnpm install && pnpm update && pnpm build &&  pnpm tauri build
+        run: pnpm install && pnpm update && pnpm prebuild && pnpm build &&  pnpm tauri build
 
       # Move built to its  own folder for compression
       - name: Move build
@@ -87,7 +87,7 @@ jobs:
         run: sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 
       - name: Install deps and build
-        run: pnpm install && pnpm update && pnpm build &&  pnpm tauri build
+        run: pnpm install && pnpm update && pnpm prebuild && pnpm build &&  pnpm tauri build
 
       # Move built to its  own folder for compression
       - name: Move build
@@ -142,7 +142,7 @@ jobs:
         run: rustup target add aarch64-apple-darwin
 
       - name: Install deps and build
-        run: pnpm install && pnpm update && pnpm build &&  pnpm tauri build --target universal-apple-darwin
+        run: pnpm install && pnpm update && pnpm prebuild && pnpm build &&  pnpm tauri build --target universal-apple-darwin
 
       # Zip artifact folder
       - name: Compress build
