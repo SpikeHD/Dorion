@@ -23,7 +23,7 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 # Table of Contents
 
 * [Setup](#setup)
-* [Why use Dorion?](#why-use-dorion)
+* [Features](#features)
   * [Plugins](#plugins)
   * [Themes](#themes)
 * [Platform Support](#platform-support)
@@ -41,27 +41,23 @@ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitiv
 
 Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.deb` for Debian, etc.) and install!
 
-If you'd like to be on the cutting edge, you can also grab an artifact from the [actions tab!](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml)
+You can also [build it](#building) yourself!
 
-# Why use Dorion?
-* Portable
-* Safe to put on a small C:\ drive
-  * Low - if any - cache footprint (compared to [the PTB client](https://user-images.githubusercontent.com/25207995/189549033-b372ca74-5f30-4864-b71a-10a88405537a.png))
-  * Extremely small installation size (~13mb!) on Windows
-    * This is because unlike the Discord client, Dorion does *not* bundle an entire Chromium engine OR NodeJS runtime
-* Often loads slightly faster (vanilla)
-* Switch between Stable, Canary and PTB clients straight from the settings
-* Built-in telemetry blocking option
-* Not only is Vencord included by default, but Dorion uses a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion) with extras specifically for Dorion
-* Made by me (automatically makes it cooler)
+# Features
+
+- Themes
+- Plugins
+- Multi-profile
+- Smaller overall size
+- (Hopefully) better low-end system performance
 
 ## Plugins
 
-While Dorion does *not* support BetterDiscord plugins (or other mods that use modified `.asar`s), it *does* support browser-based ones!
+Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports browser-based plugins! 
 
 ## Themes
 
-Dorion supports all themes, BetterDiscord and others
+Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#known-issues).
 
 [Jump to "Using Plugins and Themes"](#using-plugins-and-themes)
 
@@ -150,11 +146,9 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 # Known Issues
 
-* A couple bugs with CSS & image import related stuff
-* Fonts/font-faces will randomly not work
+* Large images in themes will not load
+* Fonts/font-faces from sources other than Google will not load
 * (MacOS) Injection JS does not reinject after reloading the page
-* (Linux) Vencord JS does not inject... at all.
-  * This is due to lookbehind/ahead RegEx not being supported in Webkit2GTK, which is what Dorion uses on Linux. Either I have to replace all lookbehind/ahead RegEx with something else, or wait for Webkit2GTK to support it.
 
 # Troubleshooting
 
@@ -196,12 +190,8 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 └── C:/Users/USERNAME/dorion/
     ├── plugins/
     |   └── plugin.js
-    |   └── plugin_name/
-    |       └── index.js
     └── themes/
         └── theme.css
-        └── Theme2
-            └── theme2.css
 ```
 
 and like so on Linux:
@@ -211,12 +201,8 @@ and like so on Linux:
 └── ~/dorion/
     ├── plugins/
     |   └── plugin.js
-    |   └── plugin_name/
-    |       └── index.js
     └── themes/
         └── theme.css
-        └── Theme2
-            └── theme2.css
 ```
 
 so if you download a plugin or theme, just pop it into the `plugins`/`themes` folder!
