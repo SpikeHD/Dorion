@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use tauri::api::path::{data_dir};
 
-use crate::config::get_profile;
+use crate::config::{get_profile, Config};
 
 pub fn profiles_dir() -> PathBuf {
   let local_config_dir = std::env::current_exe()
@@ -76,4 +76,37 @@ pub fn get_current_profile_folder() -> PathBuf {
   }
 
   profile_folder
+}
+
+#[tauri::command]
+pub fn create_profile(name: String) {
+  let profiles_folder = profiles_dir();
+
+  let new_profile_folder = profiles_folder.join(name);
+
+  if !new_profile_folder.exists() {
+    std::fs::create_dir_all(new_profile_folder).unwrap();
+  }
+}
+
+#[tauri::command]
+pub fn delete_profile(name: String) {
+  if name == "default" {
+    return;
+  }
+
+  let profiles_folder = profiles_dir();
+
+  let profile_folder = profiles_folder.join(name);
+
+  if profile_folder.exists() {
+    std::fs::remove_dir_all(profile_folder).unwrap();
+  }
+
+  // Set config to "default"
+  let mut config: Config = serde_json::from_str(&crate::config::read_config_file()).unwrap();
+
+  config.profile = Some("default".to_string());
+
+  crate::config::write_config_file(serde_json::to_string(&config).unwrap());
 }

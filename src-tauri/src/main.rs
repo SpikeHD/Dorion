@@ -139,6 +139,8 @@ fn main() {
       plugin::get_plugin_import_urls,
       profiles::get_profile_list,
       profiles::get_current_profile_folder,
+      profiles::create_profile,
+      profiles::delete_profile,
       release::get_latest_release,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
