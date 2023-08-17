@@ -1,5 +1,7 @@
 use std::{fs, path::PathBuf};
 
+use crate::{config::get_profile, profiles::profiles_dir};
+
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let local_config_dir = std::env::current_exe()
@@ -111,23 +113,8 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 }
 
 pub fn get_webdata_dir() -> PathBuf {
-  // If there is a config located in the exe dir, use that path (since we are almost definitely a portable install)
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
-    .parent()
-    .unwrap()
-    .join("config.json");
+  let profile = get_profile();
+  let profiles = profiles_dir();
 
-  if fs::metadata(&local_config_dir).is_ok() {
-    return local_config_dir.parent().unwrap().join("webdata");
-  }
-
-  let appdata = tauri::api::path::data_dir().unwrap();
-  let webdata_dir = appdata.join("dorion").join("webdata");
-
-  if fs::metadata(appdata.join("dorion")).is_err() {
-    fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
-  }
-
-  webdata_dir
+  profiles.join(profile).join("webdata")
 }

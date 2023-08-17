@@ -6,6 +6,7 @@
 use config::{get_client_type, get_start_maximized};
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
+use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
 use tauri::{
   api::dialog, async_runtime::block_on, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
@@ -22,6 +23,7 @@ mod hotkeys;
 mod init;
 mod injection;
 mod processors;
+mod profiles;
 mod proxy_server;
 mod release;
 mod util;
@@ -71,6 +73,10 @@ fn main() {
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
+
+  // Run the steps to init profiles
+  init_profiles_folders();
+  maybe_move_legacy_webdata();
 
   let mut context = tauri::generate_context!("tauri.conf.json");
   // Still have to actually just make this focus the window lol
@@ -131,6 +137,8 @@ fn main() {
       plugin::toggle_plugin,
       plugin::toggle_preload,
       plugin::get_plugin_import_urls,
+      profiles::get_profile_list,
+      profiles::get_current_profile_folder,
       release::get_latest_release,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,

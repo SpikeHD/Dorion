@@ -15,6 +15,7 @@ pub struct Config {
   pub cache_css: Option<bool>,
   pub use_native_titlebar: Option<bool>,
   pub start_maximized: Option<bool>,
+  pub profile: Option<String>,
 }
 
 pub fn init() {
@@ -52,6 +53,7 @@ pub fn default_config() -> Config {
     cache_css: Option::from(false),
     use_native_titlebar: Option::from(false),
     start_maximized: Option::from(false),
+    profile: Option::from("default".to_string()),
   }
 }
 
@@ -114,4 +116,12 @@ pub fn get_start_maximized() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.start_maximized.unwrap_or(false)
+}
+
+pub fn get_profile() -> String {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed
+    .profile
+    .unwrap_or_else(|| "default".to_string())
 }
