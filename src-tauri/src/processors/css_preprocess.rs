@@ -289,8 +289,6 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let filetype = groups.get(2).unwrap().as_str();
     let full_url = format!("{}.{}", url, filetype);
 
-    println!("is url valid? {}", full_url);
-
     // CORS allows discord media
     if url.is_empty()
       || url.contains("cdn.discordapp")
