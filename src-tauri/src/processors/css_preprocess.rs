@@ -22,7 +22,7 @@ pub async fn clear_css_cache() {
 #[tauri::command]
 #[async_recursion]
 pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> String {
-  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?\.css)(?:"|'|)\);"#).unwrap();
+  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
 
@@ -183,6 +183,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
       || url.contains("media.discordapp")
       || url.contains("cdn.discordapp")
       || url.contains("discord.com/assets")
+      || url.contains("fonts.gstatic.com")
     {
       continue;
     }
@@ -288,11 +289,13 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let filetype = groups.get(2).unwrap().as_str();
     let full_url = format!("{}.{}", url, filetype);
 
+    println!("is url valid? {}", full_url);
+
     // CORS allows discord media
     if url.is_empty()
-      || url.contains("media.discordapp")
       || url.contains("cdn.discordapp")
       || url.contains("discord.com/assets")
+      || url.contains("fonts.gstatic.com")
     {
       continue;
     }
