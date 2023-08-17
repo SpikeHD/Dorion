@@ -39,3 +39,8 @@ pub fn get_top_bar(_win: tauri::Window) -> String {
 pub fn get_notif(win: tauri::Window) -> String {
   get_html(win.app_handle(), "html/notification.html")
 }
+
+#[tauri::command]
+pub fn get_extra_css(win: tauri::Window) -> String {
+  get_html(win.app_handle(), "html/extra.css")
+}

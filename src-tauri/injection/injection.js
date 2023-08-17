@@ -99,6 +99,9 @@ function onClientLoad() {
   // Assign notification count
   applyNotificationCount()
 
+  // Load up our extra css
+  applyExtraCSS()
+
   // Check for updates
   console.log('Checking for updates...')
   checkForUpdates()
@@ -188,5 +191,14 @@ function notifGetter() {
     childList: true,
     attributes: true,
     characterData: true
+  })
+}
+
+function applyExtraCSS() {
+  const { invoke } = window.__TAURI__
+  invoke('get_extra_css').then(css => {
+    const style = document.createElement('style')
+    style.innerHTML = css
+    document.head.appendChild(style)
   })
 }

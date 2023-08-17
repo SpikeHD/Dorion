@@ -47,6 +47,7 @@
         "html/index.html",
         "html/top.html",
         "html/notification.html",
+        "html/extra.css",
         "icons/icon*.ico"
       ],
       "shortDescription": "",
