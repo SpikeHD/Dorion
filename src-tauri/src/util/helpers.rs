@@ -42,6 +42,6 @@ pub fn open_scheme(scheme: String) {
 }
 
 #[cfg(target_os = "linux")]
-pub fn open_scheme(path: PathBuf) {
+pub fn open_scheme(path: String) {
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
