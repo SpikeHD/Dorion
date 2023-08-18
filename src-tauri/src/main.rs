@@ -8,7 +8,7 @@ use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
 use tauri::{
-  api::dialog, async_runtime::block_on, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
+  async_runtime::block_on, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
 };
 use util::{
@@ -19,6 +19,7 @@ use util::{
 };
 
 mod config;
+mod deep_link;
 mod hotkeys;
 mod init;
 mod injection;
@@ -63,6 +64,8 @@ fn create_systray() -> SystemTray {
 }
 
 fn main() {
+  tauri_plugin_deep_link::prepare("com.dorion.dev");
+
   // Ensure config is created
   config::init();
 
@@ -99,17 +102,11 @@ fn main() {
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
   if dorion_open {
-    // We want this to be blocking so that we don't do anything else until this dialog is closed
-    let msg_builder = dialog::blocking::MessageDialogBuilder::new(
-      "Dorion Already Running",
-      "Another instance of Dorion is already running. Would you like to kill this one?\n\n(you can open the existing window from the system tray)"
-    ).buttons(dialog::MessageDialogButtons::YesNo);
+    // Send the dorion://open deep link request
+    helpers::open_scheme("dorion://open".to_string());
 
-    let kill = msg_builder.show();
-
-    if kill {
-      std::process::exit(0);
-    }
+    // Exit
+    std::process::exit(0);
   }
 
   // Begin the proxy server
@@ -205,9 +202,11 @@ fn main() {
       #[cfg(not(target_os = "macos"))]
       hotkeys::start_hotkey_watcher(win.clone());
 
-      //win.open_devtools();
+      // Deep link registry
+      deep_link::register_deep_link_handler(win.clone());
 
       init::inject_routine(win);
+
 
       Ok(())
     })

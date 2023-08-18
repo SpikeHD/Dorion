@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use tauri::api::path::{data_dir};
+use tauri::api::path::data_dir;
 
 use crate::config::{get_profile, Config};
 
@@ -36,7 +36,7 @@ pub fn maybe_move_legacy_webdata() {
   let default_profile_folder = profiles_dir().join("default");
 
   if legacy_webdata.exists() {
-    std::fs::rename(legacy_webdata, default_profile_folder.join("webdata")).unwrap();
+    std::fs::rename(legacy_webdata, default_profile_folder.join("webdata")).unwrap_or_default();
   }
 }
 

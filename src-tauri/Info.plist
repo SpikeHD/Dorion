@@ -10,5 +10,18 @@
   <true />
   <key>NSHighResolutionCapable</key>
   <true/>
+
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.dorion.dev</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <!-- register the dorion:// scheme -->
+        <string>dorion</string>
+      </array>
+    </dict>
+  </array>
 </dict>
 </plist>

@@ -30,3 +30,18 @@ fn open_folder(path: PathBuf) {
 fn open_folder(path: PathBuf) {
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
+
+#[cfg(target_os = "windows")]
+pub fn open_scheme(scheme: String) {
+  Command::new("start").arg(scheme).spawn().unwrap();
+}
+
+#[cfg(target_os = "macos")]
+pub fn open_scheme(scheme: String) {
+  Command::new("open").arg(scheme).spawn().unwrap();
+}
+
+#[cfg(target_os = "linux")]
+pub fn open_scheme(path: PathBuf) {
+  Command::new("xdg-open").arg(path).spawn().unwrap();
+}
