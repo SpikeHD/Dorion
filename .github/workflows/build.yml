@@ -152,10 +152,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Dorion.app
-          path: src-tauri/target/release/bundle/macos/*.app
+          path: src-tauri/target/release/universal-apple-darwin/bundle/macos/*.app
 
       # Upload dmg
       - name: Upload dmg
         uses: actions/upload-artifact@v3
         with:
-          path: src-tauri/target/release/bundle/dmg/*.dmg
+          path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
