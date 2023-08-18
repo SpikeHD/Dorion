@@ -1,4 +1,4 @@
-import type * as TauriApiTypes from "@tauri-apps/api";
+import type * as TauriApiTypes from '@tauri-apps/api';
 
 declare global {
   interface Window {
