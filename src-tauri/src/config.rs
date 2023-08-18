@@ -121,7 +121,5 @@ pub fn get_start_maximized() -> bool {
 pub fn get_profile() -> String {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
-  parsed
-    .profile
-    .unwrap_or_else(|| "default".to_string())
+  parsed.profile.unwrap_or_else(|| "default".to_string())
 }

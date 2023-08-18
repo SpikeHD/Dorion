@@ -1,4 +1,4 @@
-div[class^="scroller"] > div[class^="listItem"]:nth-last-child(2),
-div[class^="scroller"] > div[class^="listItem"]:nth-last-child(3) {
+div[class^='scroller'] > div[class^='listItem']:nth-last-child(2),
+div[class^='scroller'] > div[class^='listItem']:nth-last-child(3) {
   display: none !important;
 }

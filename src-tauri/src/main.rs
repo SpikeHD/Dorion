@@ -207,7 +207,6 @@ fn main() {
 
       init::inject_routine(win);
 
-
       Ok(())
     })
     .run(context)
