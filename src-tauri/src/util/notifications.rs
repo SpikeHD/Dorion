@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use tauri::{Icon, Manager};
 
+#[cfg(not(target_os = "macos"))]
 pub fn set_notif_icon(window: tauri::Window, amount: u16) {
   let icon_num = if amount > 9 { 9 } else { amount };
 
@@ -37,8 +38,25 @@ pub fn set_notif_icon(window: tauri::Window, amount: u16) {
     .unwrap_or(());
 }
 
+// https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
+#[cfg(target_os = "macos")]
+pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
+  use cocoa::{appkit::NSApp, base::nil, foundation::NSString};
+
+  let label = if count == 0 {
+    nil
+  } else {
+      NSString::alloc(nil).init_str(&format!("{}", count))
+  };
+  let dock_tile: cocoa::base::id = msg_send![NSApp(), dockTile];
+  let _: cocoa::base::id = msg_send![dock_tile, setBadgeLabel: label];
+} 
+
 #[tauri::command]
 pub fn notif_count(window: tauri::Window, amount: u16) {
   println!("Setting notification count: {}", amount);
-  set_notif_icon(window, amount);
+
+  unsafe {
+    set_notif_icon(window, amount);
+  };
 }
