@@ -64,90 +64,55 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 # Platform Support
 
 <div width="100%" align="center">
- <table width="100%">
-  <tr>
-   <th><i>Feature</i></th>
-   <th>Windows</th>
-   <th>Linux</th>
-   <th>MacOS</th>
-  </tr>
 
-  <tr>
-   <td>Basics (logging in, navigation, text/DMs etc.)</td>
-   <td>✓</td>
-   <td>✓</td>
-   <td>✓</td>
-  </tr>
-
-  <tr>
-   <td>Voice</td>
-   <td>✓</td>
-   <td>✓</td>
-   <td>❌<sup>[1]</sup></td>
-  </tr>
-
-  <tr>
-   <td>Themes</td>
-   <td>✓</td>
-   <td>✓</td>
-   <td>✓</td>
-  </tr>
-  
-  <tr>
-   <td>Vencord (and included plugins)</td>
-   <td>✓</td>
-   <td>✓</td>
-   <td>✓</td>
-  </tr>
-
-  <tr>
-   <td>Dorion Plugins</td>
-   <td>✓</td>
-   <td>✓</td>
-   <td>✓</td>
-  </tr>
- </table>
+| Feature                                          | Windows | Linux | MacOS           |
+|--------------------------------------------------|---------|-------|-----------------|
+| *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓     | ✓               |
+| Voice                                            | ✓       | ✓     | ✗ <sup>[1]</sup>|
+| Themes                                           | ✓       | ✓     | ✓               |
+| Vencord (and included plugins)                   | ✓       | ✓     | ✓               |
+| Dorion Plugins                                   | ✓       | ✓     | ✓               |
 </div>
 
 <sup>[1]</sup> Currently can connect to VC, but won't pass "RTC Connecting". Needs a bit more coaxing to get working.<br/>
 
 # Building
 
-### Prerequisites
+## Prerequisites
 
 * [NodeJS](https://nodejs.org)
 * [PNPM](https://pnpm.io/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 
-### Steps
+## Steps
 
 1. Clone/download the repository
 2. Open a terminal window in the root project folder
 3. Install JS dependencies:
 
-  ```sh
-  pnpm install
-  ```
+    ```sh
+    pnpm install
+    ```
 
 4. Build the minified versions of the JS/HTML files:
 
-  ```sh
-  pnpm build
-  ```
+    ```sh
+    pnpm build
+    ```
 
 5. Pull the Vencord fork
 
-  ```sh
-  pnpm vupdate
-  ```
+    ```sh
+    pnpm vupdate
+    ```
 
 6. Build!
 
-  ```sh
-  pnpm tauri build
-  # or to debug/open in dev mode
-  pnpm tauri dev
-  ```
+    ```sh
+    pnpm tauri build
+    # or to debug/open in dev mode
+    pnpm tauri dev
+    ```
 
 All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `html`, `icons`, and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/msi`
 
