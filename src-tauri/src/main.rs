@@ -66,9 +66,6 @@ fn create_systray() -> SystemTray {
 }
 
 fn main() {
-  // Give the system a moment to unregister the deeplink, in case we were relaunching
-  std::thread::sleep(Duration::from_millis(200));
-
   tauri_plugin_deep_link::prepare("com.dorion.dev");
 
   // Ensure config is created
