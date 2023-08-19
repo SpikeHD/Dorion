@@ -3,6 +3,8 @@
   windows_subsystem = "windows"
 )]
 
+use std::time::Duration;
+
 use config::{get_client_type, get_start_maximized};
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
@@ -64,6 +66,9 @@ fn create_systray() -> SystemTray {
 }
 
 fn main() {
+  // Give the system a moment to unregister the deeplink, in case we were relaunching
+  std::thread::sleep(Duration::from_millis(100));
+
   tauri_plugin_deep_link::prepare("com.dorion.dev");
 
   // Ensure config is created
