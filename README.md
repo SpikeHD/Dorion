@@ -15,7 +15,7 @@
 </div>
 
 <div align="center">
-Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
+ Dorion is an alternative Discord client aimed and lower-spec or storage-sensitive PCs that supports themes, plugins, and more!
  <br />
  https://discord.gg/agQ9mRdHMZ
 </div>
@@ -45,15 +45,15 @@ You can also [build it](#building) yourself!
 
 # Features
 
-- Themes
-- Plugins
-- Multi-profile
-- Smaller overall size
-- (Hopefully) better low-end system performance
+* Themes
+* Plugins
+* Multi-profile
+* Smaller overall size
+* (Hopefully) better low-end system performance
 
 ## Plugins
 
-Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports browser-based plugins! 
+Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports browser-based plugins!
 
 ## Themes
 
@@ -124,18 +124,25 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 1. Clone/download the repository
 2. Open a terminal window in the root project folder
 3. Install JS dependencies:
+
   ```sh
   pnpm install
   ```
+
 4. Build the minified versions of the JS/HTML files:
+
   ```sh
   pnpm build
   ```
+
 5. Pull the Vencord fork
+
   ```sh
   pnpm vupdate
   ```
+
 6. Build!
+
   ```sh
   pnpm tauri build
   # or to debug/open in dev mode
@@ -153,6 +160,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 # Troubleshooting
 
 If you are having problems opening Dorion, or it instantly crashes, or something similar, try the following:
+
 * Install via MSI instead of the `.zip` file
 * Use the `.zip` file instead of the MSI
 * (If using the `.zip` file) make sure all files were extracted properly (`html`, `injection`, etc.)
@@ -160,7 +168,6 @@ If you are having problems opening Dorion, or it instantly crashes, or something
   * Fully uninstall and reinstall.
   * If you are having trouble uninstalling it, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
   * You can also try [uninstalling from the Command Prompt](https://superuser.com/a/1743626)
-
 
 # TODO
 
@@ -186,8 +193,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
 ```
-.
-└── C:/Users/USERNAME/dorion/
+C:/Users/USERNAME/dorion/
     ├── plugins/
     |   └── plugin.js
     └── themes/
@@ -197,8 +203,7 @@ Plugins and themes are relatively simple to use, the file structure looks like s
 and like so on Linux:
 
 ```
-.
-└── ~/dorion/
+~/dorion/
     ├── plugins/
     |   └── plugin.js
     └── themes/
@@ -223,4 +228,3 @@ Loading screen. So cool!
 
 ![image](https://user-images.githubusercontent.com/25207995/202835451-31432fbd-69f1-4564-8830-59ebfcfde7fe.png)
 Theme: [Dark Neon](https://betterdiscord.app/theme/Dark%20Neon)
-
