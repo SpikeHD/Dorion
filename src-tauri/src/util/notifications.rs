@@ -42,16 +42,16 @@ pub fn set_notif_icon(window: &tauri::Window, amount: u16) {
 #[cfg(target_os = "macos")]
 pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
   use cocoa::{appkit::NSApp, base::nil, foundation::NSString};
-  use objc::{sel, sel_impl, msg_send};
+  use objc::{msg_send, sel, sel_impl};
 
   let label = if amount == 0 {
     nil
   } else {
-      NSString::alloc(nil).init_str(&format!("{}", amount))
+    NSString::alloc(nil).init_str(&format!("{}", amount))
   };
   let dock_tile: cocoa::base::id = msg_send![NSApp(), dockTile];
   let _: cocoa::base::id = msg_send![dock_tile, setBadgeLabel: label];
-} 
+}
 
 #[tauri::command]
 pub fn notif_count(window: tauri::Window, amount: u16) {

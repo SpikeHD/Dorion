@@ -1,7 +1,7 @@
 {
     "name": "dorion",
     "private": true,
-    "version": "0.9.0",
+    "version": "0.9.1",
     "type": "module",
     "scripts": {
         "prebuild": "terser --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js && terser --mangle -o src-tauri/injection/preinject_min.js -- src-tauri/injection/preinject.js",
