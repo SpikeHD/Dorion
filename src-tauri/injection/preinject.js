@@ -59,6 +59,9 @@ function safemodeTimer(elm) {
     config = JSON.parse(defaultConf)
   }
 
+  // Make window.open become window.__TAURI__.shell.open
+  window.open = window.__TAURI__.shell.open
+
   const plugins = await invoke('load_plugins');
   const version = await window.__TAURI__.app.getVersion()
   const midtitle = document.querySelector('#midtitle')
