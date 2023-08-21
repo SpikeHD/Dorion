@@ -66,7 +66,7 @@ fn create_systray() -> SystemTray {
 }
 
 fn main() {
-  std::thread::sleep(Duration::from_millis(200);
+  std::thread::sleep(Duration::from_millis(200));
 
   tauri_plugin_deep_link::prepare("com.dorion.dev");
 
