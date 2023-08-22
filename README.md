@@ -53,7 +53,7 @@ You can also [build it](#building) yourself!
 
 ## Plugins
 
-Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports browser-based plugins!
+Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports most *browser-based* plugins! There is no BetterDiscord plugin support, however.
 
 ## Themes
 
