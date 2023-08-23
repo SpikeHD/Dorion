@@ -2,7 +2,10 @@ use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
 use super::plugin;
-use crate::{processors::js_preprocess::eval_js_imports, functionality::streamer_mode::start_streamer_mode_watcher};
+use crate::{
+  functionality::streamer_mode::start_streamer_mode_watcher,
+  processors::js_preprocess::eval_js_imports,
+};
 
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {

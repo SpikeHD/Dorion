@@ -1,11 +1,10 @@
-use std::path::PathBuf;
+// use std::path::PathBuf;
 
-use tauri::{Icon, Manager};
+// use tauri::{Icon, Manager};
 
 #[cfg(not(target_os = "macos"))]
 pub fn set_notif_icon(_window: &tauri::Window, _amount: u16) {
   // This doesn't work right now womp womp
-  return;
 
   // let icon_num = if amount > 9 { 9 } else { amount };
 
@@ -60,7 +59,5 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
 pub fn notif_count(window: tauri::Window, amount: u16) {
   println!("Setting notification count: {}", amount);
 
-  unsafe {
-    set_notif_icon(&window, amount);
-  };
+  set_notif_icon(&window, amount);
 }

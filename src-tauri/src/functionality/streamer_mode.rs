@@ -1,5 +1,5 @@
-use sysinfo::{SystemExt, ProcessExt};
 use crate::config::get_streamer_mode_detection;
+use sysinfo::{ProcessExt, SystemExt};
 
 // We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
 static mut OBS_OPEN: bool = false;
@@ -22,10 +22,12 @@ pub fn start_streamer_mode_watcher(win: tauri::Window) {
 
     // Meander through the list of processes and check if OBS or Streamlabs OBS is running
     // The delay is to prevent the loop from CRANKIN THIS HOG (the CPU)
-    for ( _pid, process ) in system.processes() {
+    for process in system.processes().values() {
       std::thread::sleep(std::time::Duration::from_millis(5));
 
-      if process.name().to_lowercase().contains("obs64") || process.name().to_lowercase().contains("streamlabs") {
+      if process.name().to_lowercase().contains("obs64")
+        || process.name().to_lowercase().contains("streamlabs")
+      {
         // If OBS is running, we can break out of the loop and emit the event
         obs_running = true;
         break;
@@ -41,7 +43,7 @@ pub fn start_streamer_mode_watcher(win: tauri::Window) {
 
       continue;
     }
-    
+
     unsafe {
       if OBS_OPEN {
         OBS_OPEN = false;

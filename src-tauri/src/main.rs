@@ -6,7 +6,6 @@
 use std::time::Duration;
 
 use config::{get_client_type, get_start_maximized};
-use functionality::streamer_mode::start_streamer_mode_watcher;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
