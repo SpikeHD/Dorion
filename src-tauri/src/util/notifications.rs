@@ -3,39 +3,42 @@ use std::path::PathBuf;
 use tauri::{Icon, Manager};
 
 #[cfg(not(target_os = "macos"))]
-pub fn set_notif_icon(window: &tauri::Window, amount: u16) {
-  let icon_num = if amount > 9 { 9 } else { amount };
+pub fn set_notif_icon(_window: &tauri::Window, _amount: u16) {
+  // This doesn't work right now womp womp
+  return;
 
-  // We do not have a zero icon, set back to regular icon
-  if icon_num < 1 {
-    let mut icon_path = PathBuf::from("icons/icon");
-    icon_path.set_extension("ico");
+  // let icon_num = if amount > 9 { 9 } else { amount };
 
-    window
-      .set_icon(Icon::File(
-        window
-          .app_handle()
-          .path_resolver()
-          .resolve_resource(icon_path)
-          .unwrap(),
-      ))
-      .unwrap_or(());
-    return;
-  }
+  // // We do not have a zero icon, set back to regular icon
+  // if icon_num < 1 {
+  //   let mut icon_path = PathBuf::from("icons/icon");
+  //   icon_path.set_extension("ico");
 
-  let icon_name = format!("icon_{}", icon_num);
-  let mut icon_path = PathBuf::from("icons/").join(icon_name);
-  icon_path.set_extension("ico");
+  //   window
+  //     .set_icon(Icon::File(
+  //       window
+  //         .app_handle()
+  //         .path_resolver()
+  //         .resolve_resource(icon_path)
+  //         .unwrap(),
+  //     ))
+  //     .unwrap_or(());
+  //   return;
+  // }
 
-  window
-    .set_icon(Icon::File(
-      window
-        .app_handle()
-        .path_resolver()
-        .resolve_resource(icon_path)
-        .unwrap(),
-    ))
-    .unwrap_or(());
+  // let icon_name = format!("icon_{}", icon_num);
+  // let mut icon_path = PathBuf::from("icons/").join(icon_name);
+  // icon_path.set_extension("ico");
+
+  // window
+  //   .set_icon(Icon::File(
+  //     window
+  //       .app_handle()
+  //       .path_resolver()
+  //       .resolve_resource(icon_path)
+  //       .unwrap(),
+  //   ))
+  //   .unwrap_or(());
 }
 
 // https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
