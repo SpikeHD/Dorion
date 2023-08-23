@@ -152,7 +152,7 @@ async function checkForUpdates() {
   const latestNum = latest.tag_name.replace(/[a-z]/gi, '').trim()
 
   if (version !== latestNum) {
-    showNotification('Update Available', `<a href="${latest.link}">Dorion v${latestNum}</a> is now available!`)
+    showNotification('Update Available', `<a target="_blank" href="${latest.link}">Dorion v${latestNum}</a> is now available!`)
   }
 }
 
