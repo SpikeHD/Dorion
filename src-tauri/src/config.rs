@@ -16,6 +16,7 @@ pub struct Config {
   pub use_native_titlebar: Option<bool>,
   pub start_maximized: Option<bool>,
   pub profile: Option<String>,
+  pub streamer_mode_detection: Option<bool>,
 }
 
 pub fn init() {
@@ -54,6 +55,7 @@ pub fn default_config() -> Config {
     use_native_titlebar: Option::from(false),
     start_maximized: Option::from(false),
     profile: Option::from("default".to_string()),
+    streamer_mode_detection: Option::from(false),
   }
 }
 
@@ -122,4 +124,10 @@ pub fn get_profile() -> String {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.profile.unwrap_or_else(|| "default".to_string())
+}
+
+pub fn get_streamer_mode_detection() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.streamer_mode_detection.unwrap_or(false)
 }

@@ -2,7 +2,7 @@ use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
 use super::plugin;
-use crate::processors::js_preprocess::eval_js_imports;
+use crate::{processors::js_preprocess::eval_js_imports, functionality::streamer_mode::start_streamer_mode_watcher};
 
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
@@ -124,6 +124,9 @@ fn periodic_injection_check(
       let is_injected = env::var("TAURI_INJECTED").unwrap_or_else(|_| "0".to_string());
 
       if is_injected.eq("1") {
+        // We are injected! Start the streamer mode watcher
+        start_streamer_mode_watcher(window.clone());
+
         // After running our injection code, we can iterate through the plugins and load them as well
         for (name, script) in &plugins {
           // Don't load preload plugins
