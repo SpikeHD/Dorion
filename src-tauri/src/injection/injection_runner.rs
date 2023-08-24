@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env, fs, path::PathBuf, thread, time::Duration};
+use std::{collections::HashMap, fs, path::PathBuf, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
 
 use super::plugin;
