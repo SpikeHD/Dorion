@@ -1,7 +1,7 @@
 [package]
 name = "dorion"
-version = "0.9.1"
-description = "Repackaged Discord Web Client"
+version = "1.0.0"
+description = "Tiny alternative Discord client with a smaller footprint, themes and plugins, multi-profile, and more!"
 authors = ["SpikeHD"]
 license = ""
 repository = ""

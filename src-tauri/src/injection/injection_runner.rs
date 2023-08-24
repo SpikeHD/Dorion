@@ -7,6 +7,8 @@ use crate::{
   processors::js_preprocess::eval_js_imports,
 };
 
+static mut TAURI_INJECTED: bool = false;
+
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
@@ -112,7 +114,9 @@ pub fn load_injection_js(
 
 #[tauri::command]
 pub fn is_injected() {
-  env::set_var("TAURI_INJECTED", "1");
+  unsafe {
+    TAURI_INJECTED = true;
+  }
 }
 
 fn periodic_injection_check(
@@ -120,13 +124,13 @@ fn periodic_injection_check(
   injection_code: String,
   plugins: HashMap<String, String>,
 ) {
-  std::thread::spawn(move || {
+  std::thread::spawn(move || unsafe {
     loop {
       thread::sleep(Duration::from_secs(1));
 
-      let is_injected = env::var("TAURI_INJECTED").unwrap_or_else(|_| "0".to_string());
+      let is_injected = TAURI_INJECTED;
 
-      if is_injected.eq("1") {
+      if is_injected {
         // We are injected! Start the streamer mode watcher
         start_streamer_mode_watcher(window.clone());
 
