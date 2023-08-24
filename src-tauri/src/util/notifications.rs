@@ -59,5 +59,11 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
 pub fn notif_count(window: tauri::Window, amount: u16) {
   println!("Setting notification count: {}", amount);
 
+  #[cfg(target_os = "macos")]
+  unsafe {
+    set_notif_icon(&window, amount);
+  }
+
+  #[cfg(not(target_os = "macos"))]
   set_notif_icon(&window, amount);
 }
