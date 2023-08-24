@@ -17,6 +17,7 @@ pub struct Config {
   pub start_maximized: Option<bool>,
   pub profile: Option<String>,
   pub streamer_mode_detection: Option<bool>,
+  pub rpc_server: Option<bool>,
 }
 
 pub fn init() {
@@ -56,6 +57,7 @@ pub fn default_config() -> Config {
     start_maximized: Option::from(false),
     profile: Option::from("default".to_string()),
     streamer_mode_detection: Option::from(false),
+    rpc_server: Option::from(false),
   }
 }
 
@@ -130,4 +132,10 @@ pub fn get_streamer_mode_detection() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.streamer_mode_detection.unwrap_or(false)
+}
+
+pub fn _get_rpc_server() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.rpc_server.unwrap_or(false)
 }
