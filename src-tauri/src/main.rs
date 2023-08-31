@@ -188,6 +188,8 @@ fn main() {
         if id == "open" {
           // Reopen the window
           app.get_window("main").unwrap().show().unwrap();
+          app.get_window("main").unwrap().set_focus().unwrap();
+          app.get_window("main").unwrap().unminimize().unwrap();
         }
       }
       _ => {}
