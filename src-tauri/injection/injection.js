@@ -76,9 +76,9 @@ async function createTopBar() {
   appMount.prepend(topbar);
 
   // Set version displayed in top bar
-  const version = await window.__TAURI__.app.getVersion()
+  window.dorionVersion = await window.__TAURI__.app.getVersion()
   const versionElm = document.querySelector('#dorion_version')
-  if (versionElm) versionElm.innerHTML = `Dorion - v${version}`
+  if (versionElm) versionElm.innerHTML = `Dorion - v${window.dorionVersion}`
 
   // Once done, remove original top bar
   window.__TAURI__.invoke('remove_top_bar')
