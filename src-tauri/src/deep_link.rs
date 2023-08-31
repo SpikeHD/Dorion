@@ -4,5 +4,5 @@ pub fn register_deep_link_handler(win: tauri::Window) {
     win.set_focus().unwrap();
     win.unminimize().unwrap();
   })
-  .unwrap();
+  .unwrap_or_default();
 }
