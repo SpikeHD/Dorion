@@ -47,7 +47,7 @@ jobs:
       - name: Compress build
         uses: edgarrc/action-7z@v1
         with:
-            args: 7z a -tzip Dorion.zip src-tauri/target/release/dorion.exe src-tauri/target/release/config.json src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
+            args: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
