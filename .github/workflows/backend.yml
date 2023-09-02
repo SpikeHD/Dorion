@@ -58,7 +58,7 @@ jobs:
           working-directory: src-tauri
 
       - name: Build frontend (creates '../dist')
-        run: pnpm install && pnpm build
+        run: pnpm install && pnpm prebuild && pnpm build
 
       - uses: actions-rs/clippy-check@v1
         with:

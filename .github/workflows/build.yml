@@ -86,7 +86,7 @@ jobs:
         run: sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 
       - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build &&  pnpm tauri build
+        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build
 
       - name: Create empty folders for plugins and themes
         run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
