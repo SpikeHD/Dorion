@@ -9,14 +9,33 @@ use crate::{
 
 static mut TAURI_INJECTED: bool = false;
 
+fn injection_dir(win: tauri::Window) -> PathBuf {
+  let local_config_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("config.json");
+
+  if fs::metadata(&local_config_dir).is_ok() {
+    // This is a portable install, so we can use the local injection dir
+    return std::env::current_exe()
+      .unwrap()
+      .parent()
+      .unwrap()
+      .join("injection");
+  }
+
+  win
+    .app_handle()
+    .path_resolver()
+    .resolve_resource(PathBuf::from("injection"))
+    .unwrap()
+}
+
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let js_path = win
-    .app_handle()
-    .path_resolver()
-    .resolve_resource(PathBuf::from("injection/injection_min.js"))
-    .unwrap();
+  let js_path = injection_dir(win).join("injection_min.js");
   let injection_js = match fs::read_to_string(js_path) {
     Ok(f) => f,
     Err(e) => {
@@ -43,11 +62,7 @@ pub fn do_injection(window: tauri::Window) {
 
   // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
-    let js_path = window
-      .app_handle()
-      .path_resolver()
-      .resolve_resource(PathBuf::from("injection/preinject_min.js"))
-      .unwrap();
+    let js_path = injection_dir(window.clone()).join("preinject_min.js");
     let injection_js = match fs::read_to_string(js_path) {
       Ok(f) => f,
       Err(e) => {
