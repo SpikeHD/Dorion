@@ -112,7 +112,7 @@ jobs:
       - name: Upload AppImage
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion_Amd64.AppImage
+          name: Dorion_amd64.AppImage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
   
   build-macos:
@@ -140,20 +140,16 @@ jobs:
         run: rustup target add aarch64-apple-darwin
 
       - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build &&  pnpm tauri build --target universal-apple-darwin
-
-      # Zip artifact folder
-      - name: Compress build
-        run: zip -r Dorion.zip src-tauri/target/release/
+        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build --target universal-apple-darwin
 
       - name: Upload .app
         uses: actions/upload-artifact@v3
         with:
           name: Dorion.app
-          path: src-tauri/target/release/universal-apple-darwin/bundle/macos/*.app
+          path: src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
 
       # Upload dmg
-      - name: Upload dmg
+      - name: Upload .dmg
         uses: actions/upload-artifact@v3
         with:
           path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
