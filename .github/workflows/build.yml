@@ -152,4 +152,5 @@ jobs:
       - name: Upload .dmg
         uses: actions/upload-artifact@v3
         with:
+          name: Dorion.dmg
           path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
