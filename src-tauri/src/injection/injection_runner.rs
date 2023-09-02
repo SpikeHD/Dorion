@@ -16,7 +16,7 @@ fn injection_dir(win: tauri::Window) -> PathBuf {
     .unwrap()
     .join("config.json");
 
-  if fs::metadata(&local_config_dir).is_ok() {
+  if fs::metadata(local_config_dir).is_ok() {
     // This is a portable install, so we can use the local injection dir
     return std::env::current_exe()
       .unwrap()
