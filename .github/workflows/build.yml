@@ -40,27 +40,25 @@ jobs:
       - name: Install deps and build
         run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build &&  pnpm tauri build
 
-      # Move built to its  own folder for compression
-      - name: Move build
-        run: mkdir src-tauri/target/release/artifacts && move src-tauri/target/release/*.exe src-tauri/target/release/artifacts
+      # Make empty folders for plugins and themes
+      - name: Create empty folders for plugins and themes
+        run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
 
       - name: Compress build
-        uses: ksm2/archive-action@v1
+        uses: edgarrc/action-7z@v1
         with:
-          root-directory: src-tauri/target/release/artifacts
-          format: "zip"
-          name: "Dorion"
+            args: 7z a -tzip Dorion.zip src-tauri/target/release/dorion.exe src-tauri/target/release/config.json src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion_Win64_Portable.zip
+          name: Dorion_win64_portable.zip
           path: Dorion.zip
 
       - name: Upload MSI
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion_Win64.msi
+          name: Dorion_win64.msi
           path: src-tauri/target/release/bundle/msi/*.msi
 
   build-ubuntu:
@@ -89,25 +87,24 @@ jobs:
       - name: Install deps and build
         run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build &&  pnpm tauri build
 
-      # Move built to its  own folder for compression
-      - name: Move build
-        run: mkdir src-tauri/target/release/artifacts && mv src-tauri/target/release/dorion src-tauri/target/release/artifacts/dorion
+      - name: Create empty folders for plugins and themes
+        run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
 
-      # Zip artifact folder
+      # Zip
       - name: Compress build
-        run: zip -r Dorion.zip src-tauri/target/release/artifacts
+        run: cd src-tauri/target/release && touch config.json && tar -czvf dorion.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
 
       - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion_Amd64_Portable.zip
-          path: Dorion.zip
+          name: Dorion_amd64_portable.tar.gz
+          path: dorion.tar.gz
 
       # Upload deb
       - name: Upload deb
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion_Amd64.deb
+          name: Dorion_amd64.deb
           path: src-tauri/target/release/bundle/deb/*.deb
 
       # Upload AppImage
