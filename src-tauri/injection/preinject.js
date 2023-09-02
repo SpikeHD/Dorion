@@ -44,7 +44,13 @@ function safemodeTimer(elm) {
   await displayLoadingTop()
 
   const { invoke, event } = window.__TAURI__
-  let config = JSON.parse(await invoke('read_config_file')) || null
+  let config = {}
+  
+  try {
+    config = JSON.parse(await invoke('read_config_file'))
+  } catch(e) {
+    console.log('Error reading config.')
+  }
 
   window.DorionConfig = config
 
@@ -102,7 +108,7 @@ function safemodeTimer(elm) {
   // Get theme if it exists
   let themeInjection = ''
 
-  if (config.theme !== 'none') {
+  if (config.theme && config.theme !== 'none') {
     if (midtitle) midtitle.innerHTML = "Loading theme CSS..."
 
     const themeContents = await invoke('get_theme', {
