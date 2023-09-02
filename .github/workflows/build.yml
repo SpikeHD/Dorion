@@ -44,6 +44,9 @@ jobs:
       - name: Create empty folders for plugins and themes
         run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
 
+      - name: Create empty config.json
+        run: cd src-tauri/target/release && touch config.json
+
       - name: Compress build
         uses: edgarrc/action-7z@v1
         with:
