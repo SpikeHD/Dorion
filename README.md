@@ -158,7 +158,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
 ```
-C:/Users/USERNAME/dorion/
+C:/Users/%USERNAME%/dorion/
     ├── plugins/
     |   └── plugin.js
     └── themes/
