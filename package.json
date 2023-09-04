@@ -1,12 +1,11 @@
 {
     "name": "dorion",
-    "private": true,
     "version": "1.1.0",
     "type": "module",
     "scripts": {
         "prebuild": "terser --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js && terser --mangle -o src-tauri/injection/preinject_min.js -- src-tauri/injection/preinject.js",
         "dev": "pnpm prebuild && pnpm build && tauri dev",
-        "build": "tsc && vite build",
+        "build": "pnpm prebuild && tsc && vite build",
         "preview": "vite preview",
         "tauri": "tauri",
         "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
