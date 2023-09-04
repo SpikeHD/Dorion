@@ -201,10 +201,7 @@ fn periodic_injection_check(
 }
 
 pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
-  let path = app
-    .path_resolver()
-    .resolve_resource(PathBuf::from("injection/browser.js"))
-    .unwrap();
+  let path = injection_dir(app.get_window("main").unwrap()).join("browser.js");
 
   match fs::read_to_string(path) {
     Ok(f) => f,
@@ -217,10 +214,7 @@ pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
 }
 
 pub fn get_vencord_css_content(app: &tauri::AppHandle) -> String {
-  let path = app
-    .path_resolver()
-    .resolve_resource(PathBuf::from("injection/browser.css"))
-    .unwrap();
+  let path = injection_dir(app.get_window("main").unwrap()).join("browser.css");
 
   match fs::read_to_string(path) {
     Ok(f) => f,
