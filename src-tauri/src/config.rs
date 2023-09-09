@@ -18,6 +18,8 @@ pub struct Config {
   pub profile: Option<String>,
   pub streamer_mode_detection: Option<bool>,
   pub rpc_server: Option<bool>,
+  pub open_on_startup: Option<bool>,
+  pub startup_minimize: Option<bool>
 }
 
 pub fn init() {
@@ -58,6 +60,8 @@ pub fn default_config() -> Config {
     profile: Option::from("default".to_string()),
     streamer_mode_detection: Option::from(false),
     rpc_server: Option::from(false),
+    open_on_startup: Option::from(false),
+    startup_minimize: Option::from(false)
   }
 }
 
@@ -138,4 +142,16 @@ pub fn _get_rpc_server() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.rpc_server.unwrap_or(false)
+}
+
+pub fn get_open_on_startup() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.open_on_startup.unwrap_or(false)
+}
+
+pub fn get_startup_minimize() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.startup_minimize.unwrap_or(false)
 }
