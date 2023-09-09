@@ -3,8 +3,8 @@
   windows_subsystem = "windows"
 )]
 
-use std::time::Duration;
 use auto_launch::*;
+use std::time::Duration;
 
 use config::{get_client_type, get_start_maximized};
 use injection::{injection_runner, local_html, plugin, theme};
@@ -256,12 +256,10 @@ fn modify_window(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
 
   // If we are opening on startup (which we know from the --startup arg), check to minimize the window
-  if startup {
-    if config::get_startup_minimize() {
-      window.hide().unwrap_or_default();
-    }
+  if startup && config::get_startup_minimize() {
+    window.hide().unwrap_or_default();
   }
-  
+
   if get_start_maximized() {
     window.maximize().unwrap_or_default();
   }
@@ -274,8 +272,8 @@ fn setup_autostart(app: &mut tauri::App) {
   let current_exe = std::env::current_exe().unwrap();
 
   let autolaunch = AutoLaunchBuilder::new()
-    .set_app_name(&app_name)
-    .set_app_path(&current_exe.to_str().unwrap())
+    .set_app_name(app_name)
+    .set_app_path(current_exe.to_str().unwrap())
     .set_use_launch_agent(true)
     .set_args(&["--startup"])
     .build()

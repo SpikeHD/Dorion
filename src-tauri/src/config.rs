@@ -19,7 +19,7 @@ pub struct Config {
   pub streamer_mode_detection: Option<bool>,
   pub rpc_server: Option<bool>,
   pub open_on_startup: Option<bool>,
-  pub startup_minimized: Option<bool>
+  pub startup_minimized: Option<bool>,
 }
 
 pub fn init() {
@@ -61,7 +61,7 @@ pub fn default_config() -> Config {
     streamer_mode_detection: Option::from(false),
     rpc_server: Option::from(false),
     open_on_startup: Option::from(false),
-    startup_minimized: Option::from(false)
+    startup_minimized: Option::from(false),
   }
 }
 
