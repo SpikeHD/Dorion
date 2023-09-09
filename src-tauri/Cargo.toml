@@ -31,6 +31,9 @@ sysinfo = { version = "0.26.8" }
 tide = "0.16.0"
 urlencoding = "2.1.3"
 
+# launch on startup
+auto-launch = { git = "https://github.com/OmegaJak/auto-launch/", branch = "report_task_manager_disabled_as_disabled" }
+
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "0.18.2"
 

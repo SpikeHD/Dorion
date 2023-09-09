@@ -4,6 +4,7 @@
 )]
 
 use std::time::Duration;
+use auto_launch::*;
 
 use config::{get_client_type, get_start_maximized};
 use injection::{injection_runner, local_html, plugin, theme};
@@ -206,6 +207,8 @@ fn main() {
 
       modify_window(&win);
 
+      setup_autostart(app);
+
       #[cfg(not(target_os = "macos"))]
       hotkeys::start_hotkey_watcher(win.clone());
 
@@ -250,16 +253,41 @@ fn close(win: Window) {
  * Applies various window modifications, most being platform-dependent
  */
 fn modify_window(window: &Window) {
+  let startup = std::env::args().any(|arg| arg == "--startup");
+
+  // If we are opening on startup (which we know from the --startup arg), check to minimize the window
+  if startup {
+    if config::get_startup_minimize() {
+      window.hide().unwrap_or_default();
+    }
+  }
+  
   if get_start_maximized() {
-    window.maximize().unwrap_or_else(|_| {
-      println!("Failed to maximize window!");
-    });
+    window.maximize().unwrap_or_default();
   }
 
   window_zoom_level(window);
+}
 
-  // window
-  //   .with_webview(move |webview| unsafe {
-  //   })
-  //   .unwrap();
+fn setup_autostart(app: &mut tauri::App) {
+  let app_name = &app.package_info().name;
+  let current_exe = std::env::current_exe().unwrap();
+
+  let autolaunch = AutoLaunchBuilder::new()
+    .set_app_name(&app_name)
+    .set_app_path(&current_exe.to_str().unwrap())
+    .set_use_launch_agent(true)
+    .set_args(&["--startup"])
+    .build()
+    .unwrap();
+
+  let should_enable = config::get_open_on_startup();
+
+  autolaunch.enable().unwrap();
+
+  if !should_enable {
+    autolaunch.disable().unwrap();
+  }
+
+  println!("Autolaunch enabled: {}", autolaunch.is_enabled().unwrap());
 }
