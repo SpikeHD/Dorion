@@ -115,6 +115,11 @@ fn main() {
     std::process::exit(0);
   }
 
+  // Safemode check
+  let safemode = std::env::args().any(|arg| arg == "--safemode");
+
+  println!("Safemode enabled: {}", safemode);
+
   // Begin the proxy server
   let proxy_thread = std::thread::spawn(|| block_on(proxy_server::start_server(8678)));
 
@@ -204,6 +209,11 @@ fn main() {
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
         .build()?;
+
+      // If safemode is enabled, stop here
+      if safemode {
+        return Ok(());
+      }
 
       modify_window(&win);
 
