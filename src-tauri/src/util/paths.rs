@@ -1,6 +1,8 @@
 use std::{fs, path::PathBuf};
 
-use crate::{config::get_profile, profiles::profiles_dir};
+use tauri::api::path::data_dir;
+
+use crate::config::get_profile;
 
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
@@ -16,7 +18,12 @@ pub fn get_config_dir() -> PathBuf {
 
   println!("No local config file found. Using default.");
 
+  #[cfg(target_os = "windows")]
   let appdata = tauri::api::path::data_dir().unwrap();
+
+  #[cfg(not(target_os = "windows"))]
+  let appdata = tauri::api::path::config_dir().unwrap();
+
   let config_file = appdata.join("dorion").join("config.json");
 
   if fs::metadata(appdata.join("dorion")).is_err() {
@@ -49,7 +56,14 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
 
   println!("No local plugin dir found. Using default.");
 
+  #[cfg(target_os = "windows")]
   let plugin_dir = tauri::api::path::home_dir()
+    .unwrap()
+    .join("dorion")
+    .join("plugins");
+
+  #[cfg(not(target_os = "windows"))]
+  let plugin_dir = tauri::api::path::config_dir()
     .unwrap()
     .join("dorion")
     .join("plugins");
@@ -81,7 +95,14 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
   println!("No local theme dir found. Using default.");
 
+  #[cfg(target_os = "windows")]
   let theme_dir = tauri::api::path::home_dir()
+    .unwrap()
+    .join("dorion")
+    .join("themes");
+
+  #[cfg(not(target_os = "windows"))]
+  let theme_dir = tauri::api::path::config_dir()
     .unwrap()
     .join("dorion")
     .join("themes");
@@ -110,6 +131,23 @@ pub fn get_theme_dir() -> std::path::PathBuf {
   }
 
   theme_dir
+}
+
+pub fn profiles_dir() -> PathBuf {
+  let local_config_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("config.json");
+
+  // Check for local/portable file paths
+  if local_config_dir.exists() {
+    let profile_folder = local_config_dir.parent().unwrap().join("profiles");
+
+    return profile_folder;
+  }
+
+  data_dir().unwrap().join("dorion").join("profiles")
 }
 
 pub fn get_webdata_dir() -> PathBuf {

@@ -1,24 +1,7 @@
 use std::path::PathBuf;
 use tauri::api::path::data_dir;
 
-use crate::config::{get_profile, Config};
-
-pub fn profiles_dir() -> PathBuf {
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
-    .parent()
-    .unwrap()
-    .join("config.json");
-
-  // Check for local/portable file paths
-  if local_config_dir.exists() {
-    let profile_folder = local_config_dir.parent().unwrap().join("profiles");
-
-    return profile_folder;
-  }
-
-  data_dir().unwrap().join("dorion").join("profiles")
-}
+use crate::{config::{get_profile, Config}, util::paths::profiles_dir};
 
 pub fn init_profiles_folders() {
   // Create %appdata%/dorion/profiles/default
