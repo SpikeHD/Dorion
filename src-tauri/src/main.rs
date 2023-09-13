@@ -67,6 +67,11 @@ fn create_systray() -> SystemTray {
   SystemTray::new().with_menu(tray_menu)
 }
 
+#[tauri::command]
+fn should_disable_plugins() -> bool {
+  std::env::args().any(|arg| arg == "--disable-plugins")
+}
+
 fn main() {
   std::thread::sleep(Duration::from_millis(200));
 
@@ -132,6 +137,7 @@ fn main() {
       maximize,
       close,
       change_zoom,
+      should_disable_plugins,
       css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
