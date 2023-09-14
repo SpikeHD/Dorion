@@ -132,66 +132,66 @@ jobs:
           name: Dorion_macos.dmg
           path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
 
-  build-arm:
-    runs-on: ubuntu-latest
+  # build-arm:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
       
-      - name: Setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 18
+  #     - name: Setup node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 18
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+  #     - name: Install Rust
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
 
-      - name: Install Linux dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential \
-            curl \
-            wget \
-            libssl-dev \
-            libgtk-3-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev \
-            gcc-aarch64-linux-gnu
+  #     - name: Install Linux dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install -y build-essential \
+  #           curl \
+  #           wget \
+  #           libssl-dev \
+  #           libgtk-3-dev \
+  #           libayatana-appindicator3-dev \
+  #           librsvg2-dev \
+  #           gcc-aarch64-linux-gnu
 
-      - name: Add arm64 jammy sources to sources.list
-        run: sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse' >> /etc/apt/sources.list"
+  #     - name: Add arm64 jammy sources to sources.list
+  #       run: sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse' >> /etc/apt/sources.list"
 
-      - name: Install libwebkitgtk
-        run: sudo apt update && sudo apt install libwebkit2gtk-4.0-dev:arm64
+  #     - name: Install libwebkitgtk
+  #       run: sudo apt update && sudo apt install libwebkit2gtk-4.0-dev:arm64
 
-      - name: Set PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
-        run: export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
+  #     - name: Set PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
+  #       run: export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
 
-      - name: Install armv8 target
-        run: rustup target add aarch64-unknown-linux-gnu
+  #     - name: Install armv8 target
+  #       run: rustup target add aarch64-unknown-linux-gnu
 
-      - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build --target aarch64-unknown-linux-gnu
+  #     - name: Install deps and build
+  #       run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build --target aarch64-unknown-linux-gnu
 
-      - name: Create empty folders for plugins and themes for armv8
-        run: mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/plugins && mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/themes
+  #     - name: Create empty folders for plugins and themes for armv8
+  #       run: mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/plugins && mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/themes
 
-      - name: Create empty config.json for armv8
-        run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && touch config.json
+  #     - name: Create empty config.json for armv8
+  #       run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && touch config.json
 
-      - name: Compress build for armv8
-        run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && tar -czvf dorion_armv8.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
+  #     - name: Compress build for armv8
+  #       run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && tar -czvf dorion_armv8.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
 
-      - name: Upload Linux portable for armv8
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_armv8_portable.tar.gz
-          path: src-tauri/target/aarch64-unknown-linux-gnu/release/dorion_armv8.tar.gz
+  #     - name: Upload Linux portable for armv8
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: Dorion_armv8_portable.tar.gz
+  #         path: src-tauri/target/aarch64-unknown-linux-gnu/release/dorion_armv8.tar.gz
 
-      - name: Upload Linux deb for armv8
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_armv8_deb.tar.gz
-          path: src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/deb/*.deb
+  #     - name: Upload Linux deb for armv8
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: Dorion_armv8_deb.tar.gz
+  #         path: src-tauri/target/aarch64-unknown-linux-gnu/release/bundle/deb/*.deb
