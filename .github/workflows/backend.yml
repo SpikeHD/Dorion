@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-latest, macos-12]
+        platform: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v3

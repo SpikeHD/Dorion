@@ -17,8 +17,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-win:
-    runs-on: windows-latest
+  build:
+    runs-on: ${{ matrix.platform }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest, macos-latest]
+
     steps:
       - uses: pnpm/action-setup@v2
         with:
@@ -27,130 +33,71 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: setup node
+      - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
 
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev \
+            build-essential \
+            curl \
+            wget \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+          
       - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build &&  pnpm tauri build
-
+        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build
+      
       # Make empty folders for plugins and themes
       - name: Create empty folders for plugins and themes
         run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
 
       - name: Create empty config.json
         run: cd src-tauri/target/release && touch config.json
-
+        
+      # paths:
+      # Windows:
+      # - src-tauri/target/release/Dorion.exe|config.json|plugins|themes|injection|html|icons
+      # Ubuntu:
+      # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|html|icons
+      # MacOS:
+      # - src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
       - name: Compress build
+        if: matrix.platform == 'windows-latest'
         run: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
 
+      - name: Compress build
+        if: matrix.platform == 'ubuntu-latest'
+        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
+
       - name: Upload build
+        if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: Dorion_win64_portable.zip
           path: Dorion.zip
 
-      - name: Upload MSI
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_win64.msi
-          path: src-tauri/target/release/bundle/msi/*.msi
-
-  build-ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.6.7
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Install libraries
-        run: sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-
-      - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build
-
-      - name: Create empty folders for plugins and themes
-        run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
-
-      # Zip
-      - name: Compress build
-        run: cd src-tauri/target/release && touch config.json && tar -czvf dorion.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
-
       - name: Upload build
+        if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: Dorion_amd64_portable.tar.gz
           path: dorion.tar.gz
 
-      # Upload deb
-      - name: Upload deb
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_amd64.deb
-          path: src-tauri/target/release/bundle/deb/*.deb
-
-      # Upload AppImage
-      - name: Upload AppImage
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion_amd64.AppImage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
-  
-  build-macos:
-    runs-on: macos-12
-    steps:
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.6.7
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-
-      # Add arch target
-      - name: Add arch64 target
-        run: rustup target add aarch64-apple-darwin
-
-      - name: Install deps and build
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build --target universal-apple-darwin
-
       - name: Upload .app
+        if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
           name: Dorion.app
           path: src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
-
-      # Upload dmg
-      - name: Upload .dmg
-        uses: actions/upload-artifact@v3
-        with:
-          name: Dorion.dmg
-          path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
