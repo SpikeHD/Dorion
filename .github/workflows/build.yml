@@ -148,6 +148,9 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Add arm64 jammy sources to sources.list
+        run: sudo sh -c "echo 'deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted universe multiverse' >> /etc/apt/sources.list"
+
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
