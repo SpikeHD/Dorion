@@ -138,7 +138,7 @@ pub fn get_streamer_mode_detection() -> bool {
   parsed.streamer_mode_detection.unwrap_or(false)
 }
 
-pub fn _get_rpc_server() -> bool {
+pub fn get_rpc_server() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.rpc_server.unwrap_or(false)

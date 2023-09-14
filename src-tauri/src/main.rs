@@ -122,8 +122,17 @@ fn main() {
 
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
-
   println!("Safemode enabled: {}", safemode);
+
+  // Begin the RPC server
+  let rpc_thread = std::thread::spawn(|| {
+    if !config::get_rpc_server() {
+      return;
+    }
+
+    println!("Starting RPC server...");
+    functionality::rpc::start_rpc_server();
+  });
 
   // Begin the proxy server
   let proxy_thread = std::thread::spawn(|| block_on(proxy_server::start_server(8678)));
@@ -238,7 +247,8 @@ fn main() {
     .run(context)
     .expect("error while running tauri application");
 
-  // Join the proxy thread
+  // Join threads
+  rpc_thread.join().unwrap();
   proxy_thread.join().unwrap();
 }
 
