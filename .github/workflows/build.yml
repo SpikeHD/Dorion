@@ -81,23 +81,48 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
 
-      - name: Upload build
+      # Windows portable
+      - name: Upload Windows portable
         if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
           name: Dorion_win64_portable.zip
           path: Dorion.zip
 
-      - name: Upload build
+      # Windows MSI
+      - name: Upload .msi
+        if: matrix.platform == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Dorion_win64_msi.zip
+          path: src-tauri/target/release/bundle/msi/*.msi
+
+      # Ubuntu portable
+      - name: Upload Linux portable
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: Dorion_amd64_portable.tar.gz
-          path: dorion.tar.gz
+          path: src-tauri/target/release/dorion.tar.gz
 
-      - name: Upload .app
+      # Ubuntu deb
+      - name: Upload .deb
+        if: matrix.platform == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Dorion_amd64_deb.tar.gz
+          path: src-tauri/target/release/bundle/deb/*.deb
+
+      - name: Upload Ubuntu .appimage
+        if: matrix.platform == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Dorion_amd64_appimage.tar.gz
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
+
+      - name: Upload .dmg
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: Dorion.app
-          path: src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
+          name: Dorion_macos.dmg
+          path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
