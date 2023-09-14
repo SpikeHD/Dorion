@@ -1,7 +1,10 @@
 use std::path::PathBuf;
 use tauri::api::path::data_dir;
 
-use crate::{config::{get_profile, Config}, util::paths::profiles_dir};
+use crate::{
+  config::{get_profile, Config},
+  util::paths::profiles_dir,
+};
 
 pub fn init_profiles_folders() {
   // Create %appdata%/dorion/profiles/default

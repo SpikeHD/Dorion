@@ -39,7 +39,9 @@ pub fn get_theme_names() -> Vec<String> {
 
     let folder = path.unwrap().file_name().clone();
 
-    if folder.to_str().unwrap().to_lowercase() == "cache" || folder.to_str().unwrap().to_lowercase() == ".ds_store" {
+    if folder.to_str().unwrap().to_lowercase() == "cache"
+      || folder.to_str().unwrap().to_lowercase() == ".ds_store"
+    {
       continue;
     }
 

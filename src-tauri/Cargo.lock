@@ -385,8 +385,9 @@ checksum = "1181e1e0d1fce796a03db1ae795d67167da795f9cf4a39c37589e85ef57f26d3"
 
 [[package]]
 name = "auto-launch"
-version = "0.4.0"
-source = "git+https://github.com/OmegaJak/auto-launch/?branch=report_task_manager_disabled_as_disabled#24a3ede30e0b6538904c2b07d9516cb5c715ef9b"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f012b8cc0c850f34117ec8252a44418f2e34a2cf501de89e29b241ae5f79471"
 dependencies = [
  "dirs 4.0.0",
  "thiserror",
