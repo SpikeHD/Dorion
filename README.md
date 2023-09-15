@@ -65,13 +65,13 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 <div width="100%" align="center">
 
-| Feature                                          | Windows | Linux | MacOS           |
-|--------------------------------------------------|---------|-------|-----------------|
-| *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓     | ✓               |
-| Voice                                            | ✓       | ✓     | ✗ <sup>[1]</sup>|
-| Themes                                           | ✓       | ✓     | ✓               |
-| Vencord (and included plugins)                   | ✓       | ✓     | ✓               |
-| Dorion Plugins                                   | ✓       | ✓     | ✓               |
+| Feature                                          | Windows | Linux            | MacOS           |
+|--------------------------------------------------|---------|------------------|-----------------|
+| *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
+| Voice                                            | ✓       | ✗ <sup>[1]</sup>| ✗ <sup>[1]</sup>|
+| Themes                                           | ✓       | ✓               | ✓               |
+| Vencord (and included plugins)                   | ✓       | ✓               | ✓               |
+| Dorion Plugins                                   | ✓       | ✓               | ✓               |
 </div>
 
 <sup>[1]</sup> Currently can connect to VC, but won't pass "RTC Connecting". Needs a bit more coaxing to get working.<br/>
@@ -119,9 +119,10 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 # Known Issues
 
-* Large images in themes will not load
+* (Windows) Large images in themes will not load
 * Fonts/font-faces from sources other than Google will not load
 * (MacOS) Injection JS does not reinject after reloading the page
+* (Linux) Uses a wackload of memory for some reason
 
 # Troubleshooting
 
