@@ -80,6 +80,7 @@ fn main() {
   // Ensure config is created
   config::init();
 
+
   std::env::set_var(
     "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
     "--disable-web-security",
@@ -91,6 +92,9 @@ fn main() {
   // Run the steps to init profiles
   init_profiles_folders();
   maybe_move_legacy_webdata();
+
+  // Maybe update injection scripts
+  block_on(release::maybe_latest_injection_release());
 
   let mut context = tauri::generate_context!("tauri.conf.json");
   // Still have to actually just make this focus the window lol
