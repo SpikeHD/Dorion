@@ -62,7 +62,7 @@ jobs:
           
       - name: Install deps and build
         # Include --target universal-apple-darwin for MacOS, otherwise it will only build for x86_64
-        run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+        run: pnpm install && pnpm vupdate && pnpm prebuild && ${{ matrix.platform == 'window-latest' && 'pnpm build:updater &&' }} pnpm build && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
       
       # Make empty folders for plugins and themes
       - name: Create empty folders for plugins and themes
