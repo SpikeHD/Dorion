@@ -1,7 +1,5 @@
 use std::io::BufRead;
 
-use crate::util::paths::get_config_dir;
-
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
   pub tag_name: String,
@@ -34,7 +32,60 @@ pub async fn get_latest_release() -> Release {
 }
 
 #[tauri::command]
-pub async fn maybe_latest_injection_release() {
+pub async fn update_check() -> Vec<String> {
+  let mut to_update = vec![];
+
+  println!("Checking for updates...");
+
+  // For now, non-windows should just return
+  #[cfg(not(target_os = "windows"))]
+  return to_update;
+
+  if maybe_latest_injection_release().await {
+    println!("Available update for Vencordorion!");
+    to_update.push("vencordorion".to_string());
+  }
+
+  // TODO: Dorion autoupdate check
+
+  return to_update;
+}
+
+#[tauri::command]
+pub async fn do_update(to_update: Vec<String>) -> () {
+  let mut args = vec![];
+
+  if to_update.contains(&"vencordorion".to_string()) {
+    println!("Updating Vencordorion...");
+    args.push("--vencord");
+  }
+
+  if args.len() > 0 {
+    // Run the updater as a seperate process
+    let mut updater_path = std::env::current_exe().unwrap();
+    updater_path.pop();
+    updater_path.push("updater.exe");
+
+    let mut updater = std::process::Command::new(updater_path);
+    
+    for arg in args {
+      updater.arg(arg);
+    }
+
+    let mut process = updater.spawn().unwrap();
+    
+    // Wait for the updater to finish
+    process.wait().unwrap();
+  }
+}
+
+// TODO: Test platforms other than Windows
+#[cfg(not(target_os = "windows"))]
+pub async fn maybe_latest_injection_release() {}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+pub async fn maybe_latest_injection_release() -> bool {
   // See if there is a new release in Vencordorion
   let url = "https://api.github.com/repos/SpikeHD/Vencordorion/releases/latest";
   let client = reqwest::Client::new();
@@ -50,8 +101,8 @@ pub async fn maybe_latest_injection_release() {
   let json: serde_json::Value = serde_json::from_str(&text).unwrap();
   let tag_name = json["tag_name"].as_str().unwrap();
 
-  // Read previous version from vencord.version (located in the same place config.json is)
-  let mut path = get_config_dir();
+  // Read previous version from vencord.version (located in binary folder)
+  let mut path = std::env::current_exe().unwrap();
   path.pop();
   path.push("vencord.version");
 
@@ -64,49 +115,8 @@ pub async fn maybe_latest_injection_release() {
   }
 
   if tag_name == previous_version {
-    return;
+    return false;
   }
-
-  println!("Found Vencordorion update! Installing...");
-
-  // Download browser.css and browser.js from the assets
-  let css_url = format!(
-    "https://github.com/SpikeHD/Vencordorion/releases/download/{}/browser.css",
-    tag_name
-  );
-
-  let js_url = format!(
-    "https://github.com/SpikeHD/Vencordorion/releases/download/{}/browser.js",
-    tag_name
-  );
-
-  // Fetch both
-  let css_response = client
-    .get(&css_url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .await
-    .unwrap();
-
-  let js_response = client
-    .get(&js_url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .await
-    .unwrap();
-
-  // Write both to disk
-  let mut css_path = std::env::current_exe().unwrap();
-  css_path.pop();
-  css_path.push("injection/browser.css");
-
-  let mut js_path = std::env::current_exe().unwrap();
-  js_path.pop();
-  js_path.push("injection/browser.js");
-
-  std::fs::write(css_path, css_response.text().await.unwrap()).unwrap();
-  std::fs::write(js_path, js_response.text().await.unwrap()).unwrap();
-
-  // If this succeeds, write the new version to vencord.version
-  std::fs::write(path, tag_name).unwrap();
+  
+  true
 }

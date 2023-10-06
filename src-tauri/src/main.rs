@@ -93,9 +93,6 @@ fn main() {
   init_profiles_folders();
   maybe_move_legacy_webdata();
 
-  // Maybe update injection scripts
-  block_on(release::maybe_latest_injection_release());
-
   let mut context = tauri::generate_context!("tauri.conf.json");
   // Still have to actually just make this focus the window lol
   let dorion_open = process::process_already_exists();
@@ -168,7 +165,9 @@ fn main() {
       profiles::get_current_profile_folder,
       profiles::create_profile,
       profiles::delete_profile,
+      release::do_update,
       release::get_latest_release,
+      release::update_check,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
       injection_runner::do_injection,

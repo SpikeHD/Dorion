@@ -1,4 +1,3 @@
-pub mod elevate;
 pub mod helpers;
 pub mod notifications;
 pub mod paths;

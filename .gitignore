@@ -31,3 +31,8 @@ src-tauri/injection/browser.js
 src-tauri/injection/browser.css
 
 src-tauri/html
+
+src-tauri/updater*
+src-tauri/vencord.version
+
+updater/target
