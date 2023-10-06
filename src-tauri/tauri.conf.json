@@ -49,7 +49,7 @@
         "html/notification.html",
         "html/extra.css",
         "icons/icon*.ico",
-        "updater.exe"
+        "updater"
       ],
       "shortDescription": "",
       "targets": "all",

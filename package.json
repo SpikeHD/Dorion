@@ -6,7 +6,7 @@
         "prebuild": "terser --comments all --mangle -o src-tauri/injection/injection_min.js -- src-tauri/injection/injection.js && terser --mangle -o src-tauri/injection/preinject_min.js -- src-tauri/injection/preinject.js",
         "dev": "pnpm prebuild && pnpm build && tauri dev",
         "build": "pnpm prebuild && tsc && vite build",
-        "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater* src-tauri/",
+        "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater* src-tauri/ && mv src-tauri/updater.exe src-tauri/updater",
         "preview": "vite preview",
         "tauri": "tauri",
         "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",

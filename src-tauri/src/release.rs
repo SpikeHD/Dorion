@@ -64,7 +64,7 @@ pub async fn do_update(to_update: Vec<String>) -> () {
     // Run the updater as a seperate process
     let mut updater_path = std::env::current_exe().unwrap();
     updater_path.pop();
-    updater_path.push("updater.exe");
+    updater_path.push("updater");
 
     let mut updater = std::process::Command::new(updater_path);
     
