@@ -20,6 +20,7 @@ pub struct Config {
   pub rpc_server: Option<bool>,
   pub open_on_startup: Option<bool>,
   pub startup_minimized: Option<bool>,
+  pub autoupdate: Option<bool>,
 }
 
 pub fn init() {
@@ -62,6 +63,7 @@ pub fn default_config() -> Config {
     rpc_server: Option::from(false),
     open_on_startup: Option::from(false),
     startup_minimized: Option::from(false),
+    autoupdate: Option::from(false),
   }
 }
 
@@ -154,4 +156,10 @@ pub fn get_startup_minimize() -> bool {
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
   parsed.startup_minimized.unwrap_or(false)
+}
+
+pub fn _get_autoupdate() -> bool {
+  let parsed: Config =
+    serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
+  parsed.autoupdate.unwrap_or(false)
 }
