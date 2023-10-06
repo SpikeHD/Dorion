@@ -81,7 +81,7 @@ pub async fn do_update(to_update: Vec<String>) -> () {
 
 // TODO: Test platforms other than Windows
 #[cfg(not(target_os = "windows"))]
-pub async fn maybe_latest_injection_release() {}
+pub async fn maybe_latest_injection_release() -> bool { false }
 
 #[tauri::command]
 #[cfg(target_os = "windows")]
