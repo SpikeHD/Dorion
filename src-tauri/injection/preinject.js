@@ -66,7 +66,7 @@ function safemodeTimer(elm) {
   }
 
   // Make window.open become window.__TAURI__.shell.open
-  window.open = window.__TAURI__.shell.open
+  window.open = (url) => window.__TAURI__.shell.open(url)
 
   const plugins = await invoke('load_plugins');
   const version = await window.__TAURI__.app.getVersion()
