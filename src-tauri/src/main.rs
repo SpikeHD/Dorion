@@ -221,6 +221,7 @@ fn main() {
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
+        .visible(false)
         .build()?;
 
       // If safemode is enabled, stop here
@@ -237,6 +238,8 @@ fn main() {
 
       // Deep link registry
       deep_link::register_deep_link_handler(win.clone());
+
+      win.show().unwrap();
 
       init::inject_routine(win);
 
