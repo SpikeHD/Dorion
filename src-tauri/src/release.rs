@@ -1,5 +1,7 @@
 use std::io::BufRead;
 
+use crate::injection::{injection_runner::injection_dir, self};
+
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
   pub tag_name: String,
@@ -37,10 +39,6 @@ pub async fn update_check() -> Vec<String> {
 
   println!("Checking for updates...");
 
-  // For now, non-windows should just return
-  #[cfg(not(target_os = "windows"))]
-  return to_update;
-
   if maybe_latest_injection_release().await {
     println!("Available update for Vencordorion!");
     to_update.push("vencordorion".to_string());
@@ -52,12 +50,15 @@ pub async fn update_check() -> Vec<String> {
 }
 
 #[tauri::command]
-pub async fn do_update(to_update: Vec<String>) -> () {
+pub async fn do_update(win: tauri::Window, to_update: Vec<String>) -> () {
   let mut args = vec![];
 
   if to_update.contains(&"vencordorion".to_string()) {
+    let injection_path = injection_dir(win);
+    let injection_path = format!("{}", injection_path.to_str().unwrap());
     println!("Updating Vencordorion...");
-    args.push("--vencord");
+    args.push(String::from("--vencord"));
+    args.push(injection_path);
   }
 
   if args.len() > 0 {
@@ -79,12 +80,7 @@ pub async fn do_update(to_update: Vec<String>) -> () {
   }
 }
 
-// TODO: Test platforms other than Windows
-#[cfg(not(target_os = "windows"))]
-pub async fn maybe_latest_injection_release() -> bool { false }
-
 #[tauri::command]
-#[cfg(target_os = "windows")]
 pub async fn maybe_latest_injection_release() -> bool {
   // See if there is a new release in Vencordorion
   let url = "https://api.github.com/repos/SpikeHD/Vencordorion/releases/latest";

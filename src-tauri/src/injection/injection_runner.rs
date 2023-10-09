@@ -9,7 +9,7 @@ use crate::{
 
 static mut TAURI_INJECTED: bool = false;
 
-fn injection_dir(win: tauri::Window) -> PathBuf {
+pub fn injection_dir(win: tauri::Window) -> PathBuf {
   let local_config_dir = std::env::current_exe()
     .unwrap()
     .parent()

@@ -1,6 +1,22 @@
-use std::process::{Command, exit};
+use std::path::PathBuf;
+use clap::{command, Parser};
+
+/// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Args {
+  /// Update Dorion
+  #[arg(short = 'm', long)]
+  main: Option<String>,
+
+  /// Path to injection folder
+  #[arg(short = 'v', long)]
+  vencord: Option<String>,
+}
 
 pub fn main() {
+  let args = Args::parse();
+
   // This should always be run by Dorion itself, which means it will likely not have admin perms, so we request them before anything else
   #[cfg(target_os = "windows")]
   if is_elevated::is_elevated() == false {
@@ -9,24 +25,13 @@ pub fn main() {
 
   #[cfg(not(target_os = "windows"))]
   sudo::escalate_if_needed().expect("Failed to escalate as root");
-
-  // Two args, --main and --vencord, since we may need to update one or both
-  let args: Vec<String> = std::env::args().collect();
-
-  if args.len() < 2 {
-    println!("No arguments provided, exiting");
-    return;
-  }
-
-  let main = args.contains(&String::from("--main"));
-  let vencord = args.contains(&String::from("--vencord"));
-
-  if main {
+  
+  if args.main.is_some() {
     update_main();
   }
 
-  if vencord {
-    update_vencordorion();
+  if args.vencord.is_some() {
+    update_vencordorion(PathBuf::from(args.vencord.unwrap()));
   }
 }
 
@@ -34,7 +39,7 @@ pub fn main() {
 pub fn reopen_as_elevated() {
   let install = std::env::current_exe().unwrap();
 
-  Command::new("powershell.exe")
+  std::process::Command::new("powershell.exe")
     .arg("powershell")
     .arg(format!(
       "-command \"&{{Start-Process -filepath '{}' -verb runas -ArgumentList \"{}\"}}\"",
@@ -48,7 +53,7 @@ pub fn reopen_as_elevated() {
   exit(0);
 }
 
-pub fn update_vencordorion() {
+pub fn update_vencordorion(path: PathBuf) {
   let url = "https://api.github.com/repos/SpikeHD/Vencordorion/releases/latest";
   let client = reqwest::blocking::Client::new();
   let response = client
@@ -87,13 +92,11 @@ pub fn update_vencordorion() {
     .unwrap();
 
   // Write both to disk
-  let mut css_path = std::env::current_exe().unwrap();
-  css_path.pop();
-  css_path.push("injection/browser.css");
+  let mut css_path = path.clone();
+  css_path.push("browser.css");
 
-  let mut js_path = std::env::current_exe().unwrap();
-  js_path.pop();
-  js_path.push("injection/browser.js");
+  let mut js_path = path.clone();
+  js_path.push("browser.js");
 
   std::fs::write(css_path, css_response.text().unwrap()).unwrap();
   std::fs::write(js_path, js_response.text().unwrap()).unwrap();
