@@ -53,10 +53,6 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
   path2.pop();
   path2.push("browser.js");
 
-  let mut path3 = path.clone();
-  path3.pop();
-  path3.push("vencord.version");
-
   let css_exists = std::fs::metadata(path).is_ok();
   let js_exists = std::fs::metadata(path2).is_ok();
 
