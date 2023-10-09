@@ -53,31 +53,34 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
   path2.pop();
   path2.push("browser.js");
 
-  let css_exists = std::fs::metadata(path).is_ok();
-  let js_exists = std::fs::metadata(path2).is_ok();
+  let css_meta = std::fs::metadata(path).is_ok();
+  let js_meta = std::fs::metadata(path2).is_ok();
 
-  println!("Permissions for CSS: {}", css_exists);
-  println!("Permissions for JS: {}", js_exists);
+  println!("Permissions for CSS: {}", css_meta);
+  println!("Permissions for JS: {}", js_meta);
 
-  return css_exists && js_exists;
+  return !css_meta || !js_meta;
 }
 
 #[cfg(target_os = "windows")]
 pub fn reopen_as_elevated() {
   let install = std::env::current_exe().unwrap();
 
-  std::process::Command::new("powershell.exe")
-    .arg("powershell")
-    .arg(format!(
-      "-command \"&{{Start-Process -filepath '{}' -verb runas -ArgumentList \"{}\"}}\"",
-      install.to_str().unwrap(),
+  std::process::Command::new("powershell")
+    .arg("Start-Process")
+    .arg("-FilePath")
+    .arg(install.to_str().unwrap())
+    .arg("-Verb")
+    .arg("runas")
+    .arg("-ArgumentList")
+    .arg(
       // Grab all args except first
-      std::env::args().skip(1).collect::<Vec<String>>().join(" ")
-    ))
+      std::env::args().skip(1).collect::<Vec<String>>().join(",")
+    )
     .spawn()
     .expect("Error starting exec as admin");
 
-  exit(0);
+  std::process::exit(0);
 }
 
 pub fn update_vencordorion(path: PathBuf) {

@@ -50,30 +50,29 @@ pub async fn update_check() -> Vec<String> {
 
 #[tauri::command]
 pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
-  let mut args = vec![];
+  let updater_path = updater_dir(&win);
+  let mut updater = std::process::Command::new(updater_path);
 
   if to_update.contains(&"vencordorion".to_string()) {
     let injection_path = injection_dir(&win);
-    let injection_path = injection_path.to_str().unwrap().to_string();
     println!("Updating Vencordorion...");
-    args.push(String::from("--vencord"));
-    args.push(injection_path);
+
+    updater.arg(String::from("--vencord"));
+    updater.arg(
+      injection_path
+        .into_os_string()
+        .into_string()
+        .unwrap()
+        .replace("\\", "/")
+    );
   }
 
-  if !args.is_empty() {
-    // Run the updater as a seperate process
-    let updater_path = updater_dir(&win);
-    let mut updater = std::process::Command::new(updater_path);
+  let mut process = updater.spawn().unwrap();
 
-    for arg in args {
-      updater.arg(arg);
-    }
+  // Wait for the updater to finish
+  process.wait().unwrap();
 
-    let mut process = updater.spawn().unwrap();
-
-    // Wait for the updater to finish
-    process.wait().unwrap();
-  }
+  win.emit("update_complete", {}).unwrap();
 }
 
 #[tauri::command]
