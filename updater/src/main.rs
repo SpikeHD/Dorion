@@ -23,6 +23,7 @@ pub fn main() {
 
   if args.vencord.is_some() {
     if needs_to_elevate(PathBuf::from(args.vencord.clone().unwrap())) {
+      println!("Elevating process...");
       elevate();
       return;
     }
@@ -46,39 +47,50 @@ pub fn elevate() {
  * Check if we can already access the folder before elevating
  */
 pub fn needs_to_elevate(path: PathBuf) -> bool {
-  let mut path = path.clone();
-  path.push("browser.css");
+  // Write a test file to the injection folder to see if we have perms
+  let write_perms = match std::fs::write(&path, "test") {
+    Ok(()) => {
+      // Delete the test file
+      std::fs::remove_file(path).unwrap();
 
-  let mut path2 = path.clone();
-  path2.pop();
-  path2.push("browser.js");
+      true
+    },
+    Err(e) => {
+      println!("Error writing test file: {}", e);
+      false
+    }
+  };
 
-  let css_meta = std::fs::metadata(path).is_ok();
-  let js_meta = std::fs::metadata(path2).is_ok();
-
-  println!("Permissions for CSS: {}", css_meta);
-  println!("Permissions for JS: {}", js_meta);
-
-  return !css_meta || !js_meta;
+  return !write_perms;
 }
 
 #[cfg(target_os = "windows")]
 pub fn reopen_as_elevated() {
   let install = std::env::current_exe().unwrap();
 
-  std::process::Command::new("powershell")
+  let mut binding = std::process::Command::new("powershell");
+  let cmd = binding
     .arg("Start-Process")
     .arg("-FilePath")
-    .arg(install.to_str().unwrap())
+    .arg(format!("'{}'", install.to_str().unwrap()))
     .arg("-Verb")
     .arg("runas")
     .arg("-ArgumentList")
     .arg(
-      // Grab all args except first
-      std::env::args().skip(1).collect::<Vec<String>>().join(",")
-    )
-    .spawn()
-    .expect("Error starting exec as admin");
+      // Grab all args except first, surround them with quotes
+      std::env::args()
+        .skip(1)
+        .map(|arg| format!("'{}'", arg))
+        .collect::<Vec<String>>()
+        .join(","),
+    );
+
+  println!("Executing: {:?}", cmd);
+
+  let mut process = cmd.spawn().unwrap();
+
+  // Wait for the updater to finish
+  process.wait().unwrap();
 
   std::process::exit(0);
 }
@@ -96,6 +108,8 @@ pub fn update_vencordorion(path: PathBuf) {
   // Parse "tag_name" from JSON
   let json: serde_json::Value = serde_json::from_str(&text).unwrap();
   let tag_name = json["tag_name"].as_str().unwrap();
+
+  println!("Latest Vencordorion release: {}", tag_name);
 
   // Download browser.css and browser.js from the assets
   let css_url = format!(
@@ -121,6 +135,8 @@ pub fn update_vencordorion(path: PathBuf) {
     .send()
     .unwrap();
 
+  println!("Writing files to disk...");
+  
   // Write both to disk
   let mut css_path = path.clone();
   css_path.push("browser.css");
