@@ -16,7 +16,22 @@ pub struct Args {
 
 pub fn main() {
   let args = Args::parse();
+  
+  if args.main.is_some() {
+    update_main();
+  }
 
+  if args.vencord.is_some() {
+    if needs_to_elevate(PathBuf::from(args.vencord.clone().unwrap())) {
+      elevate();
+      return;
+    }
+
+    update_vencordorion(PathBuf::from(args.vencord.unwrap()));
+  }
+}
+
+pub fn elevate() {
   // This should always be run by Dorion itself, which means it will likely not have admin perms, so we request them before anything else
   #[cfg(target_os = "windows")]
   if is_elevated::is_elevated() == false {
@@ -25,14 +40,30 @@ pub fn main() {
 
   #[cfg(not(target_os = "windows"))]
   sudo::escalate_if_needed().expect("Failed to escalate as root");
-  
-  if args.main.is_some() {
-    update_main();
-  }
+}
 
-  if args.vencord.is_some() {
-    update_vencordorion(PathBuf::from(args.vencord.unwrap()));
-  }
+/**
+ * Check if we can already access the folder before elevating
+ */
+pub fn needs_to_elevate(path: PathBuf) -> bool {
+  let mut path = path.clone();
+  path.push("browser.css");
+
+  let mut path2 = path.clone();
+  path2.pop();
+  path2.push("browser.js");
+
+  let mut path3 = path.clone();
+  path3.pop();
+  path3.push("vencord.version");
+
+  let css_exists = std::fs::metadata(path).is_ok();
+  let js_exists = std::fs::metadata(path2).is_ok();
+
+  println!("Permissions for CSS: {}", css_exists);
+  println!("Permissions for JS: {}", js_exists);
+
+  return css_exists && js_exists;
 }
 
 #[cfg(target_os = "windows")]
