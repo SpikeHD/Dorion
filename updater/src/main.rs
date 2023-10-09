@@ -35,9 +35,7 @@ pub fn main() {
 pub fn elevate() {
   // This should always be run by Dorion itself, which means it will likely not have admin perms, so we request them before anything else
   #[cfg(target_os = "windows")]
-  if is_elevated::is_elevated() == false {
-    reopen_as_elevated();
-  }
+  reopen_as_elevated();
 
   #[cfg(not(target_os = "windows"))]
   sudo::escalate_if_needed().expect("Failed to escalate as root");
@@ -48,10 +46,13 @@ pub fn elevate() {
  */
 pub fn needs_to_elevate(path: PathBuf) -> bool {
   // Write a test file to the injection folder to see if we have perms
-  let write_perms = match std::fs::write(&path, "test") {
+  let mut test_file = path;
+  test_file.push("test");
+
+  let write_perms = match std::fs::write(&test_file, "") {
     Ok(()) => {
       // Delete the test file
-      std::fs::remove_file(path).unwrap();
+      std::fs::remove_file(test_file).unwrap();
 
       true
     },
@@ -68,22 +69,18 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
 pub fn reopen_as_elevated() {
   let install = std::env::current_exe().unwrap();
 
-  let mut binding = std::process::Command::new("powershell");
+  let mut binding = std::process::Command::new("powershell.exe");
   let cmd = binding
-    .arg("Start-Process")
-    .arg("-FilePath")
-    .arg(format!("'{}'", install.to_str().unwrap()))
-    .arg("-Verb")
-    .arg("runas")
-    .arg("-ArgumentList")
-    .arg(
-      // Grab all args except first, surround them with quotes
+    .arg("-command")
+    .arg(format!(
+      "Start-Process -filepath '{}' -verb runas -ArgumentList @({})",
+      install.into_os_string().into_string().unwrap(),
+      // get program args (without first one) and join by ,
       std::env::args()
         .skip(1)
-        .map(|arg| format!("'{}'", arg))
-        .collect::<Vec<String>>()
-        .join(","),
-    );
+        .map(|arg| format!("'\"{}\"'", arg))
+        .collect::<Vec<String>>().join(",")
+    ));
 
   println!("Executing: {:?}", cmd);
 
@@ -122,6 +119,9 @@ pub fn update_vencordorion(path: PathBuf) {
     tag_name
   );
 
+  println!("JS URL: {}", js_url);
+  println!("CSS URL: {}", css_url);
+
   // Fetch both
   let css_response = client
     .get(&css_url)
@@ -129,11 +129,15 @@ pub fn update_vencordorion(path: PathBuf) {
     .send()
     .unwrap();
 
+  println!("Got CSS response");
+
   let js_response = client
     .get(&js_url)
     .header("User-Agent", "Dorion")
     .send()
     .unwrap();
+
+  println!("Got JS response");
 
   println!("Writing files to disk...");
   
