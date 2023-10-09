@@ -40,6 +40,7 @@ function safemodeTimer(elm) {
  */
 (async () => {
   createLocalStorage()
+  proxyFetch()
 
   await displayLoadingTop()
 
@@ -308,4 +309,33 @@ function createLocalStorage() {
 
     clearInterval(interval)
   }, 50)
+}
+
+/**
+ * Overwrite the global fetch function with a new one that will redirect to the tauri API 
+ */
+function proxyFetch() {
+  window.nativeFetch = window.fetch
+
+  // eslint-disable-next-line no-global-assign
+  fetch = async (url, options) => {
+    const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
+
+    // If it matches, just let it go through native
+    if (url.toString().match(discordReg)) {
+      return window.nativeFetch(url, options)
+    }
+
+    const { http } = window.__TAURI__
+    const response = await http.fetch(url, {
+      responseType: 2,
+      ...options
+    })
+
+    // Adherence to what most scripts will expect to have available when they are using fetch()
+    response.json = () => JSON.parse(response.data)
+    response.text = () => response.data
+
+    return response
+  }
 }

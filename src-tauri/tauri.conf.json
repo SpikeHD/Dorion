@@ -16,7 +16,13 @@
       "iconAsTemplate": true
     },
     "allowlist": {
-      "all": true
+      "all": true,
+      "http": {
+        "scope": [
+          "https://**/*",
+          "http://**/*"
+        ]
+      }
     },
     "bundle": {
       "active": true,
