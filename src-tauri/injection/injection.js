@@ -147,11 +147,12 @@ async function checkForUpdates() {
   const { invoke, app } = window.__TAURI__
   const version = await app.getVersion()
   const latest = await invoke('get_latest_release')
+  const config = JSON.parse(await invoke('read_config_file'))
 
   // remove letters from latest release
   const latestNum = latest.tag_name.replace(/[a-z]/gi, '').trim()
 
-  if (version !== latestNum) {
+  if (version !== latestNum && config.update_notify) {
     showNotification('Update Available', `<a target="_blank" href="${latest.link}">Dorion v${latestNum}</a> is now available!`)
   }
 }
