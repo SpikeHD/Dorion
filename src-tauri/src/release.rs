@@ -1,6 +1,6 @@
 use std::io::BufRead;
 
-use crate::injection::{injection_runner::injection_dir, self};
+use crate::{injection::{injection_runner::injection_dir, self}, util::paths::updater_dir};
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
@@ -54,7 +54,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) -> () {
   let mut args = vec![];
 
   if to_update.contains(&"vencordorion".to_string()) {
-    let injection_path = injection_dir(win);
+    let injection_path = injection_dir(&win);
     let injection_path = format!("{}", injection_path.to_str().unwrap());
     println!("Updating Vencordorion...");
     args.push(String::from("--vencord"));
@@ -63,10 +63,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) -> () {
 
   if args.len() > 0 {
     // Run the updater as a seperate process
-    let mut updater_path = std::env::current_exe().unwrap();
-    updater_path.pop();
-    updater_path.push("updater");
-
+    let updater_path = updater_dir(&win);
     let mut updater = std::process::Command::new(updater_path);
     
     for arg in args {

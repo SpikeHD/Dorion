@@ -1,6 +1,6 @@
 use std::{fs, path::PathBuf};
 
-use tauri::api::path::data_dir;
+use tauri::{api::path::data_dir, Manager};
 
 use crate::config::get_profile;
 
@@ -155,4 +155,27 @@ pub fn get_webdata_dir() -> PathBuf {
   let profiles = profiles_dir();
 
   profiles.join(profile).join("webdata")
+}
+
+pub fn updater_dir(win: &tauri::Window) -> PathBuf {
+  let local_config_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("config.json");
+
+  if fs::metadata(local_config_dir).is_ok() {
+    // This is a portable install, so we can use the local injection dir
+    return std::env::current_exe()
+      .unwrap()
+      .parent()
+      .unwrap()
+      .join("updater");
+  }
+
+  win
+    .app_handle()
+    .path_resolver()
+    .resolve_resource(PathBuf::from("updater"))
+    .unwrap()
 }

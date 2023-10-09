@@ -9,7 +9,7 @@ use crate::{
 
 static mut TAURI_INJECTED: bool = false;
 
-pub fn injection_dir(win: tauri::Window) -> PathBuf {
+pub fn injection_dir(win: &tauri::Window) -> PathBuf {
   let local_config_dir = std::env::current_exe()
     .unwrap()
     .parent()
@@ -35,7 +35,7 @@ pub fn injection_dir(win: tauri::Window) -> PathBuf {
 #[tauri::command]
 pub async fn get_injection_js(win: tauri::Window, theme_js: &str) -> Result<String, ()> {
   let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
-  let js_path = injection_dir(win).join("injection_min.js");
+  let js_path = injection_dir(&win).join("injection_min.js");
   let injection_js = match fs::read_to_string(js_path) {
     Ok(f) => f,
     Err(e) => {
@@ -62,7 +62,7 @@ pub fn do_injection(window: tauri::Window) {
 
   // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
-    let js_path = injection_dir(window.clone()).join("preinject_min.js");
+    let js_path = injection_dir(&window.clone()).join("preinject_min.js");
     let injection_js = match fs::read_to_string(js_path) {
       Ok(f) => f,
       Err(e) => {
@@ -201,7 +201,7 @@ fn periodic_injection_check(
 }
 
 pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
-  let path = injection_dir(app.get_window("main").unwrap()).join("browser.js");
+  let path = injection_dir(&app.get_window("main").unwrap()).join("browser.js");
 
   match fs::read_to_string(path) {
     Ok(f) => f,
@@ -214,7 +214,7 @@ pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
 }
 
 pub fn get_vencord_css_content(app: &tauri::AppHandle) -> String {
-  let path = injection_dir(app.get_window("main").unwrap()).join("browser.css");
+  let path = injection_dir(&app.get_window("main").unwrap()).join("browser.css");
 
   match fs::read_to_string(path) {
     Ok(f) => f,
