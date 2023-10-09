@@ -1,6 +1,6 @@
 use std::io::BufRead;
 
-use crate::{injection::{injection_runner::injection_dir, self}, util::paths::updater_dir};
+use crate::{injection::injection_runner::injection_dir, util::paths::updater_dir};
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
@@ -45,33 +45,32 @@ pub async fn update_check() -> Vec<String> {
   }
 
   // TODO: Dorion autoupdate check
-
-  return to_update;
+  to_update
 }
 
 #[tauri::command]
-pub async fn do_update(win: tauri::Window, to_update: Vec<String>) -> () {
+pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let mut args = vec![];
 
   if to_update.contains(&"vencordorion".to_string()) {
     let injection_path = injection_dir(&win);
-    let injection_path = format!("{}", injection_path.to_str().unwrap());
+    let injection_path = injection_path.to_str().unwrap().to_string();
     println!("Updating Vencordorion...");
     args.push(String::from("--vencord"));
     args.push(injection_path);
   }
 
-  if args.len() > 0 {
+  if !args.is_empty() {
     // Run the updater as a seperate process
     let updater_path = updater_dir(&win);
     let mut updater = std::process::Command::new(updater_path);
-    
+
     for arg in args {
       updater.arg(arg);
     }
 
     let mut process = updater.spawn().unwrap();
-    
+
     // Wait for the updater to finish
     process.wait().unwrap();
   }
@@ -110,6 +109,6 @@ pub async fn maybe_latest_injection_release() -> bool {
   if tag_name == previous_version {
     return false;
   }
-  
+
   true
 }

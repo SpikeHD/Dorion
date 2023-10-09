@@ -80,7 +80,6 @@ fn main() {
   // Ensure config is created
   config::init();
 
-
   std::env::set_var(
     "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
     "--disable-web-security",
