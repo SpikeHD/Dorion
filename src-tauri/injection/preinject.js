@@ -337,7 +337,7 @@ function proxyFetch() {
     }
 
     // If there is an options.body, check if it's valid JSON. if so, set that up
-    if (options.body) {
+    if (options && options?.body) {
       const bodyContent = isJson(options.body) ? http.Body.json(options.body) : typeof options.body === 'string' ? http.Body.text(options.body) : http.Body.bytes(options.body)
       options.body = bodyContent
     }
