@@ -11,7 +11,7 @@ use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
 use tauri::{
-  async_runtime::block_on, utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
+  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
 };
 use util::{
@@ -29,7 +29,6 @@ mod init;
 mod injection;
 mod processors;
 mod profiles;
-mod proxy_server;
 mod release;
 mod util;
 
@@ -133,9 +132,6 @@ fn main() {
     println!("Starting RPC server...");
     functionality::rpc::start_rpc_server();
   });
-
-  // Begin the proxy server
-  let proxy_thread = std::thread::spawn(|| block_on(proxy_server::start_server(8678)));
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -251,7 +247,6 @@ fn main() {
 
   // Join threads
   rpc_thread.join().unwrap();
-  proxy_thread.join().unwrap();
 }
 
 // Minimize

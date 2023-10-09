@@ -311,6 +311,15 @@ function createLocalStorage() {
   }, 50)
 }
 
+function isJson(s) {
+  try {
+    JSON.parse(s);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 /**
  * Overwrite the global fetch function with a new one that will redirect to the tauri API 
  */
@@ -319,6 +328,7 @@ function proxyFetch() {
 
   // eslint-disable-next-line no-global-assign
   fetch = async (url, options) => {
+    const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
 
     // If it matches, just let it go through native
@@ -326,15 +336,20 @@ function proxyFetch() {
       return window.nativeFetch(url, options)
     }
 
-    const { http } = window.__TAURI__
+    // If there is an options.body, check if it's valid JSON. if so, set that up
+    if (options.body) {
+      const bodyContent = isJson(options.body) ? http.Body.json(options.body) : typeof options.body === 'string' ? http.Body.text(options.body) : http.Body.bytes(options.body)
+      options.body = bodyContent
+    }
+
     const response = await http.fetch(url, {
       responseType: 2,
       ...options
     })
 
-    // Adherence to what most scripts will expect to have available when they are using fetch()
-    response.json = () => JSON.parse(response.data)
-    response.text = () => response.data
+    // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
+    response.json = async () => JSON.parse(response.data)
+    response.text = async () => response.data
 
     return response
   }
