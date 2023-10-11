@@ -4,6 +4,8 @@ use tauri::{api::path::data_dir, Manager};
 
 use crate::config::get_profile;
 
+use super::helpers::move_injection_scripts;
+
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let local_config_dir = std::env::current_exe()
@@ -58,24 +60,8 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
         if win.is_none() {
           return injection_dir;
         }
-
-        let packaged_injection_dir = win
-          .unwrap()
-          .app_handle()
-          .path_resolver()
-          .resolve_resource(PathBuf::from("injection"))
-          .unwrap();
-
-        let mut copy_to = injection_dir.clone();
-        copy_to.pop();
-
-        // Copy the injection files
-        fs_extra::dir::copy(
-          packaged_injection_dir,
-          copy_to,
-          &fs_extra::dir::CopyOptions::new(),
-        )
-        .unwrap();
+        
+        move_injection_scripts(win.unwrap(), true);
       }
       Err(e) => {
         println!("Error creating injection dir: {}", e);

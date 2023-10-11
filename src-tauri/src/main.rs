@@ -21,6 +21,8 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
+use crate::util::helpers::move_injection_scripts;
+
 mod config;
 mod deep_link;
 mod functionality;
@@ -228,6 +230,9 @@ fn main() {
       if safemode {
         return Ok(());
       }
+
+      // Init injection scripts
+      move_injection_scripts(&win, false);
 
       modify_window(&win);
 
