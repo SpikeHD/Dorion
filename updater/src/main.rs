@@ -152,11 +152,13 @@ pub fn update_vencordorion(path: PathBuf) {
   std::fs::write(js_path, js_response.text().unwrap()).unwrap();
 
   // If this succeeds, write the new version to vencord.version
-  let mut path = std::env::current_exe().unwrap();
-  path.pop();
-  path.push("vencord.version");
+  let mut ven_path = path.clone();
+  ven_path.push("vencord.version");
 
-  std::fs::write(path, tag_name).unwrap();
+  println!("Writing version file...");
+  println!("{:?}", ven_path);
+
+  std::fs::write(ven_path, tag_name).unwrap();
 }
 
 pub fn update_main() {

@@ -42,6 +42,54 @@ pub fn get_config_dir() -> PathBuf {
   config_file
 }
 
+pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
+  #[cfg(target_os = "windows")]
+  let appdata = tauri::api::path::data_dir().unwrap();
+
+  #[cfg(not(target_os = "windows"))]
+  let appdata = tauri::api::path::config_dir().unwrap();
+
+  let injection_dir = appdata.join("dorion").join("injection");
+
+  println!("{:?}", injection_dir);
+
+  if fs::metadata(&injection_dir).is_err() {
+    match fs::create_dir_all(&injection_dir) {
+      Ok(()) => {
+        // If we were passed the window, we can also copy the injection files
+        if win.is_none() {
+          return injection_dir;
+        }
+
+        let packaged_injection_dir = win
+          .unwrap()
+          .app_handle()
+          .path_resolver()
+          .resolve_resource(PathBuf::from("injection"))
+          .unwrap();
+
+        let mut copy_to = injection_dir.clone();
+        copy_to.pop();
+
+        // Copy the injection files
+        fs_extra::dir::copy(
+          packaged_injection_dir,
+          copy_to,
+          &fs_extra::dir::CopyOptions::new(),
+        ).unwrap();
+
+        ()
+      },
+      Err(e) => {
+        println!("Error creating injection dir: {}", e);
+        return injection_dir;
+      }
+    };
+  }
+
+  injection_dir
+}
+
 pub fn get_plugin_dir() -> std::path::PathBuf {
   // First check for a local plugin dir
   let local_plugin_dir = std::env::current_exe()

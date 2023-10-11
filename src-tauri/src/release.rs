@@ -1,6 +1,6 @@
 use std::io::BufRead;
 
-use crate::{injection::injection_runner::injection_dir, util::paths::updater_dir};
+use crate::util::paths::{updater_dir, get_injection_dir};
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
@@ -54,7 +54,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let mut updater = std::process::Command::new(updater_path);
 
   if to_update.contains(&"vencordorion".to_string()) {
-    let injection_path = injection_dir(&win);
+    let injection_path = get_injection_dir(Some(&win));
     println!("Updating Vencordorion...");
 
     updater.arg(String::from("--vencord"));
@@ -93,8 +93,7 @@ pub async fn maybe_latest_injection_release() -> bool {
   let tag_name = json["tag_name"].as_str().unwrap();
 
   // Read previous version from vencord.version (located in binary folder)
-  let mut path = std::env::current_exe().unwrap();
-  path.pop();
+  let mut path = get_injection_dir(None);
   path.push("vencord.version");
 
   let mut previous_version = String::new();
