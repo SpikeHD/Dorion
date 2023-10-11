@@ -10,9 +10,12 @@
         "preview": "vite preview",
         "tauri": "tauri",
         "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
+        "format:updater": "cargo fmt --manifest-path ./updater/Cargo.toml --all",
         "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
         "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
+        "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
         "codefix": "pnpm format && pnpm clippy && pnpm lint",
+        "codefix:updater": "pnpm format:updater && pnpm clippy:updater",
         "vupdate": "curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.css -o src-tauri/injection/browser.css && curl -L https://github.com/SpikeHD/Vencordorion/releases/latest/download/browser.js -o src-tauri/injection/browser.js"
     },
     "devDependencies": {

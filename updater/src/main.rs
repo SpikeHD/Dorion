@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use clap::{command, Parser};
+use std::path::PathBuf;
 
 /// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 #[derive(Parser, Debug)]
@@ -16,7 +16,7 @@ pub struct Args {
 
 pub fn main() {
   let args = Args::parse();
-  
+
   if args.main.is_some() {
     update_main();
   }
@@ -55,14 +55,14 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
       std::fs::remove_file(test_file).unwrap();
 
       true
-    },
+    }
     Err(e) => {
       println!("Error writing test file: {}", e);
       false
     }
   };
 
-  return !write_perms;
+  !write_perms
 }
 
 #[cfg(target_os = "windows")]
@@ -70,17 +70,16 @@ pub fn reopen_as_elevated() {
   let install = std::env::current_exe().unwrap();
 
   let mut binding = std::process::Command::new("powershell.exe");
-  let cmd = binding
-    .arg("-command")
-    .arg(format!(
-      "Start-Process -filepath '{}' -verb runas -ArgumentList @({})",
-      install.into_os_string().into_string().unwrap(),
-      // get program args (without first one) and join by ,
-      std::env::args()
-        .skip(1)
-        .map(|arg| format!("'\"{}\"'", arg))
-        .collect::<Vec<String>>().join(",")
-    ));
+  let cmd = binding.arg("-command").arg(format!(
+    "Start-Process -filepath '{}' -verb runas -ArgumentList @({})",
+    install.into_os_string().into_string().unwrap(),
+    // get program args (without first one) and join by ,
+    std::env::args()
+      .skip(1)
+      .map(|arg| format!("'\"{}\"'", arg))
+      .collect::<Vec<String>>()
+      .join(",")
+  ));
 
   println!("Executing: {:?}", cmd);
 
@@ -101,7 +100,7 @@ pub fn update_vencordorion(path: PathBuf) {
     .send()
     .unwrap();
   let text = response.text().unwrap();
-  
+
   // Parse "tag_name" from JSON
   let json: serde_json::Value = serde_json::from_str(&text).unwrap();
   let tag_name = json["tag_name"].as_str().unwrap();
@@ -140,7 +139,7 @@ pub fn update_vencordorion(path: PathBuf) {
   println!("Got JS response");
 
   println!("Writing files to disk...");
-  
+
   // Write both to disk
   let mut css_path = path.clone();
   css_path.push("browser.css");
@@ -158,7 +157,4 @@ pub fn update_vencordorion(path: PathBuf) {
   std::fs::write(ven_path, tag_name).unwrap();
 }
 
-pub fn update_main() {
-  // Nothing for now
-  return;
-}
+pub fn update_main() {}

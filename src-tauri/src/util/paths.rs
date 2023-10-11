@@ -76,10 +76,9 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
           packaged_injection_dir,
           copy_to,
           &fs_extra::dir::CopyOptions::new(),
-        ).unwrap();
-
-        ()
-      },
+        )
+        .unwrap();
+      }
       Err(e) => {
         println!("Error creating injection dir: {}", e);
         return injection_dir;

@@ -1,6 +1,6 @@
 use std::io::BufRead;
 
-use crate::util::paths::{updater_dir, get_injection_dir};
+use crate::util::paths::{get_injection_dir, updater_dir};
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct Release {
@@ -63,7 +63,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
         .into_os_string()
         .into_string()
         .unwrap()
-        .replace("\\", "/")
+        .replace('\\', "/"),
     );
   }
 
@@ -72,7 +72,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   // Wait for the updater to finish
   process.wait().unwrap();
 
-  win.emit("update_complete", {}).unwrap();
+  win.emit("update_complete", ()).unwrap();
 }
 
 #[tauri::command]

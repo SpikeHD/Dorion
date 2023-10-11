@@ -11,8 +11,8 @@ use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
 use tauri::{
-  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray,
-  SystemTrayEvent, SystemTrayMenu, Window, WindowBuilder,
+  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  Window, WindowBuilder,
 };
 use util::{
   helpers, notifications,
