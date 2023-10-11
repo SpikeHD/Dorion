@@ -342,6 +342,19 @@ function proxyFetch() {
       options.body = bodyContent
     }
 
+    if (options && options?.headers) {
+      // Check if header object, if so convert back to Record<String, any>
+      if (options.headers instanceof Headers) {
+        const headers = {}
+
+        for (const [key, value] of options.headers.entries()) {
+          headers[key] = value
+        }
+
+        options.headers = headers
+      }
+    }
+
     const response = await http.fetch(url, {
       responseType: 2,
       ...options
@@ -350,6 +363,8 @@ function proxyFetch() {
     // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
     response.json = async () => JSON.parse(response.data)
     response.text = async () => response.data
+
+    response.headers = new Headers(response.headers)
 
     return response
   }
