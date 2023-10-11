@@ -155,9 +155,6 @@ pub fn update_vencordorion(path: PathBuf) {
   let mut ven_path = path.clone();
   ven_path.push("vencord.version");
 
-  println!("Writing version file...");
-  println!("{:?}", ven_path);
-
   std::fs::write(ven_path, tag_name).unwrap();
 }
 
