@@ -51,8 +51,6 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
 
   let injection_dir = appdata.join("dorion").join("injection");
 
-  println!("{:?}", injection_dir);
-
   if fs::metadata(&injection_dir).is_err() {
     match fs::create_dir_all(&injection_dir) {
       Ok(()) => {
