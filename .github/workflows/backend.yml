@@ -22,9 +22,17 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: actions-rs/cargo@v1
+        name: Rustfmt check
         with:
           command: fmt
           args: --manifest-path ./src-tauri/Cargo.toml --all -- --check
+
+      # also check updater
+      - uses: actions-rs/cargo@v1
+        name: Rustfmt check updater
+        with:
+          command: fmt
+          args: --manifest-path ./updater/Cargo.toml --all -- --check
 
   clippy:
     runs-on: ${{ matrix.platform }}
@@ -61,7 +69,16 @@ jobs:
         run: pnpm install && pnpm vupdate && pnpm prebuild && pnpm build
 
       - uses: actions-rs/clippy-check@v1
+        name: Clippy check
         with:
           name: clippy (${{ runner.os }})
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings
+
+      # Also clippy check updater
+      - uses: actions-rs/clippy-check@v1
+        name: Clippy check updater
+        with:
+          name: clippy (${{ runner.os }})
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings

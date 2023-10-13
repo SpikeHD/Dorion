@@ -59,6 +59,9 @@ jobs:
       - name: Install MacOS universal target
         if: matrix.platform == 'macos-latest'
         run: rustup target add aarch64-apple-darwin
+
+      - name: Build updater
+        run: pnpm build:updater
           
       - name: Install deps and build
         # Include --target universal-apple-darwin for MacOS, otherwise it will only build for x86_64
