@@ -62,10 +62,13 @@ jobs:
 
       - name: Build updater
         run: pnpm build:updater
+
+      - name: Install dependencies
+        run: pnpm install && pnpm vupdate
           
       - name: Install deps and build
         # Include --target universal-apple-darwin for MacOS, otherwise it will only build for x86_64
-        run: pnpm install && pnpm vupdate && pnpm prebuild && ${{ matrix.platform == 'window-latest' && 'pnpm build:updater &&' }} pnpm build && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+        run: pnpm prebuild && pnpm build && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
       
       # Make empty folders for plugins and themes
       - name: Create empty folders for plugins and themes
@@ -81,13 +84,13 @@ jobs:
       # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|html|icons
       # MacOS:
       # - src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
-      - name: Compress build
+      - name: Compress build (windows)
         if: matrix.platform == 'windows-latest'
-        run: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
+        run: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/updater.exe src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
 
-      - name: Compress build
+      - name: Compress build (linux)
         if: matrix.platform == 'ubuntu-latest'
-        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
+        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./html ./icons
 
       # Windows portable
       - name: Upload Windows portable
