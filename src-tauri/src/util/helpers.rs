@@ -56,7 +56,7 @@ pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
   let appdata = tauri::api::path::config_dir().unwrap();
 
   let injection_dir = appdata.join("dorion").join("injection");
-  
+
   let packaged_injection_dir = win
     .app_handle()
     .path_resolver()
@@ -82,8 +82,9 @@ pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
     fs_extra::dir::copy(
       packaged_injection_dir,
       copy_to,
-      &fs_extra::dir::CopyOptions::new()
-    ).unwrap();
+      &fs_extra::dir::CopyOptions::new(),
+    )
+    .unwrap();
     return;
   }
 

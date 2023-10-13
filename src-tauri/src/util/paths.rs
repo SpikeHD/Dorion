@@ -60,7 +60,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
         if win.is_none() {
           return injection_dir;
         }
-        
+
         move_injection_scripts(win.unwrap(), true);
       }
       Err(e) => {
