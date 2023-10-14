@@ -12,6 +12,7 @@
  <img src="https://img.shields.io/github/commit-activity/m/SpikeHD/Dorion" />
  <img src="https://img.shields.io/github/release-date/SpikeHD/Dorion" />
  <img src="https://img.shields.io/github/stars/SpikeHD/Dorion" />
+ <img src="https://img.shields.io/github/downloads/SpikeHD/Dorion/total" />
 </div>
 
 <div align="center">
