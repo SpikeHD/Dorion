@@ -203,5 +203,5 @@ Issues, PRs, etc. are all welcome!
 ![image](https://github.com/SpikeHD/Dorion/assets/25207995/e8d610b9-fd02-43eb-943c-0003e0c07d11)
 Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/28d74086-0adf-4414-a7be-a3e97ca1ba12)
+![image](https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54)
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
