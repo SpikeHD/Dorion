@@ -195,6 +195,7 @@ Issues, PRs, etc. are all welcome!
 
 ## Installation size
 ![image](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FSpikeHD%2FDorion.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FSpikeHD%2FDorion?ref=badge_shield)
 
 ## Loading screen
 ![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
@@ -205,3 +206,7 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 
 ![image](https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54)
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FSpikeHD%2FDorion.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FSpikeHD%2FDorion?ref=badge_large)
