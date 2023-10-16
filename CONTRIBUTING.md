@@ -54,7 +54,7 @@ From here, you can test your changes in two ways:
 
 ### Testing changes in Vencordorion
 
-Since Vencordorion](https://github.com/SpikeHD/Vencordorion) is an entirely seperate Dorion component, you will also need to clone and build it. To do so is simple:
+Since [Vencordorion](https://github.com/SpikeHD/Vencordorion) is an entirely seperate Dorion component, you will also need to clone and build it. To do so is simple:
 
 1. Clone, install dependencies, and change whatever you need to in Vencordorion
 2. Build the web version
