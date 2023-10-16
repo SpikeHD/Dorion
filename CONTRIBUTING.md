@@ -61,6 +61,6 @@ Since [Vencordorion](https://github.com/SpikeHD/Vencordorion) is an entirely sep
    ```sh
    pnpm buildWeb
    ```
-3. Move the `browser.js` and `browser.css` files into `./src-tauri/injection`
+3. Move the `dist/browser.js` and `dist/browser.css` files into `./src-tauri/injection`
 4. Setup Dorion debug to [think it's portable](#set-up-Dorion-to-think-the-debug-version-is-portable)
 5. Start Dorion like [above](#testing-changes-in-dorion)
