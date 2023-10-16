@@ -1,4 +1,4 @@
-# Contributung
+# Contributing
 
 Thank you for considering working on Dorion! There are only a couple things to keep in mind, as well as some tips to make development quick.
 
