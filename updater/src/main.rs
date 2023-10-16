@@ -157,4 +157,24 @@ pub fn update_vencordorion(path: PathBuf) {
   std::fs::write(ven_path, tag_name).unwrap();
 }
 
+/**
+ * Download the MSI and install
+ */
+#[cfg(target_os = "windows")]
+pub fn update_main() {
+
+}
+
+/**
+ * Download the DMG and open
+ */
+#[cfg(target_os = "macos")]
+pub fn update_main() {
+
+}
+
+/**
+ * Do nothing, too hard to know where we were sourced from on Linux
+ */
+#[cfg(target_os = "linux")]
 pub fn update_main() {}
