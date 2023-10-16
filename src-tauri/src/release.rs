@@ -18,7 +18,7 @@ pub async fn update_check(win: tauri::Window) -> Vec<String> {
     println!("Available update for Dorion!");
     to_update.push("dorion".to_string());
   }
-  
+
   to_update
 }
 
@@ -109,7 +109,10 @@ pub async fn maybe_latest_main_release(win: &tauri::Window) -> bool {
 
   let handle = win.app_handle();
   let app_version = &handle.package_info().version;
-  let version_str = format!("v{}.{}.{}", app_version.major, app_version.minor, app_version.patch);
+  let version_str = format!(
+    "v{}.{}.{}",
+    app_version.major, app_version.minor, app_version.patch
+  );
 
   println!("Comparing {} to {}", tag_name, version_str);
 

@@ -1,7 +1,7 @@
 use clap::{command, Parser};
 use std::path::PathBuf;
 
-use crate::github::{get_release, download_release};
+use crate::github::{download_release, get_release};
 
 mod github;
 
@@ -111,19 +111,19 @@ pub fn update_vencordorion(path: PathBuf) {
   js_path.push("browser.js");
 
   download_release(
-    "SpikeHD", 
+    "SpikeHD",
     "Vencordorion",
-    release.tag_name.clone(), 
+    release.tag_name.clone(),
     "browser.css",
-    css_path
+    css_path,
   );
 
   download_release(
-    "SpikeHD", 
+    "SpikeHD",
     "Vencordorion",
-    release.tag_name.clone(), 
+    release.tag_name.clone(),
     "browser.js",
-    js_path
+    js_path,
   );
 
   // If this succeeds, write the new version to vencord.version
@@ -137,9 +137,7 @@ pub fn update_vencordorion(path: PathBuf) {
  * Download the MSI and install
  */
 #[cfg(target_os = "windows")]
-pub fn update_main() {
-
-}
+pub fn update_main() {}
 
 /**
  * Download the DMG and open
@@ -160,16 +158,16 @@ pub fn update_main() {
     }
   }
 
-  let mut path = std::env::temp_dir();
+  let path = std::env::temp_dir();
 
   println!("Downloading {}...", release_name);
 
   let release_path = download_release(
-    "SpikeHD", 
+    "SpikeHD",
     "Dorion",
-    release.tag_name.clone(), 
+    release.tag_name.clone(),
     release_name.clone(),
-    path.clone()
+    path.clone(),
   );
 
   println!("Opening {:?}...", release_path.clone());

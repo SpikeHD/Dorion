@@ -4,7 +4,7 @@
 )]
 
 use auto_launch::*;
-use std::{time::Duration, path::PathBuf};
+use std::{path::PathBuf, time::Duration};
 
 use config::{get_client_type, get_start_maximized};
 use injection::{injection_runner, local_html, plugin, theme};
@@ -113,9 +113,8 @@ fn main() {
   #[cfg(target_os = "macos")]
   {
     if context.system_tray_icon_mut().is_some() {
-      *context.system_tray_icon_mut() = Some(tauri::Icon::File(
-        PathBuf::from("icons/icon_macos.png")
-      ));
+      *context.system_tray_icon_mut() =
+        Some(tauri::Icon::File(PathBuf::from("icons/icon_macos.png")));
     }
   }
 

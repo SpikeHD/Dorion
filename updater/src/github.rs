@@ -1,4 +1,4 @@
-use std::{path::PathBuf, fs};
+use std::{fs, path::PathBuf};
 
 pub struct ReleaseData {
   pub tag_name: String,
@@ -6,7 +6,11 @@ pub struct ReleaseData {
 }
 
 pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> ReleaseData {
-  let url = format!("https://api.github.com/repos/{}/{}/releases/latest", user.as_ref(), repo.as_ref());
+  let url = format!(
+    "https://api.github.com/repos/{}/{}/releases/latest",
+    user.as_ref(),
+    repo.as_ref()
+  );
   let client = reqwest::blocking::Client::new();
   let response = client
     .get(url)
@@ -33,13 +37,25 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> ReleaseData 
   }
 }
 
-pub fn download_release(user: impl AsRef<str>, repo: impl AsRef<str>, tag_name: impl AsRef<str>, release_name: impl AsRef<str>, path: PathBuf) -> PathBuf {
-  let url = format!("https://github.com/{}/{}/releases/download/{}/{}", user.as_ref(), repo.as_ref(), tag_name.as_ref(), release_name.as_ref());
+pub fn download_release(
+  user: impl AsRef<str>,
+  repo: impl AsRef<str>,
+  tag_name: impl AsRef<str>,
+  release_name: impl AsRef<str>,
+  path: PathBuf,
+) -> PathBuf {
+  let url = format!(
+    "https://github.com/{}/{}/releases/download/{}/{}",
+    user.as_ref(),
+    repo.as_ref(),
+    tag_name.as_ref(),
+    release_name.as_ref()
+  );
 
   let client = reqwest::blocking::Client::new();
 
   let response = client
-    .get(&url)
+    .get(url)
     .header("User-Agent", "Dorion")
     .send()
     .unwrap();
