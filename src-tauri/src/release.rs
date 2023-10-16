@@ -1,40 +1,10 @@
 use std::io::BufRead;
+use tauri::Manager;
 
 use crate::util::paths::{get_injection_dir, updater_dir};
 
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct Release {
-  pub tag_name: String,
-  pub link: String,
-}
-
 #[tauri::command]
-pub async fn get_latest_release() -> Release {
-  let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
-  let client = reqwest::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .await
-    .unwrap();
-  let text = response.text().await.unwrap();
-
-  // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let tag_name = json["tag_name"].as_str().unwrap();
-
-  // Parse "html_url"
-  let link = json["html_url"].as_str().unwrap();
-
-  Release {
-    tag_name: tag_name.to_string(),
-    link: link.to_string(),
-  }
-}
-
-#[tauri::command]
-pub async fn update_check() -> Vec<String> {
+pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
   println!("Checking for updates...");
@@ -44,7 +14,11 @@ pub async fn update_check() -> Vec<String> {
     to_update.push("vencordorion".to_string());
   }
 
-  // TODO: Dorion autoupdate check
+  if maybe_latest_main_release(&win).await {
+    println!("Available update for Dorion!");
+    to_update.push("dorion".to_string());
+  }
+  
   to_update
 }
 
@@ -65,6 +39,13 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
         .unwrap()
         .replace('\\', "/"),
     );
+  }
+
+  if to_update.contains(&"dorion".to_string()) {
+    println!("Updating Dorion...");
+
+    updater.arg(String::from("--main"));
+    updater.arg(String::from("true"));
   }
 
   let mut process = updater.spawn().unwrap();
@@ -105,6 +86,34 @@ pub async fn maybe_latest_injection_release() -> bool {
   }
 
   if tag_name == previous_version {
+    return false;
+  }
+
+  true
+}
+
+pub async fn maybe_latest_main_release(win: &tauri::Window) -> bool {
+  let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
+  let client = reqwest::Client::new();
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .await
+    .unwrap();
+  let text = response.text().await.unwrap();
+
+  // Parse "tag_name" from JSON
+  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
+  let tag_name = json["tag_name"].as_str().unwrap();
+
+  let handle = win.app_handle();
+  let app_version = &handle.package_info().version;
+  let version_str = format!("v{}.{}.{}", app_version.major, app_version.minor, app_version.patch);
+
+  println!("Comparing {} to {}", tag_name, version_str);
+
+  if tag_name == version_str {
     return false;
   }
 

@@ -1,13 +1,17 @@
 use clap::{command, Parser};
 use std::path::PathBuf;
 
+use crate::github::{get_release, download_release};
+
+mod github;
+
 /// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
   /// Update Dorion
   #[arg(short = 'm', long)]
-  main: Option<String>,
+  main: Option<bool>,
 
   /// Path to injection folder
   #[arg(short = 'v', long)]
@@ -17,10 +21,6 @@ pub struct Args {
 pub fn main() {
   let args = Args::parse();
 
-  if args.main.is_some() {
-    update_main();
-  }
-
   if args.vencord.is_some() {
     if needs_to_elevate(PathBuf::from(args.vencord.clone().unwrap())) {
       println!("Elevating process...");
@@ -29,6 +29,11 @@ pub fn main() {
     }
 
     update_vencordorion(PathBuf::from(args.vencord.unwrap()));
+  }
+
+  // THis should happen second
+  if args.main.is_some() {
+    update_main();
   }
 }
 
@@ -92,51 +97,9 @@ pub fn reopen_as_elevated() {
 }
 
 pub fn update_vencordorion(path: PathBuf) {
-  let url = "https://api.github.com/repos/SpikeHD/Vencordorion/releases/latest";
-  let client = reqwest::blocking::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .unwrap();
-  let text = response.text().unwrap();
+  let release = get_release("SpikeHD", "Dorion");
 
-  // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let tag_name = json["tag_name"].as_str().unwrap();
-
-  println!("Latest Vencordorion release: {}", tag_name);
-
-  // Download browser.css and browser.js from the assets
-  let css_url = format!(
-    "https://github.com/SpikeHD/Vencordorion/releases/download/{}/browser.css",
-    tag_name
-  );
-
-  let js_url = format!(
-    "https://github.com/SpikeHD/Vencordorion/releases/download/{}/browser.js",
-    tag_name
-  );
-
-  println!("JS URL: {}", js_url);
-  println!("CSS URL: {}", css_url);
-
-  // Fetch both
-  let css_response = client
-    .get(&css_url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .unwrap();
-
-  println!("Got CSS response");
-
-  let js_response = client
-    .get(&js_url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .unwrap();
-
-  println!("Got JS response");
+  println!("Latest Vencordorion release: {}", release.tag_name);
 
   println!("Writing files to disk...");
 
@@ -147,14 +110,27 @@ pub fn update_vencordorion(path: PathBuf) {
   let mut js_path = path.clone();
   js_path.push("browser.js");
 
-  std::fs::write(css_path, css_response.text().unwrap()).unwrap();
-  std::fs::write(js_path, js_response.text().unwrap()).unwrap();
+  download_release(
+    "SpikeHD", 
+    "Vencordorion",
+    release.tag_name.clone(), 
+    "browser.css",
+    css_path
+  );
+
+  download_release(
+    "SpikeHD", 
+    "Vencordorion",
+    release.tag_name.clone(), 
+    "browser.js",
+    js_path
+  );
 
   // If this succeeds, write the new version to vencord.version
   let mut ven_path = path.clone();
   ven_path.push("vencord.version");
 
-  std::fs::write(ven_path, tag_name).unwrap();
+  std::fs::write(ven_path, release.tag_name).unwrap();
 }
 
 /**
@@ -170,7 +146,48 @@ pub fn update_main() {
  */
 #[cfg(target_os = "macos")]
 pub fn update_main() {
+  let release = get_release("SpikeHD", "Dorion");
 
+  println!("Latest Dorion release: {}", release.tag_name);
+
+  // Find the release that ends with ".dmg", that's the MacOS release
+  let mut release_name = String::new();
+
+  for name in release.release_names {
+    if name.ends_with(".dmg") {
+      release_name = name;
+      break;
+    }
+  }
+
+  let mut path = std::env::temp_dir();
+
+  println!("Downloading {}...", release_name);
+
+  let release_path = download_release(
+    "SpikeHD", 
+    "Dorion",
+    release.tag_name.clone(), 
+    release_name.clone(),
+    path.clone()
+  );
+
+  println!("Opening {:?}...", release_path.clone());
+
+  // Open the mounted DMG
+  let mut cmd = std::process::Command::new("open");
+  cmd.arg(release_path);
+
+  cmd.spawn().unwrap();
+
+  println!("Attempting to kill Dorion process...");
+
+  // Also kill the main Dorion process if we can
+  let mut cmd = std::process::Command::new("pkill");
+  cmd.arg("-9");
+  cmd.arg("Dorion");
+
+  cmd.spawn().unwrap();
 }
 
 /**

@@ -172,7 +172,6 @@ fn main() {
       profiles::create_profile,
       profiles::delete_profile,
       release::do_update,
-      release::get_latest_release,
       release::update_check,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
