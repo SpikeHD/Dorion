@@ -6,3 +6,13 @@ ul[class^='tree']
   > div[class^='listItem']:nth-last-child(3) {
   display: none !important;
 }
+
+div[class^='layerContainer-'] {
+  overflow: clip;
+  top: 30px;
+}
+
+div[class^='layerContainer-']
+  div[class^='userProfileOuter-'] {
+    --custom-user-popout-outside-components-height: 30px;
+  }
