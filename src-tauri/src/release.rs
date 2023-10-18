@@ -41,6 +41,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
     );
   }
 
+  #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
     println!("Updating Dorion...");
 

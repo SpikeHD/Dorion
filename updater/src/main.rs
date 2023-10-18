@@ -137,7 +137,55 @@ pub fn update_vencordorion(path: PathBuf) {
  * Download the MSI and install
  */
 #[cfg(target_os = "windows")]
-pub fn update_main() {}
+pub fn update_main() {
+  let release = get_release("SpikeHD", "Dorion");
+
+  println!("Latest Dorion release: {}", release.tag_name);
+
+  // Find the release that ends with ".dmg", that's the MacOS release
+  let mut release_name = String::new();
+
+  for name in release.release_names {
+    if name.ends_with(".msi") {
+      release_name = name;
+      break;
+    }
+  }
+
+  let path = std::env::temp_dir();
+
+  println!("Downloading {}...", release_name);
+
+  let release_path = download_release(
+    "SpikeHD",
+    "Dorion",
+    release.tag_name.clone(),
+    release_name.clone(),
+    path.clone(),
+  );
+
+  // Kill Dorion BEFORE we install
+  println!("Attempting to kill Dorion process...");
+
+  let mut cmd = std::process::Command::new("taskkill");
+  cmd.arg("/F");
+  cmd.arg("/IM");
+  cmd.arg("Dorion.exe");
+
+  cmd.spawn().unwrap();
+
+  println!("Installing {:?}...", release_path.clone());
+
+  // Install from the MSI in quiet mode
+  let mut cmd = std::process::Command::new("msiexec");
+  cmd.arg("/i");
+  cmd.arg(release_path);
+  cmd.arg("/quiet");
+
+  cmd.spawn().unwrap();
+
+  std::process::exit(0);
+}
 
 /**
  * Download the DMG and open
