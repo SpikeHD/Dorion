@@ -110,14 +110,6 @@ fn main() {
   context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
   context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
 
-  #[cfg(target_os = "macos")]
-  {
-    if context.system_tray_icon_mut().is_some() {
-      *context.system_tray_icon_mut() =
-        Some(tauri::Icon::File(std::path::PathBuf::from("icons/icon_macos.png")));
-    }
-  }
-
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
