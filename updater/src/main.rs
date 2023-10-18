@@ -37,6 +37,7 @@ pub fn main() {
 
   // THis should happen second
   if args.main.is_some() {
+    #[cfg(target_os = "windows")]
     if args.local.is_some() && args.local.unwrap() {
       update_main_kinda();
       return;
