@@ -16,6 +16,10 @@ pub struct Args {
   /// Path to injection folder
   #[arg(short = 'v', long)]
   vencord: Option<String>,
+
+  /// Whether this is a local install or not
+  #[arg(short = 'l', long)]
+  local: Option<bool>,
 }
 
 pub fn main() {
@@ -33,6 +37,11 @@ pub fn main() {
 
   // THis should happen second
   if args.main.is_some() {
+    if args.local.is_some() && args.local.unwrap() {
+      update_main_kinda();
+      return;
+    }
+
     update_main();
   }
 }
@@ -97,25 +106,20 @@ pub fn reopen_as_elevated() {
 }
 
 pub fn update_vencordorion(path: PathBuf) {
-  let release = get_release("SpikeHD", "Dorion");
+  let release = get_release("SpikeHD", "Vencordorion");
 
   println!("Latest Vencordorion release: {}", release.tag_name);
 
   println!("Writing files to disk...");
 
   // Write both to disk
-  let mut css_path = path.clone();
-  css_path.push("browser.css");
-
-  let mut js_path = path.clone();
-  js_path.push("browser.js");
 
   download_release(
     "SpikeHD",
     "Vencordorion",
     release.tag_name.clone(),
     "browser.css",
-    css_path,
+    path.clone(),
   );
 
   download_release(
@@ -123,7 +127,7 @@ pub fn update_vencordorion(path: PathBuf) {
     "Vencordorion",
     release.tag_name.clone(),
     "browser.js",
-    js_path,
+    path.clone(),
   );
 
   // If this succeeds, write the new version to vencord.version
@@ -189,6 +193,62 @@ pub fn update_main() {
   println!("Running {:?}", cmd);
 
   cmd.spawn().unwrap();
+
+  std::process::exit(0);
+}
+
+#[cfg(target_os = "windows")]
+pub fn update_main_kinda() {
+  // Same as the MSI, but we just download the zip file instead and open explorer to highlight it
+  let release = get_release("SpikeHD", "Dorion");
+
+  println!("Latest Dorion release: {}", release.tag_name);
+
+  // Find the release that ends with ".zip", that should be the Windows release
+  let mut release_name = String::new();
+
+  for name in release.release_names {
+    if name.ends_with(".zip") && name.contains("win64") {
+      release_name = name;
+      break;
+    }
+  }
+
+  let path = std::env::temp_dir();
+
+  println!("Downloading {}...", release_name);
+
+  let release_path = download_release(
+    "SpikeHD",
+    "Dorion",
+    release.tag_name.clone(),
+    release_name.clone(),
+    path.clone(),
+  );
+
+  println!("Opening {:?}...", release_path.clone());
+
+  // Open the folder the zip is in and highlight
+  let mut cmd = std::process::Command::new("explorer");
+  cmd.arg("/select,");
+  cmd.arg(
+    release_path
+      .into_os_string()
+      .into_string()
+      .unwrap()
+  );
+
+  cmd.spawn().unwrap();
+
+  println!("Attempting to kill Dorion process...");
+
+  // Also kill the main Dorion process if we can
+  let mut cmd = std::process::Command::new("taskkill");
+  cmd.arg("/F");
+  cmd.arg("/IM");
+  cmd.arg("Dorion.exe");
+
+  cmd.spawn().unwrap().wait().unwrap();
 
   std::process::exit(0);
 }

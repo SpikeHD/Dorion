@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Dorion",
-    "version": "1.2.0"
+    "version": "1.4.0"
   },
   "tauri": {
     "systemTray": {
@@ -52,7 +52,6 @@
         "injection/browser.css",
         "html/index.html",
         "html/top.html",
-        "html/notification.html",
         "html/extra.css",
         "icons/icon*.ico",
         "updater*"

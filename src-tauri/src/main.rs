@@ -21,7 +21,7 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
-use crate::util::helpers::move_injection_scripts;
+use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
 
 mod config;
 mod deep_link;
@@ -158,7 +158,6 @@ fn main() {
       js_preprocess::localize_all_js,
       local_html::get_index,
       local_html::get_top_bar,
-      local_html::get_notif,
       local_html::get_extra_css,
       notifications::notif_count,
       plugin::load_plugins,
@@ -239,7 +238,9 @@ fn main() {
       }
 
       // Init injection scripts
-      move_injection_scripts(&win, false);
+      if !injection_is_local() {
+        move_injection_scripts(&win, false);
+      }
 
       modify_window(&win);
 

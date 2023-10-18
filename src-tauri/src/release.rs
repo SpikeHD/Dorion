@@ -1,7 +1,7 @@
 use std::io::BufRead;
 use tauri::Manager;
 
-use crate::util::paths::{get_injection_dir, updater_dir};
+use crate::util::paths::{get_injection_dir, updater_dir, config_is_local};
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
@@ -47,6 +47,12 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
     updater.arg(String::from("--main"));
     updater.arg(String::from("true"));
+  }
+
+  // If we have a local config, we are a portable install, so pass that too
+  if config_is_local() {
+    updater.arg("--local");
+    updater.arg("true");
   }
 
   let mut process = updater.spawn().unwrap();

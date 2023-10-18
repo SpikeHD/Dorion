@@ -26,7 +26,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'src/index.html'),
         bar: resolve(__dirname, 'src/top.html'),
-        notif: resolve(__dirname, 'src/notification.html'),
         extra: resolve(__dirname, 'src/extra.css'),
       },
       output: {

@@ -44,7 +44,29 @@ pub fn get_config_dir() -> PathBuf {
   config_file
 }
 
+pub fn config_is_local() -> bool {
+  let local_config_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("config.json");
+
+  fs::metadata(&local_config_dir).is_ok()
+}
+
 pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
+  // First check for a local injection dir
+  let local_inject_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("injection");
+
+  if fs::metadata(&local_inject_dir).is_ok() {
+    return local_inject_dir;
+  }
+
+  // If not, grab the normal one
   #[cfg(target_os = "windows")]
   let appdata = tauri::api::path::data_dir().unwrap();
 
@@ -71,6 +93,16 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
   }
 
   injection_dir
+}
+
+pub fn injection_is_local() -> bool {
+  let local_inject_dir = std::env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join("injection");
+
+  fs::metadata(&local_inject_dir).is_ok()
 }
 
 pub fn get_plugin_dir() -> std::path::PathBuf {

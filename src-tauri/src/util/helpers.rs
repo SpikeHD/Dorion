@@ -49,13 +49,7 @@ pub fn open_scheme(path: String) {
 }
 
 pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
-  #[cfg(target_os = "windows")]
-  let appdata = tauri::api::path::data_dir().unwrap();
-
-  #[cfg(not(target_os = "windows"))]
-  let appdata = tauri::api::path::config_dir().unwrap();
-
-  let injection_dir = appdata.join("dorion").join("injection");
+  let injection_dir = get_injection_dir(Some(win));
 
   let packaged_injection_dir = win
     .app_handle()
@@ -63,15 +57,12 @@ pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
     .resolve_resource(PathBuf::from("injection"))
     .unwrap();
 
-  let mut injection_folder = injection_dir.clone();
-  injection_folder.push("injection");
-
   let mut copy_to = injection_dir.clone();
   copy_to.pop();
 
   // If the injection folder doesn't exist, create it and re-run with everything
-  if std::fs::metadata(&injection_folder).is_err() {
-    std::fs::create_dir_all(&injection_folder).unwrap();
+  if std::fs::metadata(&injection_dir).is_err() {
+    std::fs::create_dir_all(&injection_dir).unwrap();
 
     move_injection_scripts(win, true);
     return;
