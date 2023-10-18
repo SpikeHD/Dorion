@@ -172,15 +172,21 @@ pub fn update_main() {
   cmd.arg("/IM");
   cmd.arg("Dorion.exe");
 
-  cmd.spawn().unwrap();
+  cmd.spawn().unwrap().wait().unwrap();
 
   println!("Installing {:?}...", release_path.clone());
 
   // Install from the MSI in quiet mode
   let mut cmd = std::process::Command::new("msiexec");
   cmd.arg("/i");
-  cmd.arg(release_path);
-  cmd.arg("/quiet");
+  cmd.arg(
+    release_path
+      .into_os_string()
+      .into_string()
+      .unwrap()
+  );
+
+  println!("Running {:?}", cmd);
 
   cmd.spawn().unwrap();
 

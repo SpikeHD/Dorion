@@ -104,39 +104,6 @@ function onClientLoad() {
 }
 
 /**
- * Show notification
- */
-async function showNotification(title, body) {
-  const { invoke } = window.__TAURI__
-  const notifHtml = await invoke('get_notif')
-  const notif = document.createElement('div')
-  notif.innerHTML = notifHtml
-
-  const inner = notif.querySelector('#dorion_notif')
-
-  inner.style.top = '-100%'
-  inner.style.transition = 'all 0.5s ease-in-out'
-
-  inner.querySelector('#notif_title').innerHTML = title
-  inner.querySelector('#notif_body').innerHTML = body
-
-  const inst = document.body.appendChild(notif)
-
-  // Move into view
-  setTimeout(() => {
-    inner.style.top = '5%'
-  }, 100)
-
-  // After 4 seconds, move out of view and remove
-  setTimeout(() => {
-    inner.style.top = '-100%'
-    setTimeout(() => {
-      inst.remove()
-    }, 500)
-  }, 4000)
-}
-
-/**
  * Give events to the top bar buttons
  */
 function initTopBarEvents() {
