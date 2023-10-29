@@ -65,29 +65,6 @@ pub fn do_injection(window: tauri::Window) {
         println!("Error evaluating vencord preinject: {}", e)
       }
     };
-
-    std::thread::sleep(std::time::Duration::from_millis(600));
-
-    // Inject vencords css
-    match window.eval(
-      format!(
-        "
-        const ts = document.createElement('style')
-
-        ts.textContent = `
-          {}
-        `
-
-        document.head.appendChild(ts)",
-        get_vencord_css_content(&window.app_handle())
-      )
-      .as_str(),
-    ) {
-      Ok(r) => r,
-      Err(e) => {
-        println!("Error evaluating vencord css: {}", e)
-      }
-    };
   });
 }
 
@@ -190,15 +167,3 @@ pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
   }
 }
 
-pub fn get_vencord_css_content(app: &tauri::AppHandle) -> String {
-  let path = get_injection_dir(Some(&app.get_window("main").unwrap())).join("browser.css");
-
-  match fs::read_to_string(path) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Failed to read browser.css in resource dir: {}", e);
-
-      String::new()
-    }
-  }
-}

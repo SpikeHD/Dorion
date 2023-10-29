@@ -93,6 +93,9 @@ async function createTopBar() {
 function onClientLoad() {
   observer.disconnect()
 
+  // Ensure Dorion-related plugins are installed
+  ensurePlugins()
+
   // Notifcation watcher
   notifGetter()
 
@@ -148,4 +151,60 @@ function applyExtraCSS() {
     style.innerHTML = css
     document.head.appendChild(style)
   })
+}
+
+async function ensurePlugins() {
+  const requiredPlugins = {
+    'shelteRPC': {
+      url: 'https://spikehd.github.io/shelter-plugins/shelteRPC/',
+      installed: false,
+      required: false,
+    },
+    'Dorion Settings': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-settings/',
+      installed: false,
+      required: true,
+    },
+    'Dorion Link Fix': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-link-fix/',
+      installed: false,
+      required: true,
+    },
+    'Dorion Streamer Mode': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
+      installed: false,
+      required: false,
+    }
+  }
+
+  // eslint-disable-next-line no-undef
+  const installed = shelter.plugins.installedPlugins()
+
+  for (const [_name, plugin] of Object.entries(installed)) {
+    if (requiredPlugins[plugin?.manifest?.name]) {
+      requiredPlugins[plugin.manifest.name].installed = true
+    }
+  }
+
+  // Now iterate the plugins that are not installed, and install them
+  for (const [name, plugin] of Object.entries(requiredPlugins)) {
+    if (!plugin.installed) {
+      // eslint-disable-next-line no-undef
+      await shelter.plugins.addRemotePlugin(name, plugin.url, true).catch(e => console.error(e))
+      
+      // Then set it to installed
+      requiredPlugins[name].installed = true
+    }
+  }
+
+  // Finally, enable the ones that are required
+  for (const [name, plugin] of Object.entries(requiredPlugins)) {
+    console.log('Plugin: ' + name + ' installed: ' + plugin.installed + ' required: ' + plugin.required)
+    if (plugin.installed && plugin.required) {
+      // eslint-disable-next-line no-undef
+      await shelter.plugins.startPlugin(name + '/').catch(e => console.error(e))
+
+      console.log(name + '/')
+    }
+  }
 }
