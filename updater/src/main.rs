@@ -1,7 +1,7 @@
 use clap::{command, Parser};
 use std::path::PathBuf;
 
-use crate::github::{download_release, get_release};
+use crate::github::{download_release, download_raw, get_release};
 
 mod github;
 
@@ -32,7 +32,7 @@ pub fn main() {
       return;
     }
 
-    update_vencordorion(PathBuf::from(args.vencord.unwrap()));
+    update_client_mod(PathBuf::from(args.vencord.unwrap()));
   }
 
   // THis should happen second
@@ -106,36 +106,11 @@ pub fn reopen_as_elevated() {
   std::process::exit(0);
 }
 
-pub fn update_vencordorion(path: PathBuf) {
-  let release = get_release("SpikeHD", "Vencordorion");
-
-  println!("Latest Vencordorion release: {}", release.tag_name);
-
+pub fn update_client_mod(path: PathBuf) {
   println!("Writing files to disk...");
 
-  // Write both to disk
-
-  download_release(
-    "SpikeHD",
-    "Vencordorion",
-    release.tag_name.clone(),
-    "browser.css",
-    path.clone(),
-  );
-
-  download_release(
-    "SpikeHD",
-    "Vencordorion",
-    release.tag_name.clone(),
-    "browser.js",
-    path.clone(),
-  );
-
-  // If this succeeds, write the new version to vencord.version
-  let mut ven_path = path.clone();
-  ven_path.push("vencord.version");
-
-  std::fs::write(ven_path, release.tag_name).unwrap();
+  // Write to disk
+  download_raw("uwu", "shelter-builds", "shelter.js", path.clone());
 }
 
 /**

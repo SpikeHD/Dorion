@@ -37,6 +37,44 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> ReleaseData 
   }
 }
 
+pub fn download_raw(
+  user: impl AsRef<str>,
+  repo: impl AsRef<str>,
+  filename: impl AsRef<str>,
+  path: std::path::PathBuf,
+) -> PathBuf {
+  let url = format!(
+    "https://raw.githubusercontent.com/{}/{}/master/{}",
+    user.as_ref(),
+    repo.as_ref(),
+    filename.as_ref()
+  );
+
+  let client = reqwest::blocking::Client::new();
+
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .unwrap();
+
+  let mut file_path = path.clone();
+  file_path.push(filename.as_ref());
+
+  println!("Writing to {:?}", file_path);
+
+  // Create_dir_all if needed
+  if !file_path.parent().unwrap().exists() {
+    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+  }
+
+  // Write the file
+  fs::write(&file_path, response.bytes().unwrap()).unwrap();
+
+  // Return the path of the file
+  file_path
+}
+
 pub fn download_release(
   user: impl AsRef<str>,
   repo: impl AsRef<str>,
