@@ -58,11 +58,11 @@ pub fn do_injection(window: tauri::Window) {
       }
     };
 
-    // Run vencord's preinject script
-    match window.eval(&get_vencord_js_content(&window.app_handle())) {
+    // Run Shelter's preinject script
+    match window.eval(&&get_client_mod_js_content(&window.app_handle())) {
       Ok(r) => r,
       Err(e) => {
-        println!("Error evaluating vencord preinject: {}", e)
+        println!("Error evaluating client mod preinject: {}", e)
       }
     };
   });
@@ -154,7 +154,7 @@ fn periodic_injection_check(
   });
 }
 
-pub fn get_vencord_js_content(app: &tauri::AppHandle) -> String {
+pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
   let path = get_injection_dir(Some(&app.get_window("main").unwrap())).join("browser.js");
 
   match fs::read_to_string(path) {

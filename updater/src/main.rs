@@ -14,8 +14,8 @@ pub struct Args {
   main: Option<bool>,
 
   /// Path to injection folder
-  #[arg(short = 'v', long)]
-  vencord: Option<String>,
+  #[arg(short = 's', long)]
+  shelter: Option<String>,
 
   /// Whether this is a local install or not
   #[arg(short = 'l', long)]
@@ -25,14 +25,14 @@ pub struct Args {
 pub fn main() {
   let args = Args::parse();
 
-  if args.vencord.is_some() {
-    if needs_to_elevate(PathBuf::from(args.vencord.clone().unwrap())) {
+  if args.shelter.is_some() {
+    if needs_to_elevate(PathBuf::from(args.shelter.clone().unwrap())) {
       println!("Elevating process...");
       elevate();
       return;
     }
 
-    update_client_mod(PathBuf::from(args.vencord.unwrap()));
+    update_client_mod(PathBuf::from(args.shelter.unwrap()));
   }
 
   // THis should happen second
@@ -111,6 +111,25 @@ pub fn update_client_mod(path: PathBuf) {
 
   // Write to disk
   download_raw("uwu", "shelter-builds", "shelter.js", path.clone());
+
+  // Write the SHA of the latest commit to "shelter.version"
+  let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
+  let client = reqwest::blocking::Client::new();
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .unwrap();
+  let text = response.text().unwrap();
+  
+  // Parse "tag_name" from JSON
+  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
+  let sha = json["sha"].as_str().unwrap();
+
+  let mut version_path = path.clone();
+  version_path.push("shelter.version"); 
+
+  std::fs::write(version_path, sha).unwrap();
 }
 
 /**

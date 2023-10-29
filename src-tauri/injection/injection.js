@@ -93,9 +93,6 @@ async function createTopBar() {
 function onClientLoad() {
   observer.disconnect()
 
-  // Ensure Dorion-related plugins are installed
-  ensurePlugins()
-
   // Notifcation watcher
   notifGetter()
 
@@ -104,6 +101,9 @@ function onClientLoad() {
 
   // Load up our extra css
   applyExtraCSS()
+
+  // Ensure Dorion-related plugins are installed
+  ensurePlugins()
 }
 
 /**
@@ -165,11 +165,16 @@ async function ensurePlugins() {
       installed: false,
       required: true,
     },
-    'Dorion Link Fix': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-link-fix/',
-      installed: false,
-      required: true,
-    },
+    // 'Dorion Link Fix': {
+    //   url: 'https://spikehd.github.io/shelter-plugins/dorion-link-fix/',
+    //   installed: false,
+    //   required: true,
+    // },
+    // 'Dorion Notifications': {
+    //   url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
+    //   installed: false,
+    //   required: true,
+    // },
     'Dorion Streamer Mode': {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
       installed: false,
@@ -180,9 +185,9 @@ async function ensurePlugins() {
   // eslint-disable-next-line no-undef
   const installed = shelter.plugins.installedPlugins()
 
-  for (const [_name, plugin] of Object.entries(installed)) {
-    if (requiredPlugins[plugin?.manifest?.name]) {
-      requiredPlugins[plugin.manifest.name].installed = true
+  for (const name of Object.keys(installed)) {
+    if (requiredPlugins[name]) {
+      requiredPlugins[name].installed = true
     }
   }
 
@@ -190,18 +195,20 @@ async function ensurePlugins() {
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
     if (!plugin.installed) {
       // eslint-disable-next-line no-undef
-      await shelter.plugins.addRemotePlugin(name, plugin.url, true).catch(e => console.error(e))
-      
+      await shelter.plugins.addRemotePlugin(name, plugin.url, true)?.catch(e => console.error(e))
+
       // Then set it to installed
       requiredPlugins[name].installed = true
     }
   }
 
+  const isPluginOn = (p) => installed[p]?.on
+
   // Finally, enable the ones that are required
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
-    if (plugin.installed && plugin.required) {
+    if (plugin.installed && plugin.required && !isPluginOn(name)) {
       // eslint-disable-next-line no-undef
-      await shelter.plugins.startPlugin(name + '/').catch(e => console.error(e))
+      await shelter.plugins.startPlugin(name)?.catch(e => console.error(e))
     }
   }
 }
