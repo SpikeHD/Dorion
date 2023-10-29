@@ -199,12 +199,9 @@ async function ensurePlugins() {
 
   // Finally, enable the ones that are required
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
-    console.log('Plugin: ' + name + ' installed: ' + plugin.installed + ' required: ' + plugin.required)
     if (plugin.installed && plugin.required) {
       // eslint-disable-next-line no-undef
       await shelter.plugins.startPlugin(name + '/').catch(e => console.error(e))
-
-      console.log(name + '/')
     }
   }
 }
