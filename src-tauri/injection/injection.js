@@ -104,6 +104,10 @@ function onClientLoad() {
 
   // Ensure Dorion-related plugins are installed
   ensurePlugins()
+
+  // Fixes some voice chat thing
+  // eslint-disable-next-line no-undef
+  __OVERLAY__ = true
 }
 
 /**
