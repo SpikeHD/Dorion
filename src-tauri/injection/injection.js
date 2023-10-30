@@ -170,11 +170,11 @@ async function ensurePlugins() {
       installed: false,
       required: true,
     },
-    // 'Dorion Notifications': {
-    //   url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
-    //   installed: false,
-    //   required: true,
-    // },
+    'Dorion Notifications': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
+      installed: false,
+      required: true,
+    },
     'Dorion Streamer Mode': {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
       installed: false,
