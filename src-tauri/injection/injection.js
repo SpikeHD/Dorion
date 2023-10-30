@@ -165,11 +165,11 @@ async function ensurePlugins() {
       installed: false,
       required: true,
     },
-    // 'Dorion Link Fix': {
-    //   url: 'https://spikehd.github.io/shelter-plugins/dorion-link-fix/',
-    //   installed: false,
-    //   required: true,
-    // },
+    'Always Trust': {
+      url: 'https://spikehd.github.io/shelter-plugins/always-trust/',
+      installed: false,
+      required: true,
+    },
     // 'Dorion Notifications': {
     //   url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
     //   installed: false,
