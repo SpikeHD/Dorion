@@ -166,4 +166,3 @@ pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
     }
   }
 }
-

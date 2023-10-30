@@ -1,7 +1,7 @@
 use std::io::BufRead;
 use tauri::Manager;
 
-use crate::util::paths::{get_injection_dir, updater_dir, config_is_local};
+use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
