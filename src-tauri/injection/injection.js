@@ -104,10 +104,6 @@ function onClientLoad() {
 
   // Ensure Dorion-related plugins are installed
   ensurePlugins()
-
-  // Fixes some voice chat thing
-  // eslint-disable-next-line no-undef
-  __OVERLAY__ = true
 }
 
 /**
@@ -183,7 +179,12 @@ async function ensurePlugins() {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
       installed: false,
       required: false,
-    }
+    },
+    'Dorion Voice Fix': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-voice-fix/',
+      installed: false,
+      required: true,
+    },
   }
 
   // eslint-disable-next-line no-undef
