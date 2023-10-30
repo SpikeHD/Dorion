@@ -59,7 +59,7 @@ pub fn do_injection(window: tauri::Window) {
     };
 
     // Run Shelter's preinject script
-    match window.eval(&&get_client_mod_js_content(&window.app_handle())) {
+    match window.eval(&get_client_mod_js_content(&window.app_handle())) {
       Ok(r) => r,
       Err(e) => {
         println!("Error evaluating client mod preinject: {}", e)
