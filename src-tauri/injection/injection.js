@@ -178,7 +178,7 @@ async function ensurePlugins() {
     'Dorion Streamer Mode': {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
       installed: false,
-      required: false,
+      required: true,
     },
     'Dorion Updater': {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
