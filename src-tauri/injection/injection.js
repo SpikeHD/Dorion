@@ -185,6 +185,11 @@ async function ensurePlugins() {
       installed: false,
       required: true,
     },
+    'Dorion Updater': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
+      installed: false,
+      required: true,
+    },
   }
 
   // eslint-disable-next-line no-undef
