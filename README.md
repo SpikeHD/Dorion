@@ -56,7 +56,7 @@ You can also [build it](#building) yourself!
 
 ## Plugins
 
-Dorion comes with (shelter)[https://github.com/uwu/shelter], so that should cover at least some plugin-related needs. You can also install mods like
+Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also install mods like
 [Vencord](https://github.com/vendicated/vencord) if you'd like! Remember to download the `browser.js` version.
 
 ## Themes
