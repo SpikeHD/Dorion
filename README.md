@@ -72,13 +72,11 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 | Feature                                          | Windows | Linux            | MacOS           |
 |--------------------------------------------------|---------|------------------|-----------------|
 | *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
-| Voice                                            | ✓       | ✗ <sup>[1]</sup>| ✓               |
+| Voice                                            | ✓       | ?               | ✓               |
 | Themes                                           | ✓       | ✓               | ✓               |
 | Shelter                                          | ✓       | ✓               | ✓               |
 | Dorion Plugins                                   | ✓       | ✓               | ✓               |
 </div>
-
-<sup>[1]</sup> Currently can connect to VC, but won't pass "RTC Connecting". Needs a bit more coaxing to get working.<br/>
 
 # Building
 
