@@ -180,19 +180,12 @@ async function ensurePlugins() {
       installed: false,
       required: false,
     },
-    'Dorion Voice Fix': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-voice-fix/',
-      installed: false,
-      required: true,
-    },
     'Dorion Updater': {
       url: 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
       installed: false,
       required: true,
     },
   }
-
-  return
 
   // eslint-disable-next-line no-undef
   const installed = shelter.plugins.installedPlugins()
