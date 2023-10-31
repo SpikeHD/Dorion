@@ -72,7 +72,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 | Feature                                          | Windows | Linux            | MacOS           |
 |--------------------------------------------------|---------|------------------|-----------------|
 | *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
-| Voice                                            | ✓       | ✗ <sup>[1]</sup>| ✗ <sup>[1]</sup>|
+| Voice                                            | ✓       | ✗ <sup>[1]</sup>| ✓               |
 | Themes                                           | ✓       | ✓               | ✓               |
 | Shelter                                          | ✓       | ✓               | ✓               |
 | Dorion Plugins                                   | ✓       | ✓               | ✓               |
