@@ -192,6 +192,8 @@ async function ensurePlugins() {
     },
   }
 
+  return
+
   // eslint-disable-next-line no-undef
   const installed = shelter.plugins.installedPlugins()
 

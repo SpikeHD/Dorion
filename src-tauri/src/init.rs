@@ -30,11 +30,7 @@ pub fn inject_routine(win: tauri::Window) {
         .eval("window.__TAURI__.event.emit('initial_inject')")
         .unwrap();
 
-      #[cfg(target_os = "macos")]
       std::thread::sleep(Duration::from_millis(10));
-
-      #[cfg(not(target_os = "macos"))]
-      std::thread::sleep(Duration::from_millis(100));
     }
   });
 }
