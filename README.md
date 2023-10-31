@@ -42,7 +42,7 @@
 
 Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.dmg` for MacOS, `.deb` for Debian, etc.) and install!
 
-You can also [build it](#building) yourself!
+You can also [build it](#building) yourself, or download a [build artifact](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain) from GitHub Actions!
 
 # Features
 
