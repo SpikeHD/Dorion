@@ -101,6 +101,9 @@ function onClientLoad() {
 
   // Load up our extra css
   applyExtraCSS()
+
+  // Ensure Dorion-related plugins are installed
+  ensurePlugins()
 }
 
 /**
@@ -148,4 +151,74 @@ function applyExtraCSS() {
     style.innerHTML = css
     document.head.appendChild(style)
   })
+}
+
+async function ensurePlugins() {
+  const requiredPlugins = {
+    'shelteRPC': {
+      url: 'https://spikehd.github.io/shelter-plugins/shelteRPC/',
+      installed: false,
+      required: false,
+    },
+    'Dorion Settings': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-settings/',
+      installed: false,
+      required: true,
+    },
+    'Always Trust': {
+      url: 'https://spikehd.github.io/shelter-plugins/always-trust/',
+      installed: false,
+      required: true,
+    },
+    'Dorion Notifications': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
+      installed: false,
+      required: true,
+    },
+    'Dorion Streamer Mode': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
+      installed: false,
+      required: false,
+    },
+    'Dorion Voice Fix': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-voice-fix/',
+      installed: false,
+      required: true,
+    },
+    'Dorion Updater': {
+      url: 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
+      installed: false,
+      required: true,
+    },
+  }
+
+  // eslint-disable-next-line no-undef
+  const installed = shelter.plugins.installedPlugins()
+
+  for (const name of Object.keys(installed)) {
+    if (requiredPlugins[name]) {
+      requiredPlugins[name].installed = true
+    }
+  }
+
+  // Now iterate the plugins that are not installed, and install them
+  for (const [name, plugin] of Object.entries(requiredPlugins)) {
+    if (!plugin.installed) {
+      // eslint-disable-next-line no-undef
+      await shelter.plugins.addRemotePlugin(name, plugin.url, true)?.catch(e => console.error(e))
+
+      // Then set it to installed
+      requiredPlugins[name].installed = true
+    }
+  }
+
+  const isPluginOn = (p) => installed[p]?.on
+
+  // Finally, enable the ones that are required
+  for (const [name, plugin] of Object.entries(requiredPlugins)) {
+    if (plugin.installed && plugin.required && !isPluginOn(name)) {
+      // eslint-disable-next-line no-undef
+      await shelter.plugins.startPlugin(name)?.catch(e => console.error(e))
+    }
+  }
 }

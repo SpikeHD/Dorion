@@ -1,5 +1,5 @@
 <h1 align="center">
- <img height="100px" src="https://user-images.githubusercontent.com/25207995/233253555-7f398710-bf80-4241-9397-b01930e56714.png" />
+ <img height="100px" src="https://raw.githubusercontent.com/SpikeHD/Dorion/main/src-tauri/icons/icon.png" />
  <br />
  Dorion
 </h1>
@@ -48,15 +48,16 @@ You can also [build it](#building) yourself!
 
 * [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf) than most other web-based client alternatives
 * Theme support
-* [Vencordorion](https://github.com/SpikeHD/Vencordorion) included out of the box
-* Support for other client mods and plugins, such as [shelter](https://github.com/SpikeHD/Dorion/issues/97#issuecomment-1753642725)
+* [Shelter](https://github.com/uwu/Shelter) included out of the box
+* Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
   * There is ***no*** BetterDiscord support... [yet](https://github.com/SpikeHD/Dorion/issues/91#issuecomment-1712269268)
 * Partial [game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
 * (Hopefully) better low-end system performance.
 
 ## Plugins
 
-Dorion comes with a [custom fork of Vencord](https://github.com/SpikeHD/Vencordorion), so that should cover a lot of your plugin needs. Otherwise, it also supports most other *browser-based* plugins!
+Dorion comes with (shelter)[https://github.com/uwu/shelter], so that should cover at least some plugin-related needs. You can also install mods like
+[Vencord](https://github.com/vendicated/vencord) if you'd like! Remember to download the `browser.js` version.
 
 ## Themes
 
@@ -73,7 +74,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 | *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
 | Voice                                            | ✓       | ✗ <sup>[1]</sup>| ✗ <sup>[1]</sup>|
 | Themes                                           | ✓       | ✓               | ✓               |
-| Vencord (and included plugins)                   | ✓       | ✓               | ✓               |
+| Shelter                                          | ✓       | ✓               | ✓               |
 | Dorion Plugins                                   | ✓       | ✓               | ✓               |
 </div>
 
@@ -104,10 +105,10 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm build
     ```
 
-5. Pull the Vencord fork
+5. Pull the latest shelter build
 
     ```sh
-    pnpm vupdate
+    pnpm shupdate
     ```
 
 6. Build!

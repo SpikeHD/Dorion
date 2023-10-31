@@ -51,7 +51,7 @@ pub fn config_is_local() -> bool {
     .unwrap()
     .join("config.json");
 
-  fs::metadata(&local_config_dir).is_ok()
+  fs::metadata(local_config_dir).is_ok()
 }
 
 pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
@@ -102,7 +102,7 @@ pub fn injection_is_local() -> bool {
     .unwrap()
     .join("injection");
 
-  fs::metadata(&local_inject_dir).is_ok()
+  fs::metadata(local_inject_dir).is_ok()
 }
 
 pub fn get_plugin_dir() -> std::path::PathBuf {

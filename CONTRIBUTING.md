@@ -6,18 +6,17 @@ Thank you for considering working on Dorion! There are only a couple things to k
 
 * Ensure pull requests only change one feature or "thing". Do not put 6 different bug fixes into one PR, for example.
 * Describe what your pull request does in some amount of detail. No need to write an essay, but knowing what it does at a glance is helpful to me and others.
-* For pull requests that also require a change in [Vencordorion](https://github.com/SpikeHD/Vencordorion), link that pull request in your PR to Dorion
+* For pull requests that also require a change in [shelter-plugins](https://github.com/SpikeHD/shelter-plugins), link that pull request in your PR to Dorion
 
 ## Working with Dorion
 
-Dorion as a whole is only two components, the main stuff (this repo), and [Vencordorion](https://github.com/SpikeHD/Vencordorion). Vencordorion controls things like the settings menu,
-complex patches to Discords internals, and of course, Vencord plugins.
+Dorion as a whole is only two components, the main stuff (this repo), and [shelter-plugins](https://github.com/SpikeHD/shelter-plugins). My shelter-plugins control things like the settings menu, and complex patches to things like Discords internals.
 
 Jump to:
 * [Set up Dorion to think the debug version is portable](#set-up-Dorion-to-think-the-debug-version-is-portable)
 * [Testing changes in Dorion](#testing-changes-in-dorion)
 * [Testing changes in the updater](#testing-changes-in-the-updater)
-* [Testing changes in Vencordorion](#testing-changes-in-vencordorion)
+* [Testing changes in Shelter Plugins](#testing-changes-in-shelter-plugins)
 
 ### Set up Dorion to think the debug version is portable
 
@@ -52,15 +51,16 @@ From here, you can test your changes in two ways:
   ./updater -arg1
   ```
 
-### Testing changes in Vencordorion
+### Testing changes in shelter-plugins
 
-Since [Vencordorion](https://github.com/SpikeHD/Vencordorion) is an entirely seperate Dorion component, you will also need to clone and build it. To do so is simple:
+Since my [shelter-plugins](https://github.com/SpikeHD/shelter-plugins) are an entirely seperate Dorion component, you will also need to clone and build them. To do so is simple:
 
-1. Clone, install dependencies, and change whatever you need to in Vencordorion
-2. Build the web version
+1. Clone, install dependencies, and change whatever you need to in shelter-plugins
+2. Build them
    ```sh
-   pnpm buildWeb
+   pnpm lune ci
    ```
-3. Move the `dist/browser.js` and `dist/browser.css` files into `./src-tauri/injection`
-4. Setup Dorion debug to [think it's portable](#set-up-Dorion-to-think-the-debug-version-is-portable)
-5. Start Dorion like [above](#testing-changes-in-dorion)
+3. Setup Dorion debug to [think it's portable](#set-up-Dorion-to-think-the-debug-version-is-portable) (if desired)
+4. Start Dorion like [above](#testing-changes-in-dorion)
+5. Copy the contents of whichever plugin you're testing via `./dist/plugins/plugin.js` into the Shelter "Add Plugin" menu. Remember to disable the default version
+of whichever you are testing, if needed.

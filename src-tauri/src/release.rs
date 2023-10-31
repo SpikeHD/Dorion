@@ -1,7 +1,7 @@
 use std::io::BufRead;
 use tauri::Manager;
 
-use crate::util::paths::{get_injection_dir, updater_dir, config_is_local};
+use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
@@ -10,8 +10,8 @@ pub async fn update_check(win: tauri::Window) -> Vec<String> {
   println!("Checking for updates...");
 
   if maybe_latest_injection_release().await {
-    println!("Available update for Vencordorion!");
-    to_update.push("vencordorion".to_string());
+    println!("Available update for Shelter!");
+    to_update.push("Shelter".to_string());
   }
 
   if maybe_latest_main_release(&win).await {
@@ -27,11 +27,11 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let updater_path = updater_dir(&win);
   let mut updater = std::process::Command::new(updater_path);
 
-  if to_update.contains(&"vencordorion".to_string()) {
+  if to_update.contains(&"Shelter".to_string()) {
     let injection_path = get_injection_dir(Some(&win));
-    println!("Updating Vencordorion...");
+    println!("Updating Shelter...");
 
-    updater.arg(String::from("--vencord"));
+    updater.arg(String::from("--shelter"));
     updater.arg(
       injection_path
         .into_os_string()
@@ -65,8 +65,8 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
 #[tauri::command]
 pub async fn maybe_latest_injection_release() -> bool {
-  // See if there is a new release in Vencordorion
-  let url = "https://api.github.com/repos/SpikeHD/Vencordorion/releases/latest";
+  // See if there is a new release in Shelter
+  let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
   let client = reqwest::Client::new();
   let response = client
     .get(url)
@@ -78,11 +78,11 @@ pub async fn maybe_latest_injection_release() -> bool {
 
   // Parse "tag_name" from JSON
   let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let tag_name = json["tag_name"].as_str().unwrap();
+  let sha = json["sha"].as_str().unwrap();
 
-  // Read previous version from vencord.version (located in binary folder)
+  // Read previous version from shelter.version
   let mut path = get_injection_dir(None);
-  path.push("vencord.version");
+  path.push("shelter.version");
 
   let mut previous_version = String::new();
   if let Ok(file) = std::fs::File::open(&path) {
@@ -92,7 +92,7 @@ pub async fn maybe_latest_injection_release() -> bool {
     }
   }
 
-  if tag_name == previous_version {
+  if sha == previous_version {
     return false;
   }
 

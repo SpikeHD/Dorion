@@ -1,7 +1,7 @@
 use clap::{command, Parser};
 use std::path::PathBuf;
 
-use crate::github::{download_release, get_release};
+use crate::github::{download_release, download_raw, get_release};
 
 mod github;
 
@@ -14,8 +14,8 @@ pub struct Args {
   main: Option<bool>,
 
   /// Path to injection folder
-  #[arg(short = 'v', long)]
-  vencord: Option<String>,
+  #[arg(short = 's', long)]
+  shelter: Option<String>,
 
   /// Whether this is a local install or not
   #[arg(short = 'l', long)]
@@ -25,14 +25,14 @@ pub struct Args {
 pub fn main() {
   let args = Args::parse();
 
-  if args.vencord.is_some() {
-    if needs_to_elevate(PathBuf::from(args.vencord.clone().unwrap())) {
+  if args.shelter.is_some() {
+    if needs_to_elevate(PathBuf::from(args.shelter.clone().unwrap())) {
       println!("Elevating process...");
       elevate();
       return;
     }
 
-    update_vencordorion(PathBuf::from(args.vencord.unwrap()));
+    update_client_mod(PathBuf::from(args.shelter.unwrap()));
   }
 
   // THis should happen second
@@ -106,36 +106,30 @@ pub fn reopen_as_elevated() {
   std::process::exit(0);
 }
 
-pub fn update_vencordorion(path: PathBuf) {
-  let release = get_release("SpikeHD", "Vencordorion");
-
-  println!("Latest Vencordorion release: {}", release.tag_name);
-
+pub fn update_client_mod(path: PathBuf) {
   println!("Writing files to disk...");
 
-  // Write both to disk
+  // Write to disk
+  download_raw("uwu", "shelter-builds", "shelter.js", path.clone());
 
-  download_release(
-    "SpikeHD",
-    "Vencordorion",
-    release.tag_name.clone(),
-    "browser.css",
-    path.clone(),
-  );
+  // Write the SHA of the latest commit to "shelter.version"
+  let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
+  let client = reqwest::blocking::Client::new();
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .unwrap();
+  let text = response.text().unwrap();
+  
+  // Parse "tag_name" from JSON
+  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
+  let sha = json["sha"].as_str().unwrap();
 
-  download_release(
-    "SpikeHD",
-    "Vencordorion",
-    release.tag_name.clone(),
-    "browser.js",
-    path.clone(),
-  );
+  let mut version_path = path.clone();
+  version_path.push("shelter.version"); 
 
-  // If this succeeds, write the new version to vencord.version
-  let mut ven_path = path.clone();
-  ven_path.push("vencord.version");
-
-  std::fs::write(ven_path, release.tag_name).unwrap();
+  std::fs::write(version_path, sha).unwrap();
 }
 
 /**

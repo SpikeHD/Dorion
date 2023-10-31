@@ -22,6 +22,7 @@ pub struct Config {
   pub startup_minimized: Option<bool>,
   pub autoupdate: Option<bool>,
   pub update_notify: Option<bool>,
+  pub desktop_notifications: Option<bool>,
 }
 
 pub fn init() {
@@ -66,12 +67,12 @@ pub fn default_config() -> Config {
     startup_minimized: Option::from(false),
     autoupdate: Option::from(false),
     update_notify: Option::from(true),
+    desktop_notifications: Option::from(false),
   }
 }
 
+// bro this NEEDS to change holy
 pub fn get_zoom() -> f64 {
-  init();
-
   let parsed: Config =
     serde_json::from_str(read_config_file().as_str()).unwrap_or_else(|_| default_config());
 
