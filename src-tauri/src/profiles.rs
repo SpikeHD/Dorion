@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use tauri::api::path::data_dir;
 
 use crate::{
-  config::{get_profile, Config},
+  config::{Config, get_config},
   util::paths::profiles_dir,
 };
 
@@ -52,7 +52,7 @@ pub fn get_profile_list() -> Vec<String> {
 #[tauri::command]
 pub fn get_current_profile_folder() -> PathBuf {
   let profiles_folder = profiles_dir();
-  let current_profile = get_profile();
+  let current_profile = get_config().profile.unwrap_or("default".to_string());
 
   let profile_folder = profiles_folder.join(current_profile);
 

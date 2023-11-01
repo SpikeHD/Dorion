@@ -6,7 +6,7 @@
 use auto_launch::*;
 use std::time::Duration;
 
-use config::{get_client_type, get_start_maximized};
+use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
@@ -96,7 +96,7 @@ fn main() {
   let mut context = tauri::generate_context!("tauri.conf.json");
   // Still have to actually just make this focus the window lol
   let dorion_open = process::process_already_exists();
-  let client_type = get_client_type();
+  let client_type = get_config().client_type.unwrap_or("default".to_string());
   let mut url = String::new();
 
   if client_type == "default" {
@@ -127,7 +127,7 @@ fn main() {
 
   // Begin the RPC server
   let rpc_thread = std::thread::spawn(|| {
-    if !config::get_rpc_server() {
+    if !get_config().rpc_server.unwrap_or(false) {
       return;
     }
 
@@ -182,7 +182,7 @@ fn main() {
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
         // Close to tray if the config calls for it
-        if config::get_systray() {
+        if get_config().sys_tray.unwrap_or(false) {
           event.window().hide().unwrap();
           api.prevent_close();
         }
@@ -273,7 +273,7 @@ fn maximize(win: Window) {
 #[tauri::command]
 fn close(win: Window) {
   // Ensure we minimize to tray if the config calls for it
-  if config::get_systray() {
+  if get_config().sys_tray.unwrap_or(false) {
     win.hide().unwrap();
   } else {
     win.close().unwrap();
@@ -287,11 +287,11 @@ fn modify_window(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
 
   // If we are opening on startup (which we know from the --startup arg), check to minimize the window
-  if startup && config::get_startup_minimize() {
+  if startup && get_config().startup_minimized.unwrap_or(false) {
     window.hide().unwrap_or_default();
   }
 
-  if get_start_maximized() {
+  if get_config().start_maximized.unwrap_or(false) {
     window.maximize().unwrap_or_default();
   }
 
@@ -310,7 +310,7 @@ fn setup_autostart(app: &mut tauri::App) {
     .build()
     .unwrap();
 
-  let should_enable = config::get_open_on_startup();
+  let should_enable = get_config().open_on_startup.unwrap_or(false);
 
   autolaunch.enable().unwrap();
 

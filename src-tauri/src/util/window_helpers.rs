@@ -1,4 +1,4 @@
-use crate::config;
+use crate::config::get_config;
 
 use super::paths::get_webdata_dir;
 
@@ -59,7 +59,7 @@ pub fn window_zoom_level(win: &tauri::Window) {
 
 #[cfg(not(target_os = "windows"))]
 pub fn window_zoom_level(win: &tauri::Window) {
-  let zoom = config::get_zoom();
+  let zoom = get_config().zoom.unwrap_or("1.0".to_string());
 
   win
     .eval(&format!(

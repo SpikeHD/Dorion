@@ -2,7 +2,7 @@ use std::{fs, path::PathBuf};
 
 use tauri::{api::path::data_dir, Manager};
 
-use crate::config::get_profile;
+use crate::config::get_config;
 
 use super::helpers::move_injection_scripts;
 
@@ -214,7 +214,7 @@ pub fn profiles_dir() -> PathBuf {
 }
 
 pub fn get_webdata_dir() -> PathBuf {
-  let profile = get_profile();
+  let profile = get_config().profile.unwrap_or("default".to_string());
   let profiles = profiles_dir();
 
   profiles.join(profile).join("webdata")

@@ -3,6 +3,7 @@ use std::fs;
 use async_recursion::async_recursion;
 use tauri::regex::Regex;
 
+use crate::config::get_config;
 use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
@@ -31,7 +32,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
   let mut tasks = Vec::new();
 
   // If we need to cache CSS, first check and use cache if it exists
-  if crate::config::get_cache_css() {
+  if get_config().cache_css.unwrap_or(true) {
     let cache_path = get_theme_dir().join("cache");
 
     let cache_file = cache_path.join(format!("{}_cache.css", name));
@@ -135,7 +136,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
   new_css = localize_fonts(win.clone(), new_css).await;
 
   // If we need to cache css, do that
-  if crate::config::get_cache_css() {
+  if get_config().cache_css.unwrap_or(true) {
     let cache_path = get_theme_dir().join("cache");
 
     let cache_file = cache_path.join(format!("{}_cache.css", name));
