@@ -186,6 +186,11 @@ async function ensurePlugins() {
       installed: false,
       required: true,
     },
+    'Inline CSS': {
+      url: 'https://spikehd.github.io/shelter-plugins/inline-css/',
+      installed: false,
+      required: false,
+    }
   }
 
   // eslint-disable-next-line no-undef
