@@ -276,26 +276,6 @@ function blockTelemetry() {
 }
 
 /**
- * Make all events "trusted", preventing Discord from discarding them
- * 
- * https://stackoverflow.com/a/64991159
- */
-function _interceptEventListeners() {
-  Element.prototype._addEventListener = Element.prototype.addEventListener;
-  Element.prototype.addEventListener = function () {
-    let args = [...arguments]
-    let temp = args[1];
-    args[1] = function () {
-      let args2 = [...arguments];
-      args2[0] = Object.assign({}, args2[0])
-      args2[0].isTrusted = true;
-      return temp(...args2);
-    }
-    return this._addEventListener(...args);
-  }
-}
-
-/**
  * Discord wipes `window.localStorage`, so we have to recreate it in case plugins require it
  * 
  * https://github.com/SpikeHD/Dorion/issues/7#issuecomment-1320861432

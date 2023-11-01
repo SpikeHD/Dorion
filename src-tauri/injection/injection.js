@@ -1,20 +1,6 @@
 // Ensure we don't fire more than we have to
 window.__TAURI__.invoke('is_injected')
 
-// Create URL opener which will open links in the default system browser
-// TODO: Don't resort to using this yet
-// window.openURL = (url) => {
-//   window.ipc.postMessage(JSON.stringify({
-//     cmd: 'open_url',
-//     callback: 0,
-//     error: 0,
-//     inner: {
-//       url
-//     }
-//   }));
-// }
-window.dorion = true
-
 let loaded = false
 
 /**
@@ -47,6 +33,9 @@ observer.observe(document, {
   subtree: true
 });
 
+/**
+ * Functions for window controls
+ */
 function close() {
   window.__TAURI__.invoke('close')
 }
@@ -58,7 +47,6 @@ function minimize() {
 function maximize() {
   window.__TAURI__.invoke('maximize')
 }
-
 
 async function createTopBar() {
   const topbar = document.createElement("div");
@@ -85,7 +73,6 @@ async function createTopBar() {
 
   initTopBarEvents()
 }
-
 
 /**
  * Run when the client is "loaded"
