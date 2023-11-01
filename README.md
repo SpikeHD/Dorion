@@ -84,6 +84,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 * [NodeJS](https://nodejs.org)
 * [PNPM](https://pnpm.io/)
+  * If you are on Linux or MacOS, you can replace Node and PNPM with [Bun](https://bun.sh/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 * [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/#1-system-dependencies)
 
