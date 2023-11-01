@@ -48,7 +48,7 @@ pub fn open_scheme(path: String) {
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
 
-pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
+pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
   let injection_dir = get_injection_dir(Some(win));
 
   let packaged_injection_dir = win
@@ -68,8 +68,8 @@ pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
     return;
   }
 
-  // If with_ven is true, we can just copy EVERYTHING
-  if with_ven {
+  // If true, we can just copy EVERYTHING
+  if with_mod {
     fs_extra::dir::copy(
       packaged_injection_dir,
       copy_to,
@@ -78,14 +78,4 @@ pub fn move_injection_scripts(win: &tauri::Window, with_ven: bool) {
     .unwrap();
     return;
   }
-
-  // Otherwise, we need to only grab preinject_min.js and injection_min.js
-  let mut preinject_path = packaged_injection_dir.clone();
-  preinject_path.push("preinject_min.js");
-
-  let mut inject_path = packaged_injection_dir.clone();
-  inject_path.push("injection_min.js");
-
-  std::fs::copy(preinject_path, injection_dir.join("preinject_min.js")).unwrap();
-  std::fs::copy(inject_path, injection_dir.join("injection_min.js")).unwrap();
 }
