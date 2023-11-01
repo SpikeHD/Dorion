@@ -141,7 +141,8 @@ function safemodeTimer(elm) {
           }
       \`
 
-      document.head.appendChild(ts)
+      console.log('[Theme Loader] Appending Styles')
+      document.body.appendChild(ts)
     })()`
   }
 
