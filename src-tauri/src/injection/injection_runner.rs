@@ -1,6 +1,6 @@
+use include_flate::flate;
 use std::{collections::HashMap, fs, thread, time::Duration};
 use tauri::{regex::Regex, Manager};
-use include_flate::flate;
 
 use super::plugin;
 use crate::{

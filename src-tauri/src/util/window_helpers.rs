@@ -50,7 +50,11 @@ pub fn clear_cache() {
 pub fn window_zoom_level(win: &tauri::Window) {
   win
     .with_webview(|webview| unsafe {
-      let zoom = get_config().zoom.unwrap_or("1.0".to_string()).parse::<f64>().unwrap_or(1.0);
+      let zoom = get_config()
+        .zoom
+        .unwrap_or("1.0".to_string())
+        .parse::<f64>()
+        .unwrap_or(1.0);
 
       webview.controller().SetZoomFactor(zoom).unwrap_or_default();
     })

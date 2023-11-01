@@ -74,7 +74,7 @@ pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
     std::fs::copy(
       packaged_injection_dir.join("shelter.js"),
       injection_dir.join("shelter.js"),
-    ).unwrap();
-    return;
+    )
+    .unwrap();
   }
 }

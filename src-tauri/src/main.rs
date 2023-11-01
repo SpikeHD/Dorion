@@ -295,21 +295,27 @@ fn setup_autostart(app: &mut tauri::App) {
   let app_name = &app.package_info().name;
   let current_exe = std::env::current_exe().unwrap();
 
-  let autolaunch = AutoLaunchBuilder::new()
+  let autolaunch = match AutoLaunchBuilder::new()
     .set_app_name(app_name)
     .set_app_path(current_exe.to_str().unwrap())
     .set_use_launch_agent(true)
     .set_args(&["--startup"])
     .build()
-    .unwrap();
+  {
+    Ok(autolaunch) => autolaunch,
+    Err(_) => return,
+  };
 
   let should_enable = get_config().open_on_startup.unwrap_or(false);
 
-  autolaunch.enable().unwrap();
+  autolaunch.enable().unwrap_or_default();
 
   if !should_enable {
-    autolaunch.disable().unwrap();
+    autolaunch.disable().unwrap_or_default();
   }
 
-  println!("Autolaunch enabled: {}", autolaunch.is_enabled().unwrap());
+  println!(
+    "Autolaunch enabled: {}",
+    autolaunch.is_enabled().unwrap_or_default()
+  );
 }
