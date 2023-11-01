@@ -70,12 +70,11 @@ pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
 
   // If true, we can just copy EVERYTHING
   if with_mod {
-    fs_extra::dir::copy(
-      packaged_injection_dir,
-      copy_to,
-      &fs_extra::dir::CopyOptions::new(),
-    )
-    .unwrap();
+    // Move shelter to injection folder
+    std::fs::copy(
+      packaged_injection_dir.join("shelter.js"),
+      injection_dir.join("shelter.js"),
+    ).unwrap();
     return;
   }
 }
