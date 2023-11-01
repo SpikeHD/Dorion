@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Request camera access for WebRTC</string>
+	<string>Camera access for video calling</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Request microphone access for WebRTC</string>
+	<string>Microphone access for voice chats</string>
   <key>com.apple.ScreenSharing.plist</key>
   <true />
   <key>NSHighResolutionCapable</key>
