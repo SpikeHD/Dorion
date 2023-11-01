@@ -62,12 +62,7 @@ pub fn window_zoom_level(win: &tauri::Window) {
   let zoom = get_config().zoom.unwrap_or("1.0".to_string());
 
   win
-    .eval(&format!(
-      "
-    document.body.style.zoom = '{}';
-  ",
-      zoom
-    ))
+    .eval(&format!("document.body.style.zoom = '{}'", zoom))
     .expect("Failed to set zoom level!");
 }
 

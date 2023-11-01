@@ -1,8 +1,7 @@
 use std::path::PathBuf;
-use tauri::api::path::data_dir;
 
 use crate::{
-  config::{Config, get_config},
+  config::{get_config, Config},
   util::paths::profiles_dir,
 };
 
@@ -12,17 +11,6 @@ pub fn init_profiles_folders() {
 
   if !default_profile_folder.exists() {
     std::fs::create_dir_all(default_profile_folder).unwrap();
-  }
-}
-
-pub fn maybe_move_legacy_webdata() {
-  // Legacy path is %appdata%/dorion/webdata
-  // we want to move it to %appdata%/dorion/profiles/default
-  let legacy_webdata = data_dir().unwrap().join("dorion").join("webdata");
-  let default_profile_folder = profiles_dir().join("default");
-
-  if legacy_webdata.exists() {
-    std::fs::rename(legacy_webdata, default_profile_folder.join("webdata")).unwrap_or_default();
   }
 }
 

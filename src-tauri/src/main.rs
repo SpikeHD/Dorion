@@ -9,7 +9,7 @@ use std::time::Duration;
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
-use profiles::{init_profiles_folders, maybe_move_legacy_webdata};
+use profiles::init_profiles_folders;
 use tauri::{
   utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
   Window, WindowBuilder,
@@ -81,20 +81,13 @@ fn main() {
   // Ensure config is created
   config::init();
 
-  std::env::set_var(
-    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-    "--disable-web-security",
-  );
-
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
 
   // Run the steps to init profiles
   init_profiles_folders();
-  maybe_move_legacy_webdata();
 
   let mut context = tauri::generate_context!("tauri.conf.json");
-  // Still have to actually just make this focus the window lol
   let dorion_open = process::process_already_exists();
   let client_type = get_config().client_type.unwrap_or("default".to_string());
   let mut url = String::new();

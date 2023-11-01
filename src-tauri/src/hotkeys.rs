@@ -17,7 +17,9 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 
   // Set global PTT keys
   unsafe {
-    PTT_KEYS = crate::config::get_config().push_to_talk_keys.unwrap_or(vec![]);
+    PTT_KEYS = crate::config::get_config()
+      .push_to_talk_keys
+      .unwrap_or(vec![]);
     PTT_ENABLED = crate::config::get_config().push_to_talk.unwrap_or(false);
   }
 
