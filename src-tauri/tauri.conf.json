@@ -46,8 +46,6 @@
         "signingIdentity": null
       },
       "resources": [
-        "injection/preinject_min.js",
-        "injection/injection_min.js",
         "injection/browser.js",
         "html/index.html",
         "html/top.html",

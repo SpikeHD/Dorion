@@ -103,7 +103,8 @@ function onClientLoad() {
   applyExtraCSS()
 
   // Ensure Dorion-related plugins are installed
-  ensurePlugins()
+  // It's kinda stupid to have to wait but we have to make sure Shelter loaded
+  setTimeout(ensurePlugins, 3000)
 }
 
 /**
@@ -191,7 +192,9 @@ async function ensurePlugins() {
   const installed = shelter.plugins.installedPlugins()
 
   for (const name of Object.keys(installed)) {
+    console.log('[Ensure Plugins] Checking if ' + name + ' is installed...')
     if (requiredPlugins[name]) {
+      console.log('[Ensure Plugins] ' + name + ' is installed!')
       requiredPlugins[name].installed = true
     }
   }
