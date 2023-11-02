@@ -47,9 +47,6 @@
       },
       "resources": [
         "injection/browser.js",
-        "html/index.html",
-        "html/top.html",
-        "html/extra.css",
         "icons/icon*.ico",
         "icons/icon_macos.png",
         "updater*"

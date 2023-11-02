@@ -1,41 +1,28 @@
-use std::{fs, path::PathBuf};
+use include_flate::flate;
 
-use tauri::Manager;
-
-pub fn get_html(app: tauri::AppHandle, dir: &str) -> String {
-  let dir = app
-    .path_resolver()
-    .resolve_resource(PathBuf::from(dir))
-    .unwrap();
-  match fs::read_to_string(&dir) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Failed to read {:?} in local dir: {}", dir, e);
-
-      String::new()
-    }
-  }
-}
+flate!(static TOP_BAR: str from "./html/top.html");
+flate!(static SPLASH: str from "./html/index.html");
+flate!(static EXTRA_CSS: str from "./html/extra.css");
 
 #[tauri::command]
-pub fn get_index(win: tauri::Window) -> String {
-  get_html(win.app_handle(), "html/index.html")
+pub fn get_index() -> String {
+  SPLASH.to_string()
 }
 
 #[cfg(not(target_os = "macos"))]
 #[tauri::command]
 pub fn get_top_bar(win: tauri::Window) -> String {
-  get_html(win.app_handle(), "html/top.html")
+  TOP_BAR.to_string()
 }
 
 // Top bar is broken for MacOS currently
 #[cfg(target_os = "macos")]
 #[tauri::command]
-pub fn get_top_bar(_win: tauri::Window) -> String {
+pub fn get_top_bar() -> String {
   String::new()
 }
 
 #[tauri::command]
-pub fn get_extra_css(win: tauri::Window) -> String {
-  get_html(win.app_handle(), "html/extra.css")
+pub fn get_extra_css() -> String {
+  EXTRA_CSS.to_string()
 }
