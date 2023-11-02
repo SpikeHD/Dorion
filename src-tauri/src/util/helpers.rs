@@ -18,52 +18,39 @@ pub fn open_themes() {
   open_folder(theme_folder)
 }
 
-#[cfg(target_os = "windows")]
+
 fn open_folder(path: PathBuf) {
+  #[cfg(target_os = "windows")]
   Command::new("explorer").arg(path).spawn().unwrap();
-}
 
-#[cfg(target_os = "macos")]
-fn open_folder(path: PathBuf) {
+  #[cfg(target_os = "macos")]
   Command::new("open").arg(path).spawn().unwrap();
-}
 
-#[cfg(target_os = "linux")]
-fn open_folder(path: PathBuf) {
+  #[cfg(target_os = "linux")]
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
 
-#[cfg(target_os = "windows")]
 pub fn open_scheme(scheme: String) {
+  #[cfg(target_os = "windows")]
   Command::new("start").arg(scheme).spawn().unwrap();
-}
 
-#[cfg(target_os = "macos")]
-pub fn open_scheme(scheme: String) {
+  #[cfg(target_os = "macos")]
   Command::new("open").arg(scheme).spawn().unwrap();
-}
 
-#[cfg(target_os = "linux")]
-pub fn open_scheme(path: String) {
+  #[cfg(target_os = "linux")]
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
 
-#[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn get_platform() -> String {
-  "windows".to_string()
-}
+pub fn get_platform() -> &'static str {
+  #[cfg(target_os = "windows")]
+  return "windows";
 
-#[cfg(target_os = "macos")]
-#[tauri::command]
-pub fn get_platform() -> String {
-  "macos".to_string()
-}
+  #[cfg(target_os = "macos")]
+  return "macos";
 
-#[cfg(target_os = "linux")]
-#[tauri::command]
-pub fn get_platform() -> String {
-  "linux".to_string()
+  #[cfg(target_os = "linux")]
+  "linux"
 }
 
 pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
