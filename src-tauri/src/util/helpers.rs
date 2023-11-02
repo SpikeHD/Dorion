@@ -37,7 +37,7 @@ pub fn open_scheme(scheme: String) {
   Command::new("open").arg(scheme).spawn().unwrap();
 
   #[cfg(target_os = "linux")]
-  Command::new("xdg-open").arg(path).spawn().unwrap();
+  Command::new("xdg-open").arg(scheme).spawn().unwrap();
 }
 
 #[tauri::command]
