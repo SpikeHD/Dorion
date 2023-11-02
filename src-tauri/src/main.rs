@@ -21,7 +21,7 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
-use crate::{util::{helpers::move_injection_scripts, paths::injection_is_local}, config::read_config_file};
+use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
 
 mod config;
 mod deep_link;
@@ -33,32 +33,6 @@ mod processors;
 mod profiles;
 mod release;
 mod util;
-
-#[cfg(target_os = "windows")]
-#[tauri::command]
-fn change_zoom(window: tauri::Window, zoom: f64) {
-  window
-    .with_webview(move |webview| unsafe {
-      webview.controller().SetZoomFactor(zoom).unwrap_or(());
-    })
-    .unwrap_or(());
-}
-
-#[cfg(target_os = "linux")]
-#[tauri::command]
-fn change_zoom(window: tauri::Window, zoom: f64) {
-  use webkit2gtk::WebViewExt;
-
-  window
-    .with_webview(move |webview| {
-      webview.inner().set_zoom_level(zoom);
-    })
-    .unwrap_or(());
-}
-
-#[cfg(target_os = "macos")]
-#[tauri::command]
-fn change_zoom(_window: tauri::Window, _zoom: f64) {}
 
 fn create_systray() -> SystemTray {
   let open_btn = CustomMenuItem::new("open".to_string(), "Open");
@@ -136,7 +110,6 @@ fn main() {
       minimize,
       maximize,
       close,
-      change_zoom,
       should_disable_plugins,
       css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
@@ -175,13 +148,18 @@ fn main() {
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
-        println!("Hi");
-
         // Close to tray if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
           event.window().hide().unwrap();
           api.prevent_close();
+          
+          return;
         }
+
+        maybe_clear_cache();
+      }
+      tauri::WindowEvent::Destroyed { .. } => {
+        maybe_clear_cache();
       }
       _ => {}
     })
@@ -249,6 +227,8 @@ fn main() {
     .run(context)
     .expect("error while running tauri application");
 
+
+  println!("This is atest");
   // Join threads
   rpc_thread.join().unwrap();
 }
@@ -291,7 +271,7 @@ fn modify_window(window: &Window) {
     window.maximize().unwrap_or_default();
   }
 
-  window_zoom_level(window);
+  window_zoom_level(window, None);
 }
 
 fn setup_autostart(app: &mut tauri::App) {
@@ -321,4 +301,10 @@ fn setup_autostart(app: &mut tauri::App) {
     "Autolaunch enabled: {}",
     autolaunch.is_enabled().unwrap_or_default()
   );
+}
+
+fn maybe_clear_cache() {
+  if get_config().auto_clear_cache.unwrap_or(false) {
+    functionality::cache::clear_cache();
+  }
 }

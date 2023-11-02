@@ -23,6 +23,7 @@ pub struct Config {
   pub autoupdate: Option<bool>,
   pub update_notify: Option<bool>,
   pub desktop_notifications: Option<bool>,
+  pub auto_clear_cache: Option<bool>,
 }
 
 pub fn init() {
@@ -68,6 +69,7 @@ pub fn default_config() -> Config {
     autoupdate: Option::from(false),
     update_notify: Option::from(true),
     desktop_notifications: Option::from(false),
+    auto_clear_cache: Option::from(false),
   }
 }
 

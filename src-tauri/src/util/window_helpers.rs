@@ -47,14 +47,17 @@ pub fn clear_cache() {
 }
 
 #[cfg(target_os = "windows")]
-pub fn window_zoom_level(win: &tauri::Window) {
+#[tauri::command]
+pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
   win
-    .with_webview(|webview| unsafe {
-      let zoom = get_config()
-        .zoom
-        .unwrap_or("1.0".to_string())
-        .parse::<f64>()
-        .unwrap_or(1.0);
+    .with_webview(move |webview| unsafe {
+      let zoom = value.unwrap_or(
+        get_config()
+          .zoom
+          .unwrap_or("1.0".to_string())
+          .parse::<f64>()
+          .unwrap_or(1.0)
+      );
 
       webview.controller().SetZoomFactor(zoom).unwrap_or_default();
     })
@@ -62,8 +65,15 @@ pub fn window_zoom_level(win: &tauri::Window) {
 }
 
 #[cfg(not(target_os = "windows"))]
-pub fn window_zoom_level(win: &tauri::Window) {
-  let zoom = get_config().zoom.unwrap_or("1.0".to_string());
+#[tauri::command]
+pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
+  let zoom = value.unwrap_or(
+    get_config()
+      .zoom
+      .unwrap_or("1.0".to_string())
+      .parse::<f64>()
+      .unwrap_or(1.0)
+  );
 
   win
     .eval(&format!("document.body.style.zoom = '{}'", zoom))

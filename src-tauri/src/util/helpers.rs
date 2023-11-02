@@ -48,6 +48,24 @@ pub fn open_scheme(path: String) {
   Command::new("xdg-open").arg(path).spawn().unwrap();
 }
 
+#[cfg(target_os = "windows")]
+#[tauri::command]
+pub fn get_platform() -> String {
+  "windows".to_string()
+}
+
+#[cfg(target_os = "macos")]
+#[tauri::command]
+pub fn get_platform() -> String {
+  "macos".to_string()
+}
+
+#[cfg(target_os = "linux")]
+#[tauri::command]
+pub fn get_platform() -> String {
+  "linux".to_string()
+}
+
 pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
   let injection_dir = get_injection_dir(Some(win));
 
