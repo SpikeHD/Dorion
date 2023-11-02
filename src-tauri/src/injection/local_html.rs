@@ -11,7 +11,7 @@ pub fn get_index() -> String {
 
 #[cfg(not(target_os = "macos"))]
 #[tauri::command]
-pub fn get_top_bar(win: tauri::Window) -> String {
+pub fn get_top_bar() -> String {
   TOP_BAR.to_string()
 }
 

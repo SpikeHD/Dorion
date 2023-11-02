@@ -24,6 +24,7 @@ pub struct Config {
   pub update_notify: Option<bool>,
   pub desktop_notifications: Option<bool>,
   pub auto_clear_cache: Option<bool>,
+  pub multi_instance: Option<bool>,
 }
 
 pub fn init() {
@@ -70,9 +71,20 @@ pub fn default_config() -> Config {
     update_notify: Option::from(true),
     desktop_notifications: Option::from(false),
     auto_clear_cache: Option::from(false),
+    multi_instance: Option::from(false),
   }
 }
 
 pub fn get_config() -> Config {
-  serde_json::from_str(read_config_file().as_str()).unwrap_or(default_config())
+  let config_str = read_config_file();
+  let config_str = config_str.as_str();
+  
+  match serde_json::from_str(config_str) {
+    Ok(config) => config,
+    Err(_) => {
+      println!("Failed to parse config, using default config!");
+
+      default_config()
+    }
+  }
 }

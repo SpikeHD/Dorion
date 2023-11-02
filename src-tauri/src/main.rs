@@ -48,12 +48,15 @@ fn should_disable_plugins() -> bool {
 }
 
 fn main() {
-  std::thread::sleep(Duration::from_millis(200));
-
-  tauri_plugin_deep_link::prepare("com.dorion.dev");
-
   // Ensure config is created
   config::init();
+  let config = get_config();
+
+  std::thread::sleep(Duration::from_millis(200));
+
+  if !config.multi_instance.unwrap_or(false) {
+    tauri_plugin_deep_link::prepare("com.dorion.dev");
+  }
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
@@ -61,9 +64,12 @@ fn main() {
   // Run the steps to init profiles
   init_profiles_folders();
 
+  println!("After cache check...");
+
+
   let mut context = tauri::generate_context!("tauri.conf.json");
   let dorion_open = process::process_already_exists();
-  let client_type = get_config().client_type.unwrap_or("default".to_string());
+  let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
 
   if client_type == "default" {
@@ -77,10 +83,12 @@ fn main() {
   context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
   context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
 
+  println!("multi_instance?: {}", config.multi_instance.unwrap_or(false));
+
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
-  if dorion_open {
+  if dorion_open && !config.multi_instance.unwrap_or(false) {
     // Send the dorion://open deep link request
     helpers::open_scheme("dorion://open".to_string());
 
@@ -216,7 +224,9 @@ fn main() {
       hotkeys::start_hotkey_watcher(win.clone());
 
       // Deep link registry
-      deep_link::register_deep_link_handler(win.clone());
+      if !config.multi_instance.unwrap_or(false) {
+        deep_link::register_deep_link_handler(win.clone());
+      }
 
       win.show().unwrap();
 
