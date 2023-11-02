@@ -122,7 +122,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm tauri dev
     ```
 
-All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `html`, `icons`, and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/`
+All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `icons` and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/`
 
 # Known Issues
 
