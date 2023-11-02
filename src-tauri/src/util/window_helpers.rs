@@ -56,7 +56,7 @@ pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
           .zoom
           .unwrap_or("1.0".to_string())
           .parse::<f64>()
-          .unwrap_or(1.0)
+          .unwrap_or(1.0),
       );
 
       webview.controller().SetZoomFactor(zoom).unwrap_or_default();
@@ -72,7 +72,7 @@ pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
       .zoom
       .unwrap_or("1.0".to_string())
       .parse::<f64>()
-      .unwrap_or(1.0)
+      .unwrap_or(1.0),
   );
 
   win

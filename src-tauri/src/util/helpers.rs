@@ -18,7 +18,6 @@ pub fn open_themes() {
   open_folder(theme_folder)
 }
 
-
 fn open_folder(path: PathBuf) {
   #[cfg(target_os = "windows")]
   Command::new("explorer").arg(path).spawn().unwrap();

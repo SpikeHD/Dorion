@@ -152,7 +152,7 @@ fn main() {
         if get_config().sys_tray.unwrap_or(false) {
           event.window().hide().unwrap();
           api.prevent_close();
-          
+
           return;
         }
 
@@ -226,7 +226,6 @@ fn main() {
     })
     .run(context)
     .expect("error while running tauri application");
-
 
   println!("This is atest");
   // Join threads
