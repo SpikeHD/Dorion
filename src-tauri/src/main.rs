@@ -21,7 +21,7 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
-use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
+use crate::{util::{helpers::move_injection_scripts, paths::injection_is_local}, config::read_config_file};
 
 mod config;
 mod deep_link;
@@ -167,6 +167,7 @@ fn main() {
       config::default_config,
       theme::get_theme,
       theme::get_theme_names,
+      helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
       window_helpers::remove_top_bar,
@@ -174,6 +175,8 @@ fn main() {
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
+        println!("Hi");
+
         // Close to tray if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
           event.window().hide().unwrap();
@@ -194,7 +197,7 @@ fn main() {
       SystemTrayEvent::MenuItemClick { id, .. } => {
         if id == "quit" {
           // Close the process
-          std::process::exit(0);
+          app.get_window("main").unwrap().close().unwrap();
         }
 
         if id == "open" {
