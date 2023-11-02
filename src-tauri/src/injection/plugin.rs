@@ -56,6 +56,11 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
       continue;
     }
 
+    // If the file doesn't end with .js, ignore it
+    if !name.to_str().unwrap().ends_with(".js") {
+      continue;
+    }
+
     // Disabled
     if name.to_str().unwrap().starts_with('_') {
       continue;
