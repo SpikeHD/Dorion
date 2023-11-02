@@ -1,9 +1,9 @@
 const TITLE = 'Dorion'
 
 // Tell tauri to re-inject as we unload, in the case of a refresh
-window.onbeforeunload = () => {
+document.addEventListener('pagehide', () => {
   window.__TAURI__.invoke('do_injection')
-}
+})
 
 // Needs to be done ASAP
 // interceptEventListeners()
