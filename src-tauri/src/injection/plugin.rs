@@ -66,7 +66,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
       continue;
     }
 
-    let contents = fs::read_to_string(full_path.path()).unwrap();
+    let contents = fs::read_to_string(full_path.path()).unwrap_or("".to_string());
     plugin_list.insert(format!("{:?}", name), contents);
   }
 
