@@ -79,18 +79,18 @@ jobs:
         
       # paths:
       # Windows:
-      # - src-tauri/target/release/Dorion.exe|config.json|plugins|themes|injection|html|icons
+      # - src-tauri/target/release/Dorion.exe|config.json|plugins|themes|injection|icons
       # Ubuntu:
-      # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|html|icons
+      # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|icons
       # MacOS:
       # - src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
       - name: Compress build (windows)
         if: matrix.platform == 'windows-latest'
-        run: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/updater.exe src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/injection src-tauri/target/release/html/ src-tauri/target/release/icons/
+        run: 7z a -tzip Dorion.zip src-tauri/target/release/Dorion.exe src-tauri/target/release/config.json src-tauri/target/release/updater.exe src-tauri/target/release/plugins/ src-tauri/target/release/themes/ src-tauri/target/release/icons/
 
       - name: Compress build (linux)
         if: matrix.platform == 'ubuntu-latest'
-        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./html ./icons
+        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./icons
 
       # Windows portable
       - name: Upload Windows portable
@@ -188,7 +188,7 @@ jobs:
   #       run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && touch config.json
 
   #     - name: Compress build for armv8
-  #       run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && tar -czvf dorion_armv8.tar.gz dorion config.json ./plugins ./themes ./injection ./html ./icons
+  #       run: cd src-tauri/target/aarch64-unknown-linux-gnu/release && tar -czvf dorion_armv8.tar.gz dorion config.json ./plugins ./themes ./injection ./icons
 
   #     - name: Upload Linux portable for armv8
   #       uses: actions/upload-artifact@v3
