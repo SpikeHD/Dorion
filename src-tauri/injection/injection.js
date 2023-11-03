@@ -204,11 +204,23 @@ async function ensurePlugins() {
 
   const isPluginOn = (p) => installed[p]?.on
 
-  // Finally, enable the ones that are required
+  // Enable the ones that are required
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
     if (plugin.installed && plugin.required && !isPluginOn(name)) {
       // eslint-disable-next-line no-undef
       await shelter.plugins.startPlugin(name)?.catch(e => console.error(e))
+    }
+  }
+
+  // In case all of our weird stuff made shelter freak out, check loadedPlugins(). If it's undefined, load them
+  // eslint-disable-next-line no-undef
+  if (!shelter.plugins.loadedPlugins()) {
+    // eslint-disable-next-line no-undef
+    for (const plugin in shelter.plugins.installedPlugins()) {
+      if (!plugin.on) break;
+
+      // eslint-disable-next-line no-undef
+      await shelter.plugins.startPlugin(plugin)?.catch(e => console.error(e))
     }
   }
 }
