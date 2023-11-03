@@ -23,7 +23,7 @@ pub async fn clear_css_cache() {
 #[tauri::command]
 #[async_recursion]
 pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> String {
-  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(http.*?)(?:"|'|)\);"#).unwrap();
+  let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
 
@@ -65,7 +65,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
     tasks.push(std::thread::spawn(move || {
       println!("Getting: {}", &url);
 
-      let response = match reqwest::blocking::get(&url) {
+      let response = match reqwest::blocking::get(format!("https://{}", &url)) {
         Ok(r) => r,
         Err(e) => {
           println!("Request failed: {}", e);
