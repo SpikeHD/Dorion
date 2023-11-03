@@ -1,9 +1,8 @@
 const TITLE = 'Dorion'
 
-// Tell tauri to re-inject as we unload, in the case of a refresh
-const dorionOnUnload = () => window.__TAURI__.invoke('do_injection')
-
-window.onbeforeunload = dorionOnUnload
+window.onbeforeunload = () => {
+  window.__TAURI__.invoke('do_injection')
+}
 
 // Needs to be done ASAP
 // interceptEventListeners()
