@@ -11,7 +11,7 @@ pub fn start_rpc_server() {
   // This accepts both a `&str` or a `String`
   let mut server = RPCServer::from_json_str(detectable);
 
-  server.process_scan_ms = Some(100);
+  server.process_scan_ms = Some(25);
 
   server.start();
 }
