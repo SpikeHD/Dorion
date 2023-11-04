@@ -279,6 +279,9 @@ fn modify_window(window: &Window) {
     window.maximize().unwrap_or_default();
   }
 
+  // It should start with decorations on
+  window.set_decorations(true).unwrap_or_default();
+
   window_zoom_level(window, None);
 }
 
