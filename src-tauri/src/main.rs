@@ -4,7 +4,7 @@
 )]
 
 use auto_launch::*;
-use std::time::Duration;
+use std::{time::Duration, sync::{Arc, Mutex}};
 
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
@@ -21,7 +21,7 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
-use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
+use crate::{util::{helpers::move_injection_scripts, paths::injection_is_local}, functionality::rpc};
 
 mod config;
 mod deep_link;
@@ -98,14 +98,13 @@ fn main() {
   println!("Safemode enabled: {}", safemode);
 
   // Begin the RPC server
-  let rpc_thread = std::thread::spawn(|| {
-    if !get_config().rpc_server.unwrap_or(false) {
-      return;
-    }
+  let mut rpc_thread = None;
 
-    println!("Starting RPC server...");
-    functionality::rpc::start_rpc_server();
-  });
+  if get_config().rpc_server.unwrap_or(false) {
+    rpc_thread = Some(std::thread::spawn(|| {
+      functionality::rpc::start_rpc_server();
+    }));
+  }
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -235,8 +234,11 @@ fn main() {
     .expect("error while running tauri application");
 
   println!("This is atest");
+
   // Join threads
-  rpc_thread.join().unwrap();
+  if rpc_thread.is_some() {
+    rpc_thread.unwrap().join().unwrap();
+  }
 }
 
 // Minimize

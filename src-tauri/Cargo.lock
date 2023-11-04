@@ -3177,8 +3177,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.3.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.3.0#88a1fc76765f9b655022db50bcea41ee0c4d37d1"
+version = "0.3.1"
+source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.3.1#359b65e6af6e58dd1ca02a300b0ae225bafeaa30"
 dependencies = [
  "chrono",
  "port_scanner",
