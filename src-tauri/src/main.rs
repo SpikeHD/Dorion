@@ -64,9 +64,6 @@ fn main() {
   // Run the steps to init profiles
   init_profiles_folders();
 
-  println!("After cache check...");
-
-
   let mut context = tauri::generate_context!("tauri.conf.json");
   let dorion_open = process::process_already_exists();
   let client_type = config.client_type.unwrap_or("default".to_string());

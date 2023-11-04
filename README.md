@@ -72,11 +72,13 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 | Feature                                          | Windows | Linux            | MacOS           |
 |--------------------------------------------------|---------|------------------|-----------------|
 | *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
-| Voice                                            | ✓       | ?               | ✓               |
+| Voice                                            | ✓       | ?<sup>[1]</sup> | ✓               |
 | Themes                                           | ✓       | ✓               | ✓               |
 | Shelter                                          | ✓       | ✓               | ✓               |
 | Dorion Plugins                                   | ✓       | ✓               | ✓               |
 </div>
+
+<sup>1</sup> Unlike other platforms, `navigator.userAgent` cannot be changed in WebkitGTK, which is the big voice fix. This can be done via <a href="https://webkitgtk.org/reference/webkit2gtk/unstable/property.Settings.user-agent.html">setting the property</a> at runtime on the backend-side. I don't use Linux often so if someone would like to do this, PRs are always welcome! 
 
 # Building
 
