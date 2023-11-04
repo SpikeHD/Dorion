@@ -34,6 +34,23 @@ observer.observe(document, {
 });
 
 /**
+ * Sorta yoinked from https://github.com/uwu/shelter/blob/main/packages/shelter/src/index.ts
+ */
+async function waitForApp() {
+  // Ensure appMount exists
+  const appMount = document.querySelector('#app-mount')
+
+  if (!appMount) {
+    setTimeout(waitForApp, 100)
+    return
+  }
+
+  while (appMount.childElementCount === 0) await new Promise(r => setTimeout(r, 100))
+
+  return appMount
+}
+
+/**
  * Functions for window controls
  */
 function close() {
@@ -57,7 +74,7 @@ async function createTopBar() {
 
   topbar.innerHTML = content
 
-  const appMount = document.querySelector('#app-mount')
+  const appMount = await waitForApp()
 
   if (!appMount) return
 
@@ -90,8 +107,8 @@ function onClientLoad() {
   applyExtraCSS()
 
   // Ensure Dorion-related plugins are installed
-  // It's kinda stupid to have to wait but we have to make sure Shelter loaded
-  setTimeout(ensurePlugins, 3000)
+  // It's kinda stupid to have to wait but we have to make sure Shelter loaded fully
+  waitForApp().then(() => setTimeout(ensurePlugins, 4000))
 }
 
 /**
