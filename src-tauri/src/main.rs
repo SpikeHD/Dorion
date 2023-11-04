@@ -3,8 +3,9 @@
   windows_subsystem = "windows"
 )]
 
+use std::time::Duration;
+
 use auto_launch::*;
-use std::{time::Duration, sync::{Arc, Mutex}};
 
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
@@ -21,7 +22,7 @@ use util::{
   window_helpers::{self, clear_cache_check, window_zoom_level},
 };
 
-use crate::{util::{helpers::move_injection_scripts, paths::injection_is_local}, functionality::rpc};
+use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
 
 mod config;
 mod deep_link;
@@ -80,7 +81,10 @@ fn main() {
   context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
   context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
 
-  println!("multi_instance?: {}", config.multi_instance.unwrap_or(false));
+  println!(
+    "multi_instance?: {}",
+    config.multi_instance.unwrap_or(false)
+  );
 
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
@@ -236,8 +240,8 @@ fn main() {
   println!("This is atest");
 
   // Join threads
-  if rpc_thread.is_some() {
-    rpc_thread.unwrap().join().unwrap();
+  if let Some(rpc_thread) = rpc_thread {
+    rpc_thread.join().unwrap();
   }
 }
 

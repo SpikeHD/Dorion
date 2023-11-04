@@ -1,4 +1,4 @@
-use rsrpc::{RPCServer, detection::DetectableActivity};
+use rsrpc::{detection::DetectableActivity, RPCServer};
 
 // #[derive(Clone, serde::Deserialize)]
 // struct Payload {
@@ -25,7 +25,7 @@ pub fn start_rpc_server() {
   //     name: String::from(""),
   //     exe: String::from(""),
   //   });
-    
+
   //   if payload.name.is_empty() || payload.exe.is_empty() {
   //     return;
   //   }

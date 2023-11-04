@@ -78,7 +78,7 @@ pub fn default_config() -> Config {
 pub fn get_config() -> Config {
   let config_str = read_config_file();
   let config_str = config_str.as_str();
-  
+
   match serde_json::from_str(config_str) {
     Ok(config) => config,
     Err(e) => {
