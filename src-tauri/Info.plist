@@ -11,64 +11,6 @@
   <key>NSHighResolutionCapable</key>
   <true/>
 
-  <!-- Allow insecure content (websocket, etc.) -->
-  <key>NSAppTransportSecurity</key>
-  <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-
-    <key>NSAllowsArbitraryLoadsInWebContent</key>
-    <true/>
-
-    <key>NSExceptionDomains</key>
-    <dict>
-      <key>discord.com</key>
-      <dict>
-        <key>NSExceptionRequiresForwardSecrecy</key>
-        <false/>
-
-        <key>NSExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-
-        <key>NSIncludesSubdomains</key>
-        <true/>
-
-        <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-      </dict>
-
-      <key>ptb.discord.com</key>
-      <dict>
-        <key>NSExceptionRequiresForwardSecrecy</key>
-        <false/>
-
-        <key>NSExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-
-        <key>NSIncludesSubdomains</key>
-        <true/>
-
-        <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-      </dict>
-      
-      <key>canary.discord.com</key>
-      <dict>
-        <key>NSExceptionRequiresForwardSecrecy</key>
-        <false/>
-
-        <key>NSExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-
-        <key>NSIncludesSubdomains</key>
-        <true/>
-
-        <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
-        <true/>
-      </dict>
-    </dict>
-  </dict>
-
   <key>CFBundleURLTypes</key>
   <array>
     <dict>

@@ -6,6 +6,7 @@
 use std::time::Duration;
 
 use auto_launch::*;
+
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
@@ -282,31 +283,6 @@ fn modify_window(window: &Window) {
 
   // It should start with decorations on
   window.set_decorations(true).unwrap_or_default();
-
-  // // Fix MacOS insecure connections (eg. WebSockets)
-  // #[cfg(target_os = "macos")]
-  // unsafe {
-  //   use cocoa::{appkit::NSApp, base::selector, base::nil, foundation::NSString, foundation::NSProcessInfo};
-  //   use objc::{msg_send, sel, sel_impl};
-
-  //   let sel = selector("_registerURLSchemeAsSecure:");
-    
-  //   // Register websocket (ws://) as secure
-  //   let process_info = NSProcessInfo::processInfo(nil);
-  //   let app = NSApp();
-    
-  //   let _: () = msg_send![
-  //     process_info,
-  //     selector: sel,
-  //     with: NSString::alloc(nil).init_str("ws")
-  //   ];
-    
-  //   let _: () = msg_send![
-  //     app,
-  //     selector: sel_impl("_setProcessPool:"), 
-  //     with: nil
-  //   ];
-  // }
 
   window_zoom_level(window, None);
 }
