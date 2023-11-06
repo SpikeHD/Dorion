@@ -11,7 +11,6 @@ use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
-use sysinfo::User;
 use tauri::{
   utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
   Window, WindowBuilder,
@@ -289,7 +288,7 @@ fn modify_window(window: &Window) {
   #[cfg(target_os = "linux")]
   {
     window.with_webview(|webview| {
-      use webkit2gtk::{WebViewExt, SettingsExt, UserMediaPermissionRequest, UserMediaPermissionRequestExt, PermissionRequest, PermissionRequestExt};
+      use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt};
 
       let wv = webview.inner();
       let wv = wv.as_ref();
