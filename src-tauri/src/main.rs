@@ -11,6 +11,7 @@ use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
+use sysinfo::User;
 use tauri::{
   utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
   Window, WindowBuilder,
@@ -288,13 +289,19 @@ fn modify_window(window: &Window) {
   #[cfg(target_os = "linux")]
   {
     window.with_webview(|webview| {
-      use webkit2gtk::{WebViewExt, SettingsExt};
+      use webkit2gtk::{WebViewExt, SettingsExt, UserMediaPermissionRequest, UserMediaPermissionRequestExt, PermissionRequest, PermissionRequestExt};
 
       let wv = webview.inner();
       let wv = wv.as_ref();
       let settings = WebViewExt::settings(wv).unwrap_or_default();
 
       settings.set_user_agent(Some("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"));
+
+      // We also need to manually ask for permission to use the microphone and camera
+      wv.connect_permission_request(|_, req| {
+        req.allow();
+        true
+      });
     }).unwrap_or_else(|_| println!("Failed to set user-agent"));
   }
 
