@@ -237,8 +237,6 @@ fn main() {
     .run(context)
     .expect("error while running tauri application");
 
-  println!("This is atest");
-
   // Join threads
   if let Some(rpc_thread) = rpc_thread {
     rpc_thread.join().unwrap();
