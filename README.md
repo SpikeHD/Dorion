@@ -51,7 +51,7 @@ You can also [build it](#building) yourself, or download a [build artifact](http
 * [Shelter](https://github.com/uwu/Shelter) included out of the box
 * Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
   * There is ***no*** BetterDiscord support... [yet](https://github.com/SpikeHD/Dorion/issues/91#issuecomment-1712269268)
-* Partial [game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
+* Almost full [game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
 * (Hopefully) better low-end system performance.
 
 ## Plugins
