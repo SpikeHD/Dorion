@@ -2819,12 +2819,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "port_scanner"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "325a6d2ac5dee293c3b2612d4993b98aec1dff096b0a2dae70ed7d95784a05da"
-
-[[package]]
 name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3177,15 +3171,15 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.3.1"
-source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.3.1#359b65e6af6e58dd1ca02a300b0ae225bafeaa30"
+version = "0.4.2"
+source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.4.2#4ab2be0738a0e13ea7a3b8150bffe46948d5b0d1"
 dependencies = [
  "chrono",
- "port_scanner",
  "serde",
  "serde_json",
  "simple-websockets",
  "sysinfo 0.29.10",
+ "winapi",
 ]
 
 [[package]]
