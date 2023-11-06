@@ -284,6 +284,20 @@ fn modify_window(window: &Window) {
   // It should start with decorations on
   window.set_decorations(true).unwrap_or_default();
 
+  // Set user-agent through WebkitGTK config
+  #[cfg(target_os = "linux")]
+  {
+    window.with_webview(|webview| {
+      use webkit2gtk::{WebViewExt, SettingsExt};
+
+      let wv = webview.inner();
+      let wv = wv.as_ref();
+      let settings = WebViewExt::settings(wv).unwrap_or_default();
+
+      settings.set_user_agent(Some("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"));
+    }).unwrap_or_else(|_| println!("Failed to set user-agent"));
+  }
+
   window_zoom_level(window, None);
 }
 
