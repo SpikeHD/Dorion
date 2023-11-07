@@ -28,7 +28,7 @@ pub fn inject_routine(win: tauri::Window) {
       // If it succeeds, that means the web context is ready
       win
         .eval("window.__TAURI__.event.emit('initial_inject')")
-        .unwrap();
+        .unwrap_or_default();
 
       std::thread::sleep(Duration::from_millis(10));
     }

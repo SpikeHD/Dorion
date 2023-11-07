@@ -1,4 +1,5 @@
 use device_query::{DeviceQuery, DeviceState, Keycode};
+use tauri::utils::config::parse::ConfigError;
 use std::{thread, time::Duration};
 
 use crate::config;
@@ -67,11 +68,13 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 
       if ptt_held && !ptt_state {
         // Do PTT
-        win.emit("ptt_toggle", PTTEvent { state: true }).unwrap();
+        win.emit("ptt_toggle", PTTEvent { state: true })
+          .unwrap_or_else(|_| println!("Error sending PTT event!"));
         ptt_state = true;
       } else if ptt_state && !ptt_held {
         // Stop PTT
-        win.emit("ptt_toggle", PTTEvent { state: false }).unwrap();
+        win.emit("ptt_toggle", PTTEvent { state: false })
+          .unwrap_or_else(|_| println!("Error sending PTT toggle event!"));
         ptt_state = false;
       }
 
@@ -82,37 +85,48 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 }
 
 #[tauri::command]
-pub fn save_ptt_keys(keys: Vec<String>) {
+pub fn save_ptt_keys(keys: Vec<String>) -> Result<(), String> {
   let config = config::read_config_file();
   let mut parsed =
     serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
 
   parsed.push_to_talk_keys = Option::from(keys.clone());
 
-  let new_config = serde_json::to_string(&parsed).unwrap();
+  let new_config = serde_json::to_string(&parsed);
 
-  config::write_config_file(new_config);
+  match new_config {
+    Ok(new_config) => {
+      config::write_config_file(new_config);
 
-  // Also set the global PTT keys
-  unsafe {
-    PTT_KEYS = keys;
+      unsafe {
+        PTT_KEYS = keys;
+      }
+      Ok(())
+    }
+    Err(e) => Err(e.to_string()),
   }
 }
 
 #[tauri::command]
-pub fn toggle_ptt(state: bool) {
+pub fn toggle_ptt(state: bool) -> Result<(), String> {
   let config = config::read_config_file();
   let mut parsed =
     serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
 
   parsed.push_to_talk = Option::from(state);
 
-  let new_config = serde_json::to_string(&parsed).unwrap();
+  let new_config = serde_json::to_string(&parsed);
 
-  config::write_config_file(new_config);
+  match new_config {
+    Ok(new_config) => {
+      config::write_config_file(new_config);
 
-  // Also set the global PTT keys
-  unsafe {
-    PTT_ENABLED = state;
+      unsafe {
+        PTT_ENABLED = state;
+      }
+
+      Ok(())
+    }
+    Err(e) => Err(e.to_string()),
   }
 }

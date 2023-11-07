@@ -10,7 +10,7 @@ pub fn init_profiles_folders() {
   let default_profile_folder = profiles_dir().join("default");
 
   if !default_profile_folder.exists() {
-    std::fs::create_dir_all(default_profile_folder).unwrap();
+    std::fs::create_dir_all(default_profile_folder).expect("Failed to create profile folder!");
   }
 }
 
@@ -21,15 +21,27 @@ pub fn get_profile_list() -> Vec<String> {
   let profiles_folder = profiles_dir();
 
   if profiles_folder.exists() {
-    let paths = std::fs::read_dir(profiles_folder).unwrap();
+    let paths = std::fs::read_dir(profiles_folder).expect("Unable to read profiles folder!");
 
     for path in paths {
+      if path.is_err() {
+        continue;
+      }
+
       let path = path.unwrap().path();
 
       if path.is_dir() {
-        let profile_name = path.file_name().unwrap().to_str().unwrap().to_string();
-
-        profiles.push(profile_name);
+        if let Some(file_name) = path.file_name() {
+          if let Some(profile_name) = file_name.to_str() {
+            profiles.push(profile_name.to_string());
+          } else {
+            eprintln!("Failed to convert file name to a valid UTF-8 string");
+          }
+        } else {
+          eprintln!("Failed to retrieve file name");
+        }
+      } else {
+        eprintln!("Path is not a directory");
       }
     }
   }
@@ -59,7 +71,9 @@ pub fn create_profile(name: String) {
   let new_profile_folder = profiles_folder.join(name);
 
   if !new_profile_folder.exists() {
-    std::fs::create_dir_all(new_profile_folder).unwrap();
+    std::fs::create_dir_all(new_profile_folder).unwrap_or_else(|_| {
+      eprintln!("Failed to create profile folder!");
+    });
   }
 }
 
@@ -74,13 +88,15 @@ pub fn delete_profile(name: String) {
   let profile_folder = profiles_folder.join(name);
 
   if profile_folder.exists() {
-    std::fs::remove_dir_all(profile_folder).unwrap();
+    std::fs::remove_dir_all(profile_folder).unwrap_or_else(|_| {
+      eprintln!("Failed to delete profile folder!");
+    });
   }
 
   // Set config to "default"
-  let mut config: Config = serde_json::from_str(&crate::config::read_config_file()).unwrap();
+  let mut config: Config = serde_json::from_str(&crate::config::read_config_file()).expect("Failed to read config file!");
 
   config.profile = Some("default".to_string());
 
-  crate::config::write_config_file(serde_json::to_string(&config).unwrap());
+  crate::config::write_config_file(serde_json::to_string(&config).expect("Failed to convert config to string!"));
 }

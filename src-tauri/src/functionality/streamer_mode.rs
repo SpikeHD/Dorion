@@ -37,7 +37,7 @@ pub fn start_streamer_mode_watcher(win: tauri::Window) {
       unsafe {
         if !OBS_OPEN {
           OBS_OPEN = true;
-          win.emit("streamer_mode_toggle", true).unwrap();
+          win.emit("streamer_mode_toggle", true).unwrap_or_default();
         }
       }
 
@@ -47,7 +47,7 @@ pub fn start_streamer_mode_watcher(win: tauri::Window) {
     unsafe {
       if OBS_OPEN {
         OBS_OPEN = false;
-        win.emit("streamer_mode_toggle", false).unwrap();
+        win.emit("streamer_mode_toggle", false).unwrap_or_default();
       }
     }
   });

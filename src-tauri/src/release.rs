@@ -9,12 +9,15 @@ pub async fn update_check(win: tauri::Window) -> Vec<String> {
 
   println!("Checking for updates...");
 
-  if maybe_latest_injection_release().await {
+  let injection_rel = maybe_latest_injection_release().await;
+  let main_rel = maybe_latest_main_release(&win).await;
+
+  if injection_rel.is_ok() && injection_rel.unwrap() {
     println!("Available update for Shelter!");
     to_update.push("Shelter".to_string());
   }
 
-  if maybe_latest_main_release(&win).await {
+  if main_rel.is_ok() && main_rel.unwrap() {
     println!("Available update for Dorion!");
     to_update.push("dorion".to_string());
   }
@@ -29,16 +32,18 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
   if to_update.contains(&"Shelter".to_string()) {
     let injection_path = get_injection_dir(Some(&win));
+    let arg_str = match injection_path.into_os_string().into_string() {
+      Ok(s) => s,
+      Err(_) => {
+        eprintln!("Failed to convert injection path to string!");
+        return;
+      }
+    };
+
     println!("Updating Shelter...");
 
     updater.arg(String::from("--shelter"));
-    updater.arg(
-      injection_path
-        .into_os_string()
-        .into_string()
-        .unwrap()
-        .replace('\\', "/"),
-    );
+    updater.arg(arg_str);
   }
 
   #[cfg(not(target_os = "linux"))]
@@ -55,77 +60,69 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
     updater.arg("true");
   }
 
-  let mut process = updater.spawn().unwrap();
+  let mut process = match updater.spawn() {
+    Ok(p) => p,
+    Err(e) => {
+      eprintln!("Failed to spawn updater process: {}", e);
+      return;
+    }
+  };
 
   // Wait for the updater to finish
-  process.wait().unwrap();
+  match process.wait() {
+    Ok(_) => (),
+    Err(e) => {
+      eprintln!("Failed to wait for updater process: {}", e);
+      return;
+    }
+  }
 
-  win.emit("update_complete", ()).unwrap();
+  win.emit("update_complete", ()).unwrap_or_default();
 }
 
-#[tauri::command]
-pub async fn maybe_latest_injection_release() -> bool {
-  // See if there is a new release in Shelter
+pub async fn maybe_latest_injection_release() -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
   let client = reqwest::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .await
-    .unwrap();
-  let text = response.text().await.unwrap();
+  let response = client.get(url)
+      .header("User-Agent", "Dorion")
+      .send()
+      .await?;
+  let text = response.text().await?;
 
-  // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let sha = json["sha"].as_str().unwrap();
+  // Parse "sha" from JSON
+  let json: serde_json::Value = serde_json::from_str(&text)?;
+  let sha = json["sha"].as_str()
+      .ok_or("Failed to extract 'sha' from JSON")?;
 
   // Read previous version from shelter.version
   let mut path = get_injection_dir(None);
   path.push("shelter.version");
 
-  let mut previous_version = String::new();
-  if let Ok(file) = std::fs::File::open(&path) {
-    let reader = std::io::BufReader::new(file);
-    for line in reader.lines() {
-      previous_version = line.unwrap();
-    }
-  }
+  let previous_version = std::fs::read_to_string(&path)?;
 
-  if sha == previous_version {
-    return false;
-  }
-
-  true
+  Ok(sha != previous_version)
 }
 
-pub async fn maybe_latest_main_release(win: &tauri::Window) -> bool {
+pub async fn maybe_latest_main_release(win: &tauri::Window) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
   let client = reqwest::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .await
-    .unwrap();
-  let text = response.text().await.unwrap();
+  let response = client.get(url)
+      .header("User-Agent", "Dorion")
+      .send()
+      .await?;
+  let text = response.text().await?;
 
   // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let tag_name = json["tag_name"].as_str().unwrap();
+  let json: serde_json::Value = serde_json::from_str(&text)?;
+  let tag_name = json["tag_name"].as_str()
+      .ok_or("Failed to extract 'tag_name' from JSON")?;
 
   let handle = win.app_handle();
   let app_version = &handle.package_info().version;
   let version_str = format!(
-    "v{}.{}.{}",
-    app_version.major, app_version.minor, app_version.patch
+      "v{}.{}.{}",
+      app_version.major, app_version.minor, app_version.patch
   );
 
-  println!("Comparing {} to {}", tag_name, version_str);
-
-  if tag_name == version_str {
-    return false;
-  }
-
-  true
+  Ok(tag_name != version_str)
 }

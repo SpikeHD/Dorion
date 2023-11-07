@@ -76,15 +76,8 @@ fn main() {
     url = format!("https://{}.discord.com/app", client_type);
   }
 
-  let url_ext = tauri::WindowUrl::External(reqwest::Url::parse(&url).unwrap());
-
-  context.config_mut().build.dist_dir = AppUrl::Url(url_ext.clone());
-  context.config_mut().build.dev_path = AppUrl::Url(url_ext.clone());
-
-  println!(
-    "multi_instance?: {}",
-    config.multi_instance.unwrap_or(false)
-  );
+  let parsed = reqwest::Url::parse(&url).unwrap();
+  let url_ext = tauri::WindowUrl::External(parsed);
 
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
@@ -158,7 +151,7 @@ fn main() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
         // Close to tray if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
-          event.window().hide().unwrap();
+          event.window().hide().unwrap_or_default();
           api.prevent_close();
 
           return;
@@ -178,19 +171,29 @@ fn main() {
         ..
       } => {
         // Reopen the window if the tray menu icon is clicked
-        app.get_window("main").unwrap().show().unwrap();
+        match app.get_window("main") {
+          Some(win) => {
+            win.show().unwrap_or_default();
+          }
+          None => {}
+        }
       }
       SystemTrayEvent::MenuItemClick { id, .. } => {
+        let window = match app.get_window("main") {
+          Some(win) => win,
+          None => return,
+        };
+
         if id == "quit" {
           // Close the process
-          app.get_window("main").unwrap().close().unwrap();
+          window.close().unwrap_or_default();
         }
 
         if id == "open" {
           // Reopen the window
-          app.get_window("main").unwrap().show().unwrap();
-          app.get_window("main").unwrap().set_focus().unwrap();
-          app.get_window("main").unwrap().unminimize().unwrap();
+          window.show().unwrap_or_default();
+          window.set_focus().unwrap_or_default();
+          window.unminimize().unwrap_or_default();
         }
       }
       _ => {}
@@ -228,7 +231,8 @@ fn main() {
         deep_link::register_deep_link_handler(win.clone());
       }
 
-      win.show().unwrap();
+      // Prevent flickering by starting hidden, and only showing once we are ready
+      win.show().unwrap_or_default();
 
       init::inject_routine(win);
 
@@ -246,13 +250,13 @@ fn main() {
 // Minimize
 #[tauri::command]
 fn minimize(win: Window) {
-  win.minimize().unwrap();
+  win.minimize().unwrap_or_default();
 }
 
 // Maximize
 #[tauri::command]
 fn maximize(win: Window) {
-  win.maximize().unwrap();
+  win.maximize().unwrap_or_default();
 }
 
 // Close
@@ -260,9 +264,9 @@ fn maximize(win: Window) {
 fn close(win: Window) {
   // Ensure we minimize to tray if the config calls for it
   if get_config().sys_tray.unwrap_or(false) {
-    win.hide().unwrap();
+    win.hide().unwrap_or_default();
   } else {
-    win.close().unwrap();
+    win.close().unwrap_or_default();
   }
 }
 
@@ -309,11 +313,17 @@ fn modify_window(window: &Window) {
 
 fn setup_autostart(app: &mut tauri::App) {
   let app_name = &app.package_info().name;
-  let current_exe = std::env::current_exe().unwrap();
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let exe_str = current_exe.to_str().unwrap_or_default();
+
+  // if the string is empty, just return
+  if exe_str.is_empty() {
+    return;
+  }
 
   let autolaunch = match AutoLaunchBuilder::new()
     .set_app_name(app_name)
-    .set_app_path(current_exe.to_str().unwrap())
+    .set_app_path(exe_str)
     .set_use_launch_agent(true)
     .set_args(&["--startup"])
     .build()

@@ -22,7 +22,12 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
     return imports;
   }
 
-  if let Some(capture) = captures.unwrap().get(1) {
+  let captures = match captures {
+    Some(c) => c,
+    None => return imports,
+  };
+
+  if let Some(capture) = captures.get(1) {
     let first_match = capture.as_str();
 
     imports.push(first_match.to_string());
@@ -32,50 +37,34 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
+pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String>, String> {
   let pl_only = preload_only.unwrap_or(false);
   let mut plugin_list = HashMap::new();
   let plugins_dir = get_plugin_dir();
-  let plugin_folders = match fs::read_dir(plugins_dir) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Error: {}", e);
 
-      return HashMap::new();
-    }
-  };
+  let plugin_folders = fs::read_dir(&plugins_dir)
+    .map_err(|e| format!("Error reading directory: {}", e.to_string()))?;
 
-  for path in plugin_folders {
-    let full_path = path.unwrap();
-    let meta = full_path.metadata().unwrap();
+  for entry in plugin_folders {
+    let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e.to_string()))?;
+    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e.to_string()))?;
+
     let name = full_path.file_name();
+    let name_str = name.to_str().unwrap_or_default();
 
-    // If it's just the file, load just the file contens
-    if meta.is_dir() {
-      // No more folder plugins. Ew yuck gross.
-      continue;
+    if !meta.is_dir() && name_str.ends_with(".js") && !name_str.starts_with('_') {
+      if pl_only && !name_str.starts_with("PRELOAD_") {
+        continue;
+      }
+
+      let contents = fs::read_to_string(full_path.path())
+        .map_err(|e| format!("Error reading file: {}", e.to_string()))?;
+
+      plugin_list.insert(format!("{:?}", name), contents);
     }
-
-    // If the file doesn't end with .js, ignore it
-    if !name.to_str().unwrap().ends_with(".js") {
-      continue;
-    }
-
-    // Disabled
-    if name.to_str().unwrap().starts_with('_') {
-      continue;
-    }
-
-    // Preload-only
-    if !name.to_str().unwrap().starts_with("PRELOAD_") && pl_only {
-      continue;
-    }
-
-    let contents = fs::read_to_string(full_path.path()).unwrap_or("".to_string());
-    plugin_list.insert(format!("{:?}", name), contents);
   }
 
-  plugin_list
+  Ok(plugin_list)
 }
 
 #[tauri::command]
@@ -91,76 +80,68 @@ pub fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn get_plugin_list() -> Vec<Plugin> {
+pub fn get_plugin_list() -> Result<Vec<Plugin>, String> {
   let plugins_dir = get_plugin_dir();
   let mut plugin_list: Vec<Plugin> = Vec::new();
-  let plugin_folders = match fs::read_dir(plugins_dir) {
-    Ok(f) => f,
-    Err(e) => {
-      println!("Error: {}", e);
 
-      return plugin_list;
-    }
-  };
+  let plugin_folders = fs::read_dir(&plugins_dir)
+    .map_err(|e| format!("Error reading directory: {}", e.to_string()))?;
 
-  for path in plugin_folders {
-    let full_path = path.unwrap();
-    let meta = full_path.metadata().unwrap();
-    let name = full_path.file_name();
+  for entry in plugin_folders {
+    let full_path = entry
+      .map_err(|e| format!("Error reading directory entry: {}", e.to_string()))?;
+    let meta = full_path
+      .metadata()
+      .map_err(|e| format!("Error getting metadata: {}", e.to_string()))?;
 
-    // If it's just the file, load just the file contens
-    if meta.is_dir() {
-      // No more plugin folders grr
-      continue;
-    }
+    if !meta.is_dir() {
+      let name = full_path.file_name();
+      let name_str = name.to_str().unwrap_or("");
+      let disabled = name_str.starts_with('_');
+      let preload = name_str.contains("PRELOAD");
 
-    let disabled = name.to_str().unwrap_or("").starts_with('_');
-    let preload = name.to_str().unwrap_or("").contains("PRELOAD");
+      let mut plugin_name = name_str.to_string();
 
-    let mut plugin_name = name.to_str().unwrap_or("").to_string();
+      if disabled {
+        plugin_name = plugin_name.replacen('_', "", 1);
+      }
 
-    if disabled {
-      plugin_name = plugin_name.replacen('_', "", 1);
-    }
+      if preload {
+        plugin_name = plugin_name.replace("PRELOAD_", "");
+      }
 
-    if preload {
-      plugin_name = plugin_name.replace("PRELOAD_", "");
-    }
+      plugin_name = plugin_name.replace(".js", "");
 
-    plugin_name = plugin_name.replace(".js", "");
-
-    if fs::metadata(full_path.path()).is_ok() {
-      plugin_list.push(Plugin {
-        name: plugin_name,
-        disabled,
-        preload,
-      });
+      if fs::metadata(full_path.path()).is_ok() {
+        plugin_list.push(Plugin {
+          name: plugin_name,
+          disabled,
+          preload,
+        });
+      }
     }
   }
 
-  plugin_list
+  Ok(plugin_list)
 }
 
 #[tauri::command]
-pub fn toggle_plugin(name: String) -> bool {
+pub fn toggle_plugin(name: String) -> Result<bool, String> {
   let plugins_dir = get_plugin_dir();
-  let folders = fs::read_dir(&plugins_dir).unwrap();
+  let folders = fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for path in folders {
-    let full_path = path.unwrap();
-    let meta = full_path.metadata().unwrap();
+    let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
+    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e))?;
     let file_name_os = full_path.file_name();
-    let file_name = file_name_os.to_str().unwrap();
+    let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
 
-    // If it's just the file, load just the file contens
     if meta.is_dir() {
-      // No more plugin folders grr
       continue;
     }
 
     let mut plugin_name = String::from(&name);
 
-    // Use this name to ensure that, if a name with _ is provided, we remove that before comparison
     if plugin_name.starts_with('_') {
       plugin_name = file_name.replacen('_', "", 1);
     }
@@ -173,29 +154,28 @@ pub fn toggle_plugin(name: String) -> bool {
       }
 
       // Disable the folder
-      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name)).unwrap();
+      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name))
+        .map_err(|e| format!("Error renaming file: {}", e))?;
 
-      return file_name.starts_with('_');
+      return Ok(file_name.starts_with('_'));
     }
   }
 
-  false
+  Ok(false)
 }
 
 #[tauri::command]
-pub fn toggle_preload(name: String) -> bool {
+pub fn toggle_preload(name: String) -> Result<bool, String> {
   let plugins_dir = get_plugin_dir();
-  let folders = fs::read_dir(&plugins_dir).unwrap();
+  let folders = fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for path in folders {
-    let full_path = path.unwrap();
-    let meta = full_path.metadata().unwrap();
+    let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
+    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e))?;
     let file_name_os = full_path.file_name();
-    let file_name = file_name_os.to_str().unwrap();
+    let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
 
-    // If it's just the file, load just the file contens
     if meta.is_dir() {
-      // No more plugin folders grr
       continue;
     }
 
@@ -218,7 +198,7 @@ pub fn toggle_preload(name: String) -> bool {
         new_name = String::from("PRELOAD_") + &new_name;
       }
 
-      // Ensure we keep disabled state
+      // Ensure we keep the disabled state
       if disabled {
         new_name = String::from("_") + &new_name;
       }
@@ -226,11 +206,12 @@ pub fn toggle_preload(name: String) -> bool {
       new_name += ".js";
 
       // Disable/enable preload
-      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name)).unwrap();
+      fs::rename(plugins_dir.join(file_name), plugins_dir.join(&new_name))
+        .map_err(|e| format!("Error renaming file: {}", e))?;
 
-      return !preloaded;
+      return Ok(!preloaded);
     }
   }
 
-  false
+  Ok(false)
 }
