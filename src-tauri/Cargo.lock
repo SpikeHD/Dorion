@@ -912,7 +912,7 @@ dependencies = [
  "rsrpc",
  "serde",
  "serde_json",
- "sysinfo 0.26.9",
+ "sysinfo",
  "tauri",
  "tauri-build",
  "tauri-plugin-deep-link",
@@ -3171,14 +3171,15 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.4.4"
-source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.4.4#f9257e24c3b35cf474b1ef82688bcba622b3261d"
+version = "0.5.1"
+source = "git+https://www.github.com/SpikeHD/rsRPC?branch=0.5.1#88b295f238eb03cf98bcbe37659a973811587a9c"
 dependencies = [
  "chrono",
+ "rayon",
  "serde",
  "serde_json",
  "simple-websockets",
- "sysinfo 0.29.10",
+ "sysinfo",
  "winapi",
 ]
 
@@ -3666,21 +3667,6 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
  "windows-sys 0.45.0",
-]
-
-[[package]]
-name = "sysinfo"
-version = "0.26.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c18a6156d1f27a9592ee18c1a846ca8dd5c258b7179fc193ae87c74ebb666f5"
-dependencies = [
- "cfg-if",
- "core-foundation-sys",
- "libc",
- "ntapi",
- "once_cell",
- "rayon",
- "winapi",
 ]
 
 [[package]]

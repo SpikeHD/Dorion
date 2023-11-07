@@ -15,9 +15,7 @@ pub fn start_rpc_server() {
   .unwrap();
 
   // This accepts both a `&str` or a `String`
-  let mut server = RPCServer::from_json_str(detectable);
-
-  server.process_scan_ms = Some(25);
+  let server = RPCServer::from_json_str(detectable);
 
   // When the "add_detectable" event is emitted, add the detectable to the server
   // win.listen("add_detectable", |event| {
