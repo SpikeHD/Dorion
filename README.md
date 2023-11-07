@@ -72,13 +72,13 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 | Feature                                          | Windows | Linux            | MacOS           |
 |--------------------------------------------------|---------|------------------|-----------------|
 | *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
-| Voice                                            | ✓       | ?<sup>[1]</sup> | ✓               |
+| Voice                                            | ✓       | ✗<sup>[1]</sup> | ✓               |
 | Themes                                           | ✓       | ✓               | ✓               |
 | Shelter                                          | ✓       | ✓               | ✓               |
 | Dorion Plugins                                   | ✓       | ✓               | ✓               |
 </div>
 
-<sup>1</sup> Unlike other platforms, `navigator.userAgent` cannot be changed in WebkitGTK, which is the big voice fix. This can be done via <a href="https://webkitgtk.org/reference/webkit2gtk/unstable/property.Settings.user-agent.html">setting the property</a> at runtime on the backend-side. I don't use Linux often so if someone would like to do this, PRs are always welcome! 
+<sup>1</sup> While some tweaks to Tauri made it possible to set the `webrtc_enabled` flag to true, it is unfortunately still not functional in WebKitGTK. The only way to enable the functionality it is through a build-time flag (which, as you could guess, is not set for any of the official builds). We just have to wait for it to come pre-enabled (or you can wait hours to build WebKitGTK yourself :P).
 
 # Building
 
