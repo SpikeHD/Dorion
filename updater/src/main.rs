@@ -26,16 +26,18 @@ pub fn main() {
   let args = Args::parse();
 
   if args.shelter.is_some() {
-    if needs_to_elevate(PathBuf::from(args.shelter.clone().unwrap())) {
+    let shelter = args.shelter.unwrap();
+
+    if needs_to_elevate(PathBuf::from(&shelter)) {
       println!("Elevating process...");
       elevate();
       return;
     }
 
-    update_client_mod(PathBuf::from(args.shelter.unwrap()));
+    update_client_mod(PathBuf::from(shelter));
   }
 
-  // THis should happen second
+  // This should happen second
   if args.main.is_some() {
     #[cfg(target_os = "windows")]
     if args.local.is_some() && args.local.unwrap() {
@@ -67,8 +69,7 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
   let write_perms = match std::fs::write(&test_file, "") {
     Ok(()) => {
       // Delete the test file
-      std::fs::remove_file(test_file).unwrap();
-
+      std::fs::remove_file(test_file).expect("Failed to remove test file");
       true
     }
     Err(e) => {
@@ -82,7 +83,7 @@ pub fn needs_to_elevate(path: PathBuf) -> bool {
 
 #[cfg(target_os = "windows")]
 pub fn reopen_as_elevated() {
-  let install = std::env::current_exe().unwrap();
+  let install = std::env::current_exe().unwrap_or_default();
 
   let mut binding = std::process::Command::new("powershell.exe");
   let cmd = binding.arg("-command").arg(format!(
@@ -98,10 +99,22 @@ pub fn reopen_as_elevated() {
 
   println!("Executing: {:?}", cmd);
 
-  let mut process = cmd.spawn().unwrap();
+  let mut process = match cmd.spawn() {
+    Ok(p) => p,
+    Err(e) => {
+      eprintln!("Failed to spawn updater process: {}", e);
+      return;
+    }
+  };
 
   // Wait for the updater to finish
-  process.wait().unwrap();
+  match process.wait() {
+    Ok(_) => (),
+    Err(e) => {
+      eprintln!("Failed to wait for updater process: {}", e);
+      return;
+    }
+  }
 
   std::process::exit(0);
 }
@@ -120,16 +133,16 @@ pub fn update_client_mod(path: PathBuf) {
     .header("User-Agent", "Dorion")
     .send()
     .unwrap();
-  let text = response.text().unwrap();
+  let text = response.text().expect("Failed to read response text");
   
   // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
+  let json: serde_json::Value = serde_json::from_str(&text).expect("Failed to parse commit JSON");
   let sha = json["sha"].as_str().unwrap();
 
   let mut version_path = path.clone();
   version_path.push("shelter.version"); 
 
-  std::fs::write(version_path, sha).unwrap();
+  std::fs::write(version_path, sha).expect("Failed to write shelter.version");
 }
 
 /**
@@ -137,7 +150,13 @@ pub fn update_client_mod(path: PathBuf) {
  */
 #[cfg(target_os = "windows")]
 pub fn update_main() {
-  let release = get_release("SpikeHD", "Dorion");
+  let release = match get_release("SpikeHD", "Dorion") {
+    Ok(release) => release,
+    Err(e) => {
+      println!("Failed to get release: {}", e);
+      return;
+    }
+  };
 
   println!("Latest Dorion release: {}", release.tag_name);
 
@@ -171,11 +190,17 @@ pub fn update_main() {
   cmd.arg("/IM");
   cmd.arg("Dorion.exe");
 
-  cmd.spawn().unwrap().wait().unwrap();
+  match cmd.spawn() {
+    Ok(mut p) => p.wait().unwrap(),
+    Err(e) => {
+      println!("Failed to kill Dorion process: {}", e);
+      return;
+    }
+  };
 
   println!("Installing {:?}...", release_path.clone());
 
-  // Install from the MSI in quiet mode
+  // Install from the MSI
   let mut cmd = std::process::Command::new("msiexec");
   cmd.arg("/i");
   cmd.arg(
@@ -187,7 +212,12 @@ pub fn update_main() {
 
   println!("Running {:?}", cmd);
 
-  cmd.spawn().unwrap();
+  match cmd.spawn() {
+    Ok(_) => (),
+    Err(e) => {
+      println!("Failed to kill Dorion process: {}", e);
+    }
+  };
 
   std::process::exit(0);
 }
@@ -195,7 +225,13 @@ pub fn update_main() {
 #[cfg(target_os = "windows")]
 pub fn update_main_kinda() {
   // Same as the MSI, but we just download the zip file instead and open explorer to highlight it
-  let release = get_release("SpikeHD", "Dorion");
+  let release = match get_release("SpikeHD", "Dorion") {
+    Ok(release) => release,
+    Err(e) => {
+      println!("Failed to get release: {}", e);
+      return;
+    }
+  };
 
   println!("Latest Dorion release: {}", release.tag_name);
 
@@ -233,7 +269,12 @@ pub fn update_main_kinda() {
       .unwrap()
   );
 
-  cmd.spawn().unwrap();
+  match cmd.spawn() {
+    Ok(_) => (),
+    Err(e) => {
+      println!("Failed to kill open release path in explorer: {}", e);
+    }
+  };
 
   println!("Attempting to kill Dorion process...");
 
@@ -243,7 +284,13 @@ pub fn update_main_kinda() {
   cmd.arg("/IM");
   cmd.arg("Dorion.exe");
 
-  cmd.spawn().unwrap().wait().unwrap();
+  match cmd.spawn() {
+    Ok(_) => (),
+    Err(e) => {
+      println!("Failed to kill Dorion process: {}", e);
+      return;
+    }
+  };
 
   std::process::exit(0);
 }

@@ -3,7 +3,7 @@ use crate::config::get_config;
 use super::paths::get_webdata_dir;
 
 pub fn clear_cache_check() {
-  let appdata = dirs::data_dir().unwrap().join("dorion");
+  let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
 
   if !appdata.exists() {
     std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
@@ -22,7 +22,7 @@ pub fn clear_cache_check() {
 pub fn set_clear_cache(win: tauri::Window) {
   // Create a file called "clear_cache" in the appdata dir
   // This will be read by the window when it closes
-  let appdata = dirs::data_dir().unwrap().join("dorion");
+  let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
 
   if !appdata.exists() {
     std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");

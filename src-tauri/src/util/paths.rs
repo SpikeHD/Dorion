@@ -20,10 +20,10 @@ pub fn get_config_dir() -> PathBuf {
   println!("No local config file found. Using default.");
 
   #[cfg(target_os = "windows")]
-  let appdata = dirs::data_dir().unwrap();
+  let appdata = dirs::data_dir().unwrap_or_default();
 
   #[cfg(not(target_os = "windows"))]
-  let appdata = dirs::config_dir().unwrap();
+  let appdata = dirs::config_dir().unwrap_or_default();
 
   let config_file = appdata.join("dorion").join("config.json");
 
@@ -67,10 +67,10 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
 
   // If not, grab the normal one
   #[cfg(target_os = "windows")]
-  let appdata = dirs::data_dir().unwrap();
+  let appdata = dirs::data_dir().unwrap_or_default();
 
   #[cfg(not(target_os = "windows"))]
-  let appdata = dirs::config_dir().unwrap();
+  let appdata = dirs::config_dir().unwrap_or_default();
 
   let injection_dir = appdata.join("dorion").join("injection");
 
@@ -120,13 +120,13 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
 
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
-    .unwrap()
+    .unwrap_or_default()
     .join("dorion")
     .join("plugins");
 
   #[cfg(not(target_os = "windows"))]
   let plugin_dir = dirs::config_dir()
-    .unwrap()
+    .unwrap_or_default()
     .join("dorion")
     .join("plugins");
 
@@ -159,13 +159,13 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()
-    .unwrap()
+    .unwrap_or_default()
     .join("dorion")
     .join("themes");
 
   #[cfg(not(target_os = "windows"))]
   let theme_dir = dirs::config_dir()
-    .unwrap()
+    .unwrap_or_default()
     .join("dorion")
     .join("themes");
 
@@ -212,7 +212,10 @@ pub fn profiles_dir() -> PathBuf {
     return profile_folder;
   }
 
-  dirs::data_dir().unwrap().join("dorion").join("profiles")
+  dirs::data_dir()
+    .unwrap_or_default()
+    .join("dorion")
+    .join("profiles")
 }
 
 pub fn get_webdata_dir() -> PathBuf {
@@ -241,5 +244,5 @@ pub fn updater_dir(win: &tauri::Window) -> PathBuf {
     .app_handle()
     .path_resolver()
     .resolve_resource(PathBuf::from("updater"))
-    .unwrap()
+    .unwrap_or_default()
 }

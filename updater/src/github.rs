@@ -1,53 +1,62 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, fmt::Display};
+use reqwest::blocking;
+use serde_json::Value;
 
+#[derive(Debug)]
 pub struct ReleaseData {
   pub tag_name: String,
   pub release_names: Vec<String>,
 }
 
-pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> ReleaseData {
+pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<ReleaseData, String> {
   let url = format!(
-    "https://api.github.com/repos/{}/{}/releases/latest",
-    user.as_ref(),
-    repo.as_ref()
+      "https://api.github.com/repos/{}/{}/releases/latest",
+      user.as_ref(),
+      repo.as_ref()
   );
-  let client = reqwest::blocking::Client::new();
+
+  let client = blocking::Client::new();
   let response = client
-    .get(url)
+    .get(&url)
     .header("User-Agent", "Dorion")
     .send()
-    .unwrap();
-  let text = response.text().unwrap();
+    .map_err(|e| format!("Failed to get latest release from GitHub: {}", e))?;
 
-  // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
-  let tag_name = json["tag_name"].as_str().unwrap();
-  let releases = json["assets"].as_array().unwrap();
+  let text = response.text().map_err(|e| format!("Failed to read response text: {}", e))?;
 
-  let mut release_names = Vec::new();
+  let release: Value = serde_json::from_str(&text)
+    .map_err(|e| format!("Failed to parse JSON: {}", e))?;
 
-  for release in releases {
-    let name = release["name"].as_str().unwrap();
-    release_names.push(name.to_string());
+  let asset_array = release["assets"]
+    .as_array();
+
+  if asset_array.is_none() {
+    return Err("Failed to parse JSON: assets is not an array".to_string());
   }
 
-  ReleaseData {
-    tag_name: tag_name.to_string(),
+  let release_names: Vec<String> = asset_array
+    .unwrap()
+    .iter()
+    .map(|asset| asset["name"].as_str().unwrap().to_string())
+    .collect();
+
+  Ok(ReleaseData {
+    tag_name: release["tag_name"].as_str().unwrap().to_string(),
     release_names,
-  }
+  })
 }
 
 pub fn download_raw(
-  user: impl AsRef<str>,
-  repo: impl AsRef<str>,
-  filename: impl AsRef<str>,
+  user: impl AsRef<str> + Display,
+  repo: impl AsRef<str> + Display,
+  filename: impl AsRef<str> + Display,
   path: std::path::PathBuf,
 ) -> PathBuf {
   let url = format!(
     "https://raw.githubusercontent.com/{}/{}/master/{}",
-    user.as_ref(),
-    repo.as_ref(),
-    filename.as_ref()
+    user,
+    repo,
+    filename
   );
 
   let client = reqwest::blocking::Client::new();
@@ -56,7 +65,7 @@ pub fn download_raw(
     .get(url)
     .header("User-Agent", "Dorion")
     .send()
-    .unwrap();
+    .expect("Failed to get response from GitHub");
 
   let mut file_path = path.clone();
   file_path.push(filename.as_ref());
@@ -65,29 +74,33 @@ pub fn download_raw(
 
   // Create_dir_all if needed
   if !file_path.parent().unwrap().exists() {
-    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+    fs::create_dir_all(file_path.parent().unwrap())
+      .expect("Failed to create directory");
   }
 
   // Write the file
-  fs::write(&file_path, response.bytes().unwrap()).unwrap();
+  fs::write(
+    &file_path,
+    response.bytes().expect("Failed to read response bytes")
+  ).expect("Failed to write file");
 
   // Return the path of the file
   file_path
 }
 
 pub fn download_release(
-  user: impl AsRef<str>,
-  repo: impl AsRef<str>,
-  tag_name: impl AsRef<str>,
-  release_name: impl AsRef<str>,
+  user: impl AsRef<str> + Display,
+  repo: impl AsRef<str> + Display,
+  tag_name: impl AsRef<str> + Display,
+  release_name: impl AsRef<str> + Display,
   path: PathBuf,
 ) -> PathBuf {
   let url = format!(
     "https://github.com/{}/{}/releases/download/{}/{}",
-    user.as_ref(),
-    repo.as_ref(),
-    tag_name.as_ref(),
-    release_name.as_ref()
+    user,
+    repo,
+    tag_name,
+    release_name
   );
 
   let client = reqwest::blocking::Client::new();
@@ -105,11 +118,15 @@ pub fn download_release(
 
   // Create_dir_all if needed
   if !file_path.parent().unwrap().exists() {
-    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+    fs::create_dir_all(file_path.parent().unwrap())
+      .expect("Failed to create directory");
   }
 
   // Write the file
-  fs::write(&file_path, response.bytes().unwrap()).unwrap();
+  fs::write(
+    &file_path,
+    response.bytes().expect("Failed to read response bytes")
+  ).expect("Failed to write file");
 
   // Return the path of the file
   file_path
