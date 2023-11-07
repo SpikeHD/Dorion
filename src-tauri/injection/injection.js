@@ -108,7 +108,7 @@ function onClientLoad() {
 
   // Ensure Dorion-related plugins are installed
   // It's kinda stupid to have to wait but we have to make sure Shelter loaded fully
-  waitForApp().then(() => setTimeout(ensurePlugins, 4000))
+  waitForApp().then(() => ensurePlugins())
 }
 
 /**
