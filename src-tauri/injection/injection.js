@@ -197,13 +197,58 @@ async function ensurePlugins() {
     }
   }
 
-  // eslint-disable-next-line no-undef
-  const installed = shelter.plugins.installedPlugins()
+  // Welcome to another SpikeHD "hack a thing til it works no matter how terrible the solution is". This time featuring: my lack of desire to maintain a modified Shelter fork!
+  // Read from the "plugins-data" indexedDb
+  const shelterDB = await new Promise(r => {
+    // continuously attempt to find the "shelter" db since it may not exist yet (fisrt time opening, for example)
+    const attempt = () => {
+      console.log('[Ensure Plugins] Attempting to get database')
+      const db = indexedDB.databases().then(dbs => dbs.find(db => db.name === 'shelter'))
 
-  for (const name of Object.keys(installed)) {
-    console.log('[Ensure Plugins] Checking if ' + name + ' is installed...')
-    if (requiredPlugins[name]) {
-      console.log('[Ensure Plugins] ' + name + ' is installed!')
+      console.log(db)
+
+      if (db) return r(db)
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setTimeout(() => attempt(), 1000)
+    }
+
+    attempt()
+  })
+
+  const open = await new Promise(r => {
+    const req = indexedDB.open(shelterDB.name, shelterDB.version)
+    req.onsuccess = () => r(req.result)
+
+    console.log('[Ensure Plugins] Attempting to open plugins-internal at version: ', shelterDB.version)
+  })
+
+  // Continuously attempt to open plugins-internal
+  const pluginStore = await new Promise(r => {
+    const attempt = () => {
+      console.log('[Ensure Plugins] Attempting to get plugin store')
+      const store = open.transaction('plugins-internal', 'readwrite').objectStore('plugins-internal')
+
+      if (store) return r(store)
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setTimeout(() => attempt(), 1000)
+    }
+
+    attempt()
+  })
+
+  // Finally, we can get all of the keys and values of the plugins
+  const installed = await new Promise(r => {
+    const req = pluginStore.getAll()
+    req.onsuccess = () => r(req.result)
+  })
+
+  // Mark plugins as installed or not installed
+  for (const [name, _plugin] of Object.entries(requiredPlugins)) {
+    const maybeInstalled = installed.find(p => p.manifest.name === name)
+
+    if (maybeInstalled) {
       requiredPlugins[name].installed = true
     }
   }
@@ -219,7 +264,7 @@ async function ensurePlugins() {
     }
   }
 
-  const isPluginOn = (p) => installed[p]?.on
+  const isPluginOn = (p) => installed.find(plugin => plugin.manifest.name === p)?.on
 
   // Enable the ones that are required
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
