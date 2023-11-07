@@ -905,6 +905,7 @@ dependencies = [
  "block",
  "cocoa 0.25.0",
  "device_query",
+ "dirs 5.0.1",
  "embed_plist",
  "include-flate",
  "objc",

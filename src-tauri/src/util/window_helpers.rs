@@ -3,17 +3,17 @@ use crate::config::get_config;
 use super::paths::get_webdata_dir;
 
 pub fn clear_cache_check() {
-  let appdata = tauri::api::path::data_dir().unwrap().join("dorion");
+  let appdata = dirs::data_dir().unwrap().join("dorion");
 
   if !appdata.exists() {
-    std::fs::create_dir_all(&appdata).unwrap();
+    std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
   }
 
   let cache_file = appdata.join("clear_cache");
 
   if cache_file.exists() {
     // Delete the file
-    std::fs::remove_file(&cache_file).unwrap();
+    std::fs::remove_file(&cache_file).expect("Failed to remove clear_cache file!");
     clear_cache();
   }
 }
@@ -22,15 +22,15 @@ pub fn clear_cache_check() {
 pub fn set_clear_cache(win: tauri::Window) {
   // Create a file called "clear_cache" in the appdata dir
   // This will be read by the window when it closes
-  let appdata = tauri::api::path::data_dir().unwrap().join("dorion");
+  let appdata = dirs::data_dir().unwrap().join("dorion");
 
   if !appdata.exists() {
-    std::fs::create_dir_all(&appdata).unwrap();
+    std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
   }
 
   let cache_file = appdata.join("clear_cache");
 
-  std::fs::write(cache_file, "").unwrap();
+  std::fs::write(cache_file, "").expect("Failed to create clear_cache file!");
 
   win.close().unwrap_or_default();
 }
@@ -42,7 +42,7 @@ pub fn clear_cache() {
 
   if webdata_dir.exists() {
     println!("Deleting cache...");
-    std::fs::remove_dir_all(webdata_dir).unwrap();
+    std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
   }
 }
 

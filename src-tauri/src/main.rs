@@ -12,7 +12,7 @@ use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use tauri::{
-  utils::config::AppUrl, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
   Window, WindowBuilder,
 };
 use util::{
@@ -65,7 +65,7 @@ fn main() {
   // Run the steps to init profiles
   init_profiles_folders();
 
-  let mut context = tauri::generate_context!("tauri.conf.json");
+  let context = tauri::generate_context!("tauri.conf.json");
   let dorion_open = process::process_already_exists();
   let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
@@ -84,7 +84,7 @@ fn main() {
   // instead of showing a popup, but this is fine for now
   if dorion_open && !config.multi_instance.unwrap_or(false) {
     // Send the dorion://open deep link request
-    helpers::open_scheme("dorion://open".to_string());
+    helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
     // Exit
     std::process::exit(0);

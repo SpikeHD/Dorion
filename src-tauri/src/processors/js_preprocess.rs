@@ -13,7 +13,7 @@ pub async fn localize_js(url: String) -> String {
     }
   };
 
-  response.text().await.unwrap()
+  response.text().await.unwrap_or(String::new())
 }
 
 #[tauri::command]

@@ -11,11 +11,11 @@ pub async fn clear_css_cache() {
   let cache_path = get_theme_dir().join("cache");
 
   if fs::metadata(&cache_path).is_ok() {
-    let files = fs::read_dir(&cache_path).unwrap();
+    let files = fs::read_dir(&cache_path).expect("Failed to read cache directory!");
 
     // Remove all files within
     for file in files.flatten() {
-      fs::remove_file(file.path()).unwrap();
+      fs::remove_file(file.path()).expect("Failed to remove file!");
     }
   }
 }
@@ -40,7 +40,10 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
     if fs::metadata(&cache_file).is_ok() {
       println!("Using cached CSS for {}", name);
 
-      return fs::read_to_string(cache_file).unwrap();
+      // if reading to string succeeds, return that
+      if let Ok(cached) = fs::read_to_string(cache_file) {
+        return cached;
+      }
     }
   }
 
@@ -84,7 +87,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
         return Some((full_import.to_owned(), String::new()));
       }
 
-      let text = response.text().unwrap();
+      let text = response.text().expect("CSS import text failed to parse!");
 
       // Emit a loading log
       win_clone
@@ -92,14 +95,20 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
           "loading_log",
           format!("Processed CSS import: {}", url.clone()),
         )
-        .unwrap();
+        .unwrap_or_default();
 
       Some((full_import.to_owned(), text))
     }));
   }
 
   for task in tasks {
-    let result = task.join().unwrap();
+    let result = match task.join() {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error joining thread: {:?}", e);
+        continue;
+      }
+    };
 
     println!("Joining...");
 
@@ -129,7 +138,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
       "loading_log",
       format!("Finished processing {} CSS imports", seen_urls.len()),
     )
-    .unwrap();
+    .unwrap_or_default();
 
   // Now localize images to base64 data representations
   new_css = localize_images(win.clone(), new_css).await;
@@ -138,10 +147,9 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
   // If we need to cache css, do that
   if get_config().cache_css.unwrap_or(true) {
     let cache_path = get_theme_dir().join("cache");
-
     let cache_file = cache_path.join(format!("{}_cache.css", name));
 
-    fs::write(cache_file, new_css.clone()).unwrap();
+    fs::write(cache_file, new_css.clone()).expect("Failed to write cache file!");
   }
 
   new_css
@@ -169,7 +177,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
         "loading_log",
         format!("Too many images to process ({}), skipping...", count),
       )
-      .unwrap();
+      .unwrap_or_default();
     return new_css;
   }
 
@@ -203,7 +211,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
           "loading_log",
           format!("Too many images to process ({})", groups.len()),
         )
-        .unwrap();
+        .unwrap_or_default();
       break;
     }
 
@@ -230,7 +238,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
 
       win_clone
         .emit("loading_log", format!("Processed image import: {}", &url))
-        .unwrap();
+        .unwrap_or_default();
 
       if url.is_empty() {
         return None;
@@ -244,7 +252,13 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
   }
 
   for task in tasks {
-    let result = task.join().unwrap();
+    let result = match task.join() {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error joining thread: {:?}", e);
+        continue;
+      }
+    };
 
     if result.is_none() {
       continue;
@@ -281,7 +295,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
         "loading_log",
         format!("Too many fonts to process ({}), skipping...", count),
       )
-      .unwrap();
+      .unwrap_or_default();
     return new_css;
   }
 
@@ -312,7 +326,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
 
           win_clone
             .emit("loading_log", "A font failed to import...".to_string())
-            .unwrap();
+            .unwrap_or_default();
 
           return None;
         }
@@ -322,7 +336,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
 
       win_clone
         .emit("loading_log", format!("Processed font import: {}", &url))
-        .unwrap();
+        .unwrap_or_default();
 
       Some((
         full_url.to_owned(),
@@ -332,7 +346,13 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
   }
 
   for task in tasks {
-    let result = task.join().unwrap();
+    let result = match task.join() {
+      Ok(r) => r,
+      Err(e) => {
+        println!("Error joining thread: {:?}", e);
+        continue;
+      }
+    };
 
     if result.is_none() {
       continue;

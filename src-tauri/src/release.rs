@@ -1,4 +1,3 @@
-use std::io::BufRead;
 use tauri::Manager;
 
 use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};

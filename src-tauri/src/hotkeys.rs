@@ -1,5 +1,4 @@
 use device_query::{DeviceQuery, DeviceState, Keycode};
-use tauri::utils::config::parse::ConfigError;
 use std::{thread, time::Duration};
 
 use crate::config;

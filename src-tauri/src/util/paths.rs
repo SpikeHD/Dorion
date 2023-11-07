@@ -1,15 +1,14 @@
 use std::{fs, path::PathBuf};
 
-use tauri::{api::path::data_dir, Manager};
+use tauri::Manager;
 
 use crate::config::get_config;
-
 use super::helpers::move_injection_scripts;
 
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe
     .parent()
     .unwrap()
     .join("config.json");
@@ -21,10 +20,10 @@ pub fn get_config_dir() -> PathBuf {
   println!("No local config file found. Using default.");
 
   #[cfg(target_os = "windows")]
-  let appdata = tauri::api::path::data_dir().unwrap();
+  let appdata = dirs::data_dir().unwrap();
 
   #[cfg(not(target_os = "windows"))]
-  let appdata = tauri::api::path::config_dir().unwrap();
+  let appdata = dirs::config_dir().unwrap();
 
   let config_file = appdata.join("dorion").join("config.json");
 
@@ -45,8 +44,8 @@ pub fn get_config_dir() -> PathBuf {
 }
 
 pub fn config_is_local() -> bool {
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe
     .parent()
     .unwrap()
     .join("config.json");
@@ -56,8 +55,8 @@ pub fn config_is_local() -> bool {
 
 pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
   // First check for a local injection dir
-  let local_inject_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_inject_dir = current_exe
     .parent()
     .unwrap()
     .join("injection");
@@ -68,10 +67,10 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
 
   // If not, grab the normal one
   #[cfg(target_os = "windows")]
-  let appdata = tauri::api::path::data_dir().unwrap();
+  let appdata = dirs::data_dir().unwrap();
 
   #[cfg(not(target_os = "windows"))]
-  let appdata = tauri::api::path::config_dir().unwrap();
+  let appdata = dirs::config_dir().unwrap();
 
   let injection_dir = appdata.join("dorion").join("injection");
 
@@ -96,8 +95,8 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
 }
 
 pub fn injection_is_local() -> bool {
-  let local_inject_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_inject_dir = current_exe
     .parent()
     .unwrap()
     .join("injection");
@@ -107,8 +106,8 @@ pub fn injection_is_local() -> bool {
 
 pub fn get_plugin_dir() -> std::path::PathBuf {
   // First check for a local plugin dir
-  let local_plugin_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_plugin_dir = current_exe
     .parent()
     .unwrap()
     .join("plugins");
@@ -120,13 +119,13 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
   println!("No local plugin dir found. Using default.");
 
   #[cfg(target_os = "windows")]
-  let plugin_dir = tauri::api::path::home_dir()
+  let plugin_dir = dirs::home_dir()
     .unwrap()
     .join("dorion")
     .join("plugins");
 
   #[cfg(not(target_os = "windows"))]
-  let plugin_dir = tauri::api::path::config_dir()
+  let plugin_dir = dirs::config_dir()
     .unwrap()
     .join("dorion")
     .join("plugins");
@@ -146,8 +145,8 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
 
 pub fn get_theme_dir() -> std::path::PathBuf {
   // First see if there is a local theme dir
-  let local_theme_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_theme_dir = current_exe
     .parent()
     .unwrap()
     .join("themes");
@@ -159,13 +158,13 @@ pub fn get_theme_dir() -> std::path::PathBuf {
   println!("No local theme dir found. Using default.");
 
   #[cfg(target_os = "windows")]
-  let theme_dir = tauri::api::path::home_dir()
+  let theme_dir = dirs::home_dir()
     .unwrap()
     .join("dorion")
     .join("themes");
 
   #[cfg(not(target_os = "windows"))]
-  let theme_dir = tauri::api::path::config_dir()
+  let theme_dir = dirs::config_dir()
     .unwrap()
     .join("dorion")
     .join("themes");
@@ -197,20 +196,23 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 }
 
 pub fn profiles_dir() -> PathBuf {
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe
     .parent()
     .unwrap()
     .join("config.json");
 
   // Check for local/portable file paths
   if local_config_dir.exists() {
-    let profile_folder = local_config_dir.parent().unwrap().join("profiles");
+    let profile_folder = local_config_dir
+      .parent()
+      .unwrap()
+      .join("profiles");
 
     return profile_folder;
   }
 
-  data_dir().unwrap().join("dorion").join("profiles")
+  dirs::data_dir().unwrap().join("dorion").join("profiles")
 }
 
 pub fn get_webdata_dir() -> PathBuf {
@@ -221,16 +223,15 @@ pub fn get_webdata_dir() -> PathBuf {
 }
 
 pub fn updater_dir(win: &tauri::Window) -> PathBuf {
-  let local_config_dir = std::env::current_exe()
-    .unwrap()
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe
     .parent()
     .unwrap()
     .join("config.json");
 
   if fs::metadata(local_config_dir).is_ok() {
     // This is a portable install, so we can use the local injection dir
-    return std::env::current_exe()
-      .unwrap()
+    return current_exe
       .parent()
       .unwrap()
       .join("updater");

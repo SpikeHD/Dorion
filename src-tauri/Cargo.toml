@@ -22,6 +22,7 @@ tauri = { version = "1.4.1", features = ["windows7-compat", "api-all", "icon-ico
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-deep-link = { version = "^0.1.2" }
 reqwest = { version = "0.11.14", features = ["blocking"] }
+dirs = "5.0.1"
 base64 = "0.13.0"
 
 # For push to talk (and maybe other hotkeys in the future!)

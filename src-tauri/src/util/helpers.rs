@@ -8,36 +8,40 @@ use std::process::Command;
 pub fn open_plugins() {
   let plugin_folder = get_plugin_dir();
 
-  open_folder(plugin_folder)
+  open_folder(plugin_folder).unwrap_or_default()
 }
 
 #[tauri::command]
 pub fn open_themes() {
   let theme_folder = get_theme_dir();
 
-  open_folder(theme_folder)
+  open_folder(theme_folder).unwrap_or_default()
 }
 
-fn open_folder(path: PathBuf) {
+fn open_folder(path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
   #[cfg(target_os = "windows")]
-  Command::new("explorer").arg(path).spawn().unwrap();
+  Command::new("explorer").arg(path).spawn()?;
 
   #[cfg(target_os = "macos")]
-  Command::new("open").arg(path).spawn().unwrap();
+  Command::new("open").arg(path).spawn()?;
 
   #[cfg(target_os = "linux")]
-  Command::new("xdg-open").arg(path).spawn().unwrap();
+  Command::new("xdg-open").arg(path).spawn()?;
+
+  Ok(())
 }
 
-pub fn open_scheme(scheme: String) {
+pub fn open_scheme(scheme: String) -> Result<(), Box<dyn std::error::Error>> {
   #[cfg(target_os = "windows")]
-  Command::new("start").arg(scheme).spawn().unwrap();
+  Command::new("start").arg(scheme).spawn()?;
 
   #[cfg(target_os = "macos")]
-  Command::new("open").arg(scheme).spawn().unwrap();
+  Command::new("open").arg(scheme).spawn()?;
 
   #[cfg(target_os = "linux")]
-  Command::new("xdg-open").arg(scheme).spawn().unwrap();
+  Command::new("xdg-open").arg(scheme).spawn()?;
+
+  Ok(())
 }
 
 #[tauri::command]
@@ -66,7 +70,7 @@ pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
 
   // If the injection folder doesn't exist, create it and re-run with everything
   if std::fs::metadata(&injection_dir).is_err() {
-    std::fs::create_dir_all(&injection_dir).unwrap();
+    std::fs::create_dir_all(&injection_dir).expect("Failed to create injection folder");
 
     move_injection_scripts(win, true);
     return;
@@ -79,6 +83,6 @@ pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
       packaged_injection_dir.join("shelter.js"),
       injection_dir.join("shelter.js"),
     )
-    .unwrap();
+    .expect("Failed to copy shelter.js");
   }
 }
