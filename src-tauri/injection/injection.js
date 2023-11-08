@@ -282,7 +282,7 @@ async function ensurePlugins() {
   }
 
   // eslint-disable-next-line no-undef
-  console.log('[Esnure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())
+  console.log('[Ensure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())
 
   // In case all of our weird stuff made shelter freak out, check loadedPlugins(). If it's undefined, load them
   // eslint-disable-next-line no-undef
