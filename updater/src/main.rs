@@ -300,7 +300,13 @@ pub fn update_main_kinda() {
  */
 #[cfg(target_os = "macos")]
 pub fn update_main() {
-  let release = get_release("SpikeHD", "Dorion");
+  let release = match get_release("SpikeHD", "Dorion") {
+    Ok(release) => release,
+    Err(e) => {
+      println!("Failed to get release: {}", e);
+      return;
+    }
+  };
 
   println!("Latest Dorion release: {}", release.tag_name);
 
