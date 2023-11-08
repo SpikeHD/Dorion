@@ -1,6 +1,15 @@
-// use std::path::PathBuf;
+use tauri::{api::notification, Manager};
 
-// use tauri::{Icon, Manager};
+#[tauri::command]
+pub fn send_notification(win: tauri::Window, title: String, body: String) {
+  let app = win.app_handle();
+
+  notification::Notification::new(&app.config().tauri.bundle.identifier)
+    .title(&title)
+    .body(&body)
+    .notify(&app)
+    .unwrap_or_default();
+}
 
 #[cfg(not(target_os = "macos"))]
 pub fn set_notif_icon(_window: &tauri::Window, _amount: u16) {
