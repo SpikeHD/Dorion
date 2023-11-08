@@ -60,10 +60,13 @@ pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String
         continue;
       }
 
-      let contents = fs::read_to_string(full_path.path())
-        .map_err(|e| format!("Error reading file: {}", e))?;
+      let contents = fs::read_to_string(full_path.path());
 
-      plugin_list.insert(format!("{:?}", name), contents);
+      if contents.is_err() {
+        continue;
+      }
+
+      plugin_list.insert(format!("{:?}", name), contents.unwrap());
     }
   }
 

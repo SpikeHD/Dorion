@@ -67,7 +67,8 @@ function maximize() {
 
 async function createTopBar() {
   const topbar = document.createElement("div");
-  const content = await window.__TAURI__.invoke('get_top_bar');
+  const content = await window.__TAURI__.invoke('get_top_bar')
+    .catch(e => console.error("Error reading top bar: ", e));
 
   // If the top bar failed to load, stick to the default
   if (!content) return;
@@ -155,7 +156,7 @@ function applyExtraCSS() {
     const style = document.createElement('style')
     style.innerHTML = css
     document.head.appendChild(style)
-  })
+  }).catch(e => console.error("Error reading extra CSS: ", e))
 }
 
 async function ensurePlugins() {
