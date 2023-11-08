@@ -1,29 +1,24 @@
-use clap::{command, Parser};
+use pico_args::Arguments;
 use std::path::PathBuf;
 
 use crate::github::{download_release, download_raw, get_release};
 
 mod github;
 
-/// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct Args {
-  /// Update Dorion
-  #[arg(short = 'm', long)]
-  main: Option<bool>,
-
-  /// Path to injection folder
-  #[arg(short = 's', long)]
+// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
+struct UpdaterArguments {
+  main: bool,
   shelter: Option<String>,
-
-  /// Whether this is a local install or not
-  #[arg(short = 'l', long)]
-  local: Option<bool>,
+  local: bool,
 }
 
 pub fn main() {
-  let args = Args::parse();
+  let mut pargs = Arguments::from_env();
+  let args = UpdaterArguments {
+    main: pargs.contains("--main"),
+    shelter: pargs.opt_value_from_str("--shelter").unwrap_or(None),
+    local: pargs.contains("--local"),
+  };
 
   if args.shelter.is_some() {
     let shelter = args.shelter.unwrap();
@@ -38,9 +33,9 @@ pub fn main() {
   }
 
   // This should happen second
-  if args.main.is_some() {
+  if args.main {
     #[cfg(target_os = "windows")]
-    if args.local.is_some() && args.local.unwrap() {
+    if args.local {
       update_main_kinda();
       return;
     }

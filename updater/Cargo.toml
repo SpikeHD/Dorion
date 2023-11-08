@@ -6,11 +6,11 @@ edition = "2021"
 [dependencies]
 serde_json = "1.0"
 reqwest = { version = "0.11.14", features = ["blocking"] }
-clap = { version = "4.3.21", features = ["derive"] }
 
 #[cfg(not(target_os = "windows"))]
 sudo = "0.6.0"
 
 #[cfg(target_os = "windows")]
 is_elevated = "0.1.2"
+pico-args = "0.5.0"
 
