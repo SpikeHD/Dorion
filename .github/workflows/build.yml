@@ -59,7 +59,7 @@ jobs:
             updater/target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install Linux dependencies
+      - name: (Linux) Install dependencies
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
@@ -72,7 +72,7 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - name: Install MacOS universal target
+      - name: (MacOS) Install MacOS universal target
         if: matrix.platform == 'macos-latest'
         run: rustup target add aarch64-apple-darwin
 
@@ -87,15 +87,18 @@ jobs:
         run: pnpm prebuild && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
       
       # Make empty folders for plugins and themes
-      - name: Create empty folders for plugins and themes
+      - name: (Windows) Create empty folders for plugins
         if: matrix.platform == 'windows-latest'
         run: if (not exist src-tauri/target/release/plugins) {
-            mkdir src-tauri/target/release/plugins } && 
-          if (not exist src-tauri/target/release/plugins) {
+            mkdir src-tauri/target/release/plugins }
+      
+      - name: (Windows) Create empty folders for themes
+        if: matrix.platform == 'windows-latest'
+        run: if (not exist src-tauri/target/release/plugins) {
             mkdir -p src-tauri/target/release/themes }
 
       # Empty folders, unix edition
-      - name: Create empty folders for plugins and themes
+      - name: (Unix) Create empty folders for plugins and themes
         if: matrix.platform != 'windows-latest'
         run: mkdir -p src-tauri/target/release/plugins && mkdir -p src-tauri/target/release/themes
 
@@ -109,7 +112,7 @@ jobs:
       # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|icons
       # MacOS:
       # - src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
-      - name: Compress build (windows)
+      - name: (Windows) Compress build
         if: matrix.platform == 'windows-latest'
         run: 7z a -tzip Dorion.zip 
           src-tauri/target/release/Dorion.exe
@@ -120,12 +123,12 @@ jobs:
           src-tauri/target/release/icons/
           src-tauri/target/release/injection/
 
-      - name: Compress build (linux)
+      - name: (Linux) Compress build
         if: matrix.platform == 'ubuntu-latest'
         run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./icons
 
       # Windows portable
-      - name: Upload Windows portable
+      - name: (Windows) Upload portable
         if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
@@ -133,7 +136,7 @@ jobs:
           path: Dorion.zip
 
       # Windows MSI
-      - name: Upload .msi
+      - name: (Windows) Upload .msi
         if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v3
         with:
@@ -141,7 +144,7 @@ jobs:
           path: src-tauri/target/release/bundle/msi/*.msi
 
       # Ubuntu portable
-      - name: Upload Linux portable
+      - name: (Linux) Upload portable
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
@@ -149,21 +152,21 @@ jobs:
           path: src-tauri/target/release/dorion.tar.gz
 
       # Ubuntu deb
-      - name: Upload .deb
+      - name: (Linux) Upload .deb
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: dorion_amd64_deb
           path: src-tauri/target/release/bundle/deb/*.deb
 
-      - name: Upload Ubuntu .appimage
+      - name: (Linux) Upload .appimage
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
           name: dorion_amd64_appimage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
 
-      - name: Upload .dmg
+      - name: (MacOS) Upload .dmg
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v3
         with:
