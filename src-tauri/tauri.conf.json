@@ -60,6 +60,23 @@
       }
     },
     "security": {
+      "dangerousRemoteDomainIpcAccess": [
+        {
+          "enableTauriAPI": true,
+          "domain": "discord.com",
+          "windows": ["main"]
+        },
+        {
+          "enableTauriAPI": true,
+          "domain": "ptb.discord.com",
+          "windows": ["main"]
+        },
+        {
+          "enableTauriAPI": true,
+          "domain": "canary.discord.com",
+          "windows": ["main"]
+        }
+      ],
       "csp": null
     },
     "updater": {
