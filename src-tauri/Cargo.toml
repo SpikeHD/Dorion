@@ -69,3 +69,14 @@ linker = "aarch64-linux-gnu-gcc"
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+  "-C", "link-arg=-fuse-ld=lld",
+]
+
+# Also use lld on macos
+[target.'cfg(target_os = "macos")']
+rustflags = [
+  "-C", "link-arg=-fuse-ld=lld",
+]
