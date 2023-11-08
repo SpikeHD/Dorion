@@ -89,10 +89,10 @@ jobs:
       # Make empty folders for plugins and themes
       - name: Create empty folders for plugins and themes
         if: matrix.platform == 'windows-latest'
-        run: if (not exist src-tauri/target/release/plugins)
-            mkdir src-tauri/target/release/plugins && 
-          if (not exist src-tauri/target/release/plugins)
-            mkdir -p src-tauri/target/release/themes
+        run: if (not exist src-tauri/target/release/plugins) {
+            mkdir src-tauri/target/release/plugins } && 
+          if (not exist src-tauri/target/release/plugins) {
+            mkdir -p src-tauri/target/release/themes }
 
       # Empty folders, unix edition
       - name: Create empty folders for plugins and themes
