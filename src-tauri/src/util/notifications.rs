@@ -5,8 +5,8 @@ pub fn send_notification(win: tauri::Window, title: String, body: String) {
   let app = win.app_handle();
 
   notification::Notification::new(&app.config().tauri.bundle.identifier)
-    .title(&title)
-    .body(&body)
+    .title(title)
+    .body(body)
     .notify(&app)
     .unwrap_or_default();
 }

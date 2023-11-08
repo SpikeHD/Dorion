@@ -1,7 +1,7 @@
 use tauri::Manager;
 
 use crate::injection::injection_runner;
-use std::{time::Duration, sync::Arc};
+use std::{sync::Arc, time::Duration};
 
 // Global "is injected" var
 static mut IS_READY: bool = false;
@@ -22,14 +22,12 @@ pub fn inject_routine(win: tauri::Window) {
     IS_READY = true;
     println!("JS context ready!");
 
-    let win = evt_app
-      .get_window("main");
+    let win = evt_app.get_window("main");
 
     // Set window.dorion to true in the window
     if let Some(win) = win {
-      win.eval("window.dorion = true")
-        .unwrap_or_default();
-      
+      win.eval("window.dorion = true").unwrap_or_default();
+
       injection_runner::do_injection(win);
     }
   });
@@ -47,11 +45,11 @@ pub fn inject_routine(win: tauri::Window) {
       // Send javascript that sends the "initial_inject" event
       //
       // If it succeeds, that means the web context is ready
-      let win = app
-        .get_window("main");
-        
+      let win = app.get_window("main");
+
       if let Some(win) = win {
-        win.eval("!window.dorion && window.__TAURI__.event.emit('initial_inject')")
+        win
+          .eval("!window.dorion && window.__TAURI__.event.emit('initial_inject')")
           .unwrap_or_default();
       }
 
