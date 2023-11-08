@@ -131,6 +131,7 @@ fn main() {
       release::update_check,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
+      init::inject_routine,
       injection_runner::do_injection,
       injection_runner::get_injection_js,
       injection_runner::is_injected,

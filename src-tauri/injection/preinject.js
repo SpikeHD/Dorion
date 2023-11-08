@@ -1,7 +1,7 @@
 const TITLE = 'Dorion'
 
 window.onbeforeunload = () => {
-  window.__TAURI__.invoke('do_injection')
+  window.__TAURI__.invoke('inject_routine')
 }
 
 // Needs to be done ASAP

@@ -39,7 +39,6 @@ pub fn do_injection(window: tauri::Window) {
     window.eval(script).unwrap_or(());
   }
 
-  // Gotta make sure the window location is where it needs to be
   std::thread::spawn(move || {
     let injection_js = PREINJECT.clone();
 
@@ -70,10 +69,13 @@ pub fn load_injection_js(
   contents: String,
   plugins: HashMap<String, String>,
 ) {
-  eval_js_imports(&window, imports);
-  window.eval(contents.as_str()).unwrap_or(());
+  // Tauri is always not injected when we call this
+  unsafe {
+    TAURI_INJECTED = false;
+  }
 
-  periodic_injection_check(window, contents, plugins);
+  // This is a seperate call as the JS will hang otherwise
+  periodic_injection_check(window, imports, contents, plugins);
 }
 
 #[tauri::command]
@@ -85,6 +87,7 @@ pub fn is_injected() {
 
 fn periodic_injection_check(
   window: tauri::Window,
+  imports: Vec<String>,
   injection_code: String,
   plugins: HashMap<String, String>,
 ) {
@@ -97,6 +100,9 @@ fn periodic_injection_check(
       if is_injected {
         // We are injected! Start the streamer mode watcher
         start_streamer_mode_watcher(window.clone());
+
+        // First we need to eval imports
+        eval_js_imports(&window, imports);
 
         // After running our injection code, we can iterate through the plugins and load them as well
         for (name, script) in &plugins {
