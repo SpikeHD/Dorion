@@ -43,11 +43,14 @@ pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String
   let plugins_dir = get_plugin_dir();
 
   let plugin_folders = fs::read_dir(&plugins_dir)
-    .map_err(|e| format!("Error reading directory: {}", e.to_string()))?;
+    .map_err(|e| format!("Error reading directory: {}", e))?;
 
   for entry in plugin_folders {
-    let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e.to_string()))?;
-    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e.to_string()))?;
+    let full_path =
+      entry.map_err(|e| format!("Error reading directory entry: {}", e))?;
+    let meta = full_path
+      .metadata()
+      .map_err(|e| format!("Error getting metadata: {}", e))?;
 
     let name = full_path.file_name();
     let name_str = name.to_str().unwrap_or_default();
@@ -58,7 +61,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String
       }
 
       let contents = fs::read_to_string(full_path.path())
-        .map_err(|e| format!("Error reading file: {}", e.to_string()))?;
+        .map_err(|e| format!("Error reading file: {}", e))?;
 
       plugin_list.insert(format!("{:?}", name), contents);
     }
@@ -85,14 +88,14 @@ pub fn get_plugin_list() -> Result<Vec<Plugin>, String> {
   let mut plugin_list: Vec<Plugin> = Vec::new();
 
   let plugin_folders = fs::read_dir(&plugins_dir)
-    .map_err(|e| format!("Error reading directory: {}", e.to_string()))?;
+    .map_err(|e| format!("Error reading directory: {}", e))?;
 
   for entry in plugin_folders {
-    let full_path = entry
-      .map_err(|e| format!("Error reading directory entry: {}", e.to_string()))?;
+    let full_path =
+      entry.map_err(|e| format!("Error reading directory entry: {}", e))?;
     let meta = full_path
       .metadata()
-      .map_err(|e| format!("Error getting metadata: {}", e.to_string()))?;
+      .map_err(|e| format!("Error getting metadata: {}", e))?;
 
     if !meta.is_dir() {
       let name = full_path.file_name();
@@ -128,11 +131,14 @@ pub fn get_plugin_list() -> Result<Vec<Plugin>, String> {
 #[tauri::command]
 pub fn toggle_plugin(name: String) -> Result<bool, String> {
   let plugins_dir = get_plugin_dir();
-  let folders = fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+  let folders =
+    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for path in folders {
     let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e))?;
+    let meta = full_path
+      .metadata()
+      .map_err(|e| format!("Error getting metadata: {}", e))?;
     let file_name_os = full_path.file_name();
     let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
 
@@ -167,11 +173,14 @@ pub fn toggle_plugin(name: String) -> Result<bool, String> {
 #[tauri::command]
 pub fn toggle_preload(name: String) -> Result<bool, String> {
   let plugins_dir = get_plugin_dir();
-  let folders = fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+  let folders =
+    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for path in folders {
     let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path.metadata().map_err(|e| format!("Error getting metadata: {}", e))?;
+    let meta = full_path
+      .metadata()
+      .map_err(|e| format!("Error getting metadata: {}", e))?;
     let file_name_os = full_path.file_name();
     let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
 

@@ -67,12 +67,14 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
 
       if ptt_held && !ptt_state {
         // Do PTT
-        win.emit("ptt_toggle", PTTEvent { state: true })
+        win
+          .emit("ptt_toggle", PTTEvent { state: true })
           .unwrap_or_else(|_| println!("Error sending PTT event!"));
         ptt_state = true;
       } else if ptt_state && !ptt_held {
         // Stop PTT
-        win.emit("ptt_toggle", PTTEvent { state: false })
+        win
+          .emit("ptt_toggle", PTTEvent { state: false })
           .unwrap_or_else(|_| println!("Error sending PTT toggle event!"));
         ptt_state = false;
       }

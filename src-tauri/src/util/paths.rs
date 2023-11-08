@@ -2,16 +2,13 @@ use std::{fs, path::PathBuf};
 
 use tauri::Manager;
 
-use crate::config::get_config;
 use super::helpers::move_injection_scripts;
+use crate::config::get_config;
 
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   if fs::metadata(&local_config_dir).is_ok() {
     return local_config_dir;
@@ -45,10 +42,7 @@ pub fn get_config_dir() -> PathBuf {
 
 pub fn config_is_local() -> bool {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   fs::metadata(local_config_dir).is_ok()
 }
@@ -56,10 +50,7 @@ pub fn config_is_local() -> bool {
 pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
   // First check for a local injection dir
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_inject_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("injection");
+  let local_inject_dir = current_exe.parent().unwrap().join("injection");
 
   if fs::metadata(&local_inject_dir).is_ok() {
     return local_inject_dir;
@@ -96,10 +87,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
 
 pub fn injection_is_local() -> bool {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_inject_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("injection");
+  let local_inject_dir = current_exe.parent().unwrap().join("injection");
 
   fs::metadata(local_inject_dir).is_ok()
 }
@@ -107,10 +95,7 @@ pub fn injection_is_local() -> bool {
 pub fn get_plugin_dir() -> std::path::PathBuf {
   // First check for a local plugin dir
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_plugin_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("plugins");
+  let local_plugin_dir = current_exe.parent().unwrap().join("plugins");
 
   if fs::metadata(&local_plugin_dir).is_ok() {
     return local_plugin_dir;
@@ -146,10 +131,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
 pub fn get_theme_dir() -> std::path::PathBuf {
   // First see if there is a local theme dir
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_theme_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("themes");
+  let local_theme_dir = current_exe.parent().unwrap().join("themes");
 
   if fs::metadata(&local_theme_dir).is_ok() {
     return local_theme_dir;
@@ -197,17 +179,11 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
 pub fn profiles_dir() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   // Check for local/portable file paths
   if local_config_dir.exists() {
-    let profile_folder = local_config_dir
-      .parent()
-      .unwrap()
-      .join("profiles");
+    let profile_folder = local_config_dir.parent().unwrap().join("profiles");
 
     return profile_folder;
   }
@@ -227,17 +203,11 @@ pub fn get_webdata_dir() -> PathBuf {
 
 pub fn updater_dir(win: &tauri::Window) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe
-    .parent()
-    .unwrap()
-    .join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   if fs::metadata(local_config_dir).is_ok() {
     // This is a portable install, so we can use the local injection dir
-    return current_exe
-      .parent()
-      .unwrap()
-      .join("updater");
+    return current_exe.parent().unwrap().join("updater");
   }
 
   win

@@ -94,9 +94,12 @@ pub fn delete_profile(name: String) {
   }
 
   // Set config to "default"
-  let mut config: Config = serde_json::from_str(&crate::config::read_config_file()).expect("Failed to read config file!");
+  let mut config: Config =
+    serde_json::from_str(&crate::config::read_config_file()).expect("Failed to read config file!");
 
   config.profile = Some("default".to_string());
 
-  crate::config::write_config_file(serde_json::to_string(&config).expect("Failed to convert config to string!"));
+  crate::config::write_config_file(
+    serde_json::to_string(&config).expect("Failed to convert config to string!"),
+  );
 }

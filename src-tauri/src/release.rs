@@ -79,19 +79,22 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   win.emit("update_complete", ()).unwrap_or_default();
 }
 
-pub async fn maybe_latest_injection_release() -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
+pub async fn maybe_latest_injection_release(
+) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
   let client = reqwest::Client::new();
-  let response = client.get(url)
-      .header("User-Agent", "Dorion")
-      .send()
-      .await?;
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .await?;
   let text = response.text().await?;
 
   // Parse "sha" from JSON
   let json: serde_json::Value = serde_json::from_str(&text)?;
-  let sha = json["sha"].as_str()
-      .ok_or("Failed to extract 'sha' from JSON")?;
+  let sha = json["sha"]
+    .as_str()
+    .ok_or("Failed to extract 'sha' from JSON")?;
 
   // Read previous version from shelter.version
   let mut path = get_injection_dir(None);
@@ -102,25 +105,29 @@ pub async fn maybe_latest_injection_release() -> Result<bool, Box<dyn std::error
   Ok(sha != previous_version)
 }
 
-pub async fn maybe_latest_main_release(win: &tauri::Window) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
+pub async fn maybe_latest_main_release(
+  win: &tauri::Window,
+) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
   let client = reqwest::Client::new();
-  let response = client.get(url)
-      .header("User-Agent", "Dorion")
-      .send()
-      .await?;
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .await?;
   let text = response.text().await?;
 
   // Parse "tag_name" from JSON
   let json: serde_json::Value = serde_json::from_str(&text)?;
-  let tag_name = json["tag_name"].as_str()
-      .ok_or("Failed to extract 'tag_name' from JSON")?;
+  let tag_name = json["tag_name"]
+    .as_str()
+    .ok_or("Failed to extract 'tag_name' from JSON")?;
 
   let handle = win.app_handle();
   let app_version = &handle.package_info().version;
   let version_str = format!(
-      "v{}.{}.{}",
-      app_version.major, app_version.minor, app_version.patch
+    "v{}.{}.{}",
+    app_version.major, app_version.minor, app_version.patch
   );
 
   Ok(tag_name != version_str)

@@ -4,25 +4,23 @@
 )]
 
 use std::time::Duration;
-
-use auto_launch::*;
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
 
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
-use tauri::{
-  CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  Window, WindowBuilder,
-};
 use util::{
   helpers, notifications,
   paths::get_webdata_dir,
   process,
-  window_helpers::{self, clear_cache_check, window_zoom_level},
+  window_helpers::{self, clear_cache_check},
 };
 
-use crate::util::{helpers::move_injection_scripts, paths::injection_is_local};
+use crate::{
+  functionality::window::{after_build, setup_autostart},
+  util::{helpers::move_injection_scripts, paths::injection_is_local},
+};
 
 mod config;
 mod deep_link;
@@ -108,9 +106,9 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
-      minimize,
-      maximize,
-      close,
+      functionality::window::minimize,
+      functionality::window::maximize,
+      functionality::window::close,
       should_disable_plugins,
       css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
@@ -157,10 +155,10 @@ fn main() {
           return;
         }
 
-        maybe_clear_cache();
+        functionality::cache::maybe_clear_cache();
       }
       tauri::WindowEvent::Destroyed { .. } => {
-        maybe_clear_cache();
+        functionality::cache::maybe_clear_cache();
       }
       _ => {}
     })
@@ -206,6 +204,7 @@ fn main() {
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
+        // Prevent flickering by starting hidden, and show later
         .visible(false)
         .build()?;
 
@@ -219,22 +218,9 @@ fn main() {
         move_injection_scripts(&win, false);
       }
 
-      modify_window(&win);
+      after_build(&win);
 
       setup_autostart(app);
-
-      #[cfg(not(target_os = "macos"))]
-      hotkeys::start_hotkey_watcher(win.clone());
-
-      // Deep link registry
-      if !config.multi_instance.unwrap_or(false) {
-        deep_link::register_deep_link_handler(win.clone());
-      }
-
-      // Prevent flickering by starting hidden, and only showing once we are ready
-      win.show().unwrap_or_default();
-
-      init::inject_routine(win);
 
       Ok(())
     })
@@ -244,110 +230,5 @@ fn main() {
   // Join threads
   if let Some(rpc_thread) = rpc_thread {
     rpc_thread.join().unwrap();
-  }
-}
-
-// Minimize
-#[tauri::command]
-fn minimize(win: Window) {
-  win.minimize().unwrap_or_default();
-}
-
-// Maximize
-#[tauri::command]
-fn maximize(win: Window) {
-  win.maximize().unwrap_or_default();
-}
-
-// Close
-#[tauri::command]
-fn close(win: Window) {
-  // Ensure we minimize to tray if the config calls for it
-  if get_config().sys_tray.unwrap_or(false) {
-    win.hide().unwrap_or_default();
-  } else {
-    win.close().unwrap_or_default();
-  }
-}
-
-/**
- * Applies various window modifications, most being platform-dependent
- */
-fn modify_window(window: &Window) {
-  let startup = std::env::args().any(|arg| arg == "--startup");
-
-  // If we are opening on startup (which we know from the --startup arg), check to minimize the window
-  if startup && get_config().startup_minimized.unwrap_or(false) {
-    window.hide().unwrap_or_default();
-  }
-
-  if get_config().start_maximized.unwrap_or(false) {
-    window.maximize().unwrap_or_default();
-  }
-
-  // It should start with decorations on
-  window.set_decorations(true).unwrap_or_default();
-
-  // Set user-agent through WebkitGTK config
-  #[cfg(target_os = "linux")]
-  {
-    window.with_webview(|webview| {
-      use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt};
-
-      let wv = webview.inner();
-      let wv = wv.as_ref();
-      let settings = WebViewExt::settings(wv).unwrap_or_default();
-
-      settings.set_user_agent(Some("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"));
-
-      // We also need to manually ask for permission to use the microphone and camera
-      wv.connect_permission_request(|_, req| {
-        req.allow();
-        true
-      });
-    }).unwrap_or_else(|_| println!("Failed to set user-agent"));
-  }
-
-  window_zoom_level(window, None);
-}
-
-fn setup_autostart(app: &mut tauri::App) {
-  let app_name = &app.package_info().name;
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let exe_str = current_exe.to_str().unwrap_or_default();
-
-  // if the string is empty, just return
-  if exe_str.is_empty() {
-    return;
-  }
-
-  let autolaunch = match AutoLaunchBuilder::new()
-    .set_app_name(app_name)
-    .set_app_path(exe_str)
-    .set_use_launch_agent(true)
-    .set_args(&["--startup"])
-    .build()
-  {
-    Ok(autolaunch) => autolaunch,
-    Err(_) => return,
-  };
-
-  let should_enable = get_config().open_on_startup.unwrap_or(false);
-
-  autolaunch.enable().unwrap_or_default();
-
-  if !should_enable {
-    autolaunch.disable().unwrap_or_default();
-  }
-
-  println!(
-    "Autolaunch enabled: {}",
-    autolaunch.is_enabled().unwrap_or_default()
-  );
-}
-
-fn maybe_clear_cache() {
-  if get_config().auto_clear_cache.unwrap_or(false) {
-    functionality::cache::clear_cache();
   }
 }

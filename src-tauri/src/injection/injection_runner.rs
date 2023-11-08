@@ -150,9 +150,7 @@ fn periodic_injection_check(
 }
 
 pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
-  let path = get_injection_dir(
-    Some(&app.get_window("main").unwrap())
-  ).join("browser.js");
+  let path = get_injection_dir(Some(&app.get_window("main").unwrap())).join("browser.js");
 
   match fs::read_to_string(path) {
     Ok(f) => f,

@@ -34,3 +34,9 @@ pub fn clear_cache() {
 
 #[cfg(not(target_os = "windows"))]
 pub fn clear_cache() {}
+
+pub fn maybe_clear_cache() {
+  if get_config().auto_clear_cache.unwrap_or(false) {
+    clear_cache();
+  }
+}
