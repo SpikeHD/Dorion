@@ -6,11 +6,13 @@ on:
       - '.github/workflows/build.yml'
       - 'src-tauri/**/*'
       - 'src/**/*'
+      - 'updater/**/*'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
       - 'src-tauri/**/*'
       - 'src/**/*'
+      - 'updater/**/*'
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
