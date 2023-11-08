@@ -239,11 +239,15 @@ async function ensurePlugins() {
     attempt()
   })
 
+  console.log('[Ensure Plugins] Got plugin store! Getting installed plugins...')
+
   // Finally, we can get all of the keys and values of the plugins
   const installed = await new Promise(r => {
     const req = pluginStore.getAll()
     req.onsuccess = () => r(req.result)
   })
+
+  console.log('[Ensure Plugins] Got installed plugins!')
 
   // Mark plugins as installed or not installed
   for (const [name, _plugin] of Object.entries(requiredPlugins)) {
@@ -253,6 +257,8 @@ async function ensurePlugins() {
       requiredPlugins[name].installed = true
     }
   }
+
+  console.log('[Ensure Plugins] Plugins not installed: ', Object.entries(requiredPlugins).filter(([name, plugin]) => !plugin.installed).map(([name, _plugin]) => name))
 
   // Now iterate the plugins that are not installed, and install them
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
@@ -275,13 +281,15 @@ async function ensurePlugins() {
     }
   }
 
+  // eslint-disable-next-line no-undef
+  console.log('[Esnure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())
+
   // In case all of our weird stuff made shelter freak out, check loadedPlugins(). If it's undefined, load them
   // eslint-disable-next-line no-undef
   if (!shelter.plugins.loadedPlugins()) {
+    console.log('[Ensure Plugins] Plugins not loaded, loading...')
     // eslint-disable-next-line no-undef
     for (const plugin in shelter.plugins.installedPlugins()) {
-      if (!plugin.on) break;
-
       // eslint-disable-next-line no-undef
       await shelter.plugins.startPlugin(plugin)?.catch(e => console.error(e))
     }
