@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
+env:
+  CARGO_INCREMENTAL: 0
+
 jobs:
   tsc-eslint-checks:
     runs-on: ubuntu-latest

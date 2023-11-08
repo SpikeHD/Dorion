@@ -18,6 +18,9 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
+env:
+  CARGO_INCREMENTAL: 0
+
 jobs:
   build:
     runs-on: ${{ matrix.platform }}
