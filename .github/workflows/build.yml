@@ -91,7 +91,7 @@ jobs:
         run: mkdir src-tauri/target/release/plugins && mkdir src-tauri/target/release/themes
 
       - name: Create empty config.json
-        run: cd src-tauri/target/release && echo {} >> config.json
+        run: cd src-tauri/target/release && echo {} > config.json
         
       # paths:
       # Windows:
