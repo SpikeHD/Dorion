@@ -154,7 +154,8 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Webpack stuff
 * [x] Global push-to-talk
 * [x] Rich presence(?)
-  * [ ] FULL rich presence 
+  * [ ] FULL rich presence
+* [ ] Custom keybinds
 * [ ] Helper API methods and events for plugins
 * [x] Backup localized themes
 * [x] Localization timeout
