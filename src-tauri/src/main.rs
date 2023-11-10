@@ -5,6 +5,7 @@
 
 use std::time::Duration;
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
+use tauri_plugin_window_state::{WindowExt, StateFlags};
 
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
@@ -106,10 +107,10 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
+      should_disable_plugins,
       functionality::window::minimize,
       functionality::window::maximize,
       functionality::window::close,
-      should_disable_plugins,
       css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
       js_preprocess::localize_all_js,
@@ -148,17 +149,6 @@ fn main() {
       window_helpers::set_clear_cache,
     ])
     .on_window_event(|event| match event.event() {
-      tauri::WindowEvent::CloseRequested { api, .. } => {
-        // Close to tray if the config calls for it
-        if get_config().sys_tray.unwrap_or(false) {
-          event.window().hide().unwrap_or_default();
-          api.prevent_close();
-
-          return;
-        }
-
-        functionality::cache::maybe_clear_cache();
-      }
       tauri::WindowEvent::Destroyed { .. } => {
         functionality::cache::maybe_clear_cache();
       }
@@ -219,6 +209,9 @@ fn main() {
       if !injection_is_local() {
         move_injection_scripts(&win, false);
       }
+
+      // restore state BEFORE after_build, since that may change the window
+      win.restore_state(StateFlags::all()).unwrap_or_default();
 
       after_build(&win);
 

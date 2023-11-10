@@ -1,4 +1,6 @@
 use auto_launch::AutoLaunchBuilder;
+use tauri::Manager;
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use tauri::Window;
 
 use crate::config::get_config;
@@ -22,6 +24,10 @@ pub fn maximize(win: Window) {
 // Close
 #[tauri::command]
 pub fn close(win: Window) {
+  // Save window state
+  let app = win.app_handle();
+  app.save_window_state(StateFlags::all()).unwrap_or_default();
+  
   // Ensure we minimize to tray if the config calls for it
   if get_config().sys_tray.unwrap_or(false) {
     win.hide().unwrap_or_default();
