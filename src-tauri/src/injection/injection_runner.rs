@@ -12,6 +12,7 @@ static mut TAURI_INJECTED: bool = false;
 
 flate!(static INJECTION: str from "./injection/injection_min.js");
 flate!(static PREINJECT: str from "./injection/preinject_min.js");
+flate!(static FALLBACK_MOD: str from "./injection/browser.js");
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
@@ -161,9 +162,10 @@ pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
   match fs::read_to_string(path) {
     Ok(f) => f,
     Err(e) => {
-      println!("Failed to read browser.js in resource dir: {}", e);
-
-      String::new()
+      println!("Failed to read browser.js in resource dir, using fallback: {}", e);
+      
+      // Send fallback instead
+      FALLBACK_MOD.clone()
     }
   }
 }
