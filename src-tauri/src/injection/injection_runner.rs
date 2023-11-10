@@ -15,7 +15,7 @@ flate!(static PREINJECT: str from "./injection/preinject_min.js");
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
-  let theme_rxg = Regex::new(r"/\* __THEMES__ \*/").unwrap();
+  let theme_rxg = Regex::new(r"/\*! __THEMES__ \*/").unwrap();
   let injection_js = INJECTION.clone();
   let rewritten_all = theme_rxg
     .replace_all(injection_js.as_str(), theme_js)
