@@ -1,12 +1,57 @@
 use tauri::{api::notification, Manager};
 
 #[tauri::command]
-pub fn send_notification(win: tauri::Window, title: String, body: String) {
+pub fn send_notification(win: tauri::Window, title: String, body: String, icon: String) {
+  // Write the result of the icon
+  let client = reqwest::blocking::Client::new();
+  let mut res = match client.get(&icon).send() {
+    Ok(res) => res,
+    Err(_) => {
+      send_notification_internal(win, title, body, String::new());
+      return;
+    }
+  };
+
+  // Then write it to a temp file
+  let mut tmp_file = std::env::temp_dir();
+  tmp_file.push("dorion_notif_icon.png");
+
+  let file = match std::fs::File::create(&tmp_file) {
+    Ok(file) => file,
+    Err(_) => {
+      send_notification_internal(win, title, body, String::new());
+      return;
+    }
+  };
+
+  // Write the file
+  match std::io::copy(&mut res, &mut std::io::BufWriter::new(file)) {
+    Ok(_) => {}
+    Err(_) => {
+      send_notification_internal(win, title, body, String::new());
+      return;
+    }
+  }
+
+  // Create file:// uri
+  #[cfg(target_os = "windows")]
+  let mut icon_path = String::from("file:///");
+
+  #[cfg(not(target_os = "windows"))]
+  let mut icon_path = String::from("file://");
+
+  icon_path.push_str(&tmp_file.to_str().unwrap_or_default().replace("\\", "/"));
+
+  send_notification_internal(win, title, body, icon_path);
+}
+
+fn send_notification_internal(win: tauri::Window, title: String, body: String, icon: String) {
   let app = win.app_handle();
 
   notification::Notification::new(&app.config().tauri.bundle.identifier)
     .title(title)
     .body(body)
+    .icon(icon)
     .notify(&app)
     .unwrap_or_default();
 }
