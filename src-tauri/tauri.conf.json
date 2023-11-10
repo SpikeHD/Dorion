@@ -17,6 +17,25 @@
     },
     "allowlist": {
       "all": true,
+      "fs": {
+        "all": false
+      },
+      "os": {
+        "all": false
+      },
+      "process": {
+        "all": false,
+        "exit": false,
+        "relaunch": true,
+        "relaunchDangerousAllowSymlinkMacos": false
+      },
+      "shell": {
+        "all": false,
+        "execute": false,
+        "open": true,
+        "scope": [],
+        "sidecar": false
+      },
       "http": {
         "scope": [
           "https://**/*",
