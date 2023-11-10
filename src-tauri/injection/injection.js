@@ -198,15 +198,6 @@ async function ensurePlugins() {
     }
   }
 
-  // if we are on MacOS, also add the voice fix to prevent perm spam
-  if (await window.__TAURI__.invoke('get_platform') === 'macos') {
-    requiredPlugins['Dorion Voice Fix'] = {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-voice-fix/',
-      installed: false,
-      required: true,
-    }
-  }
-
   // Welcome to another SpikeHD "hack a thing til it works no matter how terrible the solution is". This time featuring: my lack of desire to maintain a modified Shelter fork!
   // Read from the "plugins-data" indexedDb
   const shelterDB = await new Promise(r => {
