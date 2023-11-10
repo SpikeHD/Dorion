@@ -309,7 +309,13 @@ pub fn update_main() {
   let mut release_name = String::new();
 
   for name in release.release_names {
-    if name.ends_with(".dmg") {
+    let arch = if cfg!(target_arch = "x86_64") {
+      "x64"
+    } else {
+      "aarch64"
+    };
+
+    if name.ends_with(".dmg") && name.contains(arch) {
       release_name = name;
       break;
     }
