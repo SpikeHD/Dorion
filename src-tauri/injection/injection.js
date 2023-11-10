@@ -290,8 +290,11 @@ async function ensurePlugins() {
     console.log('[Ensure Plugins] Plugins not loaded, loading...')
     // eslint-disable-next-line no-undef
     for (const plugin in shelter.plugins.installedPlugins()) {
-      // eslint-disable-next-line no-undef
-      await shelter.plugins.startPlugin(plugin)?.catch(e => console.error(e))
+      // If its required, start it
+      if (requiredPlugins[plugin]?.required) {
+        // eslint-disable-next-line no-undef
+        await shelter.plugins.startPlugin(plugin)?.catch(e => console.error(e))
+      }
     }
   }
 }
