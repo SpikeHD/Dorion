@@ -48,11 +48,21 @@ pub fn config_is_local() -> bool {
 }
 
 pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
-  // First check for a local injection dir
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_inject_dir = current_exe.parent().unwrap().join("injection");
+  // Check if config is local, and if so, create (if needed) and use local injection dir
+  if config_is_local() {
+    let current_exe = std::env::current_exe().unwrap_or_default();
+    let local_inject_dir = current_exe.parent().unwrap().join("injection");
 
-  if fs::metadata(&local_inject_dir).is_ok() {
+    if fs::metadata(&local_inject_dir).is_err() {
+      match fs::create_dir_all(&local_inject_dir) {
+        Ok(()) => (),
+        Err(e) => {
+          println!("Error creating local injection dir: {}", e);
+          return local_inject_dir;
+        }
+      };
+    }
+
     return local_inject_dir;
   }
 
