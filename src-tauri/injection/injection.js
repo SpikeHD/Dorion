@@ -66,6 +66,8 @@ function maximize() {
 }
 
 async function createTopBar() {
+  if (document.querySelector('#dorion_topbar')) return
+
   const topbar = document.createElement("div");
   const content = await window.__TAURI__.invoke('get_top_bar')
     .catch(e => console.error("Error reading top bar: ", e));
@@ -74,6 +76,7 @@ async function createTopBar() {
   if (!content) return;
 
   topbar.innerHTML = content
+  topbar.id = "dorion_topbar"
 
   const appMount = await waitForApp()
 
