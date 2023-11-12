@@ -198,6 +198,7 @@ fn main() {
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
         .visible(false)
+        .decorations(true)
         .build()?;
 
       // If safemode is enabled, stop here

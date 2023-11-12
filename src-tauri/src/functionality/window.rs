@@ -51,17 +51,21 @@ pub fn after_build(window: &Window) {
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
-  if !startup || !get_config().startup_minimized.unwrap_or(false) {
+  if !startup && !get_config().startup_minimized.unwrap_or(false) {
     // Now that we are ready, and shouldn't start minimized, show the window
     window.show().unwrap_or_default();
+  } else if get_config().startup_minimized.unwrap_or(false) {
+    // Depending on whether we have "close to system tray" enabled, we either minimize or hide
+    if get_config().sys_tray.unwrap_or(false) {
+      window.hide().unwrap_or_default();
+    } else {
+      window.minimize().unwrap_or_default();
+    }
   }
 
   if get_config().start_maximized.unwrap_or(false) {
     window.maximize().unwrap_or_default();
   }
-
-  // It should start with decorations on
-  window.set_decorations(true).unwrap_or_default();
 
   // Set user-agent through WebkitGTK config
   #[cfg(target_os = "linux")]
