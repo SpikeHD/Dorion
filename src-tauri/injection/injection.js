@@ -66,8 +66,6 @@ function maximize() {
 }
 
 async function createTopBar() {
-  if (document.querySelector('#dorion_topbar')) return
-
   const topbar = document.createElement("div");
   const content = await window.__TAURI__.invoke('get_top_bar')
     .catch(e => console.error("Error reading top bar: ", e));
@@ -80,7 +78,7 @@ async function createTopBar() {
 
   const appMount = await waitForApp()
 
-  if (!appMount) return
+  if (!appMount || document.querySelector('#dorion_topbar')) return
 
   appMount.prepend(topbar);
 
