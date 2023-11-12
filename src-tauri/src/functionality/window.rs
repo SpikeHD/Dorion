@@ -41,29 +41,30 @@ pub fn close(win: Window) {
  */
 pub fn after_build(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
+  let config = get_config();
 
   #[cfg(not(target_os = "macos"))]
   hotkeys::start_hotkey_watcher(window.clone());
 
   // Deep link registry
-  if !get_config().multi_instance.unwrap_or(false) {
+  if !config.multi_instance.unwrap_or(false) {
     deep_link::register_deep_link_handler(window.clone());
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
-  if !startup && !get_config().startup_minimized.unwrap_or(false) {
+  if !startup && !config.startup_minimized.unwrap_or(false) {
     // Now that we are ready, and shouldn't start minimized, show the window
     window.show().unwrap_or_default();
-  } else if get_config().startup_minimized.unwrap_or(false) {
+  } else if startup && get_config().startup_minimized.unwrap_or(false) {
     // Depending on whether we have "close to system tray" enabled, we either minimize or hide
-    if get_config().sys_tray.unwrap_or(false) {
+    if config.sys_tray.unwrap_or(false) {
       window.hide().unwrap_or_default();
     } else {
       window.minimize().unwrap_or_default();
     }
   }
 
-  if get_config().start_maximized.unwrap_or(false) {
+  if config.start_maximized.unwrap_or(false) {
     window.maximize().unwrap_or_default();
   }
 
