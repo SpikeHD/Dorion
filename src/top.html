@@ -1,8 +1,7 @@
-<div data-tauri-drag-region id="topbar">
-  <div id="topleft">
+<div id="topbar" data-tauri-drag-region>
+  <div id="topleft" data-tauri-drag-region>
     <!-- This will get filled in with JS -->
-    <span id="topsymbol">{}</span>
-    <span id="dorion_version">Dorion</span>
+    <span id="dorion_version" data-tauri-drag-region>Dorion</span>
   </div>
   <div id="topright">
     <!-- These SVGS where taken from https://www.iconpacks.net/ -->
@@ -195,11 +194,6 @@
     color: var(--text-normal);
   }
 
-  #topsymbol {
-    padding-right: 10px;
-    color: var(--text-muted);
-  }
-
   #topleft {
     display: flex;
     flex-direction: row;
@@ -207,6 +201,8 @@
     align-items: center;
     padding: 6px;
     padding-left: 10px;
+    font-family: monospace;
+    font-size: 1rem;
   }
 
   #topright {
