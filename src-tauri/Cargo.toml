@@ -33,7 +33,7 @@ sysinfo = "0.29.10"
 auto-launch = "0.5.0"
 
 # rpc server
-rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", branch = "0.5.1" }
+rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", branch = "0.7.0" }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "0.18.2"

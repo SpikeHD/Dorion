@@ -93,15 +93,6 @@ fn main() {
   let safemode = std::env::args().any(|arg| arg == "--safemode");
   println!("Safemode enabled: {}", safemode);
 
-  // Begin the RPC server
-  let mut rpc_thread = None;
-
-  if get_config().rpc_server.unwrap_or(false) {
-    rpc_thread = Some(std::thread::spawn(|| {
-      functionality::rpc::start_rpc_server();
-    }));
-  }
-
   #[allow(clippy::single_match)]
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -214,6 +205,14 @@ fn main() {
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
 
+      // begin the RPC server if needed
+      if get_config().rpc_server.unwrap_or(false) {
+        let win_cln = win.clone();
+        std::thread::spawn(|| {
+          functionality::rpc::start_rpc_server(win_cln);
+        });
+      }
+
       after_build(&win);
 
       setup_autostart(app);
@@ -222,9 +221,4 @@ fn main() {
     })
     .run(context)
     .expect("error while running tauri application");
-
-  // Join threads
-  if let Some(rpc_thread) = rpc_thread {
-    rpc_thread.join().unwrap();
-  }
 }
