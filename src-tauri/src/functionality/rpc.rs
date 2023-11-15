@@ -1,7 +1,10 @@
+use rsrpc::{
+  detection::{DetectableActivity, Executable},
+  RPCServer,
+};
 use std::sync::{Arc, Mutex};
-use rsrpc::{detection::{DetectableActivity, Executable}, RPCServer};
+use sysinfo::{PidExt, ProcessExt, System, SystemExt};
 use window_titles::ConnectionTrait;
-use sysinfo::{System, SystemExt, ProcessExt, PidExt};
 
 #[derive(Clone, serde::Deserialize)]
 struct Payload {
@@ -25,7 +28,9 @@ pub fn start_rpc_server(win: tauri::Window) {
   .expect("Failed to get text from response");
 
   // This accepts both a `&str` or a `String`
-  let server = Arc::new(Mutex::new(RPCServer::from_json_str(detectable).expect("Failed to start RPC server")));
+  let server = Arc::new(Mutex::new(
+    RPCServer::from_json_str(detectable).expect("Failed to start RPC server"),
+  ));
   let evt_server = server.clone();
 
   // When the "add_detectable" event is emitted, add the detectable to the server
@@ -55,12 +60,15 @@ pub fn start_rpc_server(win: tauri::Window) {
       #[cfg(target_os = "macos")]
       os: "darwin".to_string(),
 
-      arguments: None
+      arguments: None,
     }]);
 
     detectable.name = payload.name.clone();
 
-    evt_server.lock().unwrap().append_detectables(vec![detectable]);
+    evt_server
+      .lock()
+      .unwrap()
+      .append_detectables(vec![detectable]);
   });
 
   server.lock().unwrap().start();
@@ -126,9 +134,10 @@ pub fn get_windows() -> Vec<Window> {
       Window {
         title: w.title,
         pid: w.pid,
-        process_name
+        process_name,
       }
-    }).collect();
+    })
+    .collect();
 
   windows
 }

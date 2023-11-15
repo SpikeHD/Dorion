@@ -162,8 +162,11 @@ pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
   match fs::read_to_string(path) {
     Ok(f) => f,
     Err(e) => {
-      println!("Failed to read browser.js in resource dir, using fallback: {}", e);
-      
+      println!(
+        "Failed to read browser.js in resource dir, using fallback: {}",
+        e
+      );
+
       // Send fallback instead
       FALLBACK_MOD.clone()
     }

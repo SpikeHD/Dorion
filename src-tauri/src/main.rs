@@ -5,7 +5,7 @@
 
 use std::time::Duration;
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
-use tauri_plugin_window_state::{WindowExt, StateFlags};
+use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{injection_runner, local_html, plugin, theme};
