@@ -1,10 +1,26 @@
 use std::sync::{Arc, Mutex};
 use rsrpc::{detection::{DetectableActivity, Executable}, RPCServer};
+use window_titles::ConnectionTrait;
 
 #[derive(Clone, serde::Deserialize)]
 struct Payload {
   name: String,
   exe: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Window {
+  title: String,
+  pid: u32,
+}
+
+impl Window {
+  pub fn from(window: window_titles::Window) -> Self {
+    Self {
+      title: window.title,
+      pid: window.pid,
+    }
+  }
 }
 
 pub fn start_rpc_server(win: tauri::Window) {
@@ -93,4 +109,16 @@ fn blank_activity() -> DetectableActivity {
     pid: None,
     timestamp: None,
   }
+}
+
+#[tauri::command]
+pub fn get_windows() -> Vec<Window> {
+  let conn = window_titles::Connection::new().expect("Failed to connect to window titles");
+  let windows: Vec<Window> = conn
+    .window_titles()
+    .unwrap_or(vec![])
+    .into_iter()
+    .map(|w| Window::from(w)).collect();
+
+  windows
 }

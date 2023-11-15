@@ -121,6 +121,7 @@ fn main() {
       profiles::delete_profile,
       release::do_update,
       release::update_check,
+      functionality::rpc::get_windows,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
       init::inject_routine,
