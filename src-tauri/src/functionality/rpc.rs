@@ -120,7 +120,7 @@ pub fn get_windows() -> Vec<Window> {
       let process_name = if let Some(proc) = proc {
         proc.name().to_string()
       } else {
-        format!("Unknown - {}", w.pid)
+        format!("Unknown ({})", w.pid)
       };
 
       Window {
