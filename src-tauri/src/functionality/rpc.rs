@@ -111,7 +111,7 @@ fn blank_activity() -> DetectableActivity {
   }
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_windows() -> Vec<Window> {
   let conn = window_titles::Connection::new().expect("Failed to connect to window titles");
   let windows: Vec<Window> = conn
