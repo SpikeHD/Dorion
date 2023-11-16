@@ -18,7 +18,7 @@ pub fn inject_routine(win: tauri::Window) {
     }
   }
 
-  win.once("initial_inject", move |_| unsafe {
+  win.listen("initial_inject", move |_| unsafe {
     IS_READY = true;
     println!("JS context ready!");
 
