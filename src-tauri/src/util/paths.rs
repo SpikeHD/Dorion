@@ -226,3 +226,21 @@ pub fn updater_dir(win: &tauri::Window) -> PathBuf {
     .resolve_resource(PathBuf::from("updater"))
     .unwrap_or_default()
 }
+
+pub fn custom_detectables_path() -> PathBuf {
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
+
+  if fs::metadata(local_config_dir).is_ok() {
+    // This is a portable install, so we can use the local injection dir
+    return current_exe.parent().unwrap().join("detectables.json");
+  }
+
+  #[cfg(target_os = "windows")]
+  let appdata = dirs::data_dir().unwrap_or_default();
+
+  #[cfg(not(target_os = "windows"))]
+  let appdata = dirs::config_dir().unwrap_or_default();
+
+  appdata.join("dorion").join("detectables.json")
+}
