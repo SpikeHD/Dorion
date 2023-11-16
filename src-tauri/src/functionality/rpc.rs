@@ -109,39 +109,20 @@ pub fn start_rpc_server(win: tauri::Window) {
 }
 
 fn blank_activity() -> DetectableActivity {
-  DetectableActivity {
-    bot_public: None,
-    bot_require_code_grant: None,
-    cover_image: None,
-    description: None,
-    developers: None,
-    executables: None,
-    flags: None,
-    guild_id: None,
-    hook: false,
-    icon: None,
-    id: "null".to_string(),
-    name: "".to_string(),
-    publishers: vec![],
-    rpc_origins: vec![],
-    splash: None,
-    summary: "".to_string(),
-    third_party_skus: vec![],
-    type_field: None,
-    verify_key: "".to_string(),
-    primary_sku_id: None,
-    slug: None,
-    aliases: vec![],
-    overlay: None,
-    overlay_compatibility_hook: None,
-    privacy_policy_url: None,
-    terms_of_service_url: None,
-    eula_id: None,
-    deeplink_uri: None,
-    tags: vec![],
-    pid: None,
-    timestamp: None,
+  serde_json::from_str::<DetectableActivity>(r#"
+  {
+    "bot_public": true,
+    "bot_require_code_grant": false,
+    "description": "",
+    "executables": [],
+    "name": "",
+    "flags": 0,
+    "hook": true,
+    "id": "1337",
+    "summary": "",
+    "type": 1
   }
+  "#).unwrap()
 }
 
 #[tauri::command(async)]
