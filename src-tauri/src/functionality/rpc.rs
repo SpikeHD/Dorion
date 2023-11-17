@@ -21,6 +21,7 @@ pub struct Window {
   pid: u32,
 }
 
+#[tauri::command]
 pub fn get_local_detectables() -> Vec<DetectableActivity> {
   let path = custom_detectables_path();
 

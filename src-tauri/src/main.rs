@@ -122,6 +122,7 @@ fn main() {
       release::do_update,
       release::update_check,
       functionality::rpc::get_windows,
+      functionality::rpc::get_local_detectables,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
       init::inject_routine,
