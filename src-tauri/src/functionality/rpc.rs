@@ -107,8 +107,8 @@ pub fn start_rpc_server(win: tauri::Window) {
       exe: String::from(""),
     });
     
-    // We only care about the exe
-    if payload.exe.is_empty() {
+    // We only care about the name
+    if payload.name.is_empty() {
       return;
     }
 
@@ -118,15 +118,7 @@ pub fn start_rpc_server(win: tauri::Window) {
     let new_detectables: Vec<DetectableActivity> = local_detectables
       .into_iter()
       .filter(|d| {
-        if let Some(exes) = &d.executables {
-          for exe in exes {
-            if exe.name == payload.exe {
-              return false;
-            }
-          }
-        }
-
-        true
+        d.name == payload.name
       })
       .collect();
 
