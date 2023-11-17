@@ -100,6 +100,41 @@ pub fn start_rpc_server(win: tauri::Window) {
     evt_server.lock().unwrap().scan_for_processes();
   });
 
+  win.listen("remove_detectable", |event| {
+    let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
+      name: String::from(""),
+      exe: String::from(""),
+    });
+    
+    // We only care about the exe
+    if payload.exe.is_empty() {
+      return;
+    }
+
+    let local_detectables = get_local_detectables();
+
+    // Remove the detectable from the local file
+    let new_detectables: Vec<DetectableActivity> = local_detectables
+      .into_iter()
+      .filter(|d| {
+        if let Some(exes) = &d.executables {
+          for exe in exes {
+            if exe.name == payload.exe {
+              return false;
+            }
+          }
+        }
+
+        true
+      })
+      .collect();
+
+      // Write back to file
+      let path = custom_detectables_path();
+
+      std::fs::write(path, serde_json::to_string(&new_detectables).unwrap_or_default()).unwrap_or_default();
+  });
+
   server.lock().unwrap().start();
 
   // Add any local custom detectables
