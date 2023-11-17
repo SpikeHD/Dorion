@@ -16,7 +16,7 @@ let observer = new MutationObserver(() => {
     console.log('Discord is loaded!')
 
     // This needs to render after discord is loaded
-    if (!window.DorionConfig.use_native_titlebar) createTopBar()
+    if (!window.DorionConfig.use_native_titlebar && !document.querySelector('#dorion_topbar')) createTopBar()
 
     onClientLoad()
 
@@ -151,13 +151,14 @@ function notifGetter() {
   })
 }
 
-function applyExtraCSS() {
+async function applyExtraCSS() {
   const { invoke } = window.__TAURI__
-  invoke('get_extra_css').then(css => {
-    const style = document.createElement('style')
-    style.innerHTML = css
-    document.head.appendChild(style)
-  }).catch(e => console.error("Error reading extra CSS: ", e))
+  const css = await invoke('get_extra_css')
+  const style = document.createElement('style')
+
+  style.innerHTML = css
+
+  document.head.appendChild(style)
 }
 
 async function ensurePlugins() {
@@ -259,7 +260,7 @@ async function ensurePlugins() {
     }
   }
 
-  console.log('[Ensure Plugins] Plugins not installed: ', Object.entries(requiredPlugins).filter(([name, plugin]) => !plugin.installed).map(([name, _plugin]) => name))
+  console.log('[Ensure Plugins] Plugins not installed: ', Object.entries(requiredPlugins).filter(([_name, plugin]) => !plugin.installed).map(([name, _plugin]) => name))
 
   // Now iterate the plugins that are not installed, and install them
   for (const [name, plugin] of Object.entries(requiredPlugins)) {
