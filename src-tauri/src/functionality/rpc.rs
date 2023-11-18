@@ -60,7 +60,8 @@ pub fn start_rpc_server(win: tauri::Window) {
   let server = Arc::new(Mutex::new(
     RPCServer::from_json_str(detectable).expect("Failed to start RPC server"),
   ));
-  let evt_server = server.clone();
+  let add_server = server.clone();
+  let remove_server = server.clone();
 
   // When the "add_detectable" event is emitted, add the detectable to the server
   win.listen("add_detectable", move |event| {
@@ -97,11 +98,11 @@ pub fn start_rpc_server(win: tauri::Window) {
     // Save the detectable to the local file
     append_to_local(vec![detectable.clone()]);
 
-    evt_server.lock().unwrap().append_detectables(vec![detectable]);
-    evt_server.lock().unwrap().scan_for_processes();
+    add_server.lock().unwrap().append_detectables(vec![detectable]);
+    add_server.lock().unwrap().scan_for_processes();
   });
 
-  win.listen("remove_detectable", |event| {
+  win.listen("remove_detectable", move |event| {
     let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
       name: String::from(""),
       exe: String::from(""),
@@ -112,13 +113,16 @@ pub fn start_rpc_server(win: tauri::Window) {
       return;
     }
 
+    // Remove from rsRPC instance
+    remove_server.lock().unwrap().remove_detectable_by_name(payload.name.clone());
+
     let local_detectables = get_local_detectables();
 
     // Remove the detectable from the local file
     let new_detectables: Vec<DetectableActivity> = local_detectables
       .into_iter()
       .filter(|d| {
-        d.name == payload.name
+        d.name != payload.name
       })
       .collect();
 
