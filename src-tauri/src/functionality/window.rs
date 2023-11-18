@@ -67,13 +67,17 @@ pub fn after_build(window: &Window) {
   #[cfg(target_os = "linux")]
   {
     window.with_webview(|webview| {
-      use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt};
+      use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
 
       let wv = webview.inner();
       let wv = wv.as_ref();
       let settings = WebViewExt::settings(wv).unwrap_or_default();
 
       settings.set_user_agent(Some("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"));
+
+      if config.disable_hardware_accel.unwrap_or(false) {
+        settings.set_hardware_acceleration_policy(HardwareAccelerationPolicy::Never);
+      }
 
       // We also need to manually ask for permission to use the microphone and camera
       wv.connect_permission_request(|_, req| {
