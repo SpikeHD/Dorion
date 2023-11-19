@@ -66,7 +66,7 @@ pub fn after_build(window: &Window) {
   // Set user-agent through WebkitGTK config
   #[cfg(target_os = "linux")]
   {
-    window.with_webview(|webview| {
+    window.with_webview(move |webview| {
       use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
 
       let wv = webview.inner();
