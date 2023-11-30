@@ -272,6 +272,9 @@ async function ensurePlugins() {
       requiredPlugins[name].installed = true
     }
   }
+  
+  // Wait a second before checking for loaded plugins
+  await new Promise(r => setTimeout(r, 1000))
 
   const isPluginOn = (p) => installed.find(plugin => plugin.manifest.name === p)?.on
 
@@ -283,8 +286,6 @@ async function ensurePlugins() {
     }
   }
 
-  // Wait a second before checking for loaded plugins
-  await new Promise(r => setTimeout(r, 1000))
 
   // eslint-disable-next-line no-undef
   console.log('[Ensure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())
