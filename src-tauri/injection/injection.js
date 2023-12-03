@@ -272,7 +272,7 @@ async function ensurePlugins() {
       requiredPlugins[name].installed = true
     }
   }
-  
+
   // Wait a second before checking for loaded plugins
   await new Promise(r => setTimeout(r, 1000))
 
@@ -285,7 +285,6 @@ async function ensurePlugins() {
       await shelter.plugins.startPlugin(name)?.catch(e => console.error(e))
     }
   }
-
 
   // eslint-disable-next-line no-undef
   console.log('[Ensure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())

@@ -18,7 +18,10 @@
     "allowlist": {
       "all": true,
       "fs": {
-        "all": false
+        "all": false,
+        "scope": [
+          "$RESOURCE/**/*"
+        ]
       },
       "os": {
         "all": false
