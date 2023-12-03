@@ -44,6 +44,12 @@
           "https://**/*",
           "http://**/*"
         ]
+      },
+      "path": {
+        "all": true
+      },
+      "notification": {
+        "all": true
       }
     },
     "bundle": {
@@ -68,7 +74,7 @@
         "signingIdentity": null
       },
       "resources": [
-        "injection/browser.js",
+        "injection/shelter.js",
         "icons/icon*.ico",
         "icons/icon_macos.png",
         "updater*"

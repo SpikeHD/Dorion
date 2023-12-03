@@ -1,6 +1,6 @@
 use include_flate::flate;
 use std::{collections::HashMap, fs, thread, time::Duration};
-use tauri::{regex::Regex, Manager};
+use tauri::regex::Regex;
 
 use super::plugin;
 use crate::{
@@ -12,7 +12,7 @@ static mut TAURI_INJECTED: bool = false;
 
 flate!(static INJECTION: str from "./injection/injection_min.js");
 flate!(static PREINJECT: str from "./injection/preinject_min.js");
-flate!(static FALLBACK_MOD: str from "./injection/browser.js");
+flate!(static FALLBACK_MOD: str from "./injection/shelter.js");
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
@@ -54,7 +54,7 @@ pub fn do_injection(window: tauri::Window) {
     };
 
     // Run Shelter's preinject script
-    match window.eval(&get_client_mod_js_content(&window.app_handle())) {
+    match window.eval(&get_client_mod_js_content(&window)) {
       Ok(r) => r,
       Err(e) => {
         println!("Error evaluating client mod preinject: {}", e)
@@ -156,14 +156,14 @@ fn periodic_injection_check(
   });
 }
 
-pub fn get_client_mod_js_content(app: &tauri::AppHandle) -> String {
-  let path = get_injection_dir(Some(&app.get_window("main").unwrap())).join("browser.js");
+pub fn get_client_mod_js_content(win: &tauri::Window) -> String {
+  let path = get_injection_dir(Some(&win)).join("shelter.js");
 
   match fs::read_to_string(path) {
     Ok(f) => f,
     Err(e) => {
       println!(
-        "Failed to read browser.js in resource dir, using fallback: {}",
+        "Failed to read shelter.js in resource dir, using fallback: {}",
         e
       );
 

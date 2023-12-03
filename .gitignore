@@ -25,8 +25,7 @@ dist-ssr
 
 src-tauri/injection/injection_min.js
 src-tauri/injection/preinject_min.js
-src-tauri/injection/browser.js
-src-tauri/injection/browser.css
+src-tauri/injection/shelter.js
 
 src-tauri/html
 

@@ -92,6 +92,15 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
     };
   }
 
+  // Check if "shelter.js" exists in the dir
+  let injection_js = injection_dir.join("shelter.js");
+
+  if fs::metadata(&injection_js).is_err() && win.is_some() {
+    println!("Moving injection scripts");
+
+    move_injection_scripts(win.unwrap(), true);
+  }
+
   injection_dir
 }
 

@@ -57,7 +57,7 @@ pub fn get_platform() -> &'static str {
 }
 
 pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
-  let injection_dir = get_injection_dir(Some(win));
+  let injection_dir = get_injection_dir(None);
 
   let packaged_injection_dir = win
     .app_handle()
