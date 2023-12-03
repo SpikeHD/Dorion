@@ -157,7 +157,7 @@ fn periodic_injection_check(
 }
 
 pub fn get_client_mod_js_content(win: &tauri::Window) -> String {
-  let path = get_injection_dir(Some(&win)).join("shelter.js");
+  let path = get_injection_dir(Some(win)).join("shelter.js");
 
   match fs::read_to_string(path) {
     Ok(f) => f,

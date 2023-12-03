@@ -45,7 +45,11 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
   let path = custom_detectables_path();
 
   // Write back to file
-  std::fs::write(path, serde_json::to_string(&local_detectables).unwrap_or_default()).unwrap_or_default();
+  std::fs::write(
+    path,
+    serde_json::to_string(&local_detectables).unwrap_or_default(),
+  )
+  .unwrap_or_default();
 }
 
 pub fn start_rpc_server(win: tauri::Window) {
@@ -98,7 +102,10 @@ pub fn start_rpc_server(win: tauri::Window) {
     // Save the detectable to the local file
     append_to_local(vec![detectable.clone()]);
 
-    add_server.lock().unwrap().append_detectables(vec![detectable]);
+    add_server
+      .lock()
+      .unwrap()
+      .append_detectables(vec![detectable]);
     add_server.lock().unwrap().scan_for_processes();
   });
 
@@ -107,41 +114,52 @@ pub fn start_rpc_server(win: tauri::Window) {
       name: String::from(""),
       exe: String::from(""),
     });
-    
+
     // We only care about the name
     if payload.name.is_empty() {
       return;
     }
 
     // Remove from rsRPC instance
-    remove_server.lock().unwrap().remove_detectable_by_name(payload.name.clone());
+    remove_server
+      .lock()
+      .unwrap()
+      .remove_detectable_by_name(payload.name.clone());
 
     let local_detectables = get_local_detectables();
 
     // Remove the detectable from the local file
     let new_detectables: Vec<DetectableActivity> = local_detectables
       .into_iter()
-      .filter(|d| {
-        d.name != payload.name
-      })
+      .filter(|d| d.name != payload.name)
       .collect();
 
-      // Write back to file
-      let path = custom_detectables_path();
+    // Write back to file
+    let path = custom_detectables_path();
 
-      std::fs::write(path, serde_json::to_string(&new_detectables).unwrap_or_default()).unwrap_or_default();
+    std::fs::write(
+      path,
+      serde_json::to_string(&new_detectables).unwrap_or_default(),
+    )
+    .unwrap_or_default();
   });
 
   server.lock().unwrap().start();
 
   // Add any local custom detectables
-  server.lock().unwrap().append_detectables(get_local_detectables());
+  server
+    .lock()
+    .unwrap()
+    .append_detectables(get_local_detectables());
 
-  loop {}
+  loop {
+    std::thread::sleep(std::time::Duration::from_millis(10));
+  }
 }
 
 fn blank_activity() -> DetectableActivity {
-  serde_json::from_str::<DetectableActivity>(r#"
+  serde_json::from_str::<DetectableActivity>(
+    r#"
   {
     "bot_public": true,
     "bot_require_code_grant": false,
@@ -154,7 +172,9 @@ fn blank_activity() -> DetectableActivity {
     "summary": "",
     "type": 1
   }
-  "#).unwrap()
+  "#,
+  )
+  .unwrap()
 }
 
 #[tauri::command(async)]
@@ -166,7 +186,7 @@ pub fn get_windows() -> Vec<Window> {
 
   let windows: Vec<Window> = conn
     .window_titles()
-    .unwrap_or(vec![])
+    .unwrap_or_default()
     .into_iter()
     .map(|w| {
       let proc = system.process(sysinfo::Pid::from_u32(w.pid));

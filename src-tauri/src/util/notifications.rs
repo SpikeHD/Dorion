@@ -4,7 +4,7 @@ use tauri::{api::notification, Manager};
 pub fn send_notification(win: tauri::Window, title: String, body: String, icon: String) {
   // Write the result of the icon
   let client = reqwest::blocking::Client::new();
-  let mut res = match client.get(&icon).send() {
+  let mut res = match client.get(icon).send() {
     Ok(res) => res,
     Err(_) => {
       send_notification_internal(win, title, body, String::new());
@@ -40,7 +40,7 @@ pub fn send_notification(win: tauri::Window, title: String, body: String, icon: 
   #[cfg(not(target_os = "windows"))]
   let mut icon_path = String::from("file://");
 
-  icon_path.push_str(&tmp_file.to_str().unwrap_or_default().replace("\\", "/"));
+  icon_path.push_str(&tmp_file.to_str().unwrap_or_default().replace('\\', "/"));
 
   send_notification_internal(win, title, body, icon_path);
 }

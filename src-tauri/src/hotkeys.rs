@@ -19,7 +19,7 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
   unsafe {
     PTT_KEYS = crate::config::get_config()
       .push_to_talk_keys
-      .unwrap_or(vec![]);
+      .unwrap_or_default();
     PTT_ENABLED = crate::config::get_config().push_to_talk.unwrap_or(false);
   }
 
