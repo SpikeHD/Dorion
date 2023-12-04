@@ -209,6 +209,7 @@ fn main() {
 
       // If safemode is enabled, stop here
       if safemode {
+        win.show();
         return Ok(());
       }
 
