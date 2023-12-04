@@ -209,7 +209,7 @@ fn main() {
 
       // If safemode is enabled, stop here
       if safemode {
-        win.show();
+        win.show().unwrap_or_default();
         return Ok(());
       }
 
