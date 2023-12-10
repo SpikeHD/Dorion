@@ -186,6 +186,13 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
     let url = groups.get(1).unwrap().as_str();
     let filetype = url.split('.').last().unwrap();
 
+    // SVGs require the filetype to be svg+xml because they're special I guess
+    let filetype = if filetype == "svg" {
+      "svg+xml"
+    } else {
+      filetype
+    };
+
     // CORS allows discord media
     if url.is_empty()
       || url.contains(".css")
