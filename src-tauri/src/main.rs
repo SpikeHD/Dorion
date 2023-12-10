@@ -15,12 +15,12 @@ use util::{
   helpers, notifications,
   paths::get_webdata_dir,
   process,
-  window_helpers::{self, clear_cache_check},
+  window_helpers::{self, clear_cache_check}, logger::log,
 };
 
 use crate::{
   functionality::window::{after_build, setup_autostart},
-  util::{helpers::move_injection_scripts, paths::injection_is_local},
+  util::{helpers::move_injection_scripts, paths::injection_is_local, logger},
 };
 
 mod config;
@@ -50,6 +50,10 @@ fn should_disable_plugins() -> bool {
 fn main() {
   // Ensure config is created
   config::init();
+
+  // ALso init logging
+  logger::init(true);
+
   let config = get_config();
 
   std::thread::sleep(Duration::from_millis(200));
@@ -104,7 +108,7 @@ fn main() {
 
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
-  println!("Safemode enabled: {}", safemode);
+  log(format!("Safemode enabled: {}", safemode));
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()

@@ -6,6 +6,7 @@ use super::plugin;
 use crate::{
   functionality::streamer_mode::start_streamer_mode_watcher,
   processors::js_preprocess::eval_js_imports, util::paths::get_injection_dir,
+  util::logger::log,
 };
 
 static mut TAURI_INJECTED: bool = false;
@@ -30,7 +31,7 @@ pub fn do_injection(window: tauri::Window) {
   let preload_plugins = match plugin::load_plugins(Option::Some(true)) {
     Ok(p) => p,
     Err(e) => {
-      println!("Error loading plugins: {}", e);
+      log(format!("Error loading plugins: {}", e));
       HashMap::new()
     }
   };
@@ -43,13 +44,13 @@ pub fn do_injection(window: tauri::Window) {
   std::thread::spawn(move || {
     let injection_js = PREINJECT.clone();
 
-    println!("Injecting...");
+    log(format!("Injecting..."));
 
     // Exec our injection js
     match window.eval(injection_js.as_str()) {
       Ok(r) => r,
       Err(e) => {
-        println!("Error evaluating preinject: {}", e)
+        log(format!("Error evaluating preinject: {}", e))
       }
     };
 
@@ -57,7 +58,7 @@ pub fn do_injection(window: tauri::Window) {
     match window.eval(&get_client_mod_js_content(&window)) {
       Ok(r) => r,
       Err(e) => {
-        println!("Error evaluating client mod preinject: {}", e)
+        log(format!("Error evaluating client mod preinject: {}", e))
       }
     };
   });

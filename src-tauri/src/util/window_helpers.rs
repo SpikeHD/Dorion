@@ -1,4 +1,5 @@
 use crate::config::get_config;
+use crate::util::logger::log;
 
 use super::paths::get_webdata_dir;
 
@@ -41,7 +42,7 @@ pub fn clear_cache() {
   let webdata_dir = get_webdata_dir();
 
   if webdata_dir.exists() {
-    println!("Deleting cache...");
+    log(format!("Deleting cache..."));
     std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
   }
 }

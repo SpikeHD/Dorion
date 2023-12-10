@@ -1,4 +1,5 @@
 use tauri::{api::notification, Manager};
+use crate::util::logger::log;
 
 #[tauri::command]
 pub fn send_notification(win: tauri::Window, title: String, body: String, icon: String) {
@@ -111,7 +112,7 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
 
 #[tauri::command]
 pub fn notif_count(window: tauri::Window, amount: u16) {
-  println!("Setting notification count: {}", amount);
+  log(format!("Setting notification count: {}", amount));
 
   #[cfg(target_os = "macos")]
   unsafe {

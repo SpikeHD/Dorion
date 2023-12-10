@@ -2,6 +2,7 @@ use device_query::{DeviceQuery, DeviceState, Keycode};
 use std::{thread, time::Duration};
 
 use crate::config;
+use crate::util::logger::log;
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
@@ -69,13 +70,13 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
         // Do PTT
         win
           .emit("ptt_toggle", PTTEvent { state: true })
-          .unwrap_or_else(|_| println!("Error sending PTT event!"));
+          .unwrap_or_else(|_| log(format!("Error sending PTT event!")));
         ptt_state = true;
       } else if ptt_state && !ptt_held {
         // Stop PTT
         win
           .emit("ptt_toggle", PTTEvent { state: false })
-          .unwrap_or_else(|_| println!("Error sending PTT toggle event!"));
+          .unwrap_or_else(|_| log(format!("Error sending PTT toggle event!")));
         ptt_state = false;
       }
 

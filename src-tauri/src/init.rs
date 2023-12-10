@@ -1,7 +1,8 @@
 use tauri::Manager;
+use std::{sync::Arc, time::Duration};
 
 use crate::injection::injection_runner;
-use std::{sync::Arc, time::Duration};
+use crate::util::logger::log;
 
 // Global "is injected" var
 static mut IS_READY: bool = false;
@@ -20,7 +21,7 @@ pub fn inject_routine(win: tauri::Window) {
 
   win.once("initial_inject", move |_| unsafe {
     IS_READY = true;
-    println!("JS context ready!");
+    log(format!("JS context ready!"));
 
     let win = evt_app.get_window("main");
 
@@ -40,7 +41,7 @@ pub fn inject_routine(win: tauri::Window) {
         }
       }
 
-      println!("JS context not ready...");
+      log(format!("JS context not ready..."));
 
       // Send javascript that sends the "initial_inject" event
       //

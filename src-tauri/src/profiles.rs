@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use crate::{
   config::{get_config, Config},
   util::paths::profiles_dir,
+  util::logger::log,
 };
 
 pub fn init_profiles_folders() {
@@ -35,13 +36,13 @@ pub fn get_profile_list() -> Vec<String> {
           if let Some(profile_name) = file_name.to_str() {
             profiles.push(profile_name.to_string());
           } else {
-            eprintln!("Failed to convert file name to a valid UTF-8 string");
+            log(format!("Failed to convert file name to a valid UTF-8 string"));
           }
         } else {
-          eprintln!("Failed to retrieve file name");
+          log(format!("Failed to retrieve file name"));
         }
       } else {
-        eprintln!("Path is not a directory");
+        log(format!("Path is not a directory"));
       }
     }
   }
@@ -72,7 +73,7 @@ pub fn create_profile(name: String) {
 
   if !new_profile_folder.exists() {
     std::fs::create_dir_all(new_profile_folder).unwrap_or_else(|_| {
-      eprintln!("Failed to create profile folder!");
+      log(format!("Failed to create profile folder!"));
     });
   }
 }
@@ -89,7 +90,7 @@ pub fn delete_profile(name: String) {
 
   if profile_folder.exists() {
     std::fs::remove_dir_all(profile_folder).unwrap_or_else(|_| {
-      eprintln!("Failed to delete profile folder!");
+      log(format!("Failed to delete profile folder!"));
     });
   }
 

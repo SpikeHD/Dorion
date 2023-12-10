@@ -1,23 +1,24 @@
 use tauri::Manager;
 
 use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
+use crate::util::logger::log;
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
-  println!("Checking for updates...");
+  log(format!("Checking for updates..."));
 
   let injection_rel = maybe_latest_injection_release().await;
   let main_rel = maybe_latest_main_release(&win).await;
 
   if injection_rel.is_ok() && injection_rel.unwrap() {
-    println!("Available update for Shelter!");
+    log(format!("Available update for Shelter!"));
     to_update.push("Shelter".to_string());
   }
 
   if main_rel.is_ok() && main_rel.unwrap() {
-    println!("Available update for Dorion!");
+    log(format!("Available update for Dorion!"));
     to_update.push("dorion".to_string());
   }
 
@@ -34,12 +35,12 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
     let arg_str = match injection_path.into_os_string().into_string() {
       Ok(s) => s,
       Err(_) => {
-        eprintln!("Failed to convert injection path to string!");
+        log(format!("Failed to convert injection path to string!"));
         return;
       }
     };
 
-    println!("Updating Shelter...");
+    log(format!("Updating Shelter..."));
 
     updater.arg(String::from("--shelter"));
     updater.arg(arg_str);
@@ -47,7 +48,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
   #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
-    println!("Updating Dorion...");
+    log(format!("Updating Dorion..."));
 
     updater.arg(String::from("--main"));
     updater.arg(String::from("true"));
@@ -62,7 +63,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let mut process = match updater.spawn() {
     Ok(p) => p,
     Err(e) => {
-      eprintln!("Failed to spawn updater process: {}", e);
+      log(format!("Failed to spawn updater process: {}", e));
       return;
     }
   };
@@ -71,7 +72,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   match process.wait() {
     Ok(_) => (),
     Err(e) => {
-      eprintln!("Failed to wait for updater process: {}", e);
+      log(format!("Failed to wait for updater process: {}", e));
       return;
     }
   }

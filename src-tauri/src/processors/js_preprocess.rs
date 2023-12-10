@@ -1,3 +1,5 @@
+use crate::util::logger::log;
+
 pub async fn localize_js(url: String) -> String {
   if url.is_empty() {
     return String::new();
@@ -6,8 +8,8 @@ pub async fn localize_js(url: String) -> String {
   let response = match reqwest::get(&url).await {
     Ok(r) => r,
     Err(e) => {
-      println!("Request failed: {}", e);
-      println!("URL: {}", &url);
+      log(format!("Request failed: {}", e));
+      log(format!("URL: {}", &url));
 
       return String::new();
     }
@@ -32,7 +34,7 @@ pub fn eval_js_imports(window: &tauri::Window, scripts: Vec<String>) {
     match window.eval(script.as_str()) {
       Ok(r) => r,
       Err(e) => {
-        println!("Error evaluating import: {}", e)
+        log(format!("Error evaluating import: {}", e))
       }
     };
   }

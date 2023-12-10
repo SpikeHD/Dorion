@@ -4,6 +4,7 @@ use tauri::Manager;
 
 use super::helpers::move_injection_scripts;
 use crate::config::get_config;
+use crate::util::logger::log;
 
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
@@ -14,7 +15,7 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  println!("No local config file found. Using default.");
+  log(format!("No local config file found. Using default."));
 
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
@@ -57,7 +58,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
       match fs::create_dir_all(&local_inject_dir) {
         Ok(()) => (),
         Err(e) => {
-          println!("Error creating local injection dir: {}", e);
+          log(format!("Error creating local injection dir: {}", e));
           return local_inject_dir;
         }
       };
@@ -86,7 +87,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
         move_injection_scripts(win.unwrap(), true);
       }
       Err(e) => {
-        println!("Error creating injection dir: {}", e);
+        log(format!("Error creating injection dir: {}", e));
         return injection_dir;
       }
     };
@@ -100,7 +101,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
       return injection_dir;
     }
 
-    println!("Moving injection scripts");
+    log(format!("Moving injection scripts"));
 
     move_injection_scripts(win, true);
   }
@@ -124,7 +125,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     return local_plugin_dir;
   }
 
-  println!("No local plugin dir found. Using default.");
+  log(format!("No local plugin dir found. Using default."));
 
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
@@ -142,7 +143,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&plugin_dir) {
       Ok(()) => (),
       Err(e) => {
-        println!("Error creating plugins dir: {}", e);
+        log(format!("Error creating plugins dir: {}", e));
         return plugin_dir;
       }
     };
@@ -160,7 +161,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     return local_theme_dir;
   }
 
-  println!("No local theme dir found. Using default.");
+  log(format!("No local theme dir found. Using default."));
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()
@@ -178,7 +179,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&theme_dir) {
       Ok(()) => (),
       Err(e) => {
-        println!("Error creating theme dir: {}", e);
+        log(format!("Error creating theme dir: {}", e));
         return theme_dir;
       }
     };
@@ -191,7 +192,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&cache_dir) {
       Ok(()) => (),
       Err(e) => {
-        println!("Error creating theme cache dir: {}", e);
+        log(format!("Error creating theme cache dir: {}", e));
         return theme_dir;
       }
     };
@@ -256,4 +257,22 @@ pub fn custom_detectables_path() -> PathBuf {
   let appdata = dirs::config_dir().unwrap_or_default();
 
   appdata.join("dorion").join("detectables.json")
+}
+
+pub fn log_file_path() -> PathBuf {
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let local_config_dir = current_exe.parent().unwrap().join("config.json");
+
+  if fs::metadata(local_config_dir).is_ok() {
+    // This is a portable install, so we can use the local injection dir
+    return current_exe.parent().unwrap().join("logs").join("latest.log");
+  }
+
+  #[cfg(target_os = "windows")]
+  let appdata = dirs::data_dir().unwrap_or_default();
+
+  #[cfg(not(target_os = "windows"))]
+  let appdata = dirs::config_dir().unwrap_or_default();
+
+  appdata.join("dorion").join("logs").join("latest.log")
 }

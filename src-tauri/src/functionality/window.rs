@@ -6,6 +6,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::deep_link;
 use crate::hotkeys;
+use crate::util::logger::log;
 use crate::init;
 use crate::util::window_helpers::window_zoom_level;
 
@@ -84,7 +85,7 @@ pub fn after_build(window: &Window) {
         req.allow();
         true
       });
-    }).unwrap_or_else(|_| println!("Failed to set user-agent"));
+    }).unwrap_or_else(|_| log(format!("Failed to set user-agent")));
   }
 
   window_zoom_level(window, None);

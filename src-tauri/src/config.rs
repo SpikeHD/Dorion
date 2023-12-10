@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 
 use crate::util::paths::get_config_dir;
+use crate::util::logger::log;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -84,8 +85,8 @@ pub fn get_config() -> Config {
   match serde_json::from_str(config_str) {
     Ok(config) => config,
     Err(e) => {
-      println!("Failed to parse config, using default config!");
-      println!("Error: {}", e);
+      log(format!("Failed to parse config, using default config!"));
+      log(format!("Error: {}", e));
 
       default_config()
     }
