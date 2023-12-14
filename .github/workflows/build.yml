@@ -106,7 +106,7 @@ jobs:
       # Ubuntu:
       # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|icons
       # MacOS:
-      # - src-tauri/target/universal-apple-darwin/release/bundle/macos/Dorion.app
+      # - src-tauri/target/[arch]/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
         if: matrix.platform == 'windows-latest'
         run: 7z a -tzip Dorion.zip 
@@ -125,7 +125,7 @@ jobs:
       # Windows portable
       - name: (Windows) Upload portable
         if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_win64_portable
           path: Dorion.zip
@@ -133,7 +133,7 @@ jobs:
       # Windows MSI
       - name: (Windows) Upload .msi
         if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Dorion_win64_msi
           path: src-tauri/target/release/bundle/msi/*.msi
@@ -141,7 +141,7 @@ jobs:
       # Ubuntu portable
       - name: (Linux) Upload portable
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_portable
           path: src-tauri/target/release/dorion.tar.gz
@@ -149,21 +149,21 @@ jobs:
       # Ubuntu deb
       - name: (Linux) Upload .deb
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_deb
           path: src-tauri/target/release/bundle/deb/*.deb
 
       - name: (Linux) Upload .appimage
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_appimage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
 
       - name: (MacOS) Upload .dmg
         if: matrix.platform == 'macos-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_macos_dmg
           path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
