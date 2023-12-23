@@ -1,43 +1,9 @@
+if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 const TITLE = 'Dorion'
 
-window.onbeforeunload = () => {
-  window.__TAURI__.invoke('inject_routine')
-}
-
-// Needs to be done ASAP
-// interceptEventListeners()
-
-function safemodeTimer(elm) {
-  setTimeout(() => {
-    elm.classList.add('show')
-  }, 10000)
-
-  const tmpKeydown = (evt) => {
-    // If loading container doesn't exist, we made it through and should stop watching key events
-    if (!document.querySelector('#loadingContainer')) {
-      document.removeEventListener('keydown', tmpKeydown)
-      return
-    }
-
-    // If spacebar, remove #loadingContainer
-    if (evt.code === 'Space') {
-      document.querySelector('#loadingContainer')?.remove()
-    }
-
-    // If F, open plugins folder
-    if (evt.code === 'KeyF') {
-      window.__TAURI__.invoke('open_themes')
-    }
-  }
-  
-  document.addEventListener('keydown', tmpKeydown)
-}
-
-/**
- * This is a bunch of scaffolding stuff that is run before the actual injection script is run.
- * This will localize imports for JS and CSS, as well as some other things
- */
-(async () => {
+// Check if window.__TAURI__ is available, if not, wait for it to be available
+// This is to prevent the script from running before Tauri is ready
+;(async () => {
   // Set useragent to be Chrome as it is closest to what we actually are
   Object.defineProperty(navigator, 'userAgent', {
     get: () => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
@@ -46,20 +12,34 @@ function safemodeTimer(elm) {
   createLocalStorage()
   proxyFetch()
 
-  await displayLoadingTop()
-
-  const { invoke, event } = window.__TAURI__
-  let config = {}
-  
-  try {
-    config = JSON.parse(await invoke('read_config_file'))
-  } catch(e) {
-    console.log('Error reading config.')
+  while (!window.__TAURI__) {
+    console.log('Waiting for definition...')
+    await new Promise(resolve => setTimeout(resolve, 100))
   }
 
-  window.DorionConfig = config
+  if (window.__DORION_INITIALIZED__) return
 
-  // If there is an issue with the config, we need to recreate a default one
+  console.log('__TAURI__ defined! Let\'s do this')
+
+  // Make window.open become window.__TAURI__.shell.open
+  window.open = (url) => window.__TAURI__.shell.open(url)
+
+  // Check if the app is already initialized
+  if (window.__DORION_INITIALIZED__) return
+
+  // Set the app as initialized
+  window.__DORION_INITIALIZED__ = true
+
+  init()
+})()
+
+async function init() {
+  const { invoke, event } = window.__TAURI__
+  const config = await invoke('read_config_file')
+
+  window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : null
+
+  // Recreate config if there is an issue
   if (!config) {
     const defaultConf = await invoke('default_config')
     // Write
@@ -67,89 +47,57 @@ function safemodeTimer(elm) {
       config: defaultConf
     })
 
-    config = JSON.parse(defaultConf)
+    window.__DORION_CONFIG__ = JSON.parse(defaultConf)
   }
 
-  // Make window.open become window.__TAURI__.shell.open
-  window.open = (url) => window.__TAURI__.shell.open(url)
+  if (window.__DORION_CONFIG__.block_telemetry) blockTelemetry()
+
+  // Run a couple other background tasks before we begin the main stuff
+  invoke('start_streamer_mode_watcher')
+  invoke('inject_client_mod')
 
   const plugins = await invoke('load_plugins')
-    .catch(e => console.error("Error reading plugins: ", e));
+    .catch(e => console.error("Error reading plugins: ", e))
   const version = await window.__TAURI__.app.getVersion()
-  const midtitle = document.querySelector('#midtitle')
-  const subtitle = document.querySelector('#subtitle')
-  const safemode = document.querySelector('#safemode')
-  const logs = document.querySelector('#logContainer')
 
-  // Start safemode timer and event listener right away, just in case
-  safemodeTimer(safemode)
-  
-  if (subtitle) subtitle.innerHTML = `Made with ❤️ by SpikeHD - v${version}`
+  updateOverlay({
+    subtitle: `Made with ❤️ by SpikeHD - v${version}`,
+    midtitle: 'Localizing JS imports...'
+  })
 
   typingAnim()
-  
-  if (midtitle) midtitle.innerHTML = "Localizing JS imports..."
 
   let importUrls = []
 
   // Iterate through the values of "plugins" (which is all of the plugin JS)
   for (const js in Object.values(plugins)) {
-    importUrls = [ ...importUrls, ...(await invoke('get_plugin_import_urls', {
+    const urls = await invoke('get_plugin_import_urls', {
       pluginJs: js
-    }))]
+    })
+    
+    importUrls.push(...urls)
   }
 
+  // Start the loading_log event listener
   event.listen('loading_log', (event) => {
     const log = event.payload
 
-    if (!logs) return
-
-    logs.innerHTML = `${log}`
+    updateOverlay({
+      logs: log
+    })
   })
 
   const imports = await invoke('localize_all_js', {
     urls: importUrls
   })
+  const themeJs = await handleThemeInjection()
 
-  // Get theme if it exists
-  let themeInjection = ''
-
-  if (config.theme && config.theme !== 'none') {
-    if (midtitle) midtitle.innerHTML = "Loading theme CSS..."
-
-    const themeContents = await invoke('get_theme', {
-      name: config.theme
-    })
-
-    if (midtitle) midtitle.innerHTML = "Localizing CSS imports..."
-    const localized = await invoke('localize_imports', {
-      css: themeContents,
-      name: config.theme
-    })
-
-    // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
-    const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
-
-    // Write theme injection code
-    themeInjection = `;(() => {
-      const ts = document.createElement('style')
-
-      ts.textContent = \`
-        ${cleanContents?.replace(/`/g, '\\`')
-            .replace(/\\8/g, '')
-            .replace(/\\9/g, '')
-          }
-      \`
-
-      console.log('[Theme Loader] Appending Styles')
-      document.body.appendChild(ts)
-    })()`
-  }
-
-  if (midtitle) midtitle.innerHTML = "Getting injection JS..."
+  updateOverlay({
+    midtitle: 'Getting injection JS...'
+  })
 
   const injectionJs = await invoke('get_injection_js', {
-    themeJs: themeInjection,
+    themeJs,
   })
 
   await invoke('load_injection_js', {
@@ -158,10 +106,9 @@ function safemodeTimer(elm) {
     plugins
   })
 
-  // Disable telemetry
-  if (!config.block_telemetry) blockTelemetry()
-
-  if (midtitle) midtitle.innerHTML = "Done!"
+  updateOverlay({
+    midtitle: 'Done!'
+  })
 
   // Remove loading container
   document.querySelector('#loadingContainer').style.opacity = 0
@@ -169,7 +116,91 @@ function safemodeTimer(elm) {
   setTimeout(() => {
     document.querySelector('#loadingContainer')?.remove()
   }, 200)
-})()
+}
+
+/**
+ * Nasty helper function for updating the text on the overlay
+ */
+async function updateOverlay(toUpdate) {
+  const midtitle = document.querySelector('#midtitle')
+  const subtitle = document.querySelector('#subtitle')
+  const safemode = document.querySelector('#safemode')
+  const logs = document.querySelector('#logContainer')
+
+  for (const [key, value] of Object.entries(toUpdate)) {
+    if (key === 'midtitle' && midtitle) midtitle.innerHTML = value
+    if (key === 'subtitle' && subtitle) subtitle.innerHTML = value
+    if (key === 'safemode' && safemode) safemode.innerHTML = value
+    if (key === 'logs' && logs) logs.innerHTML = value
+  }
+}
+
+async function handleThemeInjection() {
+  const { invoke } = window.__TAURI__
+
+  if (!window.__DORION_CONFIG__.theme || window.__DORION_CONFIG__.theme === 'none') return
+
+  updateOverlay({
+    midtitle: 'Loading theme CSS...'
+  })
+
+  // Get the initial theme
+  const themeContents = await invoke('get_theme', {
+    name: window.__DORION_CONFIG__.theme
+  })
+
+  updateOverlay({
+    midtitle: 'Localizing CSS imports...'
+  })
+
+  // Localize the imports
+  const localized = await invoke('localize_imports', {
+    css: themeContents,
+    name: window.__DORION_CONFIG__.theme
+  })
+
+  // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
+  const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
+
+  return `;(() => {
+    const ts = document.createElement('style')
+
+    ts.textContent = \`
+      ${cleanContents?.replace(/`/g, '\\`')
+          // To this day I do not know why I need to do this
+          .replace(/\\8/g, '')
+          .replace(/\\9/g, '')
+        }
+    \`
+
+    console.log('[Theme Loader] Appending Styles')
+    document.body.appendChild(ts)
+  })()`
+}
+
+/**
+ * Block Discord telemetry
+ */
+function blockTelemetry() {
+  const open = XMLHttpRequest.prototype.open;
+  
+  XMLHttpRequest.prototype.open = function(method, url) {
+    open.apply(this, arguments)
+
+    const send = this.send
+
+    this.send = function() {
+      const rgx = /\/api\/v.*\/(science|track)/g
+
+      if (!String(url).match(rgx)) {
+        return send.apply(this, arguments)
+      }
+
+      console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
+    }
+  }
+}
+
 
 /**
  * Display the splashscreen
@@ -252,34 +283,32 @@ function cssSanitize(css) {
   return result;
 }
 
-/**
- * Block Discord telemetry
- */
-function blockTelemetry() {
-  const open = XMLHttpRequest.prototype.open;
-  
-  XMLHttpRequest.prototype.open = function(method, url) {
-    open.apply(this, arguments)
+function safemodeTimer(elm) {
+  setTimeout(() => {
+    elm.classList.add('show')
+  }, 10000)
 
-    const send = this.send
+  const tmpKeydown = (evt) => {
+    // If loading container doesn't exist, we made it through and should stop watching key events
+    if (!document.querySelector('#loadingContainer')) {
+      document.removeEventListener('keydown', tmpKeydown)
+      return
+    }
 
-    this.send = function() {
-      const rgx = /\/api\/v.*\/(science|track)/g
+    // If spacebar, remove #loadingContainer
+    if (evt.code === 'Space') {
+      document.querySelector('#loadingContainer')?.remove()
+    }
 
-      if (!String(url).match(rgx)) {
-        return send.apply(this, arguments)
-      }
-
-      console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
+    // If F, open plugins folder
+    if (evt.code === 'KeyF') {
+      window.__TAURI__.invoke('open_themes')
     }
   }
+  
+  document.addEventListener('keydown', tmpKeydown)
 }
 
-/**
- * Discord wipes `window.localStorage`, so we have to recreate it in case plugins require it
- * 
- * https://github.com/SpikeHD/Dorion/issues/7#issuecomment-1320861432
- */
 function createLocalStorage() {
   const iframe = document.createElement('iframe');
 

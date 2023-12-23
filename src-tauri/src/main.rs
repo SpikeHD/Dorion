@@ -8,7 +8,7 @@ use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use config::get_config;
-use injection::{injection_runner, local_html, plugin, theme};
+use injection::{injection_runner::{self, PREINJECT, FALLBACK_MOD}, local_html, plugin, theme};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
@@ -27,7 +27,6 @@ mod config;
 mod deep_link;
 mod functionality;
 mod hotkeys;
-mod init;
 mod injection;
 mod processors;
 mod profiles;
@@ -116,6 +115,7 @@ fn main() {
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
+      functionality::streamer_mode::start_streamer_mode_watcher,
       functionality::window::minimize,
       functionality::window::maximize,
       functionality::window::close,
@@ -142,10 +142,9 @@ fn main() {
       functionality::rpc::get_local_detectables,
       hotkeys::save_ptt_keys,
       hotkeys::toggle_ptt,
-      init::inject_routine,
-      injection_runner::do_injection,
       injection_runner::get_injection_js,
       injection_runner::is_injected,
+      injection_runner::inject_client_mod,
       injection_runner::load_injection_js,
       config::read_config_file,
       config::write_config_file,
@@ -203,6 +202,9 @@ fn main() {
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
+        .initialization_script(
+          format!("!window.__DORION_INITIALIZED__ && {}", PREINJECT.as_str()).as_str()
+        )
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())

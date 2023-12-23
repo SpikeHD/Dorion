@@ -7,7 +7,6 @@ use crate::config::get_config;
 use crate::deep_link;
 use crate::hotkeys;
 use crate::util::logger::log;
-use crate::init;
 use crate::util::window_helpers::window_zoom_level;
 
 // Minimize
@@ -89,8 +88,6 @@ pub fn after_build(window: &Window) {
   }
 
   window_zoom_level(window, None);
-
-  init::inject_routine(window.to_owned());
 }
 
 pub fn setup_autostart(app: &mut tauri::App) {

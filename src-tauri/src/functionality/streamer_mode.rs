@@ -4,6 +4,7 @@ use sysinfo::{ProcessExt, SystemExt};
 // We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
 static mut OBS_OPEN: bool = false;
 
+#[tauri::command]
 pub fn start_streamer_mode_watcher(win: tauri::Window) {
   let enabled = get_config().streamer_mode_detection.unwrap_or(false);
   let mut system = sysinfo::System::new_all();

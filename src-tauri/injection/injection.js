@@ -1,6 +1,3 @@
-// Ensure we don't fire more than we have to
-window.__TAURI__.invoke('is_injected')
-
 let loaded = false
 
 /**
@@ -16,7 +13,7 @@ let observer = new MutationObserver(() => {
     console.log('Discord is loaded!')
 
     // This needs to render after discord is loaded
-    if (!window.DorionConfig.use_native_titlebar && !document.querySelector('#dorion_topbar')) createTopBar()
+    if (!window.__DORION_CONFIG__.use_native_titlebar && !document.querySelector('#dorion_topbar')) createTopBar()
 
     onClientLoad()
 
