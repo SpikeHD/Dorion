@@ -78,6 +78,9 @@ jobs:
       - name: Build frontend (creates '../dist')
         run: pnpm install && pnpm shupdate && pnpm prebuild && pnpm build
 
+      - name: Create empty file named "updater" in src-tauri
+        run: touch src-tauri/updater
+
       - name: Clippy check
         run: cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings
 
