@@ -84,12 +84,11 @@ pub fn load_injection_js(
   is_injected();
 }
 
-#[tauri::command]
-pub fn inject_client_mod(win: tauri::Window) {
-  let path = get_injection_dir(Some(&win)).join("shelter.js");
+pub fn get_client_mod() -> String {
+  let req = reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
 
-  let js = match fs::read_to_string(path) {
-    Ok(f) => f,
+  let resp = match req {
+    Ok(r) => r,
     Err(e) => {
       println!(
         "Failed to read shelter.js in resource dir, using fallback: {}",
@@ -97,9 +96,9 @@ pub fn inject_client_mod(win: tauri::Window) {
       );
 
       // Send fallback instead
-      FALLBACK_MOD.clone()
+      return FALLBACK_MOD.clone();
     }
   };
 
-  win.eval(js.as_str()).unwrap_or_default();
+  resp.text().unwrap_or_default()
 }

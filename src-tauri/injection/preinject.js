@@ -54,7 +54,6 @@ async function init() {
 
   // Run a couple other background tasks before we begin the main stuff
   invoke('start_streamer_mode_watcher')
-  invoke('inject_client_mod')
 
   const plugins = await invoke('load_plugins')
     .catch(e => console.error("Error reading plugins: ", e))

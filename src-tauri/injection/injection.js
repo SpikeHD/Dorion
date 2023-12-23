@@ -12,6 +12,9 @@ let observer = new MutationObserver(() => {
   if (loading && !loaded) {
     console.log('Discord is loaded!')
 
+    // Ensure top bar exists if we want it
+    if (window.__DORION_CONFIG__.use_native_titlebar) window.__TAURI__.window.appWindow.setDecorations(true)
+
     // This needs to render after discord is loaded
     if (!window.__DORION_CONFIG__.use_native_titlebar && !document.querySelector('#dorion_topbar')) createTopBar()
 
