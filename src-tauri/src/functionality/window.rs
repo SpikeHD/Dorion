@@ -41,7 +41,6 @@ pub fn after_build(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
   let config = get_config();
 
-  #[cfg(not(target_os = "macos"))]
   super::hotkeys::start_hotkey_watcher(window.clone());
 
   // Deep link registry
