@@ -7,18 +7,18 @@ use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
-  log(format!("Checking for updates..."));
+  log("Checking for updates...".to_string());
 
   let injection_rel = maybe_latest_injection_release().await;
   let main_rel = maybe_latest_main_release(&win).await;
 
   if injection_rel.is_ok() && injection_rel.unwrap() {
-    log(format!("Available update for Shelter!"));
+    log("Available update for Shelter!".to_string());
     to_update.push("Shelter".to_string());
   }
 
   if main_rel.is_ok() && main_rel.unwrap() {
-    log(format!("Available update for Dorion!"));
+    log("Available update for Dorion!".to_string());
     to_update.push("dorion".to_string());
   }
 
@@ -35,12 +35,12 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
     let arg_str = match injection_path.into_os_string().into_string() {
       Ok(s) => s,
       Err(_) => {
-        log(format!("Failed to convert injection path to string!"));
+        log("Failed to convert injection path to string!".to_string());
         return;
       }
     };
 
-    log(format!("Updating Shelter..."));
+    log("Updating Shelter...".to_string());
 
     updater.arg(String::from("--shelter"));
     updater.arg(arg_str);
@@ -48,7 +48,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
   #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
-    log(format!("Updating Dorion..."));
+    log("Updating Dorion...".to_string());
 
     updater.arg(String::from("--main"));
     updater.arg(String::from("true"));

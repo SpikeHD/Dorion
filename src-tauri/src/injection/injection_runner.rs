@@ -1,10 +1,8 @@
 use include_flate::flate;
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 use tauri::regex::Regex;
 
-use crate::{
-  functionality::window, processors::js_preprocess::eval_js_imports, util::paths::get_injection_dir,
-};
+use crate::processors::js_preprocess::eval_js_imports;
 
 static mut TAURI_INJECTED: bool = false;
 
@@ -32,10 +30,10 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
 
 fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
   // Eval plugin imports
-  for (_, script) in &plugins {
+  for script in plugins.values() {
     let imports = crate::injection::plugin::get_js_imports(script);
 
-    eval_js_imports(&win, imports);
+    eval_js_imports(win, imports);
   }
 
   // Eval plugin scripts
@@ -85,7 +83,8 @@ pub fn load_injection_js(
 }
 
 pub fn get_client_mod() -> String {
-  let req = reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
+  let req =
+    reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
 
   let resp = match req {
     Ok(r) => r,

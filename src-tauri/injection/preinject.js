@@ -61,6 +61,11 @@ async function init() {
 
   displayLoadingTop()
 
+  // Start the safemode timer
+  safemodeTimer(
+    document.querySelector('#safemode')
+  )
+
   updateOverlay({
     subtitle: `Made with ❤️ by SpikeHD - v${version}`,
     midtitle: 'Localizing JS imports...'

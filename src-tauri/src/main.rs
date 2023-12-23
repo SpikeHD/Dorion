@@ -9,7 +9,7 @@ use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
-  injection_runner::{self, FALLBACK_MOD, PREINJECT, get_client_mod},
+  injection_runner::{self, get_client_mod, PREINJECT},
   local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
@@ -247,7 +247,7 @@ fn main() {
           functionality::rpc::start_rpc_server(win_cln);
         });
       }
-      
+
       after_build(&win);
 
       setup_autostart(app);

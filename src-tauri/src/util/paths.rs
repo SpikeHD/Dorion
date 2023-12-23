@@ -15,7 +15,7 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  log(format!("No local config file found. Using default."));
+  log("No local config file found. Using default.".to_string());
 
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
@@ -101,7 +101,7 @@ pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
       return injection_dir;
     }
 
-    log(format!("Moving injection scripts"));
+    log("Moving injection scripts".to_string());
 
     move_injection_scripts(win, true);
   }
@@ -125,7 +125,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     return local_plugin_dir;
   }
 
-  log(format!("No local plugin dir found. Using default."));
+  log("No local plugin dir found. Using default.".to_string());
 
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
@@ -161,7 +161,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     return local_theme_dir;
   }
 
-  log(format!("No local theme dir found. Using default."));
+  log("No local theme dir found. Using default.".to_string());
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()

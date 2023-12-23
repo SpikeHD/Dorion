@@ -36,15 +36,13 @@ pub fn get_profile_list() -> Vec<String> {
           if let Some(profile_name) = file_name.to_str() {
             profiles.push(profile_name.to_string());
           } else {
-            log(format!(
-              "Failed to convert file name to a valid UTF-8 string"
-            ));
+            log("Failed to convert file name to a valid UTF-8 string".to_string());
           }
         } else {
-          log(format!("Failed to retrieve file name"));
+          log("Failed to retrieve file name".to_string());
         }
       } else {
-        log(format!("Path is not a directory"));
+        log("Path is not a directory".to_string());
       }
     }
   }
@@ -75,7 +73,7 @@ pub fn create_profile(name: String) {
 
   if !new_profile_folder.exists() {
     std::fs::create_dir_all(new_profile_folder).unwrap_or_else(|_| {
-      log(format!("Failed to create profile folder!"));
+      log("Failed to create profile folder!".to_string());
     });
   }
 }
@@ -92,7 +90,7 @@ pub fn delete_profile(name: String) {
 
   if profile_folder.exists() {
     std::fs::remove_dir_all(profile_folder).unwrap_or_else(|_| {
-      log(format!("Failed to delete profile folder!"));
+      log("Failed to delete profile folder!".to_string());
     });
   }
 

@@ -6,7 +6,6 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::deep_link;
 use crate::hotkeys;
-use crate::util::logger::log;
 use crate::util::window_helpers::window_zoom_level;
 
 // Minimize
@@ -66,6 +65,8 @@ pub fn after_build(window: &Window) {
   // Set user-agent through WebkitGTK config
   #[cfg(target_os = "linux")]
   {
+    use crate::util::logger::log;
+
     window.with_webview(move |webview| {
       use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
 

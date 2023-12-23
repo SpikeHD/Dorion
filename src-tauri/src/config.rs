@@ -85,7 +85,7 @@ pub fn get_config() -> Config {
   match serde_json::from_str(config_str) {
     Ok(config) => config,
     Err(e) => {
-      log(format!("Failed to parse config, using default config!"));
+      log("Failed to parse config, using default config!".to_string());
       log(format!("Error: {}", e));
 
       default_config()

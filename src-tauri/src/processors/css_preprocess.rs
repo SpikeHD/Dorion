@@ -111,7 +111,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
       }
     };
 
-    log(format!("Joining..."));
+    log("Joining...".to_string());
 
     if result.is_none() {
       continue;
@@ -130,7 +130,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
 
   // If any of this css still contains imports, we need to re-process it
   if reg.is_match(new_css.as_str()) {
-    log(format!("Re-processing CSS imports..."));
+    log("Re-processing CSS imports...".to_string());
     new_css = localize_imports(win.clone(), new_css, name.clone()).await;
   }
 
