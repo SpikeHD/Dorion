@@ -2,7 +2,7 @@ use device_query::{DeviceQuery, DeviceState, Keycode};
 use std::{thread, time::Duration};
 
 use crate::config;
-use crate::util::logger::log;
+use crate::util::logger::{log, self};
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
@@ -35,7 +35,7 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
       let ptt_keys = unsafe { PTT_KEYS.clone() };
       let keys: Vec<Keycode> = device_state.get_keys();
 
-      // Recreate keys as a strin vector
+      // Recreate keys as a string vector
       let mut keys_str: Vec<String> = Vec::new();
       for key in keys {
         keys_str.push(key.to_string());
@@ -118,6 +118,8 @@ pub fn toggle_ptt(state: bool) -> Result<(), String> {
   parsed.push_to_talk = Option::from(state);
 
   let new_config = serde_json::to_string(&parsed);
+
+  logger::log(format!("PTT set to: {}", state));
 
   match new_config {
     Ok(new_config) => {

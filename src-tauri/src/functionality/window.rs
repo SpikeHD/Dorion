@@ -5,7 +5,6 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
 use crate::deep_link;
-use crate::hotkeys;
 use crate::util::window_helpers::window_zoom_level;
 
 // Minimize
@@ -43,7 +42,7 @@ pub fn after_build(window: &Window) {
   let config = get_config();
 
   #[cfg(not(target_os = "macos"))]
-  hotkeys::start_hotkey_watcher(window.clone());
+  super::hotkeys::start_hotkey_watcher(window.clone());
 
   // Deep link registry
   if !config.multi_instance.unwrap_or(false) {

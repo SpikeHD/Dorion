@@ -31,7 +31,6 @@ use crate::{
 mod config;
 mod deep_link;
 mod functionality;
-mod hotkeys;
 mod injection;
 mod processors;
 mod profiles;
@@ -154,8 +153,8 @@ fn main() {
       release::update_check,
       functionality::rpc::get_windows,
       functionality::rpc::get_local_detectables,
-      hotkeys::save_ptt_keys,
-      hotkeys::toggle_ptt,
+      functionality::hotkeys::save_ptt_keys,
+      functionality::hotkeys::toggle_ptt,
       injection_runner::get_injection_js,
       injection_runner::is_injected,
       injection_runner::load_injection_js,
