@@ -167,7 +167,8 @@ async function ensurePlugins() {
     'Always Trust': 'https://spikehd.github.io/shelter-plugins/always-trust/',
     'Dorion Notifications': 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
     'Dorion Streamer Mode': 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
-    'Dorion Updater': 'https://spikehd.github.io/shelter-plugins/dorion-updater/'
+    'Dorion Updater': 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
+    'Dorion PTT': 'https://spikehd.github.io/shelter-plugins/dorion-ptt/',
   }
 
   // Fetch each URL at <url>/plugin.js
