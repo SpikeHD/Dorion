@@ -2,7 +2,7 @@ use device_query::{DeviceQuery, DeviceState, Keycode};
 use std::{thread, time::Duration};
 
 use crate::config;
-use crate::util::logger::{log, self};
+use crate::util::logger::{self, log};
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();

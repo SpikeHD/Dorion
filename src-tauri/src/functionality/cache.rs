@@ -1,12 +1,10 @@
-
-
 use crate::config::get_config;
 
 #[cfg(target_os = "windows")]
 pub fn clear_cache() {
   use crate::util::paths::profiles_dir;
   use std::fs;
-  
+
   let profiles_dir = profiles_dir();
   let profile = get_config().profile.unwrap_or("default".to_string());
 
