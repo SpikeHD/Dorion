@@ -163,144 +163,31 @@ async function applyExtraCSS() {
 
 async function ensurePlugins() {
   const requiredPlugins = {
-    'shelteRPC': {
-      url: 'https://spikehd.github.io/shelter-plugins/shelteRPC/',
-      installed: false,
-      required: false,
-    },
-    'Dorion Settings': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-settings/',
-      installed: false,
-      required: true,
-    },
-    'Always Trust': {
-      url: 'https://spikehd.github.io/shelter-plugins/always-trust/',
-      installed: false,
-      required: true,
-    },
-    'Dorion Notifications': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
-      installed: false,
-      required: true,
-    },
-    'Dorion Streamer Mode': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
-      installed: false,
-      required: true,
-    },
-    'Dorion Updater': {
-      url: 'https://spikehd.github.io/shelter-plugins/dorion-updater/',
-      installed: false,
-      required: true,
-    },
-    'Inline CSS': {
-      url: 'https://spikehd.github.io/shelter-plugins/inline-css/',
-      installed: false,
-      required: false,
-    }
+    'Dorion Settings': 'https://spikehd.github.io/shelter-plugins/dorion-settings/',
+    'Always Trust': 'https://spikehd.github.io/shelter-plugins/always-trust/',
+    'Dorion Notifications': 'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
+    'Dorion Streamer Mode': 'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
+    'Dorion Updater': 'https://spikehd.github.io/shelter-plugins/dorion-updater/'
   }
 
-  // Welcome to another SpikeHD "hack a thing til it works no matter how terrible the solution is". This time featuring: my lack of desire to maintain a modified Shelter fork!
-  // Read from the "plugins-data" indexedDb
-  const shelterDB = await new Promise(r => {
-    // continuously attempt to find the "shelter" db since it may not exist yet (fisrt time opening, for example)
-    const attempt = () => {
-      console.log('[Ensure Plugins] Attempting to get database')
-      const db = indexedDB.databases().then(dbs => dbs.find(db => db.name === 'shelter'))
+  // Fetch each URL at <url>/plugin.js
+  for (const [name, url] of Object.entries(requiredPlugins)) {
+    const res = await fetch(`${url}/plugin.js`)
+    const text = await res.text()
 
-      console.log(db)
+    // Eval
+    try {
+      console.log('[Ensure Plugins] Loading plugin: ', name)
+      
+      // Create a new plugin object. Simpler version of https://github.com/uwu/shelter/blob/ac74061864479ecb688ae5efc321e981cd1b54fa/packages/shelter/src/plugins.tsx#L54
+      const pluginStr = `shelter=>{return ${text}}${atob("Ci8v")}`;
+      const fn = eval(pluginStr)
+      const plugin = fn(window.shelter)
 
-      if (db) return r(db)
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setTimeout(() => attempt(), 1000)
-    }
-
-    attempt()
-  })
-
-  const open = await new Promise(r => {
-    const req = indexedDB.open(shelterDB.name, shelterDB.version)
-    req.onsuccess = () => r(req.result)
-
-    console.log('[Ensure Plugins] Attempting to open plugins-internal at version: ', shelterDB.version)
-  })
-
-  // Continuously attempt to open plugins-internal
-  const pluginStore = await new Promise(r => {
-    const attempt = () => {
-      console.log('[Ensure Plugins] Attempting to get plugin store')
-      const store = open.transaction('plugins-internal', 'readwrite').objectStore('plugins-internal')
-
-      if (store) return r(store)
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      setTimeout(() => attempt(), 1000)
-    }
-
-    attempt()
-  })
-
-  console.log('[Ensure Plugins] Got plugin store! Getting installed plugins...')
-
-  // Finally, we can get all of the keys and values of the plugins
-  const installed = await new Promise(r => {
-    const req = pluginStore.getAll()
-    req.onsuccess = () => r(req.result)
-  })
-
-  console.log('[Ensure Plugins] Got installed plugins!')
-
-  // Mark plugins as installed or not installed
-  for (const [name, _plugin] of Object.entries(requiredPlugins)) {
-    const maybeInstalled = installed.find(p => p.manifest.name === name)
-
-    if (maybeInstalled) {
-      requiredPlugins[name].installed = true
-    }
-  }
-
-  console.log('[Ensure Plugins] Plugins not installed: ', Object.entries(requiredPlugins).filter(([_name, plugin]) => !plugin.installed).map(([name, _plugin]) => name))
-
-  // Now iterate the plugins that are not installed, and install them
-  for (const [name, plugin] of Object.entries(requiredPlugins)) {
-    if (!plugin.installed) {
-      // eslint-disable-next-line no-undef
-      await shelter.plugins.addRemotePlugin(name, plugin.url, true)?.catch(e => console.error(e))
-
-      // Then set it to installed
-      requiredPlugins[name].installed = true
-    }
-  }
-
-  // Wait a second before checking for loaded plugins
-  await new Promise(r => setTimeout(r, 1000))
-
-  const isPluginOn = (p) => installed.find(plugin => plugin.manifest.name === p)?.on
-
-  // Enable the ones that are required
-  for (const [name, plugin] of Object.entries(requiredPlugins)) {
-    if (plugin.installed && plugin.required && !isPluginOn(name)) {
-      // eslint-disable-next-line no-undef
-      await shelter.plugins.startPlugin(name)?.catch(e => console.error(e))
-    }
-  }
-
-  // eslint-disable-next-line no-undef
-  console.log('[Ensure Plugins] Loaded plugins: ', shelter.plugins.loadedPlugins())
-
-  // In case all of our weird stuff made shelter freak out, check loadedPlugins(). If it's undefined, load them
-  // eslint-disable-next-line no-undef
-  if (!shelter.plugins.loadedPlugins()) {
-    console.log('[Ensure Plugins] Plugins not loaded, loading...')
-
-    // eslint-disable-next-line no-undef
-    for (const plugin in shelter.plugins.installedPlugins()) {
-      // If its required, start it
-      if (requiredPlugins[plugin]?.required) {
-        // eslint-disable-next-line no-undef
-        await shelter.plugins.startPlugin(plugin)?.catch(e => console.error(e))
-      }
+      // Run plugin.onLoad if it exists
+      plugin.onLoad?.()
+    } catch(e) {
+      console.error(`[Ensure Plugins] Failed to load plugin ${name}: `, e)
     }
   }
 }
