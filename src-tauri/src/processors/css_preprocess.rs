@@ -4,8 +4,8 @@ use async_recursion::async_recursion;
 use tauri::regex::Regex;
 
 use crate::config::get_config;
-use crate::util::paths::get_theme_dir;
 use crate::util::logger::log;
+use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
 pub async fn clear_css_cache() {

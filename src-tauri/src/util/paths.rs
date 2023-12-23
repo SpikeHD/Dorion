@@ -265,7 +265,11 @@ pub fn log_file_path() -> PathBuf {
 
   if fs::metadata(local_config_dir).is_ok() {
     // This is a portable install, so we can use the local injection dir
-    return current_exe.parent().unwrap().join("logs").join("latest.log");
+    return current_exe
+      .parent()
+      .unwrap()
+      .join("logs")
+      .join("latest.log");
   }
 
   #[cfg(target_os = "windows")]

@@ -1,5 +1,5 @@
-use tauri::{api::notification, Manager};
 use crate::util::logger::log;
+use tauri::{api::notification, Manager};
 
 #[tauri::command]
 pub fn send_notification(win: tauri::Window, title: String, body: String, icon: String) {

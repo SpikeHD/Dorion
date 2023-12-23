@@ -1,7 +1,7 @@
 use tauri::Manager;
 
-use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
 use crate::util::logger::log;
+use crate::util::paths::{config_is_local, get_injection_dir, updater_dir};
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {

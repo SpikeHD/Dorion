@@ -3,8 +3,7 @@ use std::{collections::HashMap, fs};
 use tauri::regex::Regex;
 
 use crate::{
-  processors::js_preprocess::eval_js_imports,
-  util::paths::get_injection_dir
+  functionality::window, processors::js_preprocess::eval_js_imports, util::paths::get_injection_dir,
 };
 
 static mut TAURI_INJECTED: bool = false;
@@ -12,6 +11,13 @@ static mut TAURI_INJECTED: bool = false;
 flate!(pub static INJECTION: str from "./injection/injection_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
 flate!(pub static FALLBACK_MOD: str from "./injection/shelter.js");
+
+#[tauri::command]
+pub fn is_injected() {
+  unsafe {
+    TAURI_INJECTED = true;
+  }
+}
 
 #[tauri::command]
 pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
@@ -24,10 +30,44 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
   Ok(rewritten_all)
 }
 
+fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
+  // Eval plugin imports
+  for (_, script) in &plugins {
+    let imports = crate::injection::plugin::get_js_imports(script);
+
+    eval_js_imports(&win, imports);
+  }
+
+  // Eval plugin scripts
+  for (name, script) in &plugins {
+    // Scuffed logging solution.
+    win
+      .eval(format!("console.log('Executing plugin: {}')", name).as_str())
+      .unwrap_or(());
+
+    // Execute the plugin in a try/catch, so we can capture whatever error occurs
+    win
+      .eval(
+        format!(
+          "
+        try {{
+          {}
+        }} catch(e) {{
+          console.error(`Plugin {} returned error: ${{e}}`)
+          console.log('The plugin could still work! Just don\\'t expect it to.')
+        }}
+        ",
+          script, name
+        )
+        .as_str(),
+      )
+      .unwrap_or(());
+  }
+}
+
 #[tauri::command]
 pub fn load_injection_js(
   window: tauri::Window,
-  imports: Vec<String>,
   contents: String,
   plugins: HashMap<String, String>,
 ) {
@@ -39,44 +79,9 @@ pub fn load_injection_js(
   // Eval contents
   window.eval(contents.as_str()).unwrap_or(());
 
-  // First we need to eval imports
-  eval_js_imports(&window, imports);
-
-  // After running our injection code, we can iterate through the plugins and load them as well
-  for (name, script) in &plugins {
-    // Scuffed logging solution.
-    // TODO: make not dogshit (not that it really matters)
-    window
-      .eval(format!("console.log('Executing plugin: {}')", name).as_str())
-      .unwrap_or(());
-
-    // Execute the plugin in a try/catch, so we can capture whatever error occurs
-    window
-      .eval(
-        format!(
-          "
-      try {{
-        {}
-      }} catch(e) {{
-        console.error(`Plugin {} returned error: ${{e}}`)
-        console.log('The plugin could still work! Just don\\'t expect it to.')
-      }}
-      ",
-          script, name
-        )
-        .as_str(),
-      )
-      .unwrap_or(());
-  }
+  load_plugins(&window, plugins);
 
   is_injected();
-}
-
-#[tauri::command]
-pub fn is_injected() {
-  unsafe {
-    TAURI_INJECTED = true;
-  }
 }
 
 #[tauri::command]

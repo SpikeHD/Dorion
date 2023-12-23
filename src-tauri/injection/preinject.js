@@ -60,23 +60,14 @@ async function init() {
     .catch(e => console.error("Error reading plugins: ", e))
   const version = await window.__TAURI__.app.getVersion()
 
+  displayLoadingTop()
+
   updateOverlay({
     subtitle: `Made with ❤️ by SpikeHD - v${version}`,
     midtitle: 'Localizing JS imports...'
   })
 
   typingAnim()
-
-  let importUrls = []
-
-  // Iterate through the values of "plugins" (which is all of the plugin JS)
-  for (const js in Object.values(plugins)) {
-    const urls = await invoke('get_plugin_import_urls', {
-      pluginJs: js
-    })
-    
-    importUrls.push(...urls)
-  }
 
   // Start the loading_log event listener
   event.listen('loading_log', (event) => {
@@ -87,9 +78,6 @@ async function init() {
     })
   })
 
-  const imports = await invoke('localize_all_js', {
-    urls: importUrls
-  })
   const themeJs = await handleThemeInjection()
 
   updateOverlay({
@@ -101,7 +89,6 @@ async function init() {
   })
 
   await invoke('load_injection_js', {
-    imports,
     contents: injectionJs,
     plugins
   })

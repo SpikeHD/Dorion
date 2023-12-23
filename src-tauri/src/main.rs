@@ -8,19 +8,24 @@ use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use config::get_config;
-use injection::{injection_runner::{self, PREINJECT, FALLBACK_MOD}, local_html, plugin, theme};
+use injection::{
+  injection_runner::{self, FALLBACK_MOD, PREINJECT},
+  local_html, plugin, theme,
+};
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  helpers, notifications,
+  helpers,
+  logger::log,
+  notifications,
   paths::get_webdata_dir,
   process,
-  window_helpers::{self, clear_cache_check}, logger::log,
+  window_helpers::{self, clear_cache_check},
 };
 
 use crate::{
   functionality::window::{after_build, setup_autostart},
-  util::{helpers::move_injection_scripts, paths::injection_is_local, logger},
+  util::{helpers::move_injection_scripts, logger, paths::injection_is_local},
 };
 
 mod config;
@@ -108,6 +113,13 @@ fn main() {
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
   log(format!("Safemode enabled: {}", safemode));
+
+  // Load preload plugins into a single string
+  let mut preload_str = String::new();
+
+  for script in plugin::load_plugins(Some(true)).unwrap().values() {
+    preload_str += script;
+  }
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -203,7 +215,7 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!("!window.__DORION_INITIALIZED__ && {}", PREINJECT.as_str()).as_str()
+          format!("!window.__DORION_INITIALIZED__ && {};{}", PREINJECT.as_str(), preload_str).as_str()
         )
         .resizable(true)
         .disable_file_drop_handler()
