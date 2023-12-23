@@ -22,20 +22,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions-rs/cargo@v1
-        name: Rustfmt check
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          command: fmt
-          args: --manifest-path ./src-tauri/Cargo.toml --all -- --check
+          components: rustfmt
+
+      - name: Rustfmt check
+        run: cargo fmt --manifest-path ./src-tauri/Cargo.toml --all -- --check
 
       # also check updater
-      - uses: actions-rs/cargo@v1
-        name: Rustfmt check updater
-        with:
-          command: fmt
-          args: --manifest-path ./updater/Cargo.toml --all -- --check
+      - name: Rustfmt check updater
+        run: cargo fmt --manifest-path ./updater/Cargo.toml --all -- --check
 
   clippy:
     runs-on: ${{ matrix.platform }}
@@ -46,7 +43,10 @@ jobs:
         platform: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
       - uses: pnpm/action-setup@v2
         with:
           version: 8.6.7
@@ -64,24 +64,23 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - uses: Swatinem/rust-cache@v1
+      - uses: actions/cache@v3
         with:
-          working-directory: src-tauri
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            src-tauri/target/
+            updater/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build frontend (creates '../dist')
         run: pnpm install && pnpm shupdate && pnpm prebuild && pnpm build
 
-      - uses: actions-rs/clippy-check@v1
-        name: Clippy check
-        with:
-          name: clippy (${{ runner.os }})
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings
+      - name: Clippy check
+        run: cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings
 
       # Also clippy check updater
-      - uses: actions-rs/clippy-check@v1
-        name: Clippy check updater
-        with:
-          name: clippy (${{ runner.os }})
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings
+      - name: Clippy check updater
+        run: cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings

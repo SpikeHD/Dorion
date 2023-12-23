@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 20
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
         with:
           version: 8.6.7

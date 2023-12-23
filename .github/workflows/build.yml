@@ -31,22 +31,18 @@ jobs:
         platform: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - uses: pnpm/action-setup@v2
         with:
           version: 8.6.7
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
 
       - uses: actions/cache@v3
         with:
