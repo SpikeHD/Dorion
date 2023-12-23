@@ -129,7 +129,7 @@ async function updateOverlay(toUpdate) {
 async function handleThemeInjection() {
   const { invoke } = window.__TAURI__
 
-  if (!window.__DORION_CONFIG__.theme || window.__DORION_CONFIG__.theme === 'none') return
+  if (!window.__DORION_CONFIG__.theme || window.__DORION_CONFIG__.theme === 'none') return ''
 
   updateOverlay({
     midtitle: 'Loading theme CSS...'
