@@ -74,6 +74,8 @@ jobs:
 
       - name: Build updater
         run: pnpm build:updater
+        env:
+          RUSTFLAGS: -Awarnings
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
