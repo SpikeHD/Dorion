@@ -50,8 +50,6 @@ async function init() {
     window.__DORION_CONFIG__ = JSON.parse(defaultConf)
   }
 
-  if (window.__DORION_CONFIG__.block_telemetry) blockTelemetry()
-
   // Run a couple other background tasks before we begin the main stuff
   invoke('start_streamer_mode_watcher')
 
@@ -168,30 +166,6 @@ async function handleThemeInjection() {
     document.body.appendChild(ts)
   })()`
 }
-
-/**
- * Block Discord telemetry
- */
-function blockTelemetry() {
-  const open = XMLHttpRequest.prototype.open;
-  
-  XMLHttpRequest.prototype.open = function(method, url) {
-    open.apply(this, arguments)
-
-    const send = this.send
-
-    this.send = function() {
-      const rgx = /\/api\/v.*\/(science|track)/g
-
-      if (!String(url).match(rgx)) {
-        return send.apply(this, arguments)
-      }
-
-      console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
-    }
-  }
-}
-
 
 /**
  * Display the splashscreen
@@ -338,9 +312,16 @@ function proxyFetch() {
   fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
+    const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native
     if (url.toString().match(discordReg)) {
+      // Block science though!
+      if (url.toString().match(scienceReg)) {
+        console.log(`[Fetch Proxy] Blocked URL: ${url}`)
+        return
+      }
+
       return window.nativeFetch(url, options)
     }
 
