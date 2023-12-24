@@ -59,7 +59,7 @@ async function init() {
     .catch(e => console.error("Error reading plugins: ", e))
   const version = await window.__TAURI__.app.getVersion()
 
-  displayLoadingTop()
+  await displayLoadingTop()
 
   // Start the safemode timer
   safemodeTimer(
@@ -300,18 +300,20 @@ function safemodeTimer(elm) {
   document.addEventListener('keydown', tmpKeydown)
 }
 
-function createLocalStorage() {
+async function createLocalStorage() {
   const iframe = document.createElement('iframe');
 
   // Wait for document.head to exist, then append the iframe
   const interval = setInterval(() => {
-    if (!document.head) return
+    if (!document.head || window.localStorage) return
 
     document.head.append(iframe);
     const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
     iframe.remove();
     
     Object.defineProperty(window, 'localStorage', pd)
+
+    console.log('[Create LocalStorage] Done!')
 
     clearInterval(interval)
   }, 50)
