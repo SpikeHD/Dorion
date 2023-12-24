@@ -61,8 +61,8 @@ function minimize() {
   window.__TAURI__.invoke('minimize')
 }
 
-function maximize() {
-  window.__TAURI__.invoke('maximize')
+function toggleMaximize() {
+  window.__TAURI__.invoke('toggle_maximize')
 }
 
 async function createTopBar() {
@@ -119,7 +119,7 @@ function onClientLoad() {
 function initTopBarEvents() {
   document.querySelector('#topclose').onclick = close
   document.querySelector('#topmin').onclick = minimize
-  document.querySelector('#topmax').onclick = maximize
+  document.querySelector('#topmax').onclick = toggleMaximize
 }
 
 function applyNotificationCount() {
