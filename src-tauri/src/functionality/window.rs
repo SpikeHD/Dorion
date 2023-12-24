@@ -23,6 +23,12 @@ pub fn toggle_maximize(win: Window) {
   }
 }
 
+// Check maximized
+#[tauri::command]
+pub fn is_maximized(win: Window) -> bool {
+  win.is_maximized().unwrap_or_default()
+}
+
 // Close
 #[tauri::command]
 pub fn close(win: Window) {

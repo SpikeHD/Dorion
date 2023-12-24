@@ -82,6 +82,9 @@ async function createTopBar() {
 
   appMount.prepend(topbar);
 
+  // Set maximize icon event handler
+  window.addEventListener('resize', setMaximizeIcon)
+
   // Set version displayed in top bar
   window.dorionVersion = await window.__TAURI__.app.getVersion()
   const versionElm = document.querySelector('#dorion_version')
@@ -194,4 +197,12 @@ async function ensurePlugins() {
   ]
   
   await Promise.all(promises)
+}
+
+async function setMaximizeIcon() {
+  if (await window.__TAURI__.invoke('is_maximized')) {
+    document.querySelector('#topmax').classList.add('maximized')
+  } else {
+    document.querySelector('#topmax').classList.remove('maximized')
+  }
 }
