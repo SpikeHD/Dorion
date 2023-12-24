@@ -13,10 +13,14 @@ pub fn minimize(win: Window) {
   win.minimize().unwrap_or_default();
 }
 
-// Maximize
+// Toggle maximize
 #[tauri::command]
-pub fn maximize(win: Window) {
-  win.maximize().unwrap_or_default();
+pub fn toggle_maximize(win: Window) {
+  if win.is_maximized().unwrap_or_default() {
+    win.unmaximize().unwrap_or_default();
+  } else {
+    win.maximize().unwrap_or_default();
+  }
 }
 
 // Close
