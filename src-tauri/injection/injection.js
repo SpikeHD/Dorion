@@ -61,8 +61,8 @@ function minimize() {
   window.__TAURI__.invoke('minimize')
 }
 
-function maximize() {
-  window.__TAURI__.invoke('maximize')
+function toggleMaximize() {
+  window.__TAURI__.invoke('toggle_maximize')
 }
 
 async function createTopBar() {
@@ -119,7 +119,7 @@ function onClientLoad() {
 function initTopBarEvents() {
   document.querySelector('#topclose').onclick = close
   document.querySelector('#topmin').onclick = minimize
-  document.querySelector('#topmax').onclick = maximize
+  document.querySelector('#topmax').onclick = toggleMaximize
 }
 
 function applyNotificationCount() {
@@ -171,24 +171,27 @@ async function ensurePlugins() {
     'Dorion PTT': 'https://spikehd.github.io/shelter-plugins/dorion-ptt/',
   }
 
-  // Fetch each URL at <url>/plugin.js
-  for (const [name, url] of Object.entries(requiredPlugins)) {
-    const res = await fetch(`${url}/plugin.js`)
-    const text = await res.text()
+  const promises = [
+    ...Object.entries(requiredPlugins).map(async ([name, url]) => {
+      const res = await fetch(`${url}/plugin.js`)
+      const text = await res.text()
 
-    // Eval
-    try {
-      console.log('[Ensure Plugins] Loading plugin: ', name)
-      
-      // Create a new plugin object. Simpler version of https://github.com/uwu/shelter/blob/ac74061864479ecb688ae5efc321e981cd1b54fa/packages/shelter/src/plugins.tsx#L54
-      const pluginStr = `shelter=>{return ${text}}${atob("Ci8v")}`;
-      const fn = eval(pluginStr)
-      const plugin = fn(window.shelter)
-
-      // Run plugin.onLoad if it exists
-      plugin.onLoad?.()
-    } catch(e) {
-      console.error(`[Ensure Plugins] Failed to load plugin ${name}: `, e)
-    }
-  }
+      // Eval
+      try {
+        console.log('[Ensure Plugins] Loading plugin: ', name)
+        
+        // Create a new plugin object. Simpler version of https://github.com/uwu/shelter/blob/ac74061864479ecb688ae5efc321e981cd1b54fa/packages/shelter/src/plugins.tsx#L54
+        const pluginStr = `shelter=>{return ${text}}${atob("Ci8v")}`;
+        const fn = eval(pluginStr)
+        const plugin = fn(window.shelter)
+  
+        // Run plugin.onLoad if it exists
+        plugin.onLoad?.()
+      } catch(e) {
+        console.error(`[Ensure Plugins] Failed to load plugin ${name}: `, e)
+      }
+    })
+  ]
+  
+  await Promise.all(promises)
 }

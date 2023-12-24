@@ -50,8 +50,6 @@ async function init() {
     window.__DORION_CONFIG__ = JSON.parse(defaultConf)
   }
 
-  if (window.__DORION_CONFIG__.block_telemetry) blockTelemetry()
-
   // Run a couple other background tasks before we begin the main stuff
   invoke('start_streamer_mode_watcher')
 
@@ -59,7 +57,7 @@ async function init() {
     .catch(e => console.error("Error reading plugins: ", e))
   const version = await window.__TAURI__.app.getVersion()
 
-  displayLoadingTop()
+  await displayLoadingTop()
 
   // Start the safemode timer
   safemodeTimer(
@@ -170,30 +168,6 @@ async function handleThemeInjection() {
 }
 
 /**
- * Block Discord telemetry
- */
-function blockTelemetry() {
-  const open = XMLHttpRequest.prototype.open;
-  
-  XMLHttpRequest.prototype.open = function(method, url) {
-    open.apply(this, arguments)
-
-    const send = this.send
-
-    this.send = function() {
-      const rgx = /\/api\/v.*\/(science|track)/g
-
-      if (!String(url).match(rgx)) {
-        return send.apply(this, arguments)
-      }
-
-      console.log(`[Telemetry Blocker] Blocked URL: ${url}`)
-    }
-  }
-}
-
-
-/**
  * Display the splashscreen
  */
 async function displayLoadingTop() {
@@ -300,18 +274,20 @@ function safemodeTimer(elm) {
   document.addEventListener('keydown', tmpKeydown)
 }
 
-function createLocalStorage() {
+async function createLocalStorage() {
   const iframe = document.createElement('iframe');
 
   // Wait for document.head to exist, then append the iframe
   const interval = setInterval(() => {
-    if (!document.head) return
+    if (!document.head || window.localStorage) return
 
     document.head.append(iframe);
     const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
     iframe.remove();
     
     Object.defineProperty(window, 'localStorage', pd)
+
+    console.log('[Create LocalStorage] Done!')
 
     clearInterval(interval)
   }, 50)
@@ -336,9 +312,16 @@ function proxyFetch() {
   fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
+    const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native
     if (url.toString().match(discordReg)) {
+      // Block science though!
+      if (url.toString().match(scienceReg)) {
+        console.log(`[Fetch Proxy] Blocked URL: ${url}`)
+        return
+      }
+
       return window.nativeFetch(url, options)
     }
 
