@@ -84,6 +84,7 @@ async function createTopBar() {
 
   // Set maximize icon event handler
   window.addEventListener('resize', setMaximizeIcon)
+  setMaximizeIcon()
 
   // Set version displayed in top bar
   window.dorionVersion = await window.__TAURI__.app.getVersion()
