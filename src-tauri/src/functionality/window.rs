@@ -6,6 +6,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::deep_link;
 use crate::util::window_helpers::window_zoom_level;
+use crate::window::blur::apply_effect;
 
 // Minimize
 #[tauri::command]
@@ -63,6 +64,8 @@ pub fn after_build(window: &Window) {
   if config.start_maximized.unwrap_or(false) {
     window.maximize().unwrap_or_default();
   }
+
+  apply_effect(window.clone(), config.blur.unwrap_or("none".to_string()).as_str());
 
   // Set user-agent through WebkitGTK config
   #[cfg(target_os = "linux")]
