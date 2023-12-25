@@ -34,9 +34,9 @@ mod functionality;
 mod injection;
 mod processors;
 mod profiles;
-mod window;
 mod release;
 mod util;
+mod window;
 
 fn create_systray() -> SystemTray {
   let open_btn = CustomMenuItem::new("open".to_string(), "Open");

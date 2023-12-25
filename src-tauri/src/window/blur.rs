@@ -2,28 +2,18 @@
 pub fn available_blurs() -> Vec<&'static str> {
   #[cfg(target_os = "windows")]
   {
-    return vec![
-      "none",
-      "blur",
-      "acrylic",
-      "mica"
-    ];
+    vec!["none", "blur", "acrylic", "mica"]
   }
 
   #[cfg(target_os = "macos")]
   {
-    return vec![
-      "none",
-      "vibrancy"
-    ];
+    vec!["none", "vibrancy"]
   }
 
   #[cfg(target_os = "linux")]
   {
     // Sorry linux :/
-    return vec![
-      "none",
-    ];
+    vec!["none"]
   }
 }
 
@@ -31,13 +21,13 @@ pub fn available_blurs() -> Vec<&'static str> {
 pub fn apply_effect(win: tauri::Window, effect: &str) {
   #[cfg(target_os = "windows")]
   {
-    use window_vibrancy::{apply_blur, apply_acrylic, apply_mica};
+    use window_vibrancy::{apply_acrylic, apply_blur, apply_mica};
 
     match effect {
       "blur" => apply_blur(win, Some((18, 18, 18, 125))).unwrap_or_default(),
       "acrylic" => apply_acrylic(win, Some((18, 18, 18, 125))).unwrap_or_default(),
       "mica" => apply_mica(win, None).unwrap_or_default(),
-      _ => ()
+      _ => (),
     }
   }
 
@@ -46,7 +36,9 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
     use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
     match effect {
-      "vibrancy" => apply_vibrancy(win, NSVisualEffectMaterial::HudWindow, None, None).unwrap_or_default(),
+      "vibrancy" => {
+        apply_vibrancy(win, NSVisualEffectMaterial::HudWindow, None, None).unwrap_or_default()
+      }
       _ => {}
     }
   }
@@ -56,7 +48,7 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
 pub fn remove_effect(win: tauri::Window) {
   #[cfg(target_os = "windows")]
   {
-    use window_vibrancy::{clear_blur, clear_acrylic, clear_mica};
+    use window_vibrancy::{clear_acrylic, clear_blur, clear_mica};
 
     clear_blur(&win).unwrap_or_default();
     clear_acrylic(&win).unwrap_or_default();

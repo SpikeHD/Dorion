@@ -14,7 +14,7 @@
         "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
         "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
         "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
-        "codefix": "pnpm format && pnpm clippy && pnpm lint",
+        "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
         "codefix:updater": "pnpm format:updater && pnpm clippy:updater",
         "shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
     },

@@ -54,7 +54,7 @@ async function init() {
   invoke('start_streamer_mode_watcher')
 
   const plugins = await invoke('load_plugins')
-    .catch(e => console.error("Error reading plugins: ", e))
+    .catch(e => console.error('Error reading plugins: ', e))
   const version = await window.__TAURI__.app.getVersion()
 
   await displayLoadingTop()
@@ -156,10 +156,10 @@ async function handleThemeInjection() {
 
     ts.textContent = \`
       ${cleanContents?.replace(/`/g, '\\`')
-          // To this day I do not know why I need to do this
-          .replace(/\\8/g, '')
-          .replace(/\\9/g, '')
-        }
+  // To this day I do not know why I need to do this
+    .replace(/\\8/g, '')
+    .replace(/\\9/g, '')
+}
     \`
 
     console.log('[Theme Loader] Appending Styles')
@@ -235,17 +235,17 @@ async function timeout(ms) {
  * @returns The sanitized CSS
  */
 function cssSanitize(css) {
-  const style = document.createElement('style');
-  style.innerHTML = css;
+  const style = document.createElement('style')
+  style.innerHTML = css
 
-  document.head.appendChild(style);
+  document.head.appendChild(style)
 
   if (!style.sheet) return
 
-  const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n');
+  const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n')
 
-  document.head.removeChild(style);
-  return result;
+  document.head.removeChild(style)
+  return result
 }
 
 function safemodeTimer(elm) {
@@ -275,15 +275,15 @@ function safemodeTimer(elm) {
 }
 
 async function createLocalStorage() {
-  const iframe = document.createElement('iframe');
+  const iframe = document.createElement('iframe')
 
   // Wait for document.head to exist, then append the iframe
   const interval = setInterval(() => {
     if (!document.head || window.localStorage) return
 
-    document.head.append(iframe);
-    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage');
-    iframe.remove();
+    document.head.append(iframe)
+    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage')
+    iframe.remove()
     
     Object.defineProperty(window, 'localStorage', pd)
 
@@ -295,11 +295,11 @@ async function createLocalStorage() {
 
 function isJson(s) {
   try {
-    JSON.parse(s);
+    JSON.parse(s)
   } catch (e) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }
 
 /**
