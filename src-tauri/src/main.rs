@@ -219,16 +219,8 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!(r#"
-          (
-            !window.__DORION_INITIALIZED__ &&
-            {}
-          ) && {};{}
-          "#,
-          !safemode,
-          PREINJECT.as_str(),
-          client_mod
-        ).as_str())
+          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mod, preload_str).as_str()
+        )
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
@@ -245,9 +237,7 @@ fn main() {
         win.show().unwrap_or_default();
         return Ok(());
       }
-
-      win.eval(&preload_str).unwrap_or_default();
-
+      
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
 
