@@ -158,6 +158,15 @@ async function applyExtraCSS() {
 
   style.innerHTML = css
 
+  // Append some background-transparenting css if blur_css is true
+  if (window.__DORION_CONFIG__.blur_css) {
+    style.innerHTML += `
+      * {
+        background: transparent !important;
+      }
+    `
+  }
+
   document.head.appendChild(style)
 }
 
