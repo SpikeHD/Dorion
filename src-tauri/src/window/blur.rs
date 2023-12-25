@@ -3,6 +3,7 @@ pub fn available_blurs() -> Vec<&'static str> {
   #[cfg(target_os = "windows")]
   {
     return vec![
+      "none",
       "blur",
       "acrylic",
       "mica"
@@ -12,6 +13,7 @@ pub fn available_blurs() -> Vec<&'static str> {
   #[cfg(target_os = "macos")]
   {
     return vec![
+      "none",
       "vibrancy"
     ];
   }
@@ -19,7 +21,9 @@ pub fn available_blurs() -> Vec<&'static str> {
   #[cfg(target_os = "linux")]
   {
     // Sorry linux :/
-    return vec![];
+    return vec![
+      "none",
+    ];
   }
 }
 
