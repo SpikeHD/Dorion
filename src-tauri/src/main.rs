@@ -25,7 +25,7 @@ use util::{
 
 use crate::{
   functionality::window::{after_build, setup_autostart},
-  util::{helpers::move_injection_scripts, logger, paths::injection_is_local},
+  util::logger,
 };
 
 mod config;
@@ -34,6 +34,7 @@ mod functionality;
 mod injection;
 mod processors;
 mod profiles;
+mod window;
 mod release;
 mod util;
 
@@ -119,7 +120,7 @@ fn main() {
   let mut preload_str = String::new();
 
   for script in plugin::load_plugins(Some(true)).unwrap().values() {
-    preload_str += script;
+    preload_str += format!("{};", script).as_str();
   }
 
   #[allow(clippy::single_match)]
@@ -166,6 +167,9 @@ fn main() {
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
+      window::blur::available_blurs,
+      window::blur::apply_effect,
+      window::blur::remove_effect,
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
     ])
@@ -215,14 +219,25 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mod, preload_str).as_str()
-        )
+          format!(r#"
+          (
+            !window.__DORION_INITIALIZED__ &&
+            {}
+          ) && {};{}
+          "#,
+          !safemode,
+          PREINJECT.as_str(),
+          client_mod
+        ).as_str())
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
         .visible(false)
         .decorations(true)
+        .transparent(
+          config.blur.unwrap_or("none".to_string()) != "none"
+        )
         .build()?;
 
       // If safemode is enabled, stop here
@@ -231,10 +246,7 @@ fn main() {
         return Ok(());
       }
 
-      // Init injection scripts
-      if !injection_is_local() {
-        move_injection_scripts(&win, false);
-      }
+      win.eval(&preload_str).unwrap_or_default();
 
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
