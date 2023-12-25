@@ -75,6 +75,7 @@
         height="256"
         viewBox="0 0 256 256"
         xml:space="preserve"
+        id="svgmax"
       >
         <defs></defs>
         <g
@@ -93,6 +94,49 @@
         >
           <path
             d="M 90 90 H 0 V 0 h 90 V 90 z M 10 80 h 70 V 10 H 10 V 80 z"
+            style="
+              stroke: none;
+              stroke-width: 1;
+              stroke-dasharray: none;
+              stroke-linecap: butt;
+              stroke-linejoin: miter;
+              stroke-miterlimit: 10;
+              fill: rgb(255, 255, 255);
+              fill-rule: nonzero;
+              opacity: 1;
+            "
+            transform=" matrix(1 0 0 1 0 0) "
+            stroke-linecap="round"
+          />
+        </g>
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        version="1.1"
+        width="256"
+        height="256"
+        viewBox="0 0 256 256"
+        xml:space="preserve"
+        id="svgunmax"
+      >
+        <defs></defs>
+        <g
+          style="
+            stroke: none;
+            stroke-width: 0;
+            stroke-dasharray: none;
+            stroke-linecap: butt;
+            stroke-linejoin: miter;
+            stroke-miterlimit: 10;
+            fill: none;
+            fill-rule: nonzero;
+            opacity: 1;
+          "
+          transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)"
+        >
+          <path
+            d="M 70 90 h -70 v -70 h 70 v 70 z M 10 80 h 50 v -50 h -50 v 50 z M 20 0 H 90 V 70 H 80 V 10 H 20 z"
             style="
               stroke: none;
               stroke-width: 1;
@@ -233,6 +277,15 @@
     cursor: pointer;
     filter: brightness(0.8);
     background: var(--background-secondary);
+  }
+
+  #topmax svg {
+    display: none;
+  }
+
+  #topmax:not(.maximized) #svgmax,
+  #topmax.maximized #svgunmax {
+    display: initial;
   }
 
   #topclose:hover {
