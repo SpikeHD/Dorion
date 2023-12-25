@@ -46,48 +46,6 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<Relea
   })
 }
 
-pub fn download_raw(
-  user: impl AsRef<str> + Display,
-  repo: impl AsRef<str> + Display,
-  filename: impl AsRef<str> + Display,
-  path: std::path::PathBuf,
-) -> PathBuf {
-  let url = format!(
-    "https://raw.githubusercontent.com/{}/{}/master/{}",
-    user,
-    repo,
-    filename
-  );
-
-  let client = reqwest::blocking::Client::new();
-
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .expect("Failed to get response from GitHub");
-
-  let mut file_path = path.clone();
-  file_path.push(filename.as_ref());
-
-  println!("Writing to {:?}", file_path);
-
-  // Create_dir_all if needed
-  if !file_path.parent().unwrap().exists() {
-    fs::create_dir_all(file_path.parent().unwrap())
-      .expect("Failed to create directory");
-  }
-
-  // Write the file
-  fs::write(
-    &file_path,
-    response.bytes().expect("Failed to read response bytes")
-  ).expect("Failed to write file");
-
-  // Return the path of the file
-  file_path
-}
-
 pub fn download_release(
   user: impl AsRef<str> + Display,
   repo: impl AsRef<str> + Display,

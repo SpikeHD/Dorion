@@ -1,5 +1,3 @@
-use tauri::Manager;
-
 use super::paths::*;
 use std::path::*;
 use std::process::Command;
@@ -54,35 +52,4 @@ pub fn get_platform() -> &'static str {
 
   #[cfg(target_os = "linux")]
   "linux"
-}
-
-pub fn move_injection_scripts(win: &tauri::Window, with_mod: bool) {
-  let injection_dir = get_injection_dir(None);
-
-  let packaged_injection_dir = win
-    .app_handle()
-    .path_resolver()
-    .resolve_resource(PathBuf::from("injection"))
-    .unwrap();
-
-  let mut copy_to = injection_dir.clone();
-  copy_to.pop();
-
-  // If the injection folder doesn't exist, create it and re-run with everything
-  if std::fs::metadata(&injection_dir).is_err() {
-    std::fs::create_dir_all(&injection_dir).expect("Failed to create injection folder");
-
-    move_injection_scripts(win, true);
-    return;
-  }
-
-  // If true, we can just copy EVERYTHING
-  if with_mod {
-    // Move shelter to injection folder
-    std::fs::copy(
-      packaged_injection_dir.join("shelter.js"),
-      injection_dir.join("shelter.js"),
-    )
-    .expect("Failed to copy shelter.js");
-  }
 }

@@ -2,7 +2,6 @@ use std::{fs, path::PathBuf};
 
 use tauri::Manager;
 
-use super::helpers::move_injection_scripts;
 use crate::config::get_config;
 use crate::util::logger::log;
 
@@ -46,74 +45,6 @@ pub fn config_is_local() -> bool {
   let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   fs::metadata(local_config_dir).is_ok()
-}
-
-pub fn get_injection_dir(win: Option<&tauri::Window>) -> PathBuf {
-  // Check if config is local, and if so, create (if needed) and use local injection dir
-  if config_is_local() {
-    let current_exe = std::env::current_exe().unwrap_or_default();
-    let local_inject_dir = current_exe.parent().unwrap().join("injection");
-
-    if fs::metadata(&local_inject_dir).is_err() {
-      match fs::create_dir_all(&local_inject_dir) {
-        Ok(()) => (),
-        Err(e) => {
-          log(format!("Error creating local injection dir: {}", e));
-          return local_inject_dir;
-        }
-      };
-    }
-
-    return local_inject_dir;
-  }
-
-  // If not, grab the normal one
-  #[cfg(target_os = "windows")]
-  let appdata = dirs::data_dir().unwrap_or_default();
-
-  #[cfg(not(target_os = "windows"))]
-  let appdata = dirs::config_dir().unwrap_or_default();
-
-  let injection_dir = appdata.join("dorion").join("injection");
-
-  if fs::metadata(&injection_dir).is_err() {
-    match fs::create_dir_all(&injection_dir) {
-      Ok(()) => {
-        // If we were passed the window, we can also copy the injection files
-        if win.is_none() {
-          return injection_dir;
-        }
-
-        move_injection_scripts(win.unwrap(), true);
-      }
-      Err(e) => {
-        log(format!("Error creating injection dir: {}", e));
-        return injection_dir;
-      }
-    };
-  }
-
-  // Check if "shelter.js" exists in the dir
-  let injection_js = injection_dir.join("shelter.js");
-
-  if let Some(win) = win {
-    if fs::metadata(injection_js).is_ok() {
-      return injection_dir;
-    }
-
-    log("Moving injection scripts".to_string());
-
-    move_injection_scripts(win, true);
-  }
-
-  injection_dir
-}
-
-pub fn injection_is_local() -> bool {
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_inject_dir = current_exe.parent().unwrap().join("injection");
-
-  fs::metadata(local_inject_dir).is_ok()
 }
 
 pub fn get_plugin_dir() -> std::path::PathBuf {

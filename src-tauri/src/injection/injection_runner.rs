@@ -38,6 +38,11 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
 
   // Eval plugin scripts
   for (name, script) in &plugins {
+    // Ignore preload plguins
+    if name.starts_with("PRELOAD_") {
+      continue;
+    }
+
     // Scuffed logging solution.
     win
       .eval(format!("console.log('Executing plugin: {}')", name).as_str())

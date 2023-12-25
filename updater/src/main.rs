@@ -1,14 +1,13 @@
 use pico_args::Arguments;
 use std::path::PathBuf;
 
-use crate::github::{download_release, download_raw, get_release};
+use crate::github::{download_release, get_release};
 
 mod github;
 
 // If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 struct UpdaterArguments {
   main: bool,
-  shelter: Option<String>,
   local: bool,
 }
 
@@ -16,21 +15,8 @@ pub fn main() {
   let mut pargs = Arguments::from_env();
   let args = UpdaterArguments {
     main: pargs.contains("--main"),
-    shelter: pargs.opt_value_from_str("--shelter").unwrap_or(None),
     local: pargs.contains("--local"),
   };
-
-  if args.shelter.is_some() {
-    let shelter = args.shelter.unwrap();
-
-    if needs_to_elevate(PathBuf::from(&shelter)) {
-      println!("Elevating process...");
-      elevate();
-      return;
-    }
-
-    update_client_mod(PathBuf::from(shelter));
-  }
 
   // This should happen second
   if args.main {
@@ -112,32 +98,6 @@ pub fn reopen_as_elevated() {
   }
 
   std::process::exit(0);
-}
-
-pub fn update_client_mod(path: PathBuf) {
-  println!("Writing files to disk...");
-
-  // Write to disk
-  download_raw("uwu", "shelter-builds", "shelter.js", path.clone());
-
-  // Write the SHA of the latest commit to "shelter.version"
-  let url = "https://api.github.com/repos/uwu/shelter-builds/commits/main";
-  let client = reqwest::blocking::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .unwrap();
-  let text = response.text().expect("Failed to read response text");
-  
-  // Parse "tag_name" from JSON
-  let json: serde_json::Value = serde_json::from_str(&text).expect("Failed to parse commit JSON");
-  let sha = json["sha"].as_str().unwrap();
-
-  let mut version_path = path.clone();
-  version_path.push("shelter.version"); 
-
-  std::fs::write(version_path, sha).expect("Failed to write shelter.version");
 }
 
 /**
