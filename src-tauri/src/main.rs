@@ -119,7 +119,7 @@ fn main() {
   let mut preload_str = String::new();
 
   for script in plugin::load_plugins(Some(true)).unwrap().values() {
-    preload_str += format!("{};",script).as_str();
+    preload_str += format!("{};", script).as_str();
   }
 
   #[allow(clippy::single_match)]
@@ -216,9 +216,15 @@ fn main() {
         .title(title.as_str())
         .initialization_script(
           format!(r#"
-          !window.__DORION_INITIALIZED__ && {};{}
-          "#, PREINJECT.as_str(), client_mod).as_str()
-        )
+          (
+            !window.__DORION_INITIALIZED__ &&
+            {}
+          ) && {};{}
+          "#,
+          !safemode,
+          PREINJECT.as_str(),
+          client_mod
+        ).as_str())
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
