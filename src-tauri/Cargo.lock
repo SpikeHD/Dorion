@@ -981,6 +981,7 @@ dependencies = [
  "tauri-plugin-window-state",
  "webkit2gtk",
  "webview2-com",
+ "window-vibrancy",
  "window_titles",
  "windows 0.39.0",
  "windows-implement 0.37.0",
@@ -5012,6 +5013,19 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
+name = "window-vibrancy"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af6abc2b9c56bd95887825a1ce56cde49a2a97c07e28db465d541f5098a2656c"
+dependencies = [
+ "cocoa 0.25.0",
+ "objc",
+ "raw-window-handle",
+ "windows-sys 0.52.0",
+ "windows-version",
+]
 
 [[package]]
 name = "window_titles"

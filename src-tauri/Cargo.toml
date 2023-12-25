@@ -18,7 +18,7 @@ async-recursion = "1.0.4"
 include-flate = "0.3.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.1", features = ["windows7-compat", "api-all", "icon-ico", "icon-png", "system-tray", "devtools"] }
+tauri = { version = "1.4.1", features = [ "macos-private-api", "windows7-compat", "api-all", "icon-ico", "icon-png", "system-tray", "devtools"] }
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-deep-link = { version = "^0.1.2" }
 reqwest = { version = "0.11.14", features = ["blocking"] }
@@ -35,6 +35,9 @@ auto-launch = "0.5.0"
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", branch = "0.9.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
+
+# window blur
+window-vibrancy = "0.4.3"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "0.18.2"

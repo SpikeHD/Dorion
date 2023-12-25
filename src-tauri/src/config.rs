@@ -27,6 +27,7 @@ pub struct Config {
   pub auto_clear_cache: Option<bool>,
   pub multi_instance: Option<bool>,
   pub disable_hardware_accel: Option<bool>,
+  pub blur: Option<String>,
 }
 
 pub fn init() {
@@ -75,6 +76,7 @@ pub fn default_config() -> Config {
     auto_clear_cache: Option::from(false),
     multi_instance: Option::from(false),
     disable_hardware_accel: Option::from(false),
+    blur: Option::from("none".to_string()),
   }
 }
 

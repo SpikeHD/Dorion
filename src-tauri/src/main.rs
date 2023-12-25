@@ -34,6 +34,7 @@ mod functionality;
 mod injection;
 mod processors;
 mod profiles;
+mod window;
 mod release;
 mod util;
 
@@ -166,6 +167,9 @@ fn main() {
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
+      window::blur::available_blurs,
+      window::blur::apply_effect,
+      window::blur::remove_effect,
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
     ])
@@ -231,6 +235,9 @@ fn main() {
         // Prevent flickering by starting hidden, and show later
         .visible(false)
         .decorations(true)
+        .transparent(
+          config.blur.unwrap_or("none".to_string()) != "none"
+        )
         .build()?;
 
       // If safemode is enabled, stop here
