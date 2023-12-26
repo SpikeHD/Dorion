@@ -177,6 +177,13 @@ fn main() {
       tauri::WindowEvent::Destroyed { .. } => {
         functionality::cache::maybe_clear_cache();
       }
+      tauri::WindowEvent::CloseRequested { api, .. } => {
+        // Just hide the window if the config calls for it
+        if get_config().sys_tray.unwrap_or(false) {
+          event.window().hide().unwrap_or_default();
+          api.prevent_close();
+        }
+      }
       _ => {}
     })
     .on_system_tray_event(|app, event| match event {
