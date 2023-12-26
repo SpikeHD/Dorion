@@ -17,7 +17,7 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<Relea
 
   let client = blocking::Client::new();
   let response = client
-    .get(&url)
+    .get(url)
     .header("User-Agent", "Dorion")
     .send()
     .map_err(|e| format!("Failed to get latest release from GitHub: {}", e))?;
