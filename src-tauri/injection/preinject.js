@@ -37,10 +37,10 @@ async function init() {
   const { invoke, event } = window.__TAURI__
   const config = await invoke('read_config_file')
 
-  window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : null
+  window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : {}
 
   // Recreate config if there is an issue
-  if (!config) {
+  if (!Object.keys(config).length || !config) {
     const defaultConf = await invoke('default_config')
     // Write
     await invoke('write_config_file', {
@@ -127,7 +127,7 @@ async function updateOverlay(toUpdate) {
 async function handleThemeInjection() {
   const { invoke } = window.__TAURI__
 
-  if (!window.__DORION_CONFIG__.theme || window.__DORION_CONFIG__.theme === 'none') return ''
+  if (!window.__DORION_CONFIG__?.theme || window.__DORION_CONFIG__?.theme === 'none') return ''
 
   updateOverlay({
     midtitle: 'Loading theme CSS...'
