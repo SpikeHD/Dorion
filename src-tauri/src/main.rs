@@ -5,7 +5,7 @@
 
 use std::time::Duration;
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
-use tauri_plugin_window_state::{StateFlags, WindowExt};
+use tauri_plugin_window_state::{StateFlags, WindowExt, AppHandleExt};
 
 use config::get_config;
 use injection::{
@@ -183,6 +183,8 @@ fn main() {
           event.window().hide().unwrap_or_default();
           api.prevent_close();
         }
+
+        event.window().app_handle().save_window_state(StateFlags::all()).unwrap_or_default();
       }
       _ => {}
     })
