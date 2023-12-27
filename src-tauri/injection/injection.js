@@ -21,9 +21,9 @@ let observer = new MutationObserver(() => {
       !window.__DORION_CONFIG__.use_native_titlebar &&
       !document.querySelector('#dorion_topbar')
     )
-      createTopBar()
+      _createTopBar()
 
-    onClientLoad()
+    _onClientLoad()
 
     // The comments ahead are read by tauri and used to insert plugin/theme injection code
 
@@ -41,12 +41,12 @@ observer.observe(document, {
 /**
  * Sorta yoinked from https://github.com/uwu/shelter/blob/main/packages/shelter/src/index.ts
  */
-async function waitForApp() {
+async function _waitForApp() {
   // Ensure appMount exists
   const appMount = document.querySelector('#app-mount')
 
   if (!appMount) {
-    setTimeout(waitForApp, 100)
+    setTimeout(_waitForApp, 100)
     return
   }
 
@@ -59,19 +59,19 @@ async function waitForApp() {
 /**
  * Functions for window controls
  */
-function close() {
+function _close() {
   window.__TAURI__.invoke('close')
 }
 
-function minimize() {
+function _minimize() {
   window.__TAURI__.invoke('minimize')
 }
 
-function toggleMaximize() {
+function _toggleMaximize() {
   window.__TAURI__.invoke('toggle_maximize')
 }
 
-async function createTopBar() {
+async function _createTopBar() {
   const topbar = document.createElement('div')
   const content = await window.__TAURI__
     .invoke('get_top_bar')
@@ -83,7 +83,7 @@ async function createTopBar() {
   topbar.innerHTML = content
   topbar.id = 'dorion_topbar'
 
-  const appMount = await waitForApp()
+  const appMount = await _waitForApp()
 
   if (!appMount || document.querySelector('#dorion_topbar')) return
 
@@ -91,9 +91,9 @@ async function createTopBar() {
 
   window.__TAURI__.event.listen(
     window.__TAURI__.event.TauriEvent.WINDOW_RESIZED,
-    setMaximizeIcon
+    _setMaximizeIcon
   )
-  setMaximizeIcon()
+  _setMaximizeIcon()
 
   // Set version displayed in top bar
   window.dorionVersion = await window.__TAURI__.app.getVersion()
@@ -103,39 +103,39 @@ async function createTopBar() {
   // Once done, remove original top bar
   window.__TAURI__.invoke('remove_top_bar')
 
-  initTopBarEvents()
+  _initTopBarEvents()
 }
 
 /**
  * Run when the client is "loaded"
  */
-function onClientLoad() {
+function _onClientLoad() {
   observer.disconnect()
 
   // Notifcation watcher
-  notifGetter()
+  _notifGetter()
 
   // Assign notification count
-  applyNotificationCount()
+  _applyNotificationCount()
 
   // Load up our extra css
-  applyExtraCSS()
+  _applyExtraCSS()
 
   // Ensure Dorion-related plugins are installed
   // It's kinda stupid to have to wait but we have to make sure Shelter loaded fully
-  waitForApp().then(() => ensurePlugins())
+  _waitForApp().then(() => _ensurePlugins())
 }
 
 /**
  * Give events to the top bar buttons
  */
-function initTopBarEvents() {
-  document.querySelector('#topclose').onclick = close
-  document.querySelector('#topmin').onclick = minimize
-  document.querySelector('#topmax').onclick = toggleMaximize
+function _initTopBarEvents() {
+  document.querySelector('#topclose').onclick = _close
+  document.querySelector('#topmin').onclick = _minimize
+  document.querySelector('#topmax').onclick = _toggleMaximize
 }
 
-function applyNotificationCount() {
+function _applyNotificationCount() {
   const { invoke } = window.__TAURI__
   const title = document.querySelector('title')
   const notifs = title.innerHTML.match(/\((.*)\)/)
@@ -153,8 +153,8 @@ function applyNotificationCount() {
   })
 }
 
-function notifGetter() {
-  const notifObserver = new MutationObserver(applyNotificationCount)
+function _notifGetter() {
+  const notifObserver = new MutationObserver(_applyNotificationCount)
 
   notifObserver.observe(document.querySelector('title'), {
     subtree: true,
@@ -164,7 +164,7 @@ function notifGetter() {
   })
 }
 
-async function applyExtraCSS() {
+async function _applyExtraCSS() {
   const { invoke } = window.__TAURI__
   const css = await invoke('get_extra_css')
   const style = document.createElement('style')
@@ -183,7 +183,7 @@ async function applyExtraCSS() {
   document.head.appendChild(style)
 }
 
-async function ensurePlugins() {
+async function _ensurePlugins() {
   const requiredPlugins = {
     'Dorion Settings':
       'https://spikehd.github.io/shelter-plugins/dorion-settings/',
@@ -222,7 +222,7 @@ async function ensurePlugins() {
   await Promise.all(promises)
 }
 
-async function setMaximizeIcon() {
+async function _setMaximizeIcon() {
   if (await window.__TAURI__.window.appWindow.isMaximized()) {
     document.querySelector('#topmax').classList.add('maximized')
   } else {
