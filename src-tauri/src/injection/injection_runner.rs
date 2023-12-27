@@ -39,7 +39,7 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
   // Eval plugin scripts
   for (name, script) in &plugins {
     // Ignore preload plguins
-    if name.starts_with("PRELOAD_") {
+    if name.contains("PRELOAD_") {
       continue;
     }
 

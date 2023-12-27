@@ -3,7 +3,7 @@
     "version": "3.1.0",
     "type": "module",
     "scripts": {
-        "prebuild": "esbuild --minify --outfile=src-tauri/injection/injection_min.js src-tauri/injection/injection.js && esbuild --minify --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.js",
+        "prebuild": "esbuild --minify --target=es6 --outfile=src-tauri/injection/injection_min.js src-tauri/injection/injection.js && esbuild --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.js",
         "dev": "pnpm prebuild && pnpm build && tauri dev",
         "build": "pnpm prebuild && tsc && vite build",
         "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater src-tauri/updater",
