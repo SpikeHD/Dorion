@@ -1,6 +1,6 @@
 [package]
 name = "dorion"
-version = "3.1.0"
+version = "3.1.1"
 description = "Tiny alternative Discord client with a smaller footprint, themes and plugins, multi-profile, and more!"
 authors = ["SpikeHD"]
 license = ""
