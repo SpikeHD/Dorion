@@ -71,7 +71,7 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
     yay -S dorion-bin
     ```
 
-*Maintaining a different package repository that I don't know about? Feel free to open a PR to add it here!*
+*Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!*
 
 ## Other ways to get Dorion
 
@@ -79,7 +79,7 @@ You can also [build it](#building) yourself, or download a [build artifact](http
 
 # Features
 
-* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf) than most other web-based client alternatives
+* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client, as well as other web-based alternatives
 * Theme support
 * [Shelter](https://github.com/uwu/Shelter) included out of the box
 * Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
