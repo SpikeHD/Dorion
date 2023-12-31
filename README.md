@@ -24,6 +24,9 @@
 # Table of Contents
 
 * [Setup](#setup)
+  * [Releases](#releases)
+  * [Package Repositories](#package-repositories)
+  * [Other ways to get Dorion](#other-ways-to-get-dorion)
 * [Features](#features)
   * [Plugins](#plugins)
   * [Themes](#themes)
@@ -40,7 +43,37 @@
 
 # Setup
 
-Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.dmg` for MacOS, `.deb` for Debian, etc.) and install!
+## Releases
+
+Each release listed in [the releases page](https://github.com/SpikeHD/Dorion/releases) contains the following:
+
+* Windows `.msi` installer
+* Windows `.zip` portable version
+* MacOS `.dmg` installers (for x86 *and* ARM)
+* Debian `.deb` installer
+* Linux `.tar.gz` portable version
+
+## Package Repositories
+
+I do not maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
+
+* Windows:
+  * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)): 
+    ```sh
+    scoop bucket add turbo 'https://github.com/Small-Ku/turbo-bucket.git'
+    scoop install turbo/dorion
+    ```
+* Linux:
+  * Arch AUR (Maintained by [Refined7075](https://github.com/DarkCoder28))
+    ```sh
+    pacman -S dorion-bin
+    # or
+    yay -S dorion-bin
+    ```
+
+*Maintaining a different package repository that I don't know about? Feel free to open a PR to add it here!*
+
+## Other ways to get Dorion
 
 You can also [build it](#building) yourself, or download a [build artifact](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain) from GitHub Actions!
 
