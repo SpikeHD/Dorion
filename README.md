@@ -228,15 +228,20 @@ Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md
 
 # Screenshots
 
-## Installation size
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf)
+## Installer Size Comparison (Windows)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/55ce8a69-1732-4e17-90f6-5582bcc21d0c" />
+
+## Full Installed Size Comparison (Windows)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a" />
 
 ## Loading screen
-![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
+<img width="100%" src="https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png" />
 
 ## Settings Menu
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/e8d610b9-fd02-43eb-943c-0003e0c07d11)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/e8d610b9-fd02-43eb-943c-0003e0c07d11" />
+
 Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
+
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
