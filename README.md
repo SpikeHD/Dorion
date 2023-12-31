@@ -235,10 +235,10 @@ Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a" />
 
 ## Loading screen
-<img width="100%" src="https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png" />
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/5c9041da-038c-465c-b048-a7c4034a45e0" />
 
 ## Settings Menu
-<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/e8d610b9-fd02-43eb-943c-0003e0c07d11" />
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/b34577eb-a583-4c9d-abf9-fde791e0f0aa" />
 
 Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 
