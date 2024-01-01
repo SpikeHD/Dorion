@@ -66,8 +66,6 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
 * Linux:
   * Arch AUR (Maintained by [Refined7075](https://github.com/DarkCoder28))
     ```sh
-    pacman -S dorion-bin
-    # or
     yay -S dorion-bin
     ```
 
