@@ -7,12 +7,12 @@ use crate::util::paths::{config_is_local, updater_dir};
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
-  log("Checking for updates...".to_string());
+  log("Checking for updates...");
 
   let main_rel = maybe_latest_main_release(&win).await;
 
   if main_rel.is_ok() && main_rel.unwrap() {
-    log("Available update for Dorion!".to_string());
+    log("Available update for Dorion!");
     to_update.push("dorion".to_string());
   }
 
@@ -26,7 +26,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
   #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
-    log("Updating Dorion...".to_string());
+    log("Updating Dorion...");
 
     updater.arg(String::from("--main"));
     updater.arg(String::from("true"));

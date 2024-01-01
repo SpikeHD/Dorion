@@ -5,7 +5,7 @@
 
 use std::time::Duration;
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
-use tauri_plugin_window_state::{StateFlags, WindowExt, AppHandleExt};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
@@ -246,7 +246,7 @@ fn main() {
         win.show().unwrap_or_default();
         return Ok(());
       }
-      
+
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
 

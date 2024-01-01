@@ -14,7 +14,7 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  log("No local config file found. Using default.".to_string());
+  log("No local config file found. Using default.");
 
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
@@ -56,7 +56,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     return local_plugin_dir;
   }
 
-  log("No local plugin dir found. Using default.".to_string());
+  log("No local plugin dir found. Using default.");
 
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
@@ -92,7 +92,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     return local_theme_dir;
   }
 
-  log("No local theme dir found. Using default.".to_string());
+  log("No local theme dir found. Using default.");
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()
