@@ -42,7 +42,7 @@ pub fn clear_cache() {
   let webdata_dir = get_webdata_dir();
 
   if webdata_dir.exists() {
-    log("Deleting cache...".to_string());
+    log("Deleting cache...");
     std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
   }
 }

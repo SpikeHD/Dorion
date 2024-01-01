@@ -43,7 +43,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String
   let plugins_dir = get_plugin_dir();
 
   let plugin_folders =
-    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+    fs::read_dir(plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for entry in plugin_folders {
     let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e))?;
@@ -90,7 +90,7 @@ pub fn get_plugin_list() -> Result<Vec<Plugin>, String> {
   let mut plugin_list: Vec<Plugin> = Vec::new();
 
   let plugin_folders =
-    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+    fs::read_dir(plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
 
   for entry in plugin_folders {
     let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e))?;

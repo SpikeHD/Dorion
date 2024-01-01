@@ -1,3 +1,4 @@
+
 if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 const TITLE = 'Dorion'
 
@@ -9,8 +10,8 @@ const TITLE = 'Dorion'
     get: () => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
   })
 
-  createLocalStorage()
-  proxyFetch()
+  _createLocalStorage()
+  _proxyFetch()
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
@@ -24,23 +25,20 @@ const TITLE = 'Dorion'
   // Make window.open become window.__TAURI__.shell.open
   window.open = (url) => window.__TAURI__.shell.open(url)
 
-  // Check if the app is already initialized
-  if (window.__DORION_INITIALIZED__) return
-
   // Set the app as initialized
   window.__DORION_INITIALIZED__ = true
 
-  init()
+  _init()
 })()
 
-async function init() {
+async function _init() {
   const { invoke, event } = window.__TAURI__
   const config = await invoke('read_config_file')
 
-  window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : null
+  window.__DORION_CONFIG__ = _isJson(config) ? JSON.parse(config) : {}
 
   // Recreate config if there is an issue
-  if (!config) {
+  if (!Object.keys(config).length || !config) {
     const defaultConf = await invoke('default_config')
     // Write
     await invoke('write_config_file', {
@@ -57,32 +55,32 @@ async function init() {
     .catch(e => console.error('Error reading plugins: ', e))
   const version = await window.__TAURI__.app.getVersion()
 
-  await displayLoadingTop()
+  await _displayLoadingTop()
 
   // Start the safemode timer
-  safemodeTimer(
+  _safemodeTimer(
     document.querySelector('#safemode')
   )
 
-  updateOverlay({
+  _updateOverlay({
     subtitle: `Made with ❤️ by SpikeHD - v${version}`,
     midtitle: 'Localizing JS imports...'
   })
 
-  typingAnim()
+  _typingAnim()
 
   // Start the loading_log event listener
   event.listen('loading_log', (event) => {
     const log = event.payload
 
-    updateOverlay({
+    _updateOverlay({
       logs: log
     })
   })
 
-  const themeJs = await handleThemeInjection()
+  const themeJs = await _handleThemeInjection()
 
-  updateOverlay({
+  _updateOverlay({
     midtitle: 'Getting injection JS...'
   })
 
@@ -95,7 +93,7 @@ async function init() {
     plugins
   })
 
-  updateOverlay({
+  _updateOverlay({
     midtitle: 'Done!'
   })
 
@@ -108,9 +106,9 @@ async function init() {
 }
 
 /**
- * Nasty helper function for updating the text on the overlay
+ * Nasty helper function _for updating the text on the overlay
  */
-async function updateOverlay(toUpdate) {
+async function _updateOverlay(toUpdate) {
   const midtitle = document.querySelector('#midtitle')
   const subtitle = document.querySelector('#subtitle')
   const safemode = document.querySelector('#safemode')
@@ -124,12 +122,12 @@ async function updateOverlay(toUpdate) {
   }
 }
 
-async function handleThemeInjection() {
+async function _handleThemeInjection() {
   const { invoke } = window.__TAURI__
 
-  if (!window.__DORION_CONFIG__.theme || window.__DORION_CONFIG__.theme === 'none') return ''
+  if (!window.__DORION_CONFIG__?.theme || window.__DORION_CONFIG__?.theme === 'none') return ''
 
-  updateOverlay({
+  _updateOverlay({
     midtitle: 'Loading theme CSS...'
   })
 
@@ -138,7 +136,7 @@ async function handleThemeInjection() {
     name: window.__DORION_CONFIG__.theme
   })
 
-  updateOverlay({
+  _updateOverlay({
     midtitle: 'Localizing CSS imports...'
   })
 
@@ -149,7 +147,7 @@ async function handleThemeInjection() {
   })
 
   // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
-  const cleanContents = cssSanitize(localized)?.replaceAll('\\"', '\'')
+  const cleanContents = _cssSanitize(localized)?.replaceAll('\\"', '\'')
 
   return `;(() => {
     const ts = document.createElement('style')
@@ -170,7 +168,7 @@ async function handleThemeInjection() {
 /**
  * Display the splashscreen
  */
-async function displayLoadingTop() {
+async function _displayLoadingTop() {
   const { invoke } = window.__TAURI__
   const html = await invoke('get_index')
   const loadingContainer = document.createElement('div')
@@ -190,7 +188,7 @@ async function displayLoadingTop() {
 /**
  * Play the little typing animation in the splash screen
  */
-async function typingAnim() {
+async function _typingAnim() {
   const title = document.querySelector('#title')
 
   if (!title) return
@@ -198,7 +196,7 @@ async function typingAnim() {
   for (const letter of TITLE.split('')) {
     title.innerHTML = title.innerHTML.replace('|', '') + letter + '|'
 
-    await timeout(100)
+    await _timeout(100)
   }
 
   // Once the "typing" is done, blink the cursor
@@ -207,13 +205,13 @@ async function typingAnim() {
   setInterval(() => {
     if (cur) {
       cur = false
-      
+
       title.innerHTML = title.innerHTML.replace('|', '&nbsp;')
       return
     }
-    
+
     cur = true
-      
+
     title.innerHTML = title.innerHTML.replace(/&nbsp;$/, '|')
   }, 500)
 }
@@ -224,7 +222,7 @@ async function typingAnim() {
  * @param {Number} ms 
  * @returns 
  */
-async function timeout(ms) {
+async function _timeout(ms) {
   return new Promise(r => setTimeout(r, ms))
 }
 
@@ -234,7 +232,7 @@ async function timeout(ms) {
  * @param {String} css 
  * @returns The sanitized CSS
  */
-function cssSanitize(css) {
+function _cssSanitize(css) {
   const style = document.createElement('style')
   style.innerHTML = css
 
@@ -248,7 +246,7 @@ function cssSanitize(css) {
   return result
 }
 
-function safemodeTimer(elm) {
+function _safemodeTimer(elm) {
   setTimeout(() => {
     elm.classList.add('show')
   }, 10000)
@@ -270,11 +268,11 @@ function safemodeTimer(elm) {
       window.__TAURI__.invoke('open_themes')
     }
   }
-  
+
   document.addEventListener('keydown', tmpKeydown)
 }
 
-async function createLocalStorage() {
+async function _createLocalStorage() {
   const iframe = document.createElement('iframe')
 
   // Wait for document.head to exist, then append the iframe
@@ -284,7 +282,7 @@ async function createLocalStorage() {
     document.head.append(iframe)
     const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage')
     iframe.remove()
-    
+
     Object.defineProperty(window, 'localStorage', pd)
 
     console.log('[Create LocalStorage] Done!')
@@ -293,7 +291,7 @@ async function createLocalStorage() {
   }, 50)
 }
 
-function isJson(s) {
+function _isJson(s) {
   try {
     JSON.parse(s)
   } catch (e) {
@@ -303,13 +301,12 @@ function isJson(s) {
 }
 
 /**
- * Overwrite the global fetch function with a new one that will redirect to the tauri API 
+ * Overwrite the global fetch function _with a new one that will redirect to the tauri API 
  */
-function proxyFetch() {
+function _proxyFetch() {
   window.nativeFetch = window.fetch
 
-  // eslint-disable-next-line no-global-assign
-  fetch = async (url, options) => {
+  window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
     const scienceReg = /\/api\/v.*\/(science|track)/g
@@ -327,7 +324,7 @@ function proxyFetch() {
 
     // If there is an options.body, check if it's valid JSON. if so, set that up
     if (options && options?.body) {
-      const bodyContent = isJson(options.body) ? http.Body.json(options.body) : typeof options.body === 'string' ? http.Body.text(options.body) : http.Body.bytes(options.body)
+      const bodyContent = _isJson(options.body) ? http.Body.json(options.body) : typeof options.body === 'string' ? http.Body.text(options.body) : http.Body.bytes(options.body)
       options.body = bodyContent
     }
 

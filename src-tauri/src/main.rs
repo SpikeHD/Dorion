@@ -5,7 +5,7 @@
 
 use std::time::Duration;
 use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder};
-use tauri_plugin_window_state::{StateFlags, WindowExt};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
@@ -177,6 +177,15 @@ fn main() {
       tauri::WindowEvent::Destroyed { .. } => {
         functionality::cache::maybe_clear_cache();
       }
+      tauri::WindowEvent::CloseRequested { api, .. } => {
+        // Just hide the window if the config calls for it
+        if get_config().sys_tray.unwrap_or(false) {
+          event.window().hide().unwrap_or_default();
+          api.prevent_close();
+        }
+
+        event.window().app_handle().save_window_state(StateFlags::all()).unwrap_or_default();
+      }
       _ => {}
     })
     .on_system_tray_event(|app, event| match event {
@@ -219,16 +228,8 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!(r#"
-          (
-            !window.__DORION_INITIALIZED__ &&
-            {}
-          ) && {};{}
-          "#,
-          !safemode,
-          PREINJECT.as_str(),
-          client_mod
-        ).as_str())
+          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mod, preload_str).as_str()
+        )
         .resizable(true)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
@@ -245,8 +246,6 @@ fn main() {
         win.show().unwrap_or_default();
         return Ok(());
       }
-
-      win.eval(&preload_str).unwrap_or_default();
 
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();

@@ -24,6 +24,9 @@
 # Table of Contents
 
 * [Setup](#setup)
+  * [Releases](#releases)
+  * [Package Repositories](#package-repositories)
+  * [Other ways to get Dorion](#other-ways-to-get-dorion)
 * [Features](#features)
   * [Plugins](#plugins)
   * [Themes](#themes)
@@ -40,13 +43,41 @@
 
 # Setup
 
-Download a [release](https://github.com/SpikeHD/Dorion/releases) (`.msi` for Windows 10/11, `.zip` for Windows 7, `.dmg` for MacOS, `.deb` for Debian, etc.) and install!
+## Releases
+
+Each release listed in [the releases page](https://github.com/SpikeHD/Dorion/releases) contains the following:
+
+* Windows `.msi` installer
+* Windows `.zip` portable version
+* MacOS `.dmg` installers (for x86 *and* ARM)
+* Debian `.deb` installer
+* Linux `.tar.gz` portable version
+
+## Package Repositories
+
+I do not maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
+
+* Windows:
+  * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)): 
+    ```sh
+    scoop bucket add turbo 'https://github.com/Small-Ku/turbo-bucket.git'
+    scoop install turbo/dorion
+    ```
+* Linux:
+  * Arch AUR (Maintained by [Refined7075](https://github.com/DarkCoder28))
+    ```sh
+    yay -S dorion-bin
+    ```
+
+*Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!*
+
+## Other ways to get Dorion
 
 You can also [build it](#building) yourself, or download a [build artifact](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain) from GitHub Actions!
 
 # Features
 
-* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf) than most other web-based client alternatives
+* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client, as well as other web-based alternatives
 * Theme support
 * [Shelter](https://github.com/uwu/Shelter) included out of the box
 * Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
@@ -130,7 +161,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 * (Windows) Large images in themes will not load
 * (MacOS) Injection JS does not reinject after reloading the page
-* Fonts/font-faces from sources other than Google will not load
+* Fonts/font-faces will not load
 
 # Troubleshooting
 
@@ -195,15 +226,20 @@ Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md
 
 # Screenshots
 
-## Installation size
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/90d35eb0-5a34-45b9-b707-d64b3bc99cdf)
+## Installer Size Comparison (Windows)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/55ce8a69-1732-4e17-90f6-5582bcc21d0c" />
+
+## Full Installed Size Comparison (Windows)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a" />
 
 ## Loading screen
-![image](https://user-images.githubusercontent.com/25207995/202835496-d10156bf-803c-4d3e-804f-761618ba8bb8.png)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/5c9041da-038c-465c-b048-a7c4034a45e0" />
 
 ## Settings Menu
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/e8d610b9-fd02-43eb-943c-0003e0c07d11)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/b34577eb-a583-4c9d-abf9-fde791e0f0aa" />
+
 Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 
-![image](https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54)
+<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
+
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
