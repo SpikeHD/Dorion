@@ -150,6 +150,7 @@ fn main() {
       profiles::get_current_profile_folder,
       profiles::create_profile,
       profiles::delete_profile,
+      release::get_changelog,
       release::do_update,
       release::update_check,
       functionality::rpc::get_windows,

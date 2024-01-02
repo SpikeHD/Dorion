@@ -4,6 +4,37 @@ use crate::util::logger::log;
 use crate::util::paths::{config_is_local, updater_dir};
 
 #[tauri::command]
+pub async fn get_changelog() -> Vec<String> {
+  let url = "https://api.github.com/repos/SpikeHD/Dorion/releases";
+  let client = reqwest::Client::new();
+  let response = client
+    .get(url)
+    .header("User-Agent", "Dorion")
+    .send()
+    .await
+    .unwrap();
+  let text = response.text().await.unwrap();
+
+  // return body
+  let json: serde_json::Value = serde_json::from_str(&text).unwrap();
+  let mut changelog = vec![];
+
+  // check if json.as_array() is None
+  if json.as_array().is_none() {
+    return changelog;
+  }
+
+  for release in json.as_array().unwrap() {
+    let tag_name = release["tag_name"].as_str().unwrap();
+    let body = release["body"].as_str().unwrap();
+
+    changelog.push(format!("# {}\n{}", tag_name, body));
+  }
+
+  changelog
+}
+
+#[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
