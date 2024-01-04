@@ -53,31 +53,39 @@ pub fn get_theme_names() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub async fn theme_from_link(win: tauri::Window, link: String) -> Result<(), String> {
+pub async fn theme_from_link(win: tauri::Window, link: String) -> String {
   let theme_name = link.split('/').last().unwrap().to_string();
   let mut file_name = theme_name.clone();
 
   if theme_name.is_empty() {
-    return Ok(());
+    return String::new();
   }
 
   if !theme_name.ends_with(".css") {
     file_name.push_str(".css");
   }
 
-  let theme = reqwest::blocking::get(&link)
-    .map_err(|e| format!("Error fetching theme from link: {}", e))?
+  let resp = reqwest::blocking::get(&link);
+
+  if resp.is_err() {
+    return String::new();
+  }
+
+  let theme = resp
+    .unwrap()
     .text()
-    .map_err(|e| format!("Error reading theme from response: {}", e))?;
+    .unwrap_or(String::new());
 
   let path = get_theme_dir().join(&file_name);
 
-  fs::write(path, &theme).map_err(|e| format!("Error writing theme to file: {}", e))?;
+  if fs::write(path, &theme).is_err() {
+    return String::new();
+  }
 
   // Cache it as well (if needed)
   if get_config().cache_css.unwrap_or_default() {
-    localize_imports(win, theme, theme_name).await;
+    localize_imports(win, theme, theme_name.clone()).await;
   }
 
-  Ok(())
+  theme_name
 }
