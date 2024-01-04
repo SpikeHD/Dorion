@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::{util::paths::get_theme_dir, config::get_config, processors::css_preprocess::localize_imports};
+use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
 pub fn get_theme(name: String) -> Result<String, String> {
@@ -53,15 +53,16 @@ pub fn get_theme_names() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub async fn theme_from_link(win: tauri::Window, link: String) -> String {
+pub fn theme_from_link(link: String) -> String {
   let theme_name = link.split('/').last().unwrap().to_string();
   let mut file_name = theme_name.clone();
+  let theme_name = theme_name.split('.').next().unwrap().to_string();
 
   if theme_name.is_empty() {
     return String::new();
   }
 
-  if !theme_name.ends_with(".css") {
+  if !file_name.ends_with(".css") {
     file_name.push_str(".css");
   }
 
@@ -82,10 +83,5 @@ pub async fn theme_from_link(win: tauri::Window, link: String) -> String {
     return String::new();
   }
 
-  // Cache it as well (if needed)
-  if get_config().cache_css.unwrap_or_default() {
-    localize_imports(win, theme, theme_name.clone()).await;
-  }
-
-  theme_name
+  file_name
 }

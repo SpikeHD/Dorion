@@ -125,6 +125,11 @@ async function _updateOverlay(toUpdate) {
 async function _handleThemeInjection() {
   const { invoke } = window.__TAURI__
 
+  // This needs to exist for hot-switching to work
+  const ts = document.createElement('style')
+  ts.id = 'dorion-theme'
+  document.body.appendChild(ts)
+
   if (!window.__DORION_CONFIG__?.theme || window.__DORION_CONFIG__?.theme === 'none') return ''
 
   _updateOverlay({
@@ -150,8 +155,7 @@ async function _handleThemeInjection() {
   const cleanContents = _cssSanitize(localized)?.replaceAll('\\"', '\'')
 
   return `;(() => {
-    const ts = document.createElement('style')
-
+    const ts = document.querySelector('#dorion-theme')
     ts.textContent = \`
       ${cleanContents?.replace(/`/g, '\\`')
   // To this day I do not know why I need to do this
@@ -161,7 +165,6 @@ async function _handleThemeInjection() {
     \`
 
     console.log('[Theme Loader] Appending Styles')
-    document.body.appendChild(ts)
   })()`
 }
 
