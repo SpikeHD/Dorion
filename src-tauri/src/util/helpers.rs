@@ -19,8 +19,8 @@ pub async fn fetch_image(url: String) -> Option<String> {
     .and_then(|value| value.to_str().ok())
     .map(|s| s.to_owned())
     .unwrap_or_else(|| {
-        eprintln!("Error: Unable to get content type");
-        String::new()
+      eprintln!("Error: Unable to get content type");
+      String::new()
     });
 
   if !content_type.starts_with("image") {
@@ -31,7 +31,7 @@ pub async fn fetch_image(url: String) -> Option<String> {
   let base64 = base64::encode(bytes);
   let image = format!("data:{};base64,{}", content_type, base64);
 
-  return Some(image);
+  Some(image)
 }
 
 #[tauri::command]
