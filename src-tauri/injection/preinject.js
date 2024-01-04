@@ -300,6 +300,25 @@ function _isJson(s) {
   return true
 }
 
+async function _fetchImage (url) {
+  // if it doesn't start with http, it's probably a local image
+  if (!url.startsWith('http')) return url
+
+  const keyName = 'dorion-changelog-image-' + url
+  
+  // check if we already have it cached
+  if (localStorage.getItem(keyName)) {
+    return localStorage.getItem(keyName)
+  }
+
+  // fetch it and cache it
+  const { invoke } = window.__TAURI__
+  const base64 = await invoke('fetch_image', { url })
+  localStorage.setItem(keyName, base64)
+  
+  return base64
+}
+
 /**
  * Overwrite the global fetch function _with a new one that will redirect to the tauri API 
  */
@@ -345,6 +364,10 @@ function _proxyFetch() {
       responseType: 2,
       ...options
     })
+
+    if (response.rawHeaders['content-type'] && response.rawHeaders['content-type'][0].includes('image/')) { 
+      response.image = async () => await _fetchImage(url)
+    }
 
     // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
     response.json = async () => JSON.parse(response.data)
