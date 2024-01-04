@@ -49,7 +49,7 @@ pub fn clear_cache() {
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
+pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
   win
     .with_webview(move |webview| unsafe {
       let zoom = value.unwrap_or(
@@ -67,7 +67,7 @@ pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
 
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
-pub fn window_zoom_level(win: &tauri::Window, value: Option<f64>) {
+pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
   let zoom = value.unwrap_or(
     get_config()
       .zoom

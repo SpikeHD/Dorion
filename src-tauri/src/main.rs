@@ -165,6 +165,7 @@ fn main() {
       config::default_config,
       theme::get_theme,
       theme::get_theme_names,
+      theme::theme_from_link,
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
@@ -174,6 +175,7 @@ fn main() {
       window::blur::remove_effect,
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
+      window_helpers::window_zoom_level,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::Destroyed { .. } => {

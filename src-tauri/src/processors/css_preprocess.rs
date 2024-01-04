@@ -148,6 +148,12 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
   // If we need to cache css, do that
   if get_config().cache_css.unwrap_or(true) {
     let cache_path = get_theme_dir().join("cache");
+
+    // Ensure cache path exists
+    if fs::metadata(&cache_path).is_err() {
+      fs::create_dir(&cache_path).expect("Failed to create cache directory!");
+    }
+
     let cache_file = cache_path.join(format!("{}_cache.css", name));
 
     fs::write(cache_file, new_css.clone()).expect("Failed to write cache file!");

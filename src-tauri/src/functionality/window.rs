@@ -96,7 +96,7 @@ pub fn after_build(window: &Window) {
     }).unwrap_or_else(|_| log(format!("Failed to set user-agent")));
   }
 
-  window_zoom_level(window, None);
+  window_zoom_level(window.clone(), None);
 }
 
 pub fn setup_autostart(app: &mut tauri::App) {

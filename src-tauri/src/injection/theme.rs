@@ -53,25 +53,35 @@ pub fn get_theme_names() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub fn _theme_from_link(link: String) -> Result<(), String> {
-  let mut theme_name = link.split('/').last().unwrap().to_string();
+pub fn theme_from_link(link: String) -> String {
+  let theme_name = link.split('/').last().unwrap().to_string();
+  let mut file_name = theme_name.clone();
+  let theme_name = theme_name.split('.').next().unwrap().to_string();
 
   if theme_name.is_empty() {
-    return Ok(());
+    return String::new();
   }
 
-  if !theme_name.ends_with(".css") {
-    theme_name.push_str(".css");
+  if !file_name.ends_with(".css") {
+    file_name.push_str(".css");
   }
 
-  let theme = reqwest::blocking::get(&link)
-    .map_err(|e| format!("Error fetching theme from link: {}", e))?
+  let resp = reqwest::blocking::get(&link);
+
+  if resp.is_err() {
+    return String::new();
+  }
+
+  let theme = resp
+    .unwrap()
     .text()
-    .map_err(|e| format!("Error reading theme from response: {}", e))?;
+    .unwrap_or(String::new());
 
-  let path = get_theme_dir().join(&theme_name);
+  let path = get_theme_dir().join(&file_name);
 
-  fs::write(path, theme).map_err(|e| format!("Error writing theme to file: {}", e))?;
+  if fs::write(path, &theme).is_err() {
+    return String::new();
+  }
 
-  Ok(())
+  file_name
 }
