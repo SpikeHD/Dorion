@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::util::paths::get_theme_dir;
+use crate::{util::paths::get_theme_dir, config::get_config, processors::css_preprocess::localize_imports};
 
 #[tauri::command]
 pub fn get_theme(name: String) -> Result<String, String> {
@@ -53,15 +53,16 @@ pub fn get_theme_names() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub fn _theme_from_link(link: String) -> Result<(), String> {
-  let mut theme_name = link.split('/').last().unwrap().to_string();
+pub async fn theme_from_link(win: tauri::Window, link: String) -> Result<(), String> {
+  let theme_name = link.split('/').last().unwrap().to_string();
+  let mut file_name = theme_name.clone();
 
   if theme_name.is_empty() {
     return Ok(());
   }
 
   if !theme_name.ends_with(".css") {
-    theme_name.push_str(".css");
+    file_name.push_str(".css");
   }
 
   let theme = reqwest::blocking::get(&link)
@@ -69,9 +70,14 @@ pub fn _theme_from_link(link: String) -> Result<(), String> {
     .text()
     .map_err(|e| format!("Error reading theme from response: {}", e))?;
 
-  let path = get_theme_dir().join(&theme_name);
+  let path = get_theme_dir().join(&file_name);
 
-  fs::write(path, theme).map_err(|e| format!("Error writing theme to file: {}", e))?;
+  fs::write(path, &theme).map_err(|e| format!("Error writing theme to file: {}", e))?;
+
+  // Cache it as well (if needed)
+  if get_config().cache_css.unwrap_or_default() {
+    localize_imports(win, theme, theme_name).await;
+  }
 
   Ok(())
 }

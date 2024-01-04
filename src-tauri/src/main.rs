@@ -164,6 +164,7 @@ fn main() {
       config::default_config,
       theme::get_theme,
       theme::get_theme_names,
+      theme::theme_from_link,
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
