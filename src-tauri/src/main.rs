@@ -168,6 +168,7 @@ fn main() {
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
+      helpers::fetch_image,
       window::blur::available_blurs,
       window::blur::apply_effect,
       window::blur::remove_effect,
