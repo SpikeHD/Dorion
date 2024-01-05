@@ -12,6 +12,8 @@ const TITLE = 'Dorion'
 
   _createLocalStorage()
   _proxyFetch()
+  
+  window.fetchImage = fetchImage
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
@@ -303,7 +305,7 @@ function _isJson(s) {
   return true
 }
 
-async function _fetchImage (url) {
+async function fetchImage (url) {
   const { invoke } = window.__TAURI__
   return await invoke('fetch_image', { url })
 }
@@ -349,30 +351,14 @@ function _proxyFetch() {
       }
     }
 
-    const headers = options?.headers || {}
-    const userAgent = navigator.userAgent
-
-    // If it's github, add the user agent
-    if (url.includes('github.com')) {
-      headers['User-Agent'] = userAgent
-    }
-
     const response = await http.fetch(url, {
       responseType: 2,
-      ...options,
-      headers: {
-        ...options?.headers,
-        ...headers
-      }
+      ...options
     })
 
     // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
     response.json = async () => JSON.parse(response.data)
     response.text = async () => response.data
-
-    if (response.rawHeaders['content-type'] && response.rawHeaders['content-type'][0].includes('image/')) { 
-      response.image = async () => await _fetchImage(url)
-    }
 
     response.headers = new Headers(response.headers)
 
