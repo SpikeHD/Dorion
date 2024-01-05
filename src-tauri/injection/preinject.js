@@ -304,22 +304,8 @@ function _isJson(s) {
 }
 
 async function _fetchImage (url) {
-  // if it doesn't start with http, it's probably a local image
-  if (!url.startsWith('http')) return url
-
-  const keyName = 'dorion-changelog-image-' + url
-  
-  // check if we already have it cached
-  if (localStorage.getItem(keyName)) {
-    return localStorage.getItem(keyName)
-  }
-
-  // fetch it and cache it
   const { invoke } = window.__TAURI__
-  const base64 = await invoke('fetch_image', { url })
-  localStorage.setItem(keyName, base64)
-  
-  return base64
+  return await invoke('fetch_image', { url })
 }
 
 /**
