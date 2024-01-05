@@ -12,6 +12,8 @@ const TITLE = 'Dorion'
 
   _createLocalStorage()
   _proxyFetch()
+  
+  window.fetchImage = fetchImage
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
@@ -303,7 +305,7 @@ function _isJson(s) {
   return true
 }
 
-async function _fetchImage (url) {
+async function fetchImage (url) {
   const { invoke } = window.__TAURI__
   return await invoke('fetch_image', { url })
 }
