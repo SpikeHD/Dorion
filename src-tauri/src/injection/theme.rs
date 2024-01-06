@@ -72,7 +72,7 @@ pub fn theme_from_link(link: String) -> String {
     return String::new();
   }
 
-  let theme = resp.unwrap().text().unwrap_or(String::new());
+  let theme = resp.unwrap().text().unwrap_or_default();
 
   let path = get_theme_dir().join(&file_name);
 
