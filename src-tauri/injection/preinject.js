@@ -303,6 +303,11 @@ function _isJson(s) {
   return true
 }
 
+async function _fetchImage(url) {
+  const { invoke } = window.__TAURI__
+  return await invoke('fetch_image', { url })
+}
+
 /**
  * Overwrite the global fetch function _with a new one that will redirect to the tauri API 
  */
