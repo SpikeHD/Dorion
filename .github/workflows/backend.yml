@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - '.github/workflows/backend.yml'
+      - 'package.json'
       - 'src-tauri/**'
   pull_request:
     paths:
       - '.github/workflows/backend.yml'
+      - 'package.json'
       - 'src-tauri/**'
 
 concurrency:

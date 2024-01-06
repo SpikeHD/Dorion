@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - '.github/workflows/build.yml'
+      - 'package.json'
       - 'src-tauri/**/*'
       - 'src/**/*'
       - 'updater/**/*'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
+      - 'package.json'
       - 'src-tauri/**/*'
       - 'src/**/*'
       - 'updater/**/*'
