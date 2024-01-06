@@ -6,7 +6,7 @@ use crate::processors::js_preprocess::eval_js_imports;
 
 static mut TAURI_INJECTED: bool = false;
 
-flate!(pub static INJECTION: str from "./injection/injection_min.js");
+flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
 flate!(pub static FALLBACK_MOD: str from "./injection/shelter.js");
 

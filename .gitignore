@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-src-tauri/injection/injection_min.js
+src-tauri/injection/postinject_min.js
 src-tauri/injection/preinject_min.js
 src-tauri/injection/shelter.js
 
