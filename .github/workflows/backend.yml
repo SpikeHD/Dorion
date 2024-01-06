@@ -78,7 +78,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build frontend (creates '../dist')
-        run: pnpm install && pnpm shupdate && pnpm prebuild && pnpm build
+        run: pnpm install && pnpm shupdate && pnpm build:js && pnpm build
 
       - name: Create empty file named "updater" in src-tauri
         run: touch src-tauri/updater
