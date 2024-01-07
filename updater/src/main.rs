@@ -160,12 +160,7 @@ pub fn update_main() {
   // Install from the MSI
   let mut cmd = std::process::Command::new("msiexec");
   cmd.arg("/i");
-  cmd.arg(
-    release_path
-      .into_os_string()
-      .into_string()
-      .unwrap()
-  );
+  cmd.arg(release_path.into_os_string().into_string().unwrap());
 
   println!("Running {:?}", cmd);
 
@@ -219,12 +214,7 @@ pub fn update_main_kinda() {
   // Open the folder the zip is in and highlight
   let mut cmd = std::process::Command::new("explorer");
   cmd.arg("/select,");
-  cmd.arg(
-    release_path
-      .into_os_string()
-      .into_string()
-      .unwrap()
-  );
+  cmd.arg(release_path.into_os_string().into_string().unwrap());
 
   match cmd.spawn() {
     Ok(_) => (),

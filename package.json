@@ -16,6 +16,7 @@
         "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
         "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
         "codefix:updater": "pnpm format:updater && pnpm clippy:updater",
+        "codefix:all": "pnpm codefix && pnpm codefix:updater",
         "shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
     },
     "devDependencies": {
