@@ -77,7 +77,7 @@ async function init() {
     .catch(e => console.error('Error reading plugins: ', e))
   const version = await window.__TAURI__.app.getVersion()
 
-  await _displayLoadingTop()
+  await displayLoadingTop()
 
   // Start the safemode timer
   safemodeTimer(
@@ -100,7 +100,7 @@ async function init() {
     })
   })
 
-  const themeJs = await _handleThemeInjection()
+  const themeJs = await handleThemeInjection()
 
   updateOverlay({
     midtitle: 'Getting injection JS...'
@@ -146,7 +146,7 @@ async function updateOverlay(toUpdate: Record<string, string>) {
   }
 }
 
-async function _handleThemeInjection() {
+async function handleThemeInjection() {
   const { invoke } = window.__TAURI__
 
   // This needs to exist for hot-switching to work
@@ -195,7 +195,7 @@ async function _handleThemeInjection() {
 /**
  * Display the splashscreen
  */
-async function _displayLoadingTop() {
+async function displayLoadingTop() {
   const { invoke } = window.__TAURI__
   const html = await invoke('get_index')
   const loadingContainer = document.createElement('div') satisfies HTMLDivElement
