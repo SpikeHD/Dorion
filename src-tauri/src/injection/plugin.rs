@@ -2,12 +2,12 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 use tauri::regex::Regex;
 
-use crate::util::paths::get_plugin_dir;
+use crate::util::{paths::get_plugin_dir, logger};
 
 #[derive(Serialize, Deserialize)]
-pub struct Plugin {
+pub struct PluginDetails {
   name: String,
-  disabled: bool,
+  enabled: bool,
   preload: bool,
 }
 
@@ -37,39 +37,38 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn load_plugins(preload_only: Option<bool>) -> Result<HashMap<String, String>, String> {
-  let pl_only = preload_only.unwrap_or(false);
-  let mut plugin_list = HashMap::new();
+pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
   let plugins_dir = get_plugin_dir();
+  let plugins_list = get_plugin_list();
+  let mut plugins: HashMap<String, String> = HashMap::new();
+  let plugin_files = fs::read_dir(plugins_dir).unwrap();
 
-  let plugin_folders =
-    fs::read_dir(plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+  for plugin in plugin_files {
+    let plugin = plugin.unwrap();
+    let plugin_name = plugin.file_name().to_str().unwrap().to_string();
 
-  for entry in plugin_folders {
-    let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path
-      .metadata()
-      .map_err(|e| format!("Error getting metadata: {}", e))?;
-
-    let name = full_path.file_name();
-    let name_str = name.to_str().unwrap_or_default();
-
-    if !meta.is_dir() && name_str.ends_with(".js") && !name_str.starts_with('_') {
-      if pl_only && !name_str.starts_with("PRELOAD_") {
-        continue;
-      }
-
-      let contents = fs::read_to_string(full_path.path());
-
-      if contents.is_err() {
-        continue;
-      }
-
-      plugin_list.insert(format!("{:?}", name), contents.unwrap());
+    if !plugin_name.ends_with(".js") {
+      continue;
     }
+
+    let plugin_details = plugins_list.get(&plugin_name);
+
+    if plugin_details.is_none() {
+      continue;
+    }
+
+    let plugin_details = plugin_details.unwrap();
+
+    if preload_only.unwrap_or(false)  && !plugin_details.preload {
+      continue;
+    }
+
+    let plugin_js = fs::read_to_string(plugin.path()).unwrap();
+
+    plugins.insert(plugin_name, plugin_js);
   }
 
-  Ok(plugin_list)
+  plugins
 }
 
 #[tauri::command]
@@ -85,143 +84,134 @@ pub fn get_plugin_import_urls(plugin_js: String) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn get_plugin_list() -> Result<Vec<Plugin>, String> {
+pub fn get_new_plugins() {
   let plugins_dir = get_plugin_dir();
-  let mut plugin_list: Vec<Plugin> = Vec::new();
+  let mut plugins_list = get_plugin_list();
 
-  let plugin_folders =
-    fs::read_dir(plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+  let plugins = fs::read_dir(&plugins_dir).unwrap();
 
-  for entry in plugin_folders {
-    let full_path = entry.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path
-      .metadata()
-      .map_err(|e| format!("Error getting metadata: {}", e))?;
+  // Not only do we add plugins, but we also remove plugins that don't exist anymore
+  for plugin in plugins {
+    let plugin = plugin.unwrap();
+    let filename = plugin.file_name().to_str().unwrap().to_string();
+    let mut plugin_name = filename.clone();
 
-    if !meta.is_dir() {
-      let name = full_path.file_name();
-      let name_str = name.to_str().unwrap_or("");
-      let disabled = name_str.starts_with('_');
-      let preload = name_str.contains("PRELOAD");
+    if !plugin_name.ends_with(".js") {
+      continue;
+    }
 
-      let mut plugin_name = name_str.to_string();
+    // Plugin name without the .js
+    plugin_name = plugin_name.split('.').next().unwrap().to_string();
 
-      if disabled {
-        plugin_name = plugin_name.replacen('_', "", 1);
-      }
+    let plugin_details = plugins_list.get(&plugin_name);
 
-      if preload {
-        plugin_name = plugin_name.replace("PRELOAD_", "");
-      }
-
-      plugin_name = plugin_name.replace(".js", "");
-
-      if fs::metadata(full_path.path()).is_ok() {
-        plugin_list.push(Plugin {
+    if plugin_details.is_none() {
+      plugins_list.insert(
+        filename,
+        PluginDetails {
           name: plugin_name,
-          disabled,
-          preload,
-        });
-      }
+          enabled: false,
+          preload: false,
+        },
+      );
     }
   }
 
-  Ok(plugin_list)
+  let plugins_to_remove: Vec<String> = plugins_list
+    .keys()
+    .filter(|&plugin_name| {
+      let plugin_path = plugins_dir.join(plugin_name);
+      !plugin_path.exists()
+    })
+    .cloned()
+    .collect();
+
+  for plugin_name in plugins_to_remove {
+    plugins_list.remove(&plugin_name);
+  }
+
+  write_plugins_json(plugins_list);
+
+  logger::log("Plugins updated");
+}
+
+fn write_plugins_json(list: HashMap<String, PluginDetails>) {
+  let plugins_dir = get_plugin_dir();
+  let plugins_json = plugins_dir.join("plugins.json");
+
+  let plugins_str = serde_json::to_string(&list).unwrap_or_default();
+
+  // If it's empty, something got borked, so just write an empty array
+  if plugins_str.is_empty() {
+    fs::write(plugins_json, "[]").unwrap();
+    return;
+  }
+
+  fs::write(plugins_json, plugins_str).unwrap();
 }
 
 #[tauri::command]
-pub fn toggle_plugin(name: String) -> Result<bool, String> {
+pub fn get_plugin_list() -> HashMap<String, PluginDetails> {
   let plugins_dir = get_plugin_dir();
-  let folders =
-    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+  let plugins_json = plugins_dir.join("plugins.json");
 
-  for path in folders {
-    let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path
-      .metadata()
-      .map_err(|e| format!("Error getting metadata: {}", e))?;
-    let file_name_os = full_path.file_name();
-    let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
-
-    if meta.is_dir() {
-      continue;
-    }
-
-    let mut plugin_name = String::from(&name);
-
-    if plugin_name.starts_with('_') {
-      plugin_name = file_name.replacen('_', "", 1);
-    }
-
-    if file_name.contains(&plugin_name) {
-      let mut new_name = String::from('_') + file_name;
-
-      if file_name.starts_with('_') {
-        new_name = file_name.replacen('_', "", 1);
-      }
-
-      // Disable the folder
-      fs::rename(plugins_dir.join(file_name), plugins_dir.join(new_name))
-        .map_err(|e| format!("Error renaming file: {}", e))?;
-
-      return Ok(file_name.starts_with('_'));
-    }
+  if !plugins_json.exists() {
+    // Create the plugins list file
+    logger::log("Plugins.json does not exit, recreating...");
+    fs::write(plugins_json, "[]").unwrap();
+    
+    return HashMap::new();
   }
 
-  Ok(false)
+  let plugins_json = fs::read_to_string(plugins_json).unwrap_or_default();
+  let plugins_json: HashMap<String, PluginDetails> = serde_json::from_str(&plugins_json).unwrap_or_else(|_| {
+    logger::log("Plugins.json invalid, recreating...");
+    fs::write(plugins_json, "{}").unwrap_or_default();
+
+    HashMap::new()
+  });
+
+  plugins_json
 }
 
 #[tauri::command]
-pub fn toggle_preload(name: String) -> Result<bool, String> {
-  let plugins_dir = get_plugin_dir();
-  let folders =
-    fs::read_dir(&plugins_dir).map_err(|e| format!("Error reading directory: {}", e))?;
+pub fn toggle_plugin(name: String) -> bool {
+  let mut plugins_list = get_plugin_list();
+  let mut found = false;
 
-  for path in folders {
-    let full_path = path.map_err(|e| format!("Error reading directory entry: {}", e))?;
-    let meta = full_path
-      .metadata()
-      .map_err(|e| format!("Error getting metadata: {}", e))?;
-    let file_name_os = full_path.file_name();
-    let file_name = file_name_os.to_str().ok_or("Error getting file name")?;
-
-    if meta.is_dir() {
-      continue;
+  plugins_list.iter_mut().for_each(|p| {
+    if p.0.as_str() == name {
+      p.1.enabled = !p.1.enabled;
+      found = true;
     }
+  });
 
-    let mut plugin_name = String::from(&name);
-    let disabled = file_name.starts_with('_');
-    let preloaded = file_name.contains("PRELOAD");
+  write_plugins_json(plugins_list);
 
-    // Use this name to ensure that, if a name with PRELOAD is provided, we remove that before comparison
-    if plugin_name.contains("PRELOAD") {
-      plugin_name = file_name.replace("PRELOAD_", "").replacen('_', "", 1);
-    }
-
-    if file_name.contains(&plugin_name) {
-      let mut new_name = plugin_name;
-
-      // Disable if enabled, otherwise enable if disabled
-      if preloaded {
-        new_name = new_name.replace("PRELOAD_", "");
-      } else {
-        new_name = String::from("PRELOAD_") + &new_name;
-      }
-
-      // Ensure we keep the disabled state
-      if disabled {
-        new_name = String::from("_") + &new_name;
-      }
-
-      new_name += ".js";
-
-      // Disable/enable preload
-      fs::rename(plugins_dir.join(file_name), plugins_dir.join(&new_name))
-        .map_err(|e| format!("Error renaming file: {}", e))?;
-
-      return Ok(!preloaded);
-    }
+  if !found {
+    logger::log(format!("Plugin {} not found", name).as_str());
   }
 
-  Ok(false)
+  found
+}
+
+#[tauri::command]
+pub fn toggle_preload(name: String) -> bool {
+  let mut plugins_list = get_plugin_list();
+  let mut found = false;
+
+  plugins_list.iter_mut().for_each(|p| {
+    if p.0.as_str() == name {
+      p.1.preload = !p.1.preload;
+      found = true;
+    }
+  });
+
+  write_plugins_json(plugins_list);
+
+  if !found {
+    logger::log(format!("Plugin {} not found", name).as_str());
+  }
+
+  found
 }
