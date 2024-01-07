@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 use tauri::regex::Regex;
 
-use crate::util::{paths::get_plugin_dir, logger};
+use crate::util::{logger, paths::get_plugin_dir};
 
 #[derive(Serialize, Deserialize)]
 pub struct PluginDetails {
@@ -159,17 +159,18 @@ pub fn get_plugin_list() -> HashMap<String, PluginDetails> {
     // Create the plugins list file
     logger::log("Plugins.json does not exit, recreating...");
     fs::write(plugins_json, "[]").unwrap();
-    
+
     return HashMap::new();
   }
 
   let plugins_json = fs::read_to_string(plugins_json).unwrap_or_default();
-  let plugins_json: HashMap<String, PluginDetails> = serde_json::from_str(&plugins_json).unwrap_or_else(|_| {
-    logger::log("Plugins.json invalid, recreating...");
-    fs::write(plugins_json, "{}").unwrap_or_default();
+  let plugins_json: HashMap<String, PluginDetails> = serde_json::from_str(&plugins_json)
+    .unwrap_or_else(|_| {
+      logger::log("Plugins.json invalid, recreating...");
+      fs::write(plugins_json, "{}").unwrap_or_default();
 
-    HashMap::new()
-  });
+      HashMap::new()
+    });
 
   plugins_json
 }
