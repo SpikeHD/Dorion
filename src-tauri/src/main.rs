@@ -171,7 +171,7 @@ fn main() {
       helpers::fetch_image,
       window::blur::available_blurs,
       window::blur::apply_effect,
-      window::blur::remove_effect,
+      // window::blur::remove_effect,
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,

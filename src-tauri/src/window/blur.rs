@@ -35,6 +35,7 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
   {
     use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
+    #[allow(clippy::single_match)]
     match effect {
       "vibrancy" => {
         apply_vibrancy(win, NSVisualEffectMaterial::HudWindow, None, None).unwrap_or_default()
@@ -44,14 +45,15 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
   }
 }
 
-#[tauri::command]
-pub fn remove_effect(win: tauri::Window) {
-  #[cfg(target_os = "windows")]
-  {
-    use window_vibrancy::{clear_acrylic, clear_blur, clear_mica};
+// Might use this one day, today is not that day
+// #[tauri::command]
+// pub fn remove_effect(win: tauri::Window) {
+//   #[cfg(target_os = "windows")]
+//   {
+//     use window_vibrancy::{clear_acrylic, clear_blur, clear_mica};
 
-    clear_blur(&win).unwrap_or_default();
-    clear_acrylic(&win).unwrap_or_default();
-    clear_mica(win).unwrap_or_default();
-  }
-}
+//     clear_blur(&win).unwrap_or_default();
+//     clear_acrylic(&win).unwrap_or_default();
+//     clear_mica(win).unwrap_or_default();
+//   }
+// }

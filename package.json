@@ -11,7 +11,7 @@
         "tauri": "tauri",
         "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
         "format:updater": "cargo fmt --manifest-path ./updater/Cargo.toml --all",
-        "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
+        "lint": "eslint ./src ./src-tauri/injection/**/*.ts",
         "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
         "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
         "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
