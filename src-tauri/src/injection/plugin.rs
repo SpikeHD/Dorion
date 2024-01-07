@@ -59,7 +59,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
 
     let plugin_details = plugin_details.unwrap();
 
-    if preload_only.unwrap_or(false)  && !plugin_details.preload {
+    if preload_only.unwrap_or(false) && !plugin_details.preload || !plugin_details.enabled {
       continue;
     }
 
@@ -103,7 +103,7 @@ pub fn get_new_plugins() {
     // Plugin name without the .js
     plugin_name = plugin_name.split('.').next().unwrap().to_string();
 
-    let plugin_details = plugins_list.get(&plugin_name);
+    let plugin_details = plugins_list.get(&filename);
 
     if plugin_details.is_none() {
       plugins_list.insert(
