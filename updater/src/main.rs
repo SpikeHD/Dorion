@@ -8,6 +8,7 @@ mod github;
 // If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 struct UpdaterArguments {
   main: bool,
+  #[cfg(target_os = "windows")]
   local: bool,
 }
 
@@ -15,6 +16,7 @@ pub fn main() {
   let mut pargs = Arguments::from_env();
   let args = UpdaterArguments {
     main: pargs.contains("--main"),
+    #[cfg(target_os = "windows")]
     local: pargs.contains("--local"),
   };
 
