@@ -180,7 +180,11 @@ fn main() {
           api.prevent_close();
         }
 
-        event.window().app_handle().save_window_state(StateFlags::all()).unwrap_or_default();
+        event
+          .window()
+          .app_handle()
+          .save_window_state(StateFlags::all())
+          .unwrap_or_default();
       }
       _ => {}
     })
@@ -228,7 +232,7 @@ fn main() {
       for script in plugin::load_plugins(Some(true)).values() {
         preload_str += format!("{};", script).as_str();
       }
-      
+
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", url_ext)
