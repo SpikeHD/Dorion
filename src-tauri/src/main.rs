@@ -116,10 +116,13 @@ fn main() {
 
   let client_mod = get_client_mod();
 
+  // Init plugin list
+  plugin::get_new_plugins();
+
   // Load preload plugins into a single string
   let mut preload_str = String::new();
 
-  for script in plugin::load_plugins(Some(true)).unwrap().values() {
+  for script in plugin::load_plugins(Some(true)).values() {
     preload_str += format!("{};", script).as_str();
   }
 
@@ -171,7 +174,7 @@ fn main() {
       helpers::fetch_image,
       window::blur::available_blurs,
       window::blur::apply_effect,
-      window::blur::remove_effect,
+      // window::blur::remove_effect,
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,

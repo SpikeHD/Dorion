@@ -4,11 +4,15 @@ on:
   push:
     paths:
       - '.github/workflows/backend.yml'
+      - 'package.json'
       - 'src-tauri/**'
+      - 'updater/**'
   pull_request:
     paths:
       - '.github/workflows/backend.yml'
+      - 'package.json'
       - 'src-tauri/**'
+      - 'updater/**'
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -76,7 +80,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build frontend (creates '../dist')
-        run: pnpm install && pnpm shupdate && pnpm prebuild && pnpm build
+        run: pnpm install && pnpm shupdate && pnpm build:js && pnpm build
 
       - name: Create empty file named "updater" in src-tauri
         run: touch src-tauri/updater

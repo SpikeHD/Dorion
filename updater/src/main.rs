@@ -8,6 +8,7 @@ mod github;
 // If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 struct UpdaterArguments {
   main: bool,
+  #[cfg(target_os = "windows")]
   local: bool,
 }
 
@@ -15,6 +16,7 @@ pub fn main() {
   let mut pargs = Arguments::from_env();
   let args = UpdaterArguments {
     main: pargs.contains("--main"),
+    #[cfg(target_os = "windows")]
     local: pargs.contains("--local"),
   };
 
@@ -158,12 +160,7 @@ pub fn update_main() {
   // Install from the MSI
   let mut cmd = std::process::Command::new("msiexec");
   cmd.arg("/i");
-  cmd.arg(
-    release_path
-      .into_os_string()
-      .into_string()
-      .unwrap()
-  );
+  cmd.arg(release_path.into_os_string().into_string().unwrap());
 
   println!("Running {:?}", cmd);
 
@@ -217,12 +214,7 @@ pub fn update_main_kinda() {
   // Open the folder the zip is in and highlight
   let mut cmd = std::process::Command::new("explorer");
   cmd.arg("/select,");
-  cmd.arg(
-    release_path
-      .into_os_string()
-      .into_string()
-      .unwrap()
-  );
+  cmd.arg(release_path.into_os_string().into_string().unwrap());
 
   match cmd.spawn() {
     Ok(_) => (),

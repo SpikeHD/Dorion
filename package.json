@@ -1,21 +1,22 @@
 {
     "name": "dorion",
-    "version": "3.1.1",
+    "version": "4.0.0",
     "type": "module",
     "scripts": {
-        "prebuild": "esbuild --minify --target=es6 --outfile=src-tauri/injection/injection_min.js src-tauri/injection/injection.js && esbuild --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.js",
-        "dev": "pnpm prebuild && pnpm build && tauri dev",
-        "build": "pnpm prebuild && tsc && vite build",
+        "build:js": "esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
+        "dev": "pnpm build:js && pnpm build && tauri dev",
+        "build": "pnpm build:js && vite build",
         "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater src-tauri/updater",
         "preview": "vite preview",
         "tauri": "tauri",
         "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
         "format:updater": "cargo fmt --manifest-path ./updater/Cargo.toml --all",
-        "lint": "eslint ./src ./src-tauri/injection/injection.js ./src-tauri/injection/preinject.js",
+        "lint": "eslint ./src ./src-tauri/injection/**/*.ts",
         "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
         "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
         "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
         "codefix:updater": "pnpm format:updater && pnpm clippy:updater",
+        "codefix:all": "pnpm codefix && pnpm codefix:updater",
         "shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
     },
     "devDependencies": {

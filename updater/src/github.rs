@@ -1,6 +1,6 @@
-use std::{fs, path::PathBuf, fmt::Display};
 use reqwest::blocking;
 use serde_json::Value;
+use std::{fmt::Display, fs, path::PathBuf};
 
 #[derive(Debug)]
 pub struct ReleaseData {
@@ -10,9 +10,9 @@ pub struct ReleaseData {
 
 pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<ReleaseData, String> {
   let url = format!(
-      "https://api.github.com/repos/{}/{}/releases/latest",
-      user.as_ref(),
-      repo.as_ref()
+    "https://api.github.com/repos/{}/{}/releases/latest",
+    user.as_ref(),
+    repo.as_ref()
   );
 
   let client = blocking::Client::new();
@@ -22,13 +22,14 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<Relea
     .send()
     .map_err(|e| format!("Failed to get latest release from GitHub: {}", e))?;
 
-  let text = response.text().map_err(|e| format!("Failed to read response text: {}", e))?;
+  let text = response
+    .text()
+    .map_err(|e| format!("Failed to read response text: {}", e))?;
 
-  let release: Value = serde_json::from_str(&text)
-    .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+  let release: Value =
+    serde_json::from_str(&text).map_err(|e| format!("Failed to parse JSON: {}", e))?;
 
-  let asset_array = release["assets"]
-    .as_array();
+  let asset_array = release["assets"].as_array();
 
   if asset_array.is_none() {
     return Err("Failed to parse JSON: assets is not an array".to_string());
@@ -55,10 +56,7 @@ pub fn download_release(
 ) -> PathBuf {
   let url = format!(
     "https://github.com/{}/{}/releases/download/{}/{}",
-    user,
-    repo,
-    tag_name,
-    release_name
+    user, repo, tag_name, release_name
   );
 
   let client = reqwest::blocking::Client::new();
@@ -76,15 +74,15 @@ pub fn download_release(
 
   // Create_dir_all if needed
   if !file_path.parent().unwrap().exists() {
-    fs::create_dir_all(file_path.parent().unwrap())
-      .expect("Failed to create directory");
+    fs::create_dir_all(file_path.parent().unwrap()).expect("Failed to create directory");
   }
 
   // Write the file
   fs::write(
     &file_path,
-    response.bytes().expect("Failed to read response bytes")
-  ).expect("Failed to write file");
+    response.bytes().expect("Failed to read response bytes"),
+  )
+  .expect("Failed to write file");
 
   // Return the path of the file
   file_path

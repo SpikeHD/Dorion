@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - '.github/workflows/build.yml'
+      - 'package.json'
       - 'src-tauri/**/*'
       - 'src/**/*'
       - 'updater/**/*'
   pull_request:
     paths:
       - '.github/workflows/build.yml'
+      - 'package.json'
       - 'src-tauri/**/*'
       - 'src/**/*'
       - 'updater/**/*'
@@ -82,7 +84,7 @@ jobs:
           
       - name: Build
         # Include --target universal-apple-darwin for MacOS, otherwise it will only build for x86_64
-        run: pnpm prebuild && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+        run: pnpm build:js && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
         env:
           RUSTFLAGS: -Awarnings
       
@@ -209,7 +211,7 @@ jobs:
   #       run: rustup target add aarch64-unknown-linux-gnu
 
   #     - name: Install deps and build
-  #       run: pnpm install && pnpm shupdate && pnpm prebuild && pnpm build && pnpm tauri build --target aarch64-unknown-linux-gnu
+  #       run: pnpm install && pnpm shupdate && pnpm build:js && pnpm build && pnpm tauri build --target aarch64-unknown-linux-gnu
 
   #     - name: Create empty folders for plugins and themes for armv8
   #       run: mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/plugins && mkdir src-tauri/target/aarch64-unknown-linux-gnu/release/themes
