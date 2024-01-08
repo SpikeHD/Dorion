@@ -2,7 +2,9 @@ use include_flate::flate;
 use std::collections::HashMap;
 use tauri::regex::Regex;
 
-use crate::processors::js_preprocess::eval_js_imports;
+use crate::{processors::js_preprocess::eval_js_imports, util::logger};
+
+use super::plugin::get_plugin_list;
 
 static mut TAURI_INJECTED: bool = false;
 
@@ -29,6 +31,8 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
 }
 
 fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
+  let plugin_list = get_plugin_list();
+
   // Eval plugin imports
   for script in plugins.values() {
     let imports = crate::injection::plugin::get_js_imports(script);
@@ -39,7 +43,8 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
   // Eval plugin scripts
   for (name, script) in &plugins {
     // Ignore preload plguins
-    if name.contains("PRELOAD_") {
+    if plugin_list.contains_key(name) {
+      logger::log(format!("Skipping plugin {} (is preload)", name).as_str());
       continue;
     }
 
