@@ -57,7 +57,7 @@ fn send_notification_internal(win: tauri::Window, title: String, body: String, i
     .unwrap_or_default();
 }
 
-#[cfg(target_os="linux")]
+#[cfg(target_os = "linux")]
 pub fn set_notif_icon(_window: &tauri::Window, _amount: u16) {
   // This doesn't work right now womp womp
 
@@ -114,19 +114,11 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
 pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
   use include_flate::flate;
   use windows::Win32::{
-    System::Com::{
-      CoCreateInstance,
-      CLSCTX_ALL,
-      CoInitialize,
-      CoUninitialize
-    },
+    System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL},
     UI::{
       Shell::{ITaskbarList3, TaskbarList},
-      WindowsAndMessaging::{
-        CreateIconFromResourceEx,
-        LR_DEFAULTCOLOR
-      },
-    }
+      WindowsAndMessaging::{CreateIconFromResourceEx, LR_DEFAULTCOLOR},
+    },
   };
 
   use crate::util::logger;
@@ -162,7 +154,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
     7 => (ICO_7.as_ptr(), ICO_7.len()),
     8 => (ICO_8.as_ptr(), ICO_8.len()),
     9 => (ICO_9.as_ptr(), ICO_9.len()),
-    _ => (std::ptr::null(), 0)
+    _ => (std::ptr::null(), 0),
   };
 
   // set the icon
@@ -170,41 +162,38 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
     // For about an hour, I was trying to use ITaskbarList3, but it turns out that the GUID is wrong. I hate Windows.
     &TaskbarList,
     None,
-    CLSCTX_ALL
+    CLSCTX_ALL,
   );
 
   // check
   if taskbar_list.is_err() {
-    logger::log(format!("Failed to get taskbar list: {:?}", taskbar_list.err()));
+    logger::log(format!(
+      "Failed to get taskbar list: {:?}",
+      taskbar_list.err()
+    ));
     return;
   }
 
   let taskbar_list = taskbar_list.unwrap();
   taskbar_list.HrInit().unwrap_or_default();
 
-  let hicon = unsafe {
-    CreateIconFromResourceEx(
-      ico.0,
-      ico.1 as u32,
-      true,
-      0x30000,
-      32,
-      32,
-      LR_DEFAULTCOLOR
-    )
-  };
+  let hicon = CreateIconFromResourceEx(ico.0, ico.1 as u32, true, 0x30000, 32, 32, LR_DEFAULTCOLOR);
 
   // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
   if hicon.is_err() {
     logger::log(format!("Failed to create icon: {:?}", hicon.err()));
     // create null icon
-    taskbar_list.SetOverlayIcon(hwnd, None, None).unwrap_or_default();
+    taskbar_list
+      .SetOverlayIcon(hwnd, None, None)
+      .unwrap_or_default();
     return;
   }
 
   let hicon = hicon.unwrap();
 
-  taskbar_list.SetOverlayIcon(hwnd, hicon, None).unwrap_or_default();
+  taskbar_list
+    .SetOverlayIcon(hwnd, hicon, None)
+    .unwrap_or_default();
 
   CoUninitialize();
 }
