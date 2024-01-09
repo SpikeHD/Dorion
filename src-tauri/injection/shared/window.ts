@@ -26,7 +26,7 @@ export async function setMaximizeIcon() {
 export function applyNotificationCount() {
   const { invoke } = window.__TAURI__
   const title = document.querySelector('title') as HTMLTitleElement
-  const notifs = title.innerHTML.match(/\((.*)\)/)
+  const notifs = title.innerHTML.startsWith('•') ? -1 : title.innerHTML?.match(/\((.*)\)/)?.[1]
 
   if (!notifs) {
     invoke('notif_count', {
@@ -37,6 +37,6 @@ export function applyNotificationCount() {
   }
 
   invoke('notif_count', {
-    amount: Number(notifs[1]),
+    amount: Number(notifs),
   })
 }
