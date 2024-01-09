@@ -39,11 +39,7 @@ lazy_static! {
 
 #[tauri::command]
 pub fn available_mods() -> Vec<String> {
-  CLIENT_MODS
-    .keys()
-    .into_iter()
-    .map(|s| s.to_string())
-    .collect()
+  CLIENT_MODS.keys().map(|s| s.to_string()).collect()
 }
 
 pub fn load_mods_js() -> String {
@@ -66,18 +62,16 @@ pub fn load_mods_js() -> String {
     let response =
       reqwest::blocking::get(CLIENT_MODS.get(mod_name.as_str()).unwrap().script.as_str()).unwrap();
 
-    let mut contents = String::new();
-
-    if !response.status().is_success() {
+    let contents = if !response.status().is_success() {
       log(format!(
         "Failed to load client mod {}! Loading fallback.",
         mod_name
       ));
 
-      contents = read_fallback(mod_name.clone());
+      read_fallback(mod_name.clone())
     } else {
-      contents = response.text().unwrap();
-    }
+      response.text().unwrap()
+    };
 
     exec = format!("{};{}", exec, contents);
 
@@ -103,16 +97,16 @@ pub fn load_mods_css() -> String {
 
     let response = reqwest::blocking::get(styles).unwrap();
 
-    let mut contents = String::new();
-
-    if !response.status().is_success() {
+    let contents = if !response.status().is_success() {
       log(format!(
         "Failed to load client mod {}! Loading fallback.",
         mod_name
       ));
+
+      String::new()
     } else {
-      contents = response.text().unwrap();
-    }
+      response.text().unwrap()
+    };
 
     exec = format!("{} {}", exec, contents);
   }

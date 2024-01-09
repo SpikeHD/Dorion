@@ -9,8 +9,9 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
+  client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
-  local_html, plugin, theme, client_mod::{load_mods_js, self},
+  local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
