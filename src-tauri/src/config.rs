@@ -64,7 +64,7 @@ pub fn read_client_mods_file() -> String {
 pub fn write_config_file(contents: String) {
   init();
 
-  let config_file = get_client_mod_dir();
+  let config_file = get_config_dir();
 
   fs::write(config_file, contents).expect("Error writing client mods!")
 }

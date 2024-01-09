@@ -244,7 +244,7 @@ fn main() {
           format!(
             "!window.__DORION_INITIALIZED__ && {};{};{}",
             PREINJECT.as_str(),
-            client_mod,
+            client_mods,
             preload_str,
           ).as_str()
         )

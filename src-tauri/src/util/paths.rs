@@ -47,8 +47,6 @@ pub fn get_client_mod_dir() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
   let local_config_dir = current_exe.parent().unwrap().join("client_mods.json");
 
-  println!("{:?}", local_config_dir);
-
   if fs::metadata(&local_config_dir).is_ok() {
     return local_config_dir;
   }

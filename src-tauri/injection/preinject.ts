@@ -103,8 +103,6 @@ async function init() {
   let themeJs = await handleThemeInjection()
   themeJs += await handleClientModThemeInjection()
 
-  console.log('Theme JS: ', themeJs)
-
   updateOverlay({
     midtitle: 'Getting injection JS...'
   })
@@ -211,16 +209,12 @@ async function handleClientModThemeInjection() {
   // Get the initial theme
   const themeContents = await invoke('get_client_mod_themes')
 
-  console.log('Client mod theme contents: ', themeContents)
-
   updateOverlay({
     midtitle: 'Localizing CSS imports...'
   })
 
   // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
   const cleanContents = cssSanitize(themeContents)?.replaceAll('\\"', '\'')
-
-  console.log('Client mod theme contents: ', cleanContents)
 
   return `;(() => {
     const ts = document.querySelector('#dorion-client-mods-themes')
