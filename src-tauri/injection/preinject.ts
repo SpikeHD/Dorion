@@ -100,7 +100,10 @@ async function init() {
     })
   })
 
-  const themeJs = await handleThemeInjection()
+  let themeJs = await handleThemeInjection()
+  themeJs += await handleClientModThemeInjection()
+
+  console.log('Theme JS: ', themeJs)
 
   updateOverlay({
     midtitle: 'Getting injection JS...'
@@ -189,6 +192,47 @@ async function handleThemeInjection() {
     \`
 
     console.log('[Theme Loader] Appending Styles')
+  })()`
+}
+
+async function handleClientModThemeInjection() {
+  
+  const { invoke } = window.__TAURI__
+
+  const ts = document.createElement('style')
+  ts.id = 'dorion-client-mods-themes'
+  document.body.appendChild(ts)
+
+
+  updateOverlay({
+    midtitle: 'Loading client mod theme CSS...'
+  })
+
+  // Get the initial theme
+  const themeContents = await invoke('get_client_mod_themes')
+
+  console.log('Client mod theme contents: ', themeContents)
+
+  updateOverlay({
+    midtitle: 'Localizing CSS imports...'
+  })
+
+  // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
+  const cleanContents = cssSanitize(themeContents)?.replaceAll('\\"', '\'')
+
+  console.log('Client mod theme contents: ', cleanContents)
+
+  return `;(() => {
+    const ts = document.querySelector('#dorion-client-mods-themes')
+    ts.textContent = \`
+      ${cleanContents?.replace(/`/g, '\\`')
+  // To this day I do not know why I need to do this
+    .replace(/\\8/g, '')
+    .replace(/\\9/g, '')
+}
+    \`
+
+    console.log('[Theme Loader] Appending Client Mod Styles')
   })()`
 }
 

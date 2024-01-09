@@ -9,7 +9,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
-  injection_runner::{self, get_client_mod, PREINJECT},
+  injection_runner::{self, get_client_mods, PREINJECT},
   local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
@@ -114,7 +114,7 @@ fn main() {
   let safemode = std::env::args().any(|arg| arg == "--safemode");
   log(format!("Safemode enabled: {}", safemode));
 
-  let client_mod = get_client_mod();
+  let client_mods = get_client_mods();
 
   // Init plugin list
   plugin::get_new_plugins();
@@ -164,8 +164,11 @@ fn main() {
       injection_runner::load_injection_js,
       config::read_config_file,
       config::write_config_file,
+      config::read_client_mods_file,
+      config::write_client_mods_file,
       config::default_config,
       theme::get_theme,
+      theme::get_client_mod_themes,
       theme::get_theme_names,
       theme::theme_from_link,
       helpers::get_platform,
@@ -234,7 +237,7 @@ fn main() {
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mod, preload_str).as_str()
+          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mods, preload_str).as_str()
         )
         .resizable(true)
         .disable_file_drop_handler()

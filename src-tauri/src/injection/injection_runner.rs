@@ -1,14 +1,15 @@
 use include_flate::flate;
 use std::collections::HashMap;
+use std::fs;
 use tauri::regex::Regex;
 
+use crate::config::get_client_mods_config;
 use crate::processors::js_preprocess::eval_js_imports;
 
 static mut TAURI_INJECTED: bool = false;
 
 flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
-flate!(pub static FALLBACK_MOD: str from "./injection/shelter.js");
 
 #[tauri::command]
 pub fn is_injected() {
@@ -87,22 +88,46 @@ pub fn load_injection_js(
   is_injected();
 }
 
-pub fn get_client_mod() -> String {
-  let req =
-    reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
+pub fn get_client_mods() -> String {
+  let client_mods = get_client_mods_config()
+    .into_iter()
+    .filter(|x| x.enabled)
+    .collect::<Vec<_>>();
 
-  let resp = match req {
-    Ok(r) => r,
-    Err(e) => {
-      println!(
-        "Failed to read shelter.js in resource dir, using fallback: {}",
-        e
-      );
+  let mut client_mods_js = String::new();
 
-      // Send fallback instead
-      return FALLBACK_MOD.clone();
+  for client_mod in client_mods {
+    let req = reqwest::blocking::get(client_mod.script.as_str());
+
+    let mut use_fallback = false;
+
+    let resp = match req {
+      Ok(r) => r,
+      Err(e) => {
+        println!(
+          "Failed to read {} in resource dir, using fallback: {}",
+          client_mod.name, e
+        );
+
+        if client_mod.fallback != "" {
+          use_fallback = true;
+        }
+
+        // Send error instead
+        return format!("console.error('Failed to load {}')", client_mod.name);
+      }
+    };
+
+    if use_fallback {
+      let fallback = fs::read_to_string(client_mod.fallback.as_str()).unwrap_or_default();
+
+      client_mods_js += fallback.as_str();
+    } else {
+      client_mods_js += resp.text().unwrap_or_default().as_str();
     }
-  };
 
-  resp.text().unwrap_or_default()
+    client_mods_js += ";";
+  }
+
+  client_mods_js
 }
