@@ -84,16 +84,16 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
   use crate::util::logger;
 
   // Include icons
-  flate!(static ICO_SOME: [u8] from "./icons/notifications/some.png");
-  flate!(static ICO_1: [u8] from "./icons/notifications/1.png");
-  flate!(static ICO_2: [u8] from "./icons/notifications/2.png");
-  flate!(static ICO_3: [u8] from "./icons/notifications/3.png");
-  flate!(static ICO_4: [u8] from "./icons/notifications/4.png");
-  flate!(static ICO_5: [u8] from "./icons/notifications/5.png");
-  flate!(static ICO_6: [u8] from "./icons/notifications/6.png");
-  flate!(static ICO_7: [u8] from "./icons/notifications/7.png");
-  flate!(static ICO_8: [u8] from "./icons/notifications/8.png");
-  flate!(static ICO_9: [u8] from "./icons/notifications/9.png");
+  flate!(static ICO_SOME: [u8] from "./icons/notifications/some_48.png");
+  flate!(static ICO_1: [u8] from "./icons/notifications/1_48.png");
+  flate!(static ICO_2: [u8] from "./icons/notifications/2_48.png");
+  flate!(static ICO_3: [u8] from "./icons/notifications/3_48.png");
+  flate!(static ICO_4: [u8] from "./icons/notifications/4_48.png");
+  flate!(static ICO_5: [u8] from "./icons/notifications/5_48.png");
+  flate!(static ICO_6: [u8] from "./icons/notifications/6_48.png");
+  flate!(static ICO_7: [u8] from "./icons/notifications/7_48.png");
+  flate!(static ICO_8: [u8] from "./icons/notifications/8_48.png");
+  flate!(static ICO_9: [u8] from "./icons/notifications/9_48.png");
 
   CoInitialize(std::ptr::null()).unwrap_or_default();
 
