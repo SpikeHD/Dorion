@@ -138,7 +138,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
   let taskbar_list = taskbar_list.unwrap();
   taskbar_list.HrInit().unwrap_or_default();
 
-  let hicon = CreateIconFromResourceEx(ico.0, ico.1 as u32, true, 0x30000, 32, 32, LR_DEFAULTCOLOR);
+  let hicon = CreateIconFromResourceEx(ico.0, ico.1 as u32, true, 0x30000, 24, 24, LR_DEFAULTCOLOR);
 
   // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
   if hicon.is_err() || amount == 0 {
