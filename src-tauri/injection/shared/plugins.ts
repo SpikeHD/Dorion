@@ -1,7 +1,7 @@
 export async function ensurePlugins() {
   const requiredPlugins = {
-    'Dorion Settings':
-      'https://spikehd.github.io/shelter-plugins/dorion-settings/',
+    // 'Dorion Settings':
+    //   'https://spikehd.github.io/shelter-plugins/dorion-settings/',
     'Always Trust': 'https://spikehd.github.io/shelter-plugins/always-trust/',
     'Dorion Notifications':
       'https://spikehd.github.io/shelter-plugins/dorion-notifications/',

@@ -29,6 +29,7 @@ pub struct Config {
   pub disable_hardware_accel: Option<bool>,
   pub blur: Option<String>,
   pub blur_css: Option<bool>,
+  pub client_mods: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -103,6 +104,7 @@ pub fn default_config() -> Config {
     disable_hardware_accel: Option::from(false),
     blur: Option::from("none".to_string()),
     blur_css: Option::from(true),
+    client_mods: Option::from(vec!["Shelter".to_string()]),
   }
 }
 

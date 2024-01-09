@@ -40,8 +40,6 @@ pub fn get_config_dir() -> PathBuf {
   config_file
 }
 
-
-
 pub fn get_client_mod_dir() -> PathBuf {
   // First check for a local config file
   let current_exe = std::env::current_exe().unwrap_or_default();

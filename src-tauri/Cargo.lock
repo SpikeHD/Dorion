@@ -997,6 +997,7 @@ dependencies = [
  "dirs 5.0.1",
  "embed_plist",
  "include-flate",
+ "lazy_static",
  "objc",
  "reqwest",
  "rsrpc",
