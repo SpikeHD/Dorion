@@ -114,7 +114,8 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
     7 => (ICO_7.as_ptr(), ICO_7.len()),
     8 => (ICO_8.as_ptr(), ICO_8.len()),
     9 => (ICO_9.as_ptr(), ICO_9.len()),
-    _ => (std::ptr::null(), 0),
+    // more than 9, just stay at 9
+    _ => (ICO_9.as_ptr(), ICO_9.len()),
   };
 
   // set the icon
@@ -140,7 +141,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
   let hicon = CreateIconFromResourceEx(ico.0, ico.1 as u32, true, 0x30000, 32, 32, LR_DEFAULTCOLOR);
 
   // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
-  if hicon.is_err() {
+  if hicon.is_err() || amount == 0 {
     logger::log(format!("Failed to create icon: {:?}", hicon.err()));
     // create null icon
     taskbar_list
