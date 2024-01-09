@@ -111,71 +111,67 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
 }
 
 #[cfg(target_os = "windows")]
-pub fn set_notif_icon(window: &tauri::Window, amount: u16) {
+pub unsafe fn set_notif_icon(window: &tauri::Window, amount: u16) {
   use include_flate::flate;
-  use windows::{
-    core::Interface,
-    Win32::{
-      System::Com::{
-        CoCreateInstance,
-        CLSCTX_ALL,
-        CoInitialize,
-        CoUninitialize
+  use windows::Win32::{
+    System::Com::{
+      CoCreateInstance,
+      CLSCTX_ALL,
+      CoInitialize,
+      CoUninitialize
+    },
+    UI::{
+      Shell::{ITaskbarList3, TaskbarList},
+      WindowsAndMessaging::{
+        CreateIconFromResourceEx,
+        LR_DEFAULTCOLOR
       },
-      UI::{
-        Shell::ITaskbarList3,
-        WindowsAndMessaging::CreateIcon,
-      }
     }
   };
 
   use crate::util::logger;
 
   // Include icons
-  flate!(pub static ICO_1: [u8] from "./icons/notifications/1.ico");
-  flate!(pub static ICO_2: [u8] from "./icons/notifications/2.ico");
-  flate!(pub static ICO_3: [u8] from "./icons/notifications/3.ico");
-  flate!(pub static ICO_4: [u8] from "./icons/notifications/4.ico");
-  flate!(pub static ICO_5: [u8] from "./icons/notifications/5.ico");
-  flate!(pub static ICO_6: [u8] from "./icons/notifications/6.ico");
-  flate!(pub static ICO_7: [u8] from "./icons/notifications/7.ico");
-  flate!(pub static ICO_8: [u8] from "./icons/notifications/8.ico");
-  flate!(pub static ICO_9: [u8] from "./icons/notifications/9.ico");
+  flate!(pub static ICO_1: [u8] from "./icons/notifications/1.png");
+  flate!(pub static ICO_2: [u8] from "./icons/notifications/2.png");
+  flate!(pub static ICO_3: [u8] from "./icons/notifications/3.png");
+  flate!(pub static ICO_4: [u8] from "./icons/notifications/4.png");
+  flate!(pub static ICO_5: [u8] from "./icons/notifications/5.png");
+  flate!(pub static ICO_6: [u8] from "./icons/notifications/6.png");
+  flate!(pub static ICO_7: [u8] from "./icons/notifications/7.png");
+  flate!(pub static ICO_8: [u8] from "./icons/notifications/8.png");
+  flate!(pub static ICO_9: [u8] from "./icons/notifications/9.png");
 
-  unsafe { CoInitialize(std::ptr::null()).unwrap_or_default(); }
+  CoInitialize(std::ptr::null()).unwrap_or_default();
 
-  // load the icon
-  //let icon_num = if amount > 9 { 9 } else { amount };
-  let icon_inst = unsafe {
-    CreateIcon(
-      None,
-      32,
-      32,
-      1,
-      32,
-      ICO_1.as_ptr(),
-      std::ptr::null(),
-    )
-  };
   let hwnd = window.hwnd();
-  
-  // checks
-  if icon_inst.is_err() || hwnd.is_err() {
-    logger::log(format!("Failed to load icon: {:?}", icon_inst.err()));
+
+  if hwnd.is_err() {
+    logger::log(format!("Failed to get window handle: {:?}", hwnd.err()));
     return;
   }
 
-  let icon_inst = icon_inst.unwrap();
   let hwnd = hwnd.unwrap();
+  let ico = match amount {
+    1 => (ICO_1.as_ptr(), ICO_1.len()),
+    2 => (ICO_2.as_ptr(), ICO_2.len()),
+    3 => (ICO_3.as_ptr(), ICO_3.len()),
+    4 => (ICO_4.as_ptr(), ICO_4.len()),
+    5 => (ICO_5.as_ptr(), ICO_5.len()),
+    6 => (ICO_6.as_ptr(), ICO_6.len()),
+    7 => (ICO_7.as_ptr(), ICO_7.len()),
+    8 => (ICO_8.as_ptr(), ICO_8.len()),
+    9 => (ICO_9.as_ptr(), ICO_9.len()),
+    _ => (std::ptr::null(), 0)
+  };
 
   // set the icon
-  let taskbar_list: Result<ITaskbarList3, windows::core::Error> = unsafe {
-    CoCreateInstance(
-      &ITaskbarList3::IID,
-      None,
-      CLSCTX_ALL
-    )
-  };
+  let taskbar_list: Result<ITaskbarList3, windows::core::Error> = CoCreateInstance(
+    // For about an hour, I was trying to use ITaskbarList3, but it turns out that the GUID is wrong. I hate Windows.
+    &TaskbarList,
+    None,
+    CLSCTX_ALL
+  );
 
   // check
   if taskbar_list.is_err() {
@@ -184,24 +180,44 @@ pub fn set_notif_icon(window: &tauri::Window, amount: u16) {
   }
 
   let taskbar_list = taskbar_list.unwrap();
+  taskbar_list.HrInit().unwrap_or_default();
 
-  unsafe {
-    taskbar_list.HrInit().unwrap_or_default();
-    taskbar_list.SetOverlayIcon(hwnd, icon_inst, None).unwrap_or_default();
+  let hicon = unsafe {
+    CreateIconFromResourceEx(
+      ico.0,
+      ico.1 as u32,
+      true,
+      0x30000,
+      32,
+      32,
+      LR_DEFAULTCOLOR
+    )
+  };
+
+  // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
+  if hicon.is_err() {
+    logger::log(format!("Failed to create icon: {:?}", hicon.err()));
+    // create null icon
+    taskbar_list.SetOverlayIcon(hwnd, None, None).unwrap_or_default();
+    return;
   }
 
-  unsafe { CoUninitialize(); }
+  let hicon = hicon.unwrap();
+
+  taskbar_list.SetOverlayIcon(hwnd, hicon, None).unwrap_or_default();
+
+  CoUninitialize();
 }
 
 #[tauri::command]
 pub fn notif_count(window: tauri::Window, amount: u16) {
   log(format!("Setting notification count: {}", amount));
 
-  #[cfg(target_os = "macos")]
+  #[cfg(not(target_os = "linux"))]
   unsafe {
     set_notif_icon(&window, amount);
   }
 
-  #[cfg(not(target_os = "macos"))]
+  #[cfg(target_os = "linux")]
   set_notif_icon(&window, amount);
 }
