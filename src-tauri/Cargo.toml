@@ -1,6 +1,6 @@
 [package]
 name = "dorion"
-version = "4.0.0"
+version = "4.0.1"
 description = "Tiny alternative Discord client with a smaller footprint, themes and plugins, multi-profile, and more!"
 authors = ["SpikeHD"]
 license = ""
@@ -60,6 +60,7 @@ features = [
     "Win32_Security",
     "Win32_System_Threading",
     "Win32_UI_WindowsAndMessaging",
+    "Win32_System_Com",
 ]
 
 [target.armv7-unknown-linux-gnueabihf]
