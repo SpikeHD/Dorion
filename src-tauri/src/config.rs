@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 
 use crate::util::logger::log;
-use crate::util::paths::{get_config_dir, get_client_mod_dir};
+use crate::util::paths::get_config_dir;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -32,15 +32,6 @@ pub struct Config {
   pub client_mods: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct ClientMod {
-  pub name: String,
-  pub script: String,
-  pub styles: String,
-  pub enabled: bool,
-  pub fallback: String,
-}
-
 pub fn init() {
   get_config_dir();
 }
@@ -55,27 +46,12 @@ pub fn read_config_file() -> String {
 }
 
 #[tauri::command]
-pub fn read_client_mods_file() -> String {
-  let config_file = get_client_mod_dir();
-
-  fs::read_to_string(config_file).expect("Client_mods does not exist!")
-}
-
-#[tauri::command]
 pub fn write_config_file(contents: String) {
   init();
 
   let config_file = get_config_dir();
 
   fs::write(config_file, contents).expect("Error writing client mods!")
-}
-
-// remember to call `.manage(MyState::default())`
-#[tauri::command]
-pub fn write_client_mods_file(contents: String) {
-  let config_file = get_client_mod_dir();
-
-  fs::write(config_file, contents).expect("Error writing client_mods!")
 }
 
 #[tauri::command]
@@ -108,26 +84,6 @@ pub fn default_config() -> Config {
   }
 }
 
-#[tauri::command]
-pub fn default_client_mods() -> Vec<ClientMod> {
-  vec![
-    ClientMod {
-      name: "Shelter".to_string(),
-      script: "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js".to_string(),
-      styles: "".to_string(),
-      enabled: true,
-      fallback: "./injection/shelter.js".to_string(), 
-    },
-    ClientMod {
-      name: "Vencord".to_string(),
-      script: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js".to_string(),
-      styles: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css".to_string(),
-      enabled: true,
-      fallback: "".to_string(),
-    },
-  ]
-}
-
 pub fn get_config() -> Config {
   let config_str = read_config_file();
   let config_str = config_str.as_str();
@@ -139,21 +95,6 @@ pub fn get_config() -> Config {
       log(format!("Error: {}", e));
 
       default_config()
-    }
-  }
-}
-
-pub fn get_client_mods_config() -> Vec<ClientMod> {
-  let config_str = read_client_mods_file();
-  let config_str = config_str.as_str();
-
-  match serde_json::from_str(config_str) {
-    Ok(config) => config,
-    Err(e) => {
-      log("Failed to parse config, using default config!");
-      log(format!("Error: {}", e));
-
-      default_client_mods()
     }
   }
 }

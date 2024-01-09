@@ -194,7 +194,6 @@ async function handleThemeInjection() {
 }
 
 async function handleClientModThemeInjection() {
-  
   const { invoke } = window.__TAURI__
 
   const ts = document.createElement('style')
@@ -207,11 +206,7 @@ async function handleClientModThemeInjection() {
   })
 
   // Get the initial theme
-  const themeContents = await invoke('get_client_mod_themes')
-
-  updateOverlay({
-    midtitle: 'Localizing CSS imports...'
-  })
+  const themeContents = await invoke('load_mods_css')
 
   // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes
   const cleanContents = cssSanitize(themeContents)?.replaceAll('\\"', '\'')

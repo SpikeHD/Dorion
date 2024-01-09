@@ -1,7 +1,10 @@
 use lazy_static::lazy_static;
 use std::{collections::HashMap, fs, path::PathBuf};
 
-use crate::{util::logger::log, config::{get_config, write_config_file}};
+use crate::{
+  config::{get_config, write_config_file},
+  util::logger::log,
+};
 
 pub struct ClientMod {
   pub script: String,
@@ -84,9 +87,46 @@ pub fn load_mods_js() -> String {
   exec
 }
 
+#[tauri::command]
+pub fn load_mods_css() -> String {
+  let config = get_config();
+  let enabled_mods = config.client_mods.unwrap_or(vec![]);
+
+  let mut exec = String::new();
+
+  for mod_name in enabled_mods {
+    let styles = CLIENT_MODS.get(mod_name.as_str()).unwrap().styles.clone();
+
+    if styles.is_empty() {
+      continue;
+    }
+
+    let response = reqwest::blocking::get(styles).unwrap();
+
+    let mut contents = String::new();
+
+    if !response.status().is_success() {
+      log(format!(
+        "Failed to load client mod {}! Loading fallback.",
+        mod_name
+      ));
+    } else {
+      contents = response.text().unwrap();
+    }
+
+    exec = format!("{} {}", exec, contents);
+  }
+
+  exec
+}
+
 fn get_fallback_dir(mod_name: String) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  current_exe.parent().unwrap().join("injection").join(format!("{}.js", mod_name))
+  current_exe
+    .parent()
+    .unwrap()
+    .join("injection")
+    .join(format!("{}.js", mod_name))
 }
 
 fn write_fallback(mod_name: String, contents: String) {

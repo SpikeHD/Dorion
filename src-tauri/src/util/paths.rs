@@ -40,41 +40,6 @@ pub fn get_config_dir() -> PathBuf {
   config_file
 }
 
-pub fn get_client_mod_dir() -> PathBuf {
-  // First check for a local config file
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("client_mods.json");
-
-  if fs::metadata(&local_config_dir).is_ok() {
-    return local_config_dir;
-  }
-
-  log("No local client mods file found. Using default.");
-
-  #[cfg(target_os = "windows")]
-  let appdata = dirs::data_dir().unwrap_or_default();
-
-  #[cfg(not(target_os = "windows"))]
-  let appdata = dirs::config_dir().unwrap_or_default();
-
-  let config_file = appdata.join("dorion").join("client_mods.json");
-
-  if fs::metadata(appdata.join("dorion")).is_err() {
-    fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
-  }
-
-  // Write default config if it doesn't exist
-  if fs::metadata(&config_file).is_err() {
-    fs::write(
-      &config_file,
-      r#"[{"name":"Shelter","script":"https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js","styles":"","enabled":true,"fallback":"./injection/shelter.js"},{"name":"Vencord","script":"https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js","styles":"https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css","enabled":false,"fallback":""}]"#,
-    )
-    .unwrap_or(());
-  }
-
-  config_file
-}
-
 pub fn config_is_local() -> bool {
   let current_exe = std::env::current_exe().unwrap_or_default();
   let local_config_dir = current_exe.parent().unwrap().join("config.json");

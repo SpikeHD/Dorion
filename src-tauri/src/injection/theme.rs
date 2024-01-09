@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::{util::paths::get_theme_dir, config::get_client_mods_config};
+use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
 pub fn get_theme(name: String) -> Result<String, String> {
@@ -26,40 +26,6 @@ pub fn get_theme(name: String) -> Result<String, String> {
   }
 
   Ok("".to_string())
-}
-
-#[tauri::command]
-pub fn get_client_mod_themes() -> String {
-  let client_mods = get_client_mods_config()
-    .into_iter()
-    .filter(|x| x.enabled)
-    .collect::<Vec<_>>();
-
-  let mut client_mods_css = String::new();
-
-  for client_mod in client_mods {
-    if client_mod.styles.is_empty() {
-      continue;
-    }
-
-    let req = reqwest::blocking::get(client_mod.styles.as_str());
-
-    let resp = match req {
-      Ok(r) => r,
-      Err(e) => {
-        println!(
-          "Failed to read {} in resource dir, using fallback: {}",
-          client_mod.name, e
-        );
-        // Send nothing instead
-        return String::new();
-      }
-    };
-
-    client_mods_css += resp.text().unwrap_or_default().as_str();
-  }
-
-  client_mods_css
 }
 
 #[tauri::command]
