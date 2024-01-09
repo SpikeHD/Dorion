@@ -57,7 +57,7 @@ fn send_notification_internal(win: tauri::Window, title: String, body: String, i
     .unwrap_or_default();
 }
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os="linux")]
 pub fn set_notif_icon(_window: &tauri::Window, _amount: u16) {
   // This doesn't work right now womp womp
 
@@ -108,6 +108,89 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: u16) {
   };
   let dock_tile: cocoa::base::id = msg_send![NSApp(), dockTile];
   let _: cocoa::base::id = msg_send![dock_tile, setBadgeLabel: label];
+}
+
+#[cfg(target_os = "windows")]
+pub fn set_notif_icon(window: &tauri::Window, amount: u16) {
+  use include_flate::flate;
+  use windows::{
+    core::Interface,
+    Win32::{
+      System::Com::{
+        CoCreateInstance,
+        CLSCTX_ALL,
+        CoInitialize,
+        CoUninitialize
+      },
+      UI::{
+        Shell::ITaskbarList3,
+        WindowsAndMessaging::CreateIcon,
+      }
+    }
+  };
+
+  use crate::util::logger;
+
+  // Include icons
+  flate!(pub static ICO_1: [u8] from "./icons/notifications/1.ico");
+  flate!(pub static ICO_2: [u8] from "./icons/notifications/2.ico");
+  flate!(pub static ICO_3: [u8] from "./icons/notifications/3.ico");
+  flate!(pub static ICO_4: [u8] from "./icons/notifications/4.ico");
+  flate!(pub static ICO_5: [u8] from "./icons/notifications/5.ico");
+  flate!(pub static ICO_6: [u8] from "./icons/notifications/6.ico");
+  flate!(pub static ICO_7: [u8] from "./icons/notifications/7.ico");
+  flate!(pub static ICO_8: [u8] from "./icons/notifications/8.ico");
+  flate!(pub static ICO_9: [u8] from "./icons/notifications/9.ico");
+
+  unsafe { CoInitialize(std::ptr::null()).unwrap_or_default(); }
+
+  // load the icon
+  //let icon_num = if amount > 9 { 9 } else { amount };
+  let icon_inst = unsafe {
+    CreateIcon(
+      None,
+      32,
+      32,
+      1,
+      32,
+      ICO_1.as_ptr(),
+      std::ptr::null(),
+    )
+  };
+  let hwnd = window.hwnd();
+  
+  // checks
+  if icon_inst.is_err() || hwnd.is_err() {
+    logger::log(format!("Failed to load icon: {:?}", icon_inst.err()));
+    return;
+  }
+
+  let icon_inst = icon_inst.unwrap();
+  let hwnd = hwnd.unwrap();
+
+  // set the icon
+  let taskbar_list: Result<ITaskbarList3, windows::core::Error> = unsafe {
+    CoCreateInstance(
+      &ITaskbarList3::IID,
+      None,
+      CLSCTX_ALL
+    )
+  };
+
+  // check
+  if taskbar_list.is_err() {
+    logger::log(format!("Failed to get taskbar list: {:?}", taskbar_list.err()));
+    return;
+  }
+
+  let taskbar_list = taskbar_list.unwrap();
+
+  unsafe {
+    taskbar_list.HrInit().unwrap_or_default();
+    taskbar_list.SetOverlayIcon(hwnd, icon_inst, None).unwrap_or_default();
+  }
+
+  unsafe { CoUninitialize(); }
 }
 
 #[tauri::command]
