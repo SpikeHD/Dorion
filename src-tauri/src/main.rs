@@ -116,16 +116,6 @@ fn main() {
 
   let client_mod = get_client_mod();
 
-  // Init plugin list
-  plugin::get_new_plugins();
-
-  // Load preload plugins into a single string
-  let mut preload_str = String::new();
-
-  for script in plugin::load_plugins(Some(true)).values() {
-    preload_str += format!("{};", script).as_str();
-  }
-
   #[allow(clippy::single_match)]
   tauri::Builder::default()
     .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -190,7 +180,11 @@ fn main() {
           api.prevent_close();
         }
 
-        event.window().app_handle().save_window_state(StateFlags::all()).unwrap_or_default();
+        event
+          .window()
+          .app_handle()
+          .save_window_state(StateFlags::all())
+          .unwrap_or_default();
       }
       _ => {}
     })
@@ -229,12 +223,27 @@ fn main() {
       _ => {}
     })
     .setup(move |app| {
+      // Init plugin list
+      plugin::get_new_plugins();
+
+      // Load preload plugins into a single string
+      let mut preload_str = String::new();
+
+      for script in plugin::load_plugins(Some(true)).values() {
+        preload_str += format!("{};", script).as_str();
+      }
+
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!("!window.__DORION_INITIALIZED__ && {};{};{}", PREINJECT.as_str(), client_mod, preload_str).as_str()
+          format!(
+            "!window.__DORION_INITIALIZED__ && {};{};{}",
+            PREINJECT.as_str(),
+            client_mod,
+            preload_str,
+          ).as_str()
         )
         .resizable(true)
         .disable_file_drop_handler()
