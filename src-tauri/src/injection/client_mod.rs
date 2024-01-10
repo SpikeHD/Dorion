@@ -48,15 +48,14 @@ pub fn load_mods_js() -> String {
 
   for mod_name in enabled_mods {
     let script_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().script;
-    let response = match reqwest::blocking::get(script_url)
-    {
+    let response = match reqwest::blocking::get(script_url) {
       Ok(r) => r,
       Err(_) => {
         log(format!("Failed to load client mod JS for {}.", mod_name));
 
         if mod_name == "Shelter" {
           log("Shelter detected: loading fallback!");
-          exec = format!("{};{}", exec, FALLBACK.to_string());
+          exec = format!("{};{}", exec, *FALLBACK);
         }
 
         continue;
@@ -70,7 +69,7 @@ pub fn load_mods_js() -> String {
 
       if mod_name == "Shelter" {
         log("Shelter detected: loading fallback!");
-        exec = format!("{};{}", exec, FALLBACK.to_string());
+        exec = format!("{};{}", exec, *FALLBACK);
       }
 
       continue;
@@ -98,8 +97,7 @@ pub fn load_mods_css() -> String {
       continue;
     }
 
-    let response = match reqwest::blocking::get(styles_url)
-    {
+    let response = match reqwest::blocking::get(styles_url) {
       Ok(r) => r,
       Err(_) => {
         log(format!("Failed to load client mod CSS for {}.", mod_name));
