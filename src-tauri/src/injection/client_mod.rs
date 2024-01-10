@@ -46,38 +46,59 @@ pub fn load_mods_js() -> String {
 
   let mut exec = String::new();
 
+  let mut tasks = Vec::new();
+
   for mod_name in enabled_mods {
     let script_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().script;
-    let response = match reqwest::blocking::get(script_url) {
-      Ok(r) => r,
-      Err(_) => {
+
+    tasks.push(std::thread::spawn(move || {
+      let response = match reqwest::blocking::get(script_url) {
+        Ok(r) => r,
+        Err(_) => {
+          log(format!("Failed to load client mod JS for {}.", mod_name));
+
+          if mod_name == "Shelter" {
+            log("Shelter detected: loading fallback!");
+            // return *FALLBACK;
+          }
+
+          return String::new();
+        }
+      };
+
+      let status = response.status();
+
+      if status != 200 {
         log(format!("Failed to load client mod JS for {}.", mod_name));
 
         if mod_name == "Shelter" {
           log("Shelter detected: loading fallback!");
-          exec = format!("{};{}", exec, *FALLBACK);
+          // return *FALLBACK;
         }
 
+        return String::new();
+      }
+
+      response.text().expect("Failed to parse client mod JS!")
+    }));
+  }
+
+  for task in tasks {
+    let result = match task.join() {
+      Ok(r) => r,
+      Err(e) => {
+        log(format!("Error joining thread: {:?}", e));
         continue;
       }
     };
 
-    let status = response.status();
+    log("Joining...");
 
-    if status != 200 {
-      log(format!("Failed to load client mod JS for {}.", mod_name));
-
-      if mod_name == "Shelter" {
-        log("Shelter detected: loading fallback!");
-        exec = format!("{};{}", exec, *FALLBACK);
-      }
-
+    if result.is_empty() {
       continue;
     }
 
-    let contents = response.text().expect("Failed to parse client mod JS!");
-
-    exec = format!("{};{}", exec, contents);
+    exec = format!("{};{}", exec, result);
   }
 
   exec
@@ -90,6 +111,8 @@ pub fn load_mods_css() -> String {
 
   let mut exec = String::new();
 
+  let mut tasks = Vec::new();
+
   for mod_name in enabled_mods {
     let styles_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().styles.clone();
 
@@ -97,24 +120,42 @@ pub fn load_mods_css() -> String {
       continue;
     }
 
-    let response = match reqwest::blocking::get(styles_url) {
-      Ok(r) => r,
-      Err(_) => {
+    tasks.push(std::thread::spawn(move || {
+      let response = match reqwest::blocking::get(styles_url) {
+        Ok(r) => r,
+        Err(_) => {
+          log(format!("Failed to load client mod CSS for {}.", mod_name));
+          return String::new();
+        }
+      };
+
+      let status = response.status();
+
+      if status != 200 {
         log(format!("Failed to load client mod CSS for {}.", mod_name));
+        return String::new();
+      }
+
+      response.text().expect("Failed to parse client mod CSS!")
+    }));
+  }
+
+  for task in tasks {
+    let result = match task.join() {
+      Ok(r) => r,
+      Err(e) => {
+        log(format!("Error joining thread: {:?}", e));
         continue;
       }
     };
 
-    let status = response.status();
+    log("Joining...");
 
-    if status != 200 {
-      log(format!("Failed to load client mod CSS for {}.", mod_name));
+    if result.is_empty() {
       continue;
     }
 
-    let contents = response.text().expect("Failed to parse client mod CSS!");
-
-    exec = format!("{} {}", exec, contents);
+    exec = format!("{} {}", exec, result);
   }
 
   exec
