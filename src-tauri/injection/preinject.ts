@@ -199,7 +199,6 @@ async function handleClientModThemeInjection() {
   ts.id = 'dorion-client-mods-themes'
   document.body.appendChild(ts)
 
-
   updateOverlay({
     midtitle: 'Loading client mod theme CSS...'
   })
