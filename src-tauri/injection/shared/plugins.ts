@@ -23,7 +23,7 @@ export async function ensurePlugins() {
 
         // Create a new plugin object. Simpler version of https://github.com/uwu/shelter/blob/ac74061864479ecb688ae5efc321e981cd1b54fa/packages/shelter/src/plugins.tsx#L54
         const pluginStr = `shelter=>{return ${text}}${atob('Ci8v')}`
-        const fn = eval(pluginStr)
+        const fn = window.eval(pluginStr)
         const plugin = fn(window.shelter)
 
         // Run plugin.onLoad if it exists
