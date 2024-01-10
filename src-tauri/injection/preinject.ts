@@ -129,7 +129,6 @@ async function init() {
   }, 200)
 }
 
-
 /**
  * Nasty helper function _for updating the text on the overlay
  */

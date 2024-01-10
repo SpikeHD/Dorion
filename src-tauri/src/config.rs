@@ -51,7 +51,7 @@ pub fn write_config_file(contents: String) {
 
   let config_file = get_config_dir();
 
-  fs::write(config_file, contents).expect("Error writing client mods!")
+  fs::write(config_file, contents).expect("Error writing config!")
 }
 
 #[tauri::command]
