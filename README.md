@@ -66,6 +66,7 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
   * WinGet (Maintained by [headquarter8302](https://github.com/headquarter8302))
     ```sh
     winget install --id SpikeHD.Dorion
+    ```
 * Linux:
   * Arch AUR (Maintained by [Refined7075](https://github.com/DarkCoder28))
     ```sh
