@@ -9,7 +9,8 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
-  injection_runner::{self, get_client_mod, PREINJECT},
+  client_mod::{self, load_mods_js},
+  injection_runner::{self, PREINJECT},
   local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
@@ -116,7 +117,7 @@ fn main() {
   let safemode = std::env::args().any(|arg| arg == "--safemode");
   log(format!("Safemode enabled: {}", safemode));
 
-  let client_mod = get_client_mod();
+  let client_mods = load_mods_js();
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -141,6 +142,8 @@ fn main() {
       plugin::toggle_plugin,
       plugin::toggle_preload,
       plugin::get_plugin_import_urls,
+      client_mod::available_mods,
+      client_mod::load_mods_css,
       profiles::get_profile_list,
       profiles::get_current_profile_folder,
       profiles::create_profile,
@@ -255,7 +258,7 @@ fn main() {
           format!(
             "!window.__DORION_INITIALIZED__ && {};{};{}",
             PREINJECT.as_str(),
-            client_mod,
+            client_mods,
             preload_str,
           ).as_str()
         )

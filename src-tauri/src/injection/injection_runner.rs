@@ -10,7 +10,6 @@ static mut TAURI_INJECTED: bool = false;
 
 flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
-flate!(pub static FALLBACK_MOD: str from "./injection/shelter.js");
 
 #[tauri::command]
 pub fn is_injected() {
@@ -90,24 +89,4 @@ pub fn load_injection_js(
   load_plugins(&window, plugins);
 
   is_injected();
-}
-
-pub fn get_client_mod() -> String {
-  let req =
-    reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
-
-  let resp = match req {
-    Ok(r) => r,
-    Err(e) => {
-      println!(
-        "Failed to read shelter.js in resource dir, using fallback: {}",
-        e
-      );
-
-      // Send fallback instead
-      return FALLBACK_MOD.clone();
-    }
-  };
-
-  resp.text().unwrap_or_default()
 }
