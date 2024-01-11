@@ -3,9 +3,12 @@
   windows_subsystem = "windows"
 )]
 
-use std::time::Duration;
 use functionality::tray;
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder, api::process::restart};
+use std::time::Duration;
+use tauri::{
+  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  WindowBuilder,
+};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
