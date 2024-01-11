@@ -8,8 +8,8 @@ export function proxyFetch() {
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net)(?:\/.*)?/g
     const scienceReg = /\/api\/v.*\/(science|track)/g
 
-    // If it matches, just let it go through native
-    if (url.toString().match(discordReg)) {
+    // If it matches, just let it go through native OR its a relative URL
+    if (url.toString().match(discordReg) || url.toString().startsWith('/')) {
       // Block science though!
       if (url.toString().match(scienceReg)) {
         console.log(`[Fetch Proxy] Blocked URL: ${url}`)
