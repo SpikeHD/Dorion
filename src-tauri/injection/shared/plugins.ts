@@ -10,6 +10,7 @@ export async function ensurePlugins() {
     'Dorion Updater':
       'https://spikehd.github.io/shelter-plugins/dorion-updater/',
     'Dorion PTT': 'https://spikehd.github.io/shelter-plugins/dorion-ptt/',
+    'Dorion Tray': 'https://spikehd.github.io/shelter-plugins/dorion-tray/',
   }
 
   const promises = [

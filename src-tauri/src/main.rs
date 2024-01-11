@@ -3,6 +3,7 @@
   windows_subsystem = "windows"
 )]
 
+use functionality::tray;
 use std::time::Duration;
 use tauri::{
   api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
@@ -180,6 +181,7 @@ fn main() {
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,
+      tray::set_tray_icon,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::Destroyed { .. } => {
