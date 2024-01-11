@@ -81,8 +81,6 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
     },
   };
 
-  use crate::util::logger;
-
   // Include icons
   flate!(static ICO_SOME: [u8] from "./icons/notifications/some_48.png");
   flate!(static ICO_1: [u8] from "./icons/notifications/1_48.png");
@@ -100,7 +98,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
   let hwnd = window.hwnd();
 
   if hwnd.is_err() {
-    logger::log(format!("Failed to get window handle: {:?}", hwnd.err()));
+    log(format!("Failed to get window handle: {:?}", hwnd.err()));
     return;
   }
 
@@ -130,7 +128,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
 
   // check
   if taskbar_list.is_err() {
-    logger::log(format!(
+    log(format!(
       "Failed to get taskbar list: {:?}",
       taskbar_list.err()
     ));
@@ -144,7 +142,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
 
   // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
   if hicon.is_err() || amount == 0 {
-    logger::log(format!("Failed to create icon: {:?}", hicon.err()));
+    log(format!("Failed to create icon: {:?}", hicon.err()));
     // create null icon
     taskbar_list
       .SetOverlayIcon(hwnd, None, None)

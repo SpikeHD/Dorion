@@ -4,7 +4,10 @@
 )]
 
 use std::time::Duration;
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder, api::process::restart};
+use tauri::{
+  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  WindowBuilder,
+};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
@@ -44,7 +47,11 @@ fn create_systray() -> SystemTray {
   let reload_btn = CustomMenuItem::new("reload".to_string(), "Reload");
   let restart_brn = CustomMenuItem::new("restart".to_string(), "Restart");
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
-  let tray_menu = SystemTrayMenu::new().add_item(open_btn).add_item(reload_btn).add_item(restart_brn).add_item(quit_btn);
+  let tray_menu = SystemTrayMenu::new()
+    .add_item(open_btn)
+    .add_item(reload_btn)
+    .add_item(restart_brn)
+    .add_item(quit_btn);
 
   SystemTray::new().with_menu(tray_menu)
 }

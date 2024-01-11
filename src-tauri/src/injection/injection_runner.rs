@@ -2,7 +2,7 @@ use include_flate::flate;
 use std::collections::HashMap;
 use tauri::regex::Regex;
 
-use crate::{processors::js_preprocess::eval_js_imports, util::logger};
+use crate::{processors::js_preprocess::eval_js_imports, util::logger::log};
 
 use super::plugin::get_plugin_list;
 
@@ -43,7 +43,7 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
   for (name, script) in &plugins {
     // Ignore preload plguins
     if plugin_list.contains_key(name) {
-      logger::log(format!("Skipping plugin {} (is preload)", name).as_str());
+      log(format!("Skipping plugin {} (is preload)", name).as_str());
       continue;
     }
 
