@@ -31,7 +31,7 @@ pub fn available_mods() -> Vec<String> {
 
 pub fn load_mods_js() -> String {
   let config = get_config();
-  let mut enabled_mods = config.client_mods.unwrap_or(vec![]);
+  let mut enabled_mods = config.client_mods.unwrap_or_default();
 
   // if enabled_mods does not include shelter, add it and save the config
   if !enabled_mods.contains(&"Shelter".to_string()) {
@@ -45,7 +45,6 @@ pub fn load_mods_js() -> String {
   }
 
   let mut exec = String::new();
-
   let mut tasks = Vec::new();
 
   for mod_name in enabled_mods {
@@ -59,7 +58,7 @@ pub fn load_mods_js() -> String {
 
           if mod_name == "Shelter" {
             log("Shelter detected: loading fallback!");
-            // return *FALLBACK;
+            return FALLBACK.clone();
           }
 
           return String::new();
@@ -73,7 +72,7 @@ pub fn load_mods_js() -> String {
 
         if mod_name == "Shelter" {
           log("Shelter detected: loading fallback!");
-          // return *FALLBACK;
+          return FALLBACK.clone();
         }
 
         return String::new();
@@ -107,14 +106,13 @@ pub fn load_mods_js() -> String {
 #[tauri::command]
 pub fn load_mods_css() -> String {
   let config = get_config();
-  let enabled_mods = config.client_mods.unwrap_or(vec![]);
-
+  let enabled_mods = config.client_mods.unwrap_or_default();
   let mut exec = String::new();
 
   let mut tasks = Vec::new();
 
   for mod_name in enabled_mods {
-    let styles_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().styles.clone();
+    let styles_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().styles;
 
     if styles_url.is_empty() {
       continue;
