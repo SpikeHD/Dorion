@@ -4,12 +4,16 @@
 )]
 
 use std::time::Duration;
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder, api::process::restart};
+use tauri::{
+  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
+  WindowBuilder,
+};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
 use injection::{
-  injection_runner::{self, get_client_mod, PREINJECT},
+  client_mod::{self, load_mods_js},
+  injection_runner::{self, PREINJECT},
   local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
@@ -43,7 +47,11 @@ fn create_systray() -> SystemTray {
   let reload_btn = CustomMenuItem::new("reload".to_string(), "Reload");
   let restart_brn = CustomMenuItem::new("restart".to_string(), "Restart");
   let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
-  let tray_menu = SystemTrayMenu::new().add_item(open_btn).add_item(reload_btn).add_item(restart_brn).add_item(quit_btn);
+  let tray_menu = SystemTrayMenu::new()
+    .add_item(open_btn)
+    .add_item(reload_btn)
+    .add_item(restart_brn)
+    .add_item(quit_btn);
 
   SystemTray::new().with_menu(tray_menu)
 }
@@ -116,7 +124,7 @@ fn main() {
   let safemode = std::env::args().any(|arg| arg == "--safemode");
   log(format!("Safemode enabled: {}", safemode));
 
-  let client_mod = get_client_mod();
+  let client_mods = load_mods_js();
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
@@ -141,6 +149,8 @@ fn main() {
       plugin::toggle_plugin,
       plugin::toggle_preload,
       plugin::get_plugin_import_urls,
+      client_mod::available_mods,
+      client_mod::load_mods_css,
       profiles::get_profile_list,
       profiles::get_current_profile_folder,
       profiles::create_profile,
@@ -255,7 +265,7 @@ fn main() {
           format!(
             "!window.__DORION_INITIALIZED__ && {};{};{}",
             PREINJECT.as_str(),
-            client_mod,
+            client_mods,
             preload_str,
           ).as_str()
         )

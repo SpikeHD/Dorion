@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 use tauri::regex::Regex;
 
-use crate::util::{logger, paths::get_plugin_dir};
+use crate::util::{logger::log, paths::get_plugin_dir};
 
 #[derive(Serialize, Deserialize)]
 pub struct PluginDetails {
@@ -132,7 +132,7 @@ pub fn get_new_plugins() {
 
   write_plugins_json(plugins_list);
 
-  logger::log("Plugins updated");
+  log("Plugins updated");
 }
 
 fn write_plugins_json(list: HashMap<String, PluginDetails>) {
@@ -157,7 +157,7 @@ pub fn get_plugin_list() -> HashMap<String, PluginDetails> {
 
   if !plugins_json.exists() {
     // Create the plugins list file
-    logger::log("Plugins.json does not exit, recreating...");
+    log("Plugins.json does not exit, recreating...");
     fs::write(plugins_json, "[]").unwrap();
 
     return HashMap::new();
@@ -166,7 +166,7 @@ pub fn get_plugin_list() -> HashMap<String, PluginDetails> {
   let plugins_json = fs::read_to_string(plugins_json).unwrap_or_default();
   let plugins_json: HashMap<String, PluginDetails> = serde_json::from_str(&plugins_json)
     .unwrap_or_else(|_| {
-      logger::log("Plugins.json invalid, recreating...");
+      log("Plugins.json invalid, recreating...");
       fs::write(plugins_json, "{}").unwrap_or_default();
 
       HashMap::new()
@@ -190,7 +190,7 @@ pub fn toggle_plugin(name: String) -> bool {
   write_plugins_json(plugins_list);
 
   if !found {
-    logger::log(format!("Plugin {} not found", name).as_str());
+    log(format!("Plugin {} not found", name).as_str());
   }
 
   found
@@ -211,7 +211,7 @@ pub fn toggle_preload(name: String) -> bool {
   write_plugins_json(plugins_list);
 
   if !found {
-    logger::log(format!("Plugin {} not found", name).as_str());
+    log(format!("Plugin {} not found", name).as_str());
   }
 
   found

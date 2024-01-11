@@ -998,6 +998,7 @@ dependencies = [
  "embed_plist",
  "include-flate",
  "objc",
+ "phf 0.11.2",
  "reqwest",
  "rsrpc",
  "serde",

@@ -2,7 +2,7 @@ use include_flate::flate;
 use std::collections::HashMap;
 use tauri::regex::Regex;
 
-use crate::{processors::js_preprocess::eval_js_imports, util::logger};
+use crate::{processors::js_preprocess::eval_js_imports, util::logger::log};
 
 use super::plugin::get_plugin_list;
 
@@ -10,7 +10,6 @@ static mut TAURI_INJECTED: bool = false;
 
 flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
-flate!(pub static FALLBACK_MOD: str from "./injection/shelter.js");
 
 #[tauri::command]
 pub fn is_injected() {
@@ -44,7 +43,7 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
   for (name, script) in &plugins {
     // Ignore preload plguins
     if plugin_list.contains_key(name) {
-      logger::log(format!("Skipping plugin {} (is preload)", name).as_str());
+      log(format!("Skipping plugin {} (is preload)", name).as_str());
       continue;
     }
 
@@ -90,24 +89,4 @@ pub fn load_injection_js(
   load_plugins(&window, plugins);
 
   is_injected();
-}
-
-pub fn get_client_mod() -> String {
-  let req =
-    reqwest::blocking::get("https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js");
-
-  let resp = match req {
-    Ok(r) => r,
-    Err(e) => {
-      println!(
-        "Failed to read shelter.js in resource dir, using fallback: {}",
-        e
-      );
-
-      // Send fallback instead
-      return FALLBACK_MOD.clone();
-    }
-  };
-
-  resp.text().unwrap_or_default()
 }

@@ -2,7 +2,7 @@ use device_query::{DeviceQuery, DeviceState, Keycode};
 use std::{thread, time::Duration};
 
 use crate::config;
-use crate::util::logger::{self, log};
+use crate::util::logger::log;
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
@@ -119,7 +119,7 @@ pub fn toggle_ptt(state: bool) -> Result<(), String> {
 
   let new_config = serde_json::to_string(&parsed);
 
-  logger::log(format!("PTT set to: {}", state));
+  log(format!("PTT set to: {}", state));
 
   match new_config {
     Ok(new_config) => {
