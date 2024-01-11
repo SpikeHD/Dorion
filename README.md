@@ -68,6 +68,10 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
     ```sh
     yay -S dorion-bin
     ```
+  * NixOS
+    ```sh
+    nix-shell -p dorion
+    ```
 
 *Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!*
 
