@@ -4,10 +4,8 @@
 )]
 
 use std::time::Duration;
-use tauri::{
-  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  WindowBuilder,
-};
+use functionality::tray;
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder, api::process::restart};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
@@ -180,6 +178,7 @@ fn main() {
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,
+      tray::set_default_tray_icon,
     ])
     .on_window_event(|event| match event.event() {
       tauri::WindowEvent::Destroyed { .. } => {
