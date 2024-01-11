@@ -37,8 +37,6 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     await new Promise(resolve => setTimeout(resolve, 100))
   }
 
-  window.__TAURI__.window.appWindow.setFullscreen(false)
-
   if (window.__DORION_INITIALIZED__) return
 
   console.log('__TAURI__ defined! Let\'s do this')
