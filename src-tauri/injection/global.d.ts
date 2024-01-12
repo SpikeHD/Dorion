@@ -28,5 +28,6 @@ declare global {
     __DORION_INITIALIZED__: boolean
     Dorion: any
     shelter: any
+    nativeOpen: Window['open']
   }
 }
