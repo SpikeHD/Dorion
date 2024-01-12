@@ -11,6 +11,8 @@ export async function ensurePlugins() {
       'https://spikehd.github.io/shelter-plugins/dorion-updater/',
     'Dorion PTT': 'https://spikehd.github.io/shelter-plugins/dorion-ptt/',
     'Dorion Tray': 'https://spikehd.github.io/shelter-plugins/dorion-tray/',
+    'Dorion Fullscreen':
+      'https://spikehd.github.io/shelter-plugins/dorion-fullscreen/',
   }
 
   const promises = [
