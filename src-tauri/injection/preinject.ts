@@ -10,7 +10,8 @@ window.Dorion = {
     isJson,
     fetchImage,
     waitForApp,
-    waitForElm
+    waitForElm,
+    applyNotificationCount
   },
   recreate: {
     createLocalStorage,
@@ -18,7 +19,8 @@ window.Dorion = {
   },
   window: {
     applyNotificationCount
-  }
+  },
+  shouldShowUnreadBadge: false
 }
 
 if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
@@ -76,6 +78,8 @@ async function init() {
 
     window.__DORION_CONFIG__ = JSON.parse(defaultConf)
   }
+
+  window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
   // Run a couple other background tasks before we begin the main stuff
   invoke('start_streamer_mode_watcher')

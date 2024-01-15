@@ -3,8 +3,8 @@ export async function ensurePlugins() {
     'Dorion Settings':
       'https://spikehd.github.io/shelter-plugins/dorion-settings/',
     'Always Trust': 'https://spikehd.github.io/shelter-plugins/always-trust/',
-    'Dorion Notifications':
-      'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
+    // 'Dorion Notifications':
+    //   'https://spikehd.github.io/shelter-plugins/dorion-notifications/',
     'Dorion Streamer Mode':
       'https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/',
     'Dorion Updater':
