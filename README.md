@@ -204,7 +204,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 
 # Using Plugins and Themes
 
-*See the `examples` directory for examples of plugins, including how to include external code and themes. You can also look at [my own plugins/themes repo](https://github.com/SpikeHD/DorionPluginsAndThemes) for some basic ones.*
+*See the `examples` directory for examples of plugins, including how to include external code and themes.*
 
 Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
