@@ -96,7 +96,7 @@ You can also [build it](#building) yourself, or download a [build artifact](http
 ## Plugins
 
 Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also install client mods like
-[Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page if you'd like! If you want to install plugins not avalible within the Dorion settings page, remember to download the `browser.js` version.
+[Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page if you'd like! If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
 
 ## Themes
 
