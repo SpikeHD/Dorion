@@ -165,7 +165,7 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: i32) {
   use cocoa::{appkit::NSApp, base::nil, foundation::NSString};
   use objc::{msg_send, sel, sel_impl};
 
-  let label = if amount == 0 {
+  let label = if amount <= 0 {
     nil
   } else {
     NSString::alloc(nil).init_str(&format!("{}", amount))
