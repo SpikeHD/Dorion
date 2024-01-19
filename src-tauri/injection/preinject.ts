@@ -111,8 +111,8 @@ async function init() {
     })
   })
 
-  let themeJs = await handleThemeInjection()
-  themeJs += await handleClientModThemeInjection()
+  let themeJs = await handleClientModThemeInjection()
+  themeJs += await handleThemeInjection()
 
   updateOverlay({
     midtitle: 'Getting injection JS...'
