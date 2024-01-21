@@ -1,6 +1,3 @@
-use device_query::{DeviceQuery, DeviceState, Keycode};
-use std::{thread, time::Duration};
-
 use crate::config;
 use crate::util::logger::log;
 
@@ -13,7 +10,14 @@ pub struct PTTEvent {
   pub state: bool,
 }
 
+#[cfg(target_os = "macos")]
+pub fn start_hotkey_watcher(_win: tauri::Window) {}
+
+#[cfg(not(target_os = "macos"))]
 pub fn start_hotkey_watcher(win: tauri::Window) {
+  use device_query::{DeviceQuery, DeviceState, Keycode};
+  use std::{thread, time::Duration};
+
   let mut ptt_state = false;
 
   // Set global PTT keys
