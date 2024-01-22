@@ -206,7 +206,8 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
       || url.contains("media.discordapp")
       || url.contains("cdn.discordapp")
       || url.contains("discord.com/assets")
-      || url.contains("fonts.gstatic.com")
+      // Imgur is allowed(?)
+      || url.contains("i.imgur.com")
     {
       continue;
     }
