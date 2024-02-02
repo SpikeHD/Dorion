@@ -21,12 +21,13 @@
  https://discord.gg/agQ9mRdHMZ
 </div>
 
+# Download
+
+Installers are available on [the releases page](https://github.com/SpikeHD/Dorion/releases/latest). You can also get it from a [package repository](#package-repositories), or [GitHub Actions](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain), or you can [build it yourself](#building)!
+
 # Table of Contents
 
-* [Setup](#setup)
-  * [Releases](#releases)
-  * [Package Repositories](#package-repositories)
-  * [Other ways to get Dorion](#other-ways-to-get-dorion)
+* [Package Repositories](#package-repositories)
 * [Features](#features)
   * [Plugins](#plugins)
   * [Themes](#themes)
@@ -41,19 +42,7 @@
 * [Contributing](#contributing)
 * [Screenshots](#screenshots)
 
-# Setup
-
-## Releases
-
-Each release listed in [the releases page](https://github.com/SpikeHD/Dorion/releases) contains the following:
-
-* Windows `.msi` installer
-* Windows `.zip` portable version
-* MacOS `.dmg` installers (for x86 *and* ARM)
-* Debian `.deb` installer
-* Linux `.tar.gz` portable version
-
-## Package Repositories
+# Package Repositories
 
 I do not maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
 
@@ -77,11 +66,8 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
     nix-shell -p dorion
     ```
 
-*Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!*
-
-## Other ways to get Dorion
-
-You can also [build it](#building) yourself, or download a [build artifact](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain) from GitHub Actions!
+> [!NOTE]
+> Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!
 
 # Features
 
@@ -95,8 +81,7 @@ You can also [build it](#building) yourself, or download a [build artifact](http
 
 ## Plugins
 
-Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also install client mods like
-[Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page if you'd like! If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
+Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also enable client mods like [Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page. If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
 
 ## Themes
 
@@ -108,16 +93,17 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 <div width="100%" align="center">
 
-| Feature                                          | Windows | Linux            | MacOS           |
-|--------------------------------------------------|---------|------------------|-----------------|
-| *Basics (logging in, navigation, text/DMs etc.)* | ✓       | ✓               | ✓               |
-| Voice                                            | ✓       | ✗<sup>[1]</sup> | ✓               |
-| Themes                                           | ✓       | ✓               | ✓               |
-| Shelter                                          | ✓       | ✓               | ✓               |
-| Dorion Plugins                                   | ✓       | ✓               | ✓               |
+| Feature                                        | Windows | Linux            | MacOS           |
+|------------------------------------------------|---------|------------------|-----------------|
+| Basics (logging in, navigation, text/DMs etc.) | ✓       | ✓               | ✓               |
+| Voice                                          | ✓       | ✗<sup>[1]</sup> | ✓               |
+| Themes                                         | ✓       | ✓               | ✓               |
+| Shelter                                        | ✓       | ✓               | ✓               |
+| Dorion Plugins                                 | ✓       | ✓               | ✓               |
+
 </div>
 
-<sup>1</sup> While some tweaks to Tauri made it possible to set the `webrtc_enabled` flag to true, it is unfortunately still not functional in WebKitGTK. The only way to enable the functionality it is through a build-time flag (which, as you could guess, is not set for any of the official builds). We just have to wait for it to come pre-enabled (or you can wait hours to build WebKitGTK yourself :P).
+<sup>1</sup> While some tweaks to Tauri made it possible to set the `webrtc_enabled` flag to true, it is unfortunately still not functional in WebKitGTK. The only way to enable the functionality it is through a build-time flag (which, as you could guess, is not set for any of the official builds) and then using a custom Tauri version. For now, we just have to wait for it to come pre-enabled (or you can wait hours to build WebKitGTK yourself :P).
 
 # Building
 
@@ -125,7 +111,6 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 * [NodeJS](https://nodejs.org)
 * [PNPM](https://pnpm.io/)
-  * If you are on Linux or MacOS, you can replace Node and PNPM with [Bun](https://bun.sh/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 * [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/#1-system-dependencies)
 
@@ -204,7 +189,8 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 
 # Using Plugins and Themes
 
-*See the `examples` directory for examples of plugins, including how to include external code and themes.*
+> [!TIP]
+> See the `examples` directory for examples of plugins, including how to include external code and themes.
 
 Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
 
