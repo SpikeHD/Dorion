@@ -12,6 +12,7 @@ rust-version = "1.57"
 
 [profile.release]
 strip = "debuginfo"
+lto = true
 
 [build-dependencies]
 tauri-build = { version = "1.0.0", features = [] }
