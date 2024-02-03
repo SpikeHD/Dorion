@@ -5,7 +5,7 @@ export function proxyFetch() {
 
   window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
-    const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.net|discordapp\.com)(?:\/.*)?/g
+    const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.com)(?:\/.*)?/g
     const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native OR its a relative URL
