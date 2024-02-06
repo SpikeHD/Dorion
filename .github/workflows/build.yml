@@ -83,8 +83,8 @@ jobs:
         run: pnpm install && pnpm shupdate
           
       - name: Build
-        # Include --target universal-apple-darwin for MacOS, otherwise it will only build for x86_64
-        run: pnpm build:js && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+        # Include seperate targets for MacOS since it needs to build for both aarch64 and x86_64
+        run: pnpm build:js && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && pnpm tauri build --target x86_64-apple-darwin' || '' }}
         env:
           RUSTFLAGS: -Awarnings
       
@@ -137,7 +137,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: Dorion_win64_msi
+          name: dorion_win64_msi
           path: src-tauri/target/release/bundle/msi/*.msi
 
       # Ubuntu portable
@@ -163,12 +163,19 @@ jobs:
           name: dorion_amd64_appimage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
 
-      - name: (MacOS) Upload .dmg
+      - name: (MacOS) Upload x86 .dmg
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_macos_dmg
-          path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          name: dorion_macos_x86-64_dmg
+          path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
+      
+      - name: (MacOS) Upload ARM .dmg
+        if: matrix.platform == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dorion_macos_arm_dmg
+          path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
 
   # build-arm:
   #   runs-on: ubuntu-latest
