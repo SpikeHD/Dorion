@@ -84,7 +84,7 @@ jobs:
           
       - name: Build
         # Include seperate targets for MacOS since it needs to build for both aarch64 and x86_64
-        run: pnpm build:js && pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && pnpm tauri build --target x86_64-apple-darwin' || '' }}
+        run: pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && pnpm tauri build --target x86_64-apple-darwin' || '' }}
         env:
           RUSTFLAGS: -Awarnings
       
