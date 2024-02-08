@@ -84,7 +84,7 @@ pub fn default_config() -> Config {
     blur_css: Option::from(true),
     client_mods: Option::from(vec!["Shelter".to_string()]),
     unread_badge: Option::from(true),
-    dorion_plugins: Option::from(false),
+    dorion_plugins: Option::from(true),
   }
 }
 
