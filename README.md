@@ -185,7 +185,9 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Localization timeout
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
-* [ ] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
+* [x] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
+* [ ] Move from `device_query` to `rdev` (since `device_query` doesn't work when spawned in a thread on MacOS)
+* [ ] API abstractions
 
 # Using Plugins and Themes
 
