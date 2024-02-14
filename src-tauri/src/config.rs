@@ -31,7 +31,7 @@ pub struct Config {
   pub blur_css: Option<bool>,
   pub client_mods: Option<Vec<String>>,
   pub unread_badge: Option<bool>,
-  pub dorion_plugins: Option<bool>,
+  pub client_plugins: Option<bool>,
 }
 
 pub fn init() {
@@ -84,7 +84,7 @@ pub fn default_config() -> Config {
     blur_css: Option::from(true),
     client_mods: Option::from(vec!["Shelter".to_string()]),
     unread_badge: Option::from(true),
-    dorion_plugins: Option::from(true),
+    client_plugins: Option::from(true),
   }
 }
 

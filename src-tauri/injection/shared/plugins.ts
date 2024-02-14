@@ -15,7 +15,7 @@ export async function ensurePlugins() {
       'https://spikehd.github.io/shelter-plugins/dorion-fullscreen/',
   }
 
-  if (!window.__DORION_CONFIG__?.dorion_plugins) return
+  if (!window.__DORION_CONFIG__?.client_plugins) return
 
   const promises = [
     ...Object.entries(requiredPlugins).map(async ([name, url]) => {
