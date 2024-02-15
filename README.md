@@ -187,7 +187,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] New release notifications
 * [x] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
 * [ ] Move from `device_query` to `rdev` (since `device_query` doesn't work when spawned in a thread on MacOS)
-* [ ] API abstractions
+* [x] API abstractions
 
 # Using Plugins and Themes
 
