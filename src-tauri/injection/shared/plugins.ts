@@ -15,7 +15,7 @@ export async function ensurePlugins() {
       'https://spikehd.github.io/shelter-plugins/dorion-fullscreen/',
   }
 
-  if (window.__DORION_CONFIG__?.client_plugins !== null && !window.__DORION_CONFIG__?.client_plugins) {
+  if (window.__DORION_CONFIG__?.client_plugins != null && !window.__DORION_CONFIG__?.client_plugins) {
     console.log('[Ensure Plugins] Client plugins are disabled. I hope you know what you are doing!')
     return
   }
