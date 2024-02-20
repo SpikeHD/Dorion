@@ -25,6 +25,11 @@
 
 Installers are available on [the releases page](https://github.com/SpikeHD/Dorion/releases/latest). You can also get it from a [package repository](#package-repositories), or [GitHub Actions](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain), or you can [build it yourself](#building)!
 
+> [!NOTE]
+> ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`.
+>
+> ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
+
 # Table of Contents
 
 * [Package Repositories](#package-repositories)
