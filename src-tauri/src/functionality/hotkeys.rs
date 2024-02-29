@@ -32,7 +32,7 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
     let device_state = DeviceState::new();
     loop {
       if unsafe { !PTT_ENABLED } {
-        thread::sleep(Duration::from_millis(20));
+        thread::sleep(Duration::from_millis(100));
         continue;
       }
 
@@ -42,33 +42,38 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
       // Recreate keys as a string vector
       let mut keys_str: Vec<String> = Vec::new();
       for key in keys {
+        if key.to_string() == "LControl" || key.to_string() == "RControl" {
+          keys_str.push("Control".to_string());
+          continue;
+        }
+
+        if key.to_string() == "LShift" || key.to_string() == "RShift" {
+          keys_str.push("Shift".to_string());
+          continue;
+        }
+
+        if key.to_string() == "LAlt" || key.to_string() == "RAlt" {
+          keys_str.push("Alt".to_string());
+          continue;
+        }
+          
         keys_str.push(key.to_string());
       }
 
       // Check if held keys matches all PTT keys
       let mut ptt_held = true;
 
-      for key in &ptt_keys {
-        // if the key is "Control" or "Shift", match both L and R version
-        if key == "Control"
-          && !keys_str.contains(&"LControl".to_string())
-          && !keys_str.contains(&"RControl".to_string())
-        {
-          ptt_held = false;
-        }
+      println!("{:?}", keys_str);
+      println!("{:?}", ptt_keys);
 
-        if key == "Shift"
-          && !keys_str.contains(&"LShift".to_string())
-          && !keys_str.contains(&"RShift".to_string())
-        {
+      for key in ptt_keys {
+        if !keys_str.contains(&key) {
           ptt_held = false;
-        }
-
-        // If the key is a single regular character, make sure we are comparing an uppercase version of ptt_key
-        if key.len() == 1 && !keys_str.contains(&key.to_uppercase()) {
-          ptt_held = false;
+          break;
         }
       }
+
+      println!("PTT Held: {}", ptt_held);
 
       if ptt_held && !ptt_state {
         // Do PTT
@@ -85,7 +90,7 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
       }
 
       // Small delay to reduce CPU usage
-      thread::sleep(Duration::from_millis(5));
+      thread::sleep(Duration::from_millis(10));
     }
   });
 }
