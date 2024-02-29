@@ -25,7 +25,7 @@ use util::{
   notifications,
   paths::get_webdata_dir,
   process,
-  window_helpers::{self, clear_cache_check},
+  window_helpers::{self, clear_cache_check, set_user_agent},
 };
 
 use crate::{
@@ -281,6 +281,9 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .build()?;
+
+      // Set the user agent to one that enables all normal Discord features
+      set_user_agent(&win);
 
       // If safemode is enabled, stop here
       if safemode {

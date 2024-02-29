@@ -3,6 +3,8 @@ use crate::util::logger::log;
 
 use super::paths::get_webdata_dir;
 
+static USERAGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
+
 pub fn clear_cache_check() {
   let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
 
@@ -91,3 +93,46 @@ pub fn remove_top_bar(win: tauri::Window) {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn remove_top_bar(_win: tauri::Window) {}
+
+#[cfg(target_os = "windows")]
+pub fn set_user_agent(win: &tauri::Window) {
+  use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+  use windows::core::{Interface, HSTRING};
+
+  win.with_webview(|webview| unsafe {
+    let settings: ICoreWebView2Settings2 = webview
+      .controller()
+      .CoreWebView2()
+      .expect("Failed to get CoreWebView2!")
+      .Settings()
+      .expect("Failed to get Settings!")
+      .cast::<ICoreWebView2Settings2>()
+      .expect("Failed to cast to ICoreWebView2Settings2!");
+
+    settings.SetUserAgent(&HSTRING::from(USERAGENT)).unwrap_or_default();
+  }).expect("Failed to set user agent!");
+
+  log("Set user agent!");
+}
+
+#[cfg(target_os = "linux")]
+pub fn set_user_agent(win: &tauri::Window) {
+  use webkit2gtk::{WebViewExt, SettingsExt};
+
+  win
+    .with_webview(|webview| {
+      let webview = webview.inner();
+      let settings = webview.settings().unwrap();
+
+      settings.set_user_agent(Some(USERAGENT));
+    })
+    .expect("Failed to set user agent!");
+}
+
+#[cfg(target_os = "macos")]
+pub fn set_user_agent(win: &tauri::Window) {
+  use objc::msg_send;
+  use objc_foundation::{NSString, INSString};
+
+  let () = msg_send![webview.inner(), setCustomUserAgent: NSString::from_str(USERAGENT)];
+}
