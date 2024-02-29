@@ -111,7 +111,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
       }
     };
 
-    log("Joining...");
+    log("Joining (localize_imports)...");
 
     if result.is_none() {
       continue;

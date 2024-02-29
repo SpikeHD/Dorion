@@ -91,7 +91,7 @@ pub fn load_mods_js() -> String {
       }
     };
 
-    log("Joining...");
+    log("Joining (load_mods_js)...");
 
     if result.is_empty() {
       continue;
@@ -147,7 +147,7 @@ pub fn load_mods_css() -> String {
       }
     };
 
-    log("Joining...");
+    log("Joining (load_mods_css)...");
 
     if result.is_empty() {
       continue;
