@@ -131,8 +131,15 @@ pub fn set_user_agent(win: &tauri::Window) {
 
 #[cfg(target_os = "macos")]
 pub fn set_user_agent(win: &tauri::Window) {
-  use objc::msg_send;
+  use objc::{msg_send, sel};
   use objc_foundation::{NSString, INSString};
 
-  let () = msg_send![webview.inner(), setCustomUserAgent: NSString::from_str(USERAGENT)];
+  win
+    .with_webview(|webview| {
+      let webview = webview.inner();
+      unsafe {
+        msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
+      }
+    })
+    .expect("Failed to set user agent!");
 }
