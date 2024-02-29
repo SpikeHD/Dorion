@@ -49,6 +49,7 @@ webkit2gtk = "0.18.2"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
+objc-foundation = "0.1.1"
 cocoa = "0.25.0"
 block = "0.1.6"
 embed_plist = "1.2.2"

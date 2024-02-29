@@ -991,6 +991,7 @@ dependencies = [
  "embed_plist",
  "include-flate",
  "objc",
+ "objc-foundation",
  "phf 0.11.2",
  "reqwest",
  "rsrpc",
