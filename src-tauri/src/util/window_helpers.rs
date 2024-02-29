@@ -131,7 +131,7 @@ pub fn set_user_agent(win: &tauri::Window) {
 
 #[cfg(target_os = "macos")]
 pub fn set_user_agent(win: &tauri::Window) {
-  use objc::{msg_send, sel};
+  use objc::{msg_send, sel, sel_impl};
   use objc_foundation::{NSString, INSString};
 
   win
