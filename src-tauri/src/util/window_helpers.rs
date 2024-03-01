@@ -138,7 +138,7 @@ pub fn set_user_agent(win: &tauri::Window) {
     .with_webview(|webview| {
       let webview = webview.inner();
       unsafe {
-        msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
+        let _: () = msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
       }
     })
     .expect("Failed to set user agent!");
