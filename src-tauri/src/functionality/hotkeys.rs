@@ -56,15 +56,12 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
           keys_str.push("Alt".to_string());
           continue;
         }
-          
+
         keys_str.push(key.to_string());
       }
 
       // Check if held keys matches all PTT keys
       let mut ptt_held = true;
-
-      println!("{:?}", keys_str);
-      println!("{:?}", ptt_keys);
 
       for key in ptt_keys {
         if !keys_str.contains(&key) {
@@ -72,8 +69,6 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
           break;
         }
       }
-
-      println!("PTT Held: {}", ptt_held);
 
       if ptt_held && !ptt_state {
         // Do PTT

@@ -99,25 +99,29 @@ pub fn set_user_agent(win: &tauri::Window) {
   use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
   use windows::core::{Interface, HSTRING};
 
-  win.with_webview(|webview| unsafe {
-    let settings: ICoreWebView2Settings2 = webview
-      .controller()
-      .CoreWebView2()
-      .expect("Failed to get CoreWebView2!")
-      .Settings()
-      .expect("Failed to get Settings!")
-      .cast::<ICoreWebView2Settings2>()
-      .expect("Failed to cast to ICoreWebView2Settings2!");
+  win
+    .with_webview(|webview| unsafe {
+      let settings: ICoreWebView2Settings2 = webview
+        .controller()
+        .CoreWebView2()
+        .expect("Failed to get CoreWebView2!")
+        .Settings()
+        .expect("Failed to get Settings!")
+        .cast::<ICoreWebView2Settings2>()
+        .expect("Failed to cast to ICoreWebView2Settings2!");
 
-    settings.SetUserAgent(&HSTRING::from(USERAGENT)).unwrap_or_default();
-  }).expect("Failed to set user agent!");
+      settings
+        .SetUserAgent(&HSTRING::from(USERAGENT))
+        .unwrap_or_default();
+    })
+    .expect("Failed to set user agent!");
 
   log("Set user agent!");
 }
 
 #[cfg(target_os = "linux")]
 pub fn set_user_agent(win: &tauri::Window) {
-  use webkit2gtk::{WebViewExt, SettingsExt};
+  use webkit2gtk::{SettingsExt, WebViewExt};
 
   win
     .with_webview(|webview| {
@@ -132,7 +136,7 @@ pub fn set_user_agent(win: &tauri::Window) {
 #[cfg(target_os = "macos")]
 pub fn set_user_agent(win: &tauri::Window) {
   use objc::{msg_send, sel, sel_impl};
-  use objc_foundation::{NSString, INSString};
+  use objc_foundation::{INSString, NSString};
 
   win
     .with_webview(|webview| {
