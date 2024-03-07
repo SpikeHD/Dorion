@@ -1,6 +1,6 @@
 {
     "name": "dorion",
-    "version": "4.1.2",
+    "version": "4.1.3",
     "type": "module",
     "scripts": {
         "build:js": "esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
