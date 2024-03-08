@@ -221,6 +221,9 @@ and like so on Linux:
 
 so if you download a plugin or theme, just pop it into the `plugins`/`themes` folder. If you need help finding them, there are buttons in Dorion settings that'll take you where you need!
 
+> [!NOTE]
+> Themes can also be installed by clicking `Install Theme from Link` in Theme settings, if you prefer
+
 # Contributing
 
 Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md](https://github.com/SpikeHD/Dorion/blob/main/CONTRIBUTING.md)
