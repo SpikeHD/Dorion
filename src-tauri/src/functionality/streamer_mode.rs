@@ -1,8 +1,10 @@
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use crate::config::get_config;
 use sysinfo::{ProcessExt, SystemExt};
 
 // We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
-static mut OBS_OPEN: bool = false;
+static OBS_OPEN: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
 pub fn start_streamer_mode_watcher(win: tauri::Window) {
@@ -35,21 +37,17 @@ pub fn start_streamer_mode_watcher(win: tauri::Window) {
       }
     }
     if obs_running {
-      unsafe {
-        if !OBS_OPEN {
-          OBS_OPEN = true;
-          win.emit("streamer_mode_toggle", true).unwrap_or_default();
-        }
+      if !OBS_OPEN.load(Ordering::Relaxed) {
+        OBS_OPEN.store(true, Ordering::Relaxed);
+        win.emit("streamer_mode_toggle", true).unwrap_or_default();
       }
 
       continue;
     }
 
-    unsafe {
-      if OBS_OPEN {
-        OBS_OPEN = false;
-        win.emit("streamer_mode_toggle", false).unwrap_or_default();
-      }
+    if OBS_OPEN.load(Ordering::Relaxed) {
+      OBS_OPEN.store(false, Ordering::Relaxed);
+      win.emit("streamer_mode_toggle", false).unwrap_or_default();
     }
   });
 }
