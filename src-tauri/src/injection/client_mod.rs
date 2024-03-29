@@ -3,7 +3,7 @@ use phf::phf_map;
 
 use crate::{
   config::{get_config, write_config_file},
-  util::logger::log,
+  log
 };
 
 flate!(pub static FALLBACK: str from "./injection/shelter.js");
@@ -35,7 +35,7 @@ pub fn load_mods_js() -> String {
 
   // if enabled_mods does not include shelter, add it and save the config
   if !enabled_mods.contains(&"Shelter".to_string()) {
-    log("Shelter not detected as client mod: adding to config!");
+    log!("Shelter not detected as client mod: adding to config!");
     let mut config = get_config();
     // add shelter to the enabled mods while keeping the others. shelter is always first
     enabled_mods.insert(0, "Shelter".to_string());
@@ -54,10 +54,10 @@ pub fn load_mods_js() -> String {
       let response = match reqwest::blocking::get(script_url) {
         Ok(r) => r,
         Err(_) => {
-          log(format!("Failed to load client mod JS for {}.", mod_name));
+          log!("Failed to load client mod JS for {}.", mod_name);
 
           if mod_name == "Shelter" {
-            log("Shelter detected: loading fallback!");
+            log!("Shelter detected: loading fallback!");
             return FALLBACK.clone();
           }
 
@@ -68,10 +68,10 @@ pub fn load_mods_js() -> String {
       let status = response.status();
 
       if status != 200 {
-        log(format!("Failed to load client mod JS for {}.", mod_name));
+        log!("Failed to load client mod JS for {}.", mod_name);
 
         if mod_name == "Shelter" {
-          log("Shelter detected: loading fallback!");
+          log!("Shelter detected: loading fallback!");
           return FALLBACK.clone();
         }
 
@@ -86,12 +86,12 @@ pub fn load_mods_js() -> String {
     let result = match task.join() {
       Ok(r) => r,
       Err(e) => {
-        log(format!("Error joining thread: {:?}", e));
+        log!("Error joining thread: {:?}", e);
         continue;
       }
     };
 
-    log("Joining (load_mods_js)...");
+    log!("Joining (load_mods_js)...");
 
     if result.is_empty() {
       continue;
@@ -122,7 +122,7 @@ pub fn load_mods_css() -> String {
       let response = match reqwest::blocking::get(styles_url) {
         Ok(r) => r,
         Err(_) => {
-          log(format!("Failed to load client mod CSS for {}.", mod_name));
+          log!("Failed to load client mod CSS for {}.", mod_name);
           return String::new();
         }
       };
@@ -130,7 +130,7 @@ pub fn load_mods_css() -> String {
       let status = response.status();
 
       if status != 200 {
-        log(format!("Failed to load client mod CSS for {}.", mod_name));
+        log!("Failed to load client mod CSS for {}.", mod_name);
         return String::new();
       }
 
@@ -142,12 +142,12 @@ pub fn load_mods_css() -> String {
     let result = match task.join() {
       Ok(r) => r,
       Err(e) => {
-        log(format!("Error joining thread: {:?}", e));
+        log!("Error joining thread: {:?}", e);
         continue;
       }
     };
 
-    log("Joining (load_mods_css)...");
+    log!("Joining (load_mods_css)...");
 
     if result.is_empty() {
       continue;

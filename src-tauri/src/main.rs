@@ -123,7 +123,7 @@ fn main() {
 
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
-  log(format!("Safemode enabled: {}", safemode));
+  log!("Safemode enabled: {}", safemode);
 
   let client_mods = load_mods_js();
 

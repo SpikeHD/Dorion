@@ -4,7 +4,7 @@ use async_recursion::async_recursion;
 use tauri::regex::Regex;
 
 use crate::config::get_config;
-use crate::util::logger::log;
+use crate::log;
 use crate::util::paths::get_theme_dir;
 
 #[tauri::command]
@@ -39,7 +39,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
     let cache_file = cache_path.join(format!("{}_cache.css", name));
 
     if fs::metadata(&cache_file).is_ok() {
-      log(format!("Using cached CSS for {}", name));
+      log!("Using cached CSS for {}", name);
 
       // if reading to string succeeds, return that
       if let Ok(cached) = fs::read_to_string(cache_file) {
@@ -67,13 +67,13 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
     seen_urls.push(url.clone());
 
     tasks.push(std::thread::spawn(move || {
-      log(format!("Getting: {}", &url));
+      log!("Getting: {}", &url);
 
       let response = match reqwest::blocking::get(format!("https://{}", &url)) {
         Ok(r) => r,
         Err(e) => {
-          log(format!("Request failed: {}", e));
-          log(format!("URL: {}", &url));
+          log!("Request failed: {}", e);
+          log!("URL: {}", &url);
 
           return Some((full_import.to_owned(), String::new()));
         }
@@ -82,8 +82,8 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
       let status = response.status();
 
       if status != 200 {
-        log(format!("Request failed: {}", status));
-        log(format!("URL: {}", &url));
+        log!("Request failed: {}", status);
+        log!("URL: {}", &url);
 
         return Some((full_import.to_owned(), String::new()));
       }
@@ -106,12 +106,12 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
     let result = match task.join() {
       Ok(r) => r,
       Err(e) => {
-        log(format!("Error joining thread: {:?}", e));
+        log!("Error joining thread: {:?}", e);
         continue;
       }
     };
 
-    log("Joining (localize_imports)...");
+    log!("Joining (localize_imports)...");
 
     if result.is_none() {
       continue;
@@ -130,7 +130,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
 
   // If any of this css still contains imports, we need to re-process it
   if reg.is_match(new_css.as_str()) {
-    log("Re-processing CSS imports...");
+    log!("Re-processing CSS imports...");
     new_css = localize_imports(win.clone(), new_css, name.clone()).await;
   }
 
@@ -233,13 +233,13 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
     let win_clone = win.clone(); // Clone the Window handle for use in the async block
 
     tasks.push(std::thread::spawn(move || {
-      log(format!("Getting: {}", &url));
+      log!("Getting: {}", &url);
 
       let response = match reqwest::blocking::get(url) {
         Ok(r) => r,
         Err(e) => {
-          log(format!("Request failed: {}", e));
-          log(format!("URL: {}", &url));
+          log!("Request failed: {}", e);
+          log!("URL: {}", &url);
 
           win_clone
             .emit("loading_log", "An image failed to import...".to_string())
@@ -270,7 +270,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
     let result = match task.join() {
       Ok(r) => r,
       Err(e) => {
-        log(format!("Error joining thread: {:?}", e));
+        log!("Error joining thread: {:?}", e);
         continue;
       }
     };
@@ -331,13 +331,13 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let win_clone = win.clone(); // Clone the Window handle for use in the async block
 
     tasks.push(std::thread::spawn(move || {
-      log(format!("Getting: {}", &full_url));
+      log!("Getting: {}", &full_url);
 
       let response = match reqwest::blocking::get(&full_url) {
         Ok(r) => r,
         Err(e) => {
-          log(format!("Request failed: {}", e));
-          log(format!("URL: {}", &full_url));
+          log!("Request failed: {}", e);
+          log!("URL: {}", &full_url);
 
           win_clone
             .emit("loading_log", "A font failed to import...".to_string())
@@ -364,7 +364,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
     let result = match task.join() {
       Ok(r) => r,
       Err(e) => {
-        log(format!("Error joining thread: {:?}", e));
+        log!("Error joining thread: {:?}", e);
         continue;
       }
     };

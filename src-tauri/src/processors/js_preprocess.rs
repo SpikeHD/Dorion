@@ -1,4 +1,4 @@
-use crate::util::logger::log;
+use crate::log;
 
 pub async fn localize_js(url: String) -> String {
   if url.is_empty() {
@@ -8,8 +8,8 @@ pub async fn localize_js(url: String) -> String {
   let response = match reqwest::get(&url).await {
     Ok(r) => r,
     Err(e) => {
-      log(format!("Request failed: {}", e));
-      log(format!("URL: {}", &url));
+      log!("Request failed: {}", e);
+      log!("URL: {}", &url);
 
       return String::new();
     }

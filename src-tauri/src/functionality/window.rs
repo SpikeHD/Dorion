@@ -6,6 +6,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::deep_link;
 use crate::util::window_helpers::window_zoom_level;
+use crate::log;
 use crate::window::blur::apply_effect;
 
 // Minimize
@@ -73,7 +74,7 @@ pub fn after_build(window: &Window) {
   // Set user-agent through WebkitGTK config
   #[cfg(target_os = "linux")]
   {
-    use crate::util::logger::log;
+    use crate::log;
 
     window.with_webview(move |webview| {
       use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
@@ -93,7 +94,7 @@ pub fn after_build(window: &Window) {
         req.allow();
         true
       });
-    }).unwrap_or_else(|_| log(format!("Failed to set user-agent")));
+    }).unwrap_or_else(|_| log!("Failed to set user-agent"));
   }
 
   window_zoom_level(window.clone(), None);
@@ -128,7 +129,7 @@ pub fn setup_autostart(app: &mut tauri::App) {
     autolaunch.disable().unwrap_or_default();
   }
 
-  println!(
+  log!(
     "Autolaunch enabled: {}",
     autolaunch.is_enabled().unwrap_or_default()
   );

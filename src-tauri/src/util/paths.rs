@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use tauri::Manager;
 
 use crate::config::get_config;
-use crate::util::logger::log;
+use crate::log;
 
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
@@ -14,7 +14,7 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  log("No local config file found. Using default.");
+  log!("No local config file found. Using default.");
 
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
@@ -56,7 +56,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     return local_plugin_dir;
   }
 
-  log("No local plugin dir found. Using default.");
+  log!("No local plugin dir found. Using default.");
 
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
@@ -74,7 +74,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&plugin_dir) {
       Ok(()) => (),
       Err(e) => {
-        log(format!("Error creating plugins dir: {}", e));
+        log!("Error creating plugins dir: {}", e);
         return plugin_dir;
       }
     };
@@ -92,7 +92,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     return local_theme_dir;
   }
 
-  log("No local theme dir found. Using default.");
+  log!("No local theme dir found. Using default.");
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()
@@ -110,7 +110,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&theme_dir) {
       Ok(()) => (),
       Err(e) => {
-        log(format!("Error creating theme dir: {}", e));
+        log!("Error creating theme dir: {}", e);
         return theme_dir;
       }
     };
@@ -123,7 +123,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     match fs::create_dir_all(&cache_dir) {
       Ok(()) => (),
       Err(e) => {
-        log(format!("Error creating theme cache dir: {}", e));
+        log!("Error creating theme cache dir: {}", e);
         return theme_dir;
       }
     };

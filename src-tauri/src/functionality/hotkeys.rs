@@ -1,5 +1,5 @@
 use crate::config;
-use crate::util::logger::log;
+use crate::log;
 
 // Globally store the PTT keys
 static mut PTT_KEYS: Vec<String> = Vec::new();
@@ -74,13 +74,13 @@ pub fn start_hotkey_watcher(win: tauri::Window) {
         // Do PTT
         win
           .emit("ptt_toggle", PTTEvent { state: true })
-          .unwrap_or_else(|_| log("Error sending PTT event!"));
+          .unwrap_or_else(|_| log!("Error sending PTT event!"));
         ptt_state = true;
       } else if ptt_state && !ptt_held {
         // Stop PTT
         win
           .emit("ptt_toggle", PTTEvent { state: false })
-          .unwrap_or_else(|_| log("Error sending PTT toggle event!"));
+          .unwrap_or_else(|_| log!("Error sending PTT toggle event!"));
         ptt_state = false;
       }
 
@@ -123,7 +123,7 @@ pub fn toggle_ptt(state: bool) -> Result<(), String> {
 
   let new_config = serde_json::to_string(&parsed);
 
-  log(format!("PTT set to: {}", state));
+  log!("PTT set to: {}", state);
 
   match new_config {
     Ok(new_config) => {

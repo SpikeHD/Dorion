@@ -1,18 +1,18 @@
 use tauri::Manager;
 
-use crate::util::logger::log;
+use crate::log;
 use crate::util::paths::{config_is_local, updater_dir};
 
 #[tauri::command]
 pub async fn update_check(win: tauri::Window) -> Vec<String> {
   let mut to_update = vec![];
 
-  log("Checking for updates...");
+  log!("Checking for updates...");
 
   let main_rel = maybe_latest_main_release(&win).await;
 
   if main_rel.is_ok() && main_rel.unwrap() {
-    log("Available update for Dorion!");
+    log!("Available update for Dorion!");
     to_update.push("dorion".to_string());
   }
 
@@ -26,7 +26,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 
   #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
-    log("Updating Dorion...");
+    log!("Updating Dorion...");
 
     updater.arg(String::from("--main"));
     updater.arg(String::from("true"));
@@ -41,7 +41,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let mut process = match updater.spawn() {
     Ok(p) => p,
     Err(e) => {
-      log(format!("Failed to spawn updater process: {}", e));
+      log!("Failed to spawn updater process: {}", e);
       return;
     }
   };
@@ -50,7 +50,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   match process.wait() {
     Ok(_) => (),
     Err(e) => {
-      log(format!("Failed to wait for updater process: {}", e));
+      log!("Failed to wait for updater process: {}", e);
       return;
     }
   }

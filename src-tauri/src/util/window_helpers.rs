@@ -1,5 +1,5 @@
 use crate::config::get_config;
-use crate::util::logger::log;
+use crate::log;
 
 use super::paths::get_webdata_dir;
 
@@ -44,7 +44,7 @@ pub fn clear_cache() {
   let webdata_dir = get_webdata_dir();
 
   if webdata_dir.exists() {
-    log("Deleting cache...");
+    log!("Deleting cache...");
     std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
   }
 }
@@ -116,7 +116,7 @@ pub fn set_user_agent(win: &tauri::Window) {
     })
     .expect("Failed to set user agent!");
 
-  log("Set user agent!");
+  log!("Set user agent!");
 }
 
 #[cfg(target_os = "linux")]
