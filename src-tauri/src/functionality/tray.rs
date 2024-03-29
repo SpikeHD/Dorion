@@ -1,6 +1,8 @@
 use include_flate::flate;
 use tauri::{AppHandle, Icon};
 
+use crate::log;
+
 flate!(static DEFAULT: [u8] from "./icons/icon.png");
 flate!(static CONNECTED: [u8] from "./icons/tray/connected.png");
 flate!(static MUTED: [u8] from "./icons/tray/muted.png");
@@ -11,7 +13,7 @@ flate!(static STREAMING: [u8] from "./icons/tray/streaming.png");
 
 #[tauri::command]
 pub fn set_tray_icon(app: AppHandle, event: String) {
-  println!("Setting tray icon to {}", event.as_str());
+  log!("Setting tray icon to {}", event.as_str());
 
   let icon = match event.as_str() {
     "connected" => Icon::Raw(CONNECTED.to_vec()),
