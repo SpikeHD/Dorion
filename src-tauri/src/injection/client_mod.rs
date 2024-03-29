@@ -3,7 +3,7 @@ use phf::phf_map;
 
 use crate::{
   config::{get_config, write_config_file},
-  log
+  log,
 };
 
 flate!(pub static FALLBACK: str from "./injection/shelter.js");

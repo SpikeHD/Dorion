@@ -2,7 +2,7 @@ use include_flate::flate;
 use std::collections::HashMap;
 use tauri::regex::Regex;
 
-use crate::{processors::js_preprocess::eval_js_imports, log};
+use crate::{log, processors::js_preprocess::eval_js_imports};
 
 use super::plugin::get_plugin_list;
 

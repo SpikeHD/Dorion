@@ -1,7 +1,7 @@
+use chrono::Local;
 use std::fmt::Display;
 use std::fs::{self, File};
 use std::io::Write;
-use chrono::Local;
 
 static mut LOG_FILE: Option<File> = None;
 
@@ -32,6 +32,6 @@ pub fn log(s: impl AsRef<str> + Display) {
 #[macro_export]
 macro_rules! log {
   ($($arg:tt)*) => {
-    crate::log(format!($($arg)*))
+    $crate::log(format!($($arg)*))
   };
 }

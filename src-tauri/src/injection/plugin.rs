@@ -2,10 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
 use tauri::regex::Regex;
 
-use crate::{
-  util::paths::get_plugin_dir,
-  log
-};
+use crate::{log, util::paths::get_plugin_dir};
 
 #[derive(Serialize, Deserialize)]
 pub struct PluginDetails {
