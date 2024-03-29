@@ -2,9 +2,9 @@ use chrono::Local;
 use std::fmt::Display;
 use std::fs::{self, File};
 use std::io::Write;
-use std::ptr::addr_of_mut;
+use std::sync::Mutex;
 
-static mut LOG_FILE: Option<File> = None;
+static LOG_FILE: Mutex<Option<File>> = Mutex::new(None);
 
 pub fn init(with_file: bool) {
   if with_file {
@@ -14,26 +14,17 @@ pub fn init(with_file: bool) {
 
     let file = File::create(path).unwrap();
 
-    unsafe {
-      LOG_FILE = Some(file);
-    }
+    *LOG_FILE.lock().unwrap() = Some(file);
   }
 }
 
 pub fn log(s: impl AsRef<str> + Display) {
   println!("[{}] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), s);
 
-  unsafe {
-    let file = addr_of_mut!(LOG_FILE);
-    let file = match file.as_mut() {
-      Some(file) => file,
-      None => return,
-    };
+  let mut file = LOG_FILE.lock().unwrap();
 
-    if let Some(f) = file {
-      f.write_all(format!("[{}] {}\n", Local::now().format("%Y-%m-%d %H:%M:%S"), s).as_bytes())
-        .unwrap()
-    }
+  if let Some(file) = &mut *file {
+    writeln!(file, "[{}] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), s).unwrap_or_default();
   }
 }
 
