@@ -2,6 +2,7 @@ use chrono::Local;
 use std::fmt::Display;
 use std::fs::{self, File};
 use std::io::Write;
+use std::ptr::addr_of_mut;
 
 static mut LOG_FILE: Option<File> = None;
 
@@ -23,8 +24,15 @@ pub fn log(s: impl AsRef<str> + Display) {
   println!("[{}] {}", Local::now().format("%Y-%m-%d %H:%M:%S"), s);
 
   unsafe {
-    if let Some(file) = &mut LOG_FILE {
-      file.write_all(format!("{}\n", s).as_bytes()).unwrap()
+    let file = addr_of_mut!(LOG_FILE);
+    let file = match file.as_mut() {
+      Some(file) => file,
+      None => return,
+    };
+
+    if let Some(f) = file {
+      f.write_all(format!("[{}] {}\n", Local::now().format("%Y-%m-%d %H:%M:%S"), s).as_bytes())
+        .unwrap()
     }
   }
 }
