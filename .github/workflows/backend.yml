@@ -1,6 +1,7 @@
 name: Check backend
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/backend.yml'
