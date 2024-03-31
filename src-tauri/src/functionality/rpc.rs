@@ -3,7 +3,7 @@ use rsrpc::{
   RPCServer,
 };
 use std::sync::{Arc, Mutex};
-use sysinfo::{PidExt, ProcessExt, System, SystemExt};
+use sysinfo::System;
 use window_titles::ConnectionTrait;
 
 use crate::util::paths::custom_detectables_path;
@@ -54,11 +54,11 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
 
 pub fn start_rpc_server(win: tauri::Window) {
   let detectable = reqwest::blocking::get(
-    "https://gist.githubusercontent.com/SpikeHD/209bd9b17c97f45dc5be4803c748726f/raw/ddf8ed33621933b4e3c58cf1113e1679ab9fd9b5/dorion_detectable.json",
-  )
-  .expect("Request for detectable.json failed")
-  .text()
-  .expect("Failed to get text from response");
+        "https://gist.githubusercontent.com/SpikeHD/209bd9b17c97f45dc5be4803c748726f/raw/ddf8ed33621933b4e3c58cf1113e1679ab9fd9b5/dorion_detectable.json",
+    )
+        .expect("Request for detectable.json failed")
+        .text()
+        .expect("Failed to get text from response");
 
   // This accepts both a `&str` or a `String`
   let server = Arc::new(Mutex::new(
@@ -97,7 +97,7 @@ pub fn start_rpc_server(win: tauri::Window) {
       arguments: None,
     }]);
 
-    detectable.name = payload.name.clone();
+    detectable.name.clone_from(&payload.name);
 
     // Save the detectable to the local file
     append_to_local(vec![detectable.clone()]);

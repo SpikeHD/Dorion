@@ -6,7 +6,7 @@ authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.57"
+rust-version = "1.69"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,21 +18,21 @@ lto = true
 tauri-build = { version = "1.0.0", features = [] }
 
 [dependencies]
-async-recursion = "1.0.4"
+async-recursion = "1.1.0"
 include-flate = "0.3.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.6.0", features = [ "macos-private-api", "windows7-compat", "api-all", "icon-ico", "icon-png", "system-tray", "devtools"] }
+tauri = { version = "1.6.0", features = ["macos-private-api", "windows7-compat", "api-all", "icon-ico", "icon-png", "system-tray", "devtools"] }
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace" }
 tauri-plugin-deep-link = { version = "^0.1.2" }
-reqwest = { version = "0.11.14", features = ["blocking"] }
+reqwest = { version = "0.12.2", features = ["blocking"] }
 dirs = "5.0.1"
-base64 = "0.13.0"
+base64 = "0.22.0"
 phf = "0.11.2"
 
 # For push to talk (and maybe other hotkeys in the future!)
-device_query = "1.1.3"
-sysinfo = "0.29.10"
+device_query = "2.0.0"
+sysinfo = "0.30.7"
 
 # launch on startup
 auto-launch = "0.5.0"
@@ -57,7 +57,7 @@ embed_plist = "1.2.2"
 
 [target.'cfg(windows)'.dependencies]
 webview2-com = "0.19.0"
-windows-implement = "0.37.0"
+windows-implement = "0.39.0"
 
 [target.'cfg(windows)'.dependencies.windows]
 version = "0.39.0"
@@ -84,11 +84,11 @@ custom-protocol = ["tauri/custom-protocol"]
 
 [target.x86_64-unknown-linux-gnu]
 rustflags = [
-  "-C", "link-arg=-fuse-ld=lld",
+    "-C", "link-arg=-fuse-ld=lld",
 ]
 
 # Also use lld on macos
 [target.'cfg(target_os = "macos")']
 rustflags = [
-  "-C", "link-arg=-fuse-ld=lld",
+    "-C", "link-arg=-fuse-ld=lld",
 ]
