@@ -24,8 +24,13 @@ env:
 
 jobs:
   rustfmt:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.platform }}
 
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest, macos-latest]
+    
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
