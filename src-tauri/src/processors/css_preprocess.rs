@@ -7,6 +7,8 @@ use crate::config::get_config;
 use crate::log;
 use crate::util::paths::get_theme_dir;
 
+use base64::{engine::general_purpose, Engine as _};
+
 #[tauri::command]
 pub async fn clear_css_cache() {
   let cache_path = get_theme_dir().join("cache");
@@ -201,13 +203,13 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
 
     // CORS allows discord media
     if url.is_empty()
-      || url.contains(".css")
-      || url.contains("data:image")
-      || url.contains("media.discordapp")
-      || url.contains("cdn.discordapp")
-      || url.contains("discord.com/assets")
-      // Imgur is allowed(?)
-      || url.contains("i.imgur.com")
+            || url.contains(".css")
+            || url.contains("data:image")
+            || url.contains("media.discordapp")
+            || url.contains("cdn.discordapp")
+            || url.contains("discord.com/assets")
+            // Imgur is allowed(?)
+            || url.contains("i.imgur.com")
     {
       continue;
     }
@@ -249,7 +251,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
         }
       };
       let bytes = response.bytes().unwrap();
-      let b64 = base64::encode(&bytes);
+      let b64 = general_purpose::STANDARD.encode(&bytes);
 
       win_clone
         .emit("loading_log", format!("Processed image import: {}", &url))
@@ -347,7 +349,7 @@ async fn localize_fonts(win: tauri::Window, css: String) -> String {
         }
       };
       let bytes = response.bytes().unwrap();
-      let b64 = base64::encode(&bytes);
+      let b64 = general_purpose::STANDARD.encode(&bytes);
 
       win_clone
         .emit("loading_log", format!("Processed font import: {}", &url))

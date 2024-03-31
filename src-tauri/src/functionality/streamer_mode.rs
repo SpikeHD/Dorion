@@ -1,7 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use crate::config::get_config;
-use sysinfo::{ProcessExt, SystemExt};
+use sysinfo::System;
 
 // We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
 static OBS_OPEN: AtomicBool = AtomicBool::new(false);
@@ -9,7 +9,7 @@ static OBS_OPEN: AtomicBool = AtomicBool::new(false);
 #[tauri::command]
 pub fn start_streamer_mode_watcher(win: tauri::Window) {
   let enabled = get_config().streamer_mode_detection.unwrap_or(false);
-  let mut system = sysinfo::System::new_all();
+  let mut system = System::new_all();
 
   if !enabled {
     return;
