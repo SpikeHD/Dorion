@@ -22,6 +22,10 @@ pub static CLIENT_MODS: phf::Map<&'static str, ClientMod> = phf_map! {
       script: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js",
       styles: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css",
   },
+  "Equicord" => ClientMod {
+      script: "https://github.com/Equicord/Equicord/releases/download/latest/browser.js",
+      styles: "https://github.com/Equicord/Equicord/releases/download/latest/browser.css",
+  },
 };
 
 #[tauri::command]
