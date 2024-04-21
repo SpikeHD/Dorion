@@ -32,7 +32,45 @@ pub fn clear_cache() {
   }
 }
 
-#[cfg(not(target_os = "windows"))]
+// TODO: I'm not conviced this works yet, I think the window is destroyed before this stuff runs, so it's not clearing the cache
+#[cfg(target_os = "macos")]
+pub fn clear_cache() {
+  use std::os::raw::c_char;
+
+  extern "C" {
+    // Global Obj-C variables
+    static WKWebsiteDataTypeDiskCache: *const c_char;
+    static WKWebsiteDataTypeMemoryCache: *const c_char;
+    static WKWebsiteDataTypeOfflineWebApplicationCache: *const c_char;
+  }
+
+  use cocoa::base::id;
+  use cocoa::foundation::NSAutoreleasePool;
+  use objc::{msg_send, sel, sel_impl, class};
+
+  unsafe {
+    let pool = cocoa::foundation::NSAutoreleasePool::new(cocoa::base::nil);
+    let configuration: id = msg_send![class!(WKWebViewConfiguration), new];
+    let store: id = msg_send![configuration, websiteDataStore];
+    
+    // Specify cache so as to not clear login stuff
+    let data_types = vec![
+      WKWebsiteDataTypeDiskCache,
+      WKWebsiteDataTypeMemoryCache,
+      WKWebsiteDataTypeOfflineWebApplicationCache,
+    ];
+
+    let date: id = msg_send![class!(NSDate), dateWithTimeIntervalSince1970:0.0];
+    
+    // Define a completion handler using a closure
+    let handler = |_: id| {};
+    
+    let _: id = msg_send![store, removeDataOfTypes:data_types modifiedSince:date completionHandler:handler];
+    pool.drain();
+  }
+}
+
+#[cfg(target_os = "linux")]
 pub fn clear_cache() {}
 
 pub fn maybe_clear_cache() {
