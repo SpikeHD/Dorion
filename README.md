@@ -98,17 +98,21 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 <div width="100%" align="center">
 
-| Feature                                        | Windows | Linux            | MacOS           |
-|------------------------------------------------|---------|------------------|-----------------|
-| Basics (logging in, navigation, text/DMs etc.) | ✓       | ✓               | ✓               |
-| Voice                                          | ✓       | ✗<sup>[1]</sup> | ✓               |
-| Themes                                         | ✓       | ✓               | ✓               |
-| Shelter                                        | ✓       | ✓               | ✓               |
-| Dorion Plugins                                 | ✓       | ✓               | ✓               |
+| Feature                                        | Windows 10/11 | Windows 7<sup>[1]</sup> | Linux            | MacOS           |
+|------------------------------------------------|---------------|---------------|------------------|-----------------|
+| Basics (logging in, navigation, text/DMs etc.) | ✓             | ✓             | ~<sup>[2]</sup>  | ✓               |
+| Voice                                          | ✓             | ✓             | ✗<sup>[3]</sup> | ✓               |
+| Themes                                         | ✓             | ✓             | ✓               | ✓               |
+| Shelter                                        | ✓             | ✓             | ✓               | ✓               |
+| Dorion Plugins                                 | ✓             | ✓             | ✓               | ✓               |
 
 </div>
 
-<sup>1</sup> While some tweaks to Tauri made it possible to set the `webrtc_enabled` flag to true, it is unfortunately still not functional in WebKitGTK. The only way to enable the functionality it is through a build-time flag (which, as you could guess, is not set for any of the official builds) and then using a custom Tauri version. For now, we just have to wait for it to come pre-enabled (or you can wait hours to build WebKitGTK yourself :P).
+<sup>1</sup> While I am told it works fine, Windows 7 support is speculative and not guaranteed. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!).
+
+<sup>2</sup> Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is a bug in WebkitGTK.
+
+<sup>3</sup> Support for WebRTC is hidden behind a build-time flag that is not used in almost all distros. Even with support, Tauri v1 does not support a high enough version of WebkitGTK bindings to enable the functionality. This will be available when WebkitGTK ships with WebRTC support.
 
 # Building
 
