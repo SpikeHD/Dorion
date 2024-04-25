@@ -132,13 +132,13 @@ jobs:
       - name: (Windows) Compress build
         if: matrix.config.platform == 'windows-latest'
         run: cd src-tauri/target/${{ matrix.config.target }}/ && 7z a -tzip -mx9 Dorion.zip 
-          src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe
-          src-tauri/target/${{ matrix.config.target }}/release/config.json
-          src-tauri/target/${{ matrix.config.target }}/release/updater.exe
-          src-tauri/target/${{ matrix.config.target }}/release/plugins/
-          src-tauri/target/${{ matrix.config.target }}/release/themes/
-          src-tauri/target/${{ matrix.config.target }}/release/icons/
-          src-tauri/target/${{ matrix.config.target }}/release/injection/
+          Dorion.exe
+          config.json
+          updater.exe
+          plugins/
+          themes/
+          icons/
+          injection/
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-latest'
