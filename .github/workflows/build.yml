@@ -72,7 +72,7 @@ jobs:
             ~/.cargo/git/db/
             src-tauri/target/
             updater/target/
-          key: ${{ runner.os }}-${{ matrix.config.platform }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: (Linux) Install dependencies
         if: matrix.config.platform == 'ubuntu-latest'
