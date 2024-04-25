@@ -104,7 +104,7 @@ jobs:
       - name: Build
         # If we are compiling for Windows ARM, we can only support NSIS
         # However, I cannot phase out the MSI or a buncha package managers will explode
-        run: cargo tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' }}
+        run: cargo tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
         env:
           RUSTFLAGS: -Awarnings
       
