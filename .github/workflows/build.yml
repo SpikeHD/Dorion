@@ -162,6 +162,7 @@ jobs:
 
       # Windows ARM only supports NSIS right now, but we should upload that too
       - name: (Windows) Upload NSIS
+        if: matrix.config.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: dorion-${{ matrix.config.target }}-nsis
