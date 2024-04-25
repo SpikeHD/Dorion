@@ -26,12 +26,28 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.config.platform }}
 
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-latest, macos-latest]
+        config:
+          - platform: ubuntu-latest
+            target: 'x86_64-unknown-linux-gnu'
+          - platform: ubuntu-latest
+            target: 'aarch64-unknown-linux-gnu'
+          - platform: ubuntu-latest
+            target: 'armv7-unknown-linux-gnueabihf'
+
+          - platform: macos-latest
+            target: 'x86_64-apple-darwin'
+          - platform: macos-latest
+            target: 'aarch64-apple-darwin'
+
+          - platform: windows-latest
+            target: 'x86_64-pc-windows-msvc'
+          - platform: windows-latest
+            target: 'aarch64-pc-windows-msvc'
 
     steps:
       - uses: actions-rust-lang/setup-rust-toolchain@v1.8
@@ -59,7 +75,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: (Linux) Install dependencies
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.config.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev \
@@ -71,9 +87,8 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - name: (MacOS) Install MacOS universal target
-        if: matrix.platform == 'macos-latest'
-        run: rustup target add aarch64-apple-darwin
+      - name: Add target
+        run: rustup target add ${{ matrix.config.target }}
 
       - name: Build updater
         run: pnpm build:updater
@@ -85,98 +100,91 @@ jobs:
           
       - name: Build
         # Include seperate targets for MacOS since it needs to build for both aarch64 and x86_64
-        run: pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && pnpm tauri build --target x86_64-apple-darwin' || '' }}
+        run: pnpm tauri build --target ${{ matrix.config.target }}
         env:
           RUSTFLAGS: -Awarnings
       
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
-        if: matrix.platform == 'windows-latest'
+        if: matrix.config.platform == 'windows-latest'
         continue-on-error: true
-        run: mkdir src-tauri/target/release/themes && mkdir src-tauri/target/release/plugins
+        run: mkdir src-tauri/target/${{ matrix.config.target }}/release/themes && mkdir src-tauri/target/${{ matrix.config.target }}/release/plugins
 
       # Empty folders, unix edition
       - name: (Unix) Create empty folders for plugins and themes
-        if: matrix.platform != 'windows-latest'
-        run: mkdir -p src-tauri/target/release/plugins && mkdir -p src-tauri/target/release/themes
+        if: matrix.config.platform != 'windows-latest'
+        run: mkdir -p src-tauri/target/${{ matrix.config.target }}/release/plugins && mkdir -p src-tauri/target/${{ matrix.config.target }}/release/themes
 
       - name: Create empty config.json
-        run: cd src-tauri/target/release && echo {} > config.json
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && echo {} > config.json
         
       # paths:
       # Windows:
-      # - src-tauri/target/release/Dorion.exe|config.json|plugins|themes|injection|icons
+      # - src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe|config.json|plugins|themes|injection|icons
       # Ubuntu:
-      # - src-tauri/target/release/dorion|config.json|plugins|themes|injection|icons
+      # - src-tauri/target/${{ matrix.config.target }}/release/dorion|config.json|plugins|themes|injection|icons
       # MacOS:
-      # - src-tauri/target/[arch]/release/bundle/macos/Dorion.app
+      # - src-tauri/target/${{ matrix.config.target }}/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
-        if: matrix.platform == 'windows-latest'
+        if: matrix.config.platform == 'windows-latest'
         run: 7z a -tzip -mx9 Dorion.zip 
-          src-tauri/target/release/Dorion.exe
-          src-tauri/target/release/config.json
-          src-tauri/target/release/updater.exe
-          src-tauri/target/release/plugins/
-          src-tauri/target/release/themes/
-          src-tauri/target/release/icons/
-          src-tauri/target/release/injection/
+          src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe
+          src-tauri/target/${{ matrix.config.target }}/release/config.json
+          src-tauri/target/${{ matrix.config.target }}/release/updater.exe
+          src-tauri/target/${{ matrix.config.target }}/release/plugins/
+          src-tauri/target/${{ matrix.config.target }}/release/themes/
+          src-tauri/target/${{ matrix.config.target }}/release/icons/
+          src-tauri/target/${{ matrix.config.target }}/release/injection/
 
       - name: (Linux) Compress build
-        if: matrix.platform == 'ubuntu-latest'
-        run: cd src-tauri/target/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./icons
+        if: matrix.config.platform == 'ubuntu-latest'
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./icons
 
       # Windows portable
       - name: (Windows) Upload portable
-        if: matrix.platform == 'windows-latest'
+        if: matrix.config.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_win64_portable
+          name: dorion-${{ matrix.config.target }}-portable
           path: Dorion.zip
 
       # Windows MSI
       - name: (Windows) Upload .msi
-        if: matrix.platform == 'windows-latest'
+        if: matrix.config.platform == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_win64_msi
-          path: src-tauri/target/release/bundle/msi/*.msi
+          name: dorion-${{ matrix.config.target }}-msi
+          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/msi/*.msi
 
       # Ubuntu portable
       - name: (Linux) Upload portable
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.config.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_amd64_portable
-          path: src-tauri/target/release/dorion.tar.gz
+          name: dorion-${{ matrix.config.target }}-portable
+          path: src-tauri/target/${{ matrix.config.target }}/release/dorion.tar.gz
 
       # Ubuntu deb
       - name: (Linux) Upload .deb
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.config.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_amd64_deb
-          path: src-tauri/target/release/bundle/deb/*.deb
+          name: dorion-${{ matrix.config.target }}-deb
+          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/deb/*.deb
 
       - name: (Linux) Upload .appimage
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.config.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_amd64_appimage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          name: dorion-${{ matrix.config.target }}-appimage
+          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/appimage/*.AppImage
 
-      - name: (MacOS) Upload x86 .dmg
-        if: matrix.platform == 'macos-latest'
+      - name: (MacOS) Upload .dmg
+        if: matrix.config.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: dorion_macos_x86-64_dmg
-          path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
-      
-      - name: (MacOS) Upload ARM .dmg
-        if: matrix.platform == 'macos-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dorion_macos_arm_dmg
-          path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+          name: dorion-${{ matrix.config.target }}-dmg
+          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/dmg/*.dmg
 
   # build-arm:
   #   runs-on: ubuntu-latest
