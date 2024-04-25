@@ -131,7 +131,7 @@ jobs:
       # - src-tauri/target/${{ matrix.config.target }}/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
         if: matrix.config.platform == 'windows-latest'
-        run: cd src-tauri/target/${{ matrix.config.target }}/ && 7z a -tzip -mx9 Dorion.zip 
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && 7z a -tzip -mx9 Dorion.zip 
           Dorion.exe
           config.json
           updater.exe
