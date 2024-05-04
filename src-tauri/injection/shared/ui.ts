@@ -61,6 +61,7 @@ export async function applyExtraCSS() {
   const style = document.createElement('style')
 
   style.innerHTML = css
+  style.id = 'dorion-extra-css'
 
   // Append some background-transparenting css if blur_css is true
   if (window.__DORION_CONFIG__.blur !== 'none' && window.__DORION_CONFIG__.blur_css) {
@@ -71,7 +72,7 @@ export async function applyExtraCSS() {
     `
   }
 
-  document.head.appendChild(style)
+  document.body.appendChild(style)
 }
 
 async function initTopBarEvents() {

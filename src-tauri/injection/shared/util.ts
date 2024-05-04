@@ -2,13 +2,13 @@ export function cssSanitize(css: string) {
   const style = document.createElement('style')
   style.innerHTML = css
 
-  document.head.appendChild(style)
+  document.body.appendChild(style)
 
   if (!style.sheet) return
 
   const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n')
 
-  document.head.removeChild(style)
+  document.body.removeChild(style)
   return result
 }
 
