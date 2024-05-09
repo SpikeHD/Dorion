@@ -119,7 +119,6 @@ jobs:
             libc6:armhf \
             libwebkit2gtk-4.0-dev:armhf \
             libssl-dev:armhf \
-            libsoup-2.4-dev:armhf \
             gcc-arm-linux-gnueabihf
     
       - name: (Linux) (ARM64) Install dependencies
@@ -129,7 +128,6 @@ jobs:
             libc6:arm64 \
             libwebkit2gtk-4.0-dev:arm64 \
             libssl-dev:arm64 \
-            libsoup-2.4-dev:arm64 \
             gcc-aarch64-linux-gnu
 
       - name: Add target
