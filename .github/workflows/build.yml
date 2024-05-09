@@ -74,6 +74,31 @@ jobs:
             updater/target/
           key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: (Linux) ARM sources.list
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu' || matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        run: |
+          # Add [arch=amd64] to the initial entries of the sources.list
+          sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
+  
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
+  
+      # ARM-linux related sources and dpkg config and such
+      - name: (Linux) ARM setup
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu' || matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo dpkg --add-architecture armhf
+          sudo apt-get update
+
       - name: (Linux) Install dependencies
         if: matrix.config.platform == 'ubuntu-latest'
         run: |
@@ -86,6 +111,26 @@ jobs:
             libgtk-3-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev
+
+      - name: (Linux) (ARMv7) Install dependencies
+        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        run: |
+          sudo apt-get install -y \
+            libc6:armhf \
+            libwebkit2gtk-4.0-dev:armhf \
+            libssl-dev:armhf \
+            libsoup-2.4-dev:armhf \
+            gcc-arm-linux-gnueabihf
+    
+      - name: (Linux) (ARM64) Install dependencies
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get install -y \
+            libc6:arm64 \
+            libwebkit2gtk-4.0-dev:arm64 \
+            libssl-dev:arm64 \
+            libsoup-2.4-dev:arm64 \
+            gcc-aarch64-linux-gnu
 
       - name: Add target
         run: rustup target add ${{ matrix.config.target }}
@@ -102,11 +147,30 @@ jobs:
         run: pnpm install && pnpm shupdate
           
       - name: Build
+        if: matrix.config.target != 'armv7-unknown-linux-gnueabihf' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         # If we are compiling for Windows ARM, we can only support NSIS
         # However, I cannot phase out the MSI or a buncha package managers will explode
         run: cargo tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
         env:
           RUSTFLAGS: -Awarnings
+
+      - name: (Linux) (ARMv7) Build
+        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        run: pnpm tauri build --target ${{ matrix.config.target }} --bundles deb,rpm
+        env:
+          RUSTFLAGS: -Awarnings -L/usr/lib/arm-linux-gnueabihf
+          CC: arm-linux-gnueabihf-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
+          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
+  
+      - name: (Linux) (ARM64) Build
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: pnpm tauri build --target ${{ matrix.config.target }} --bundles deb,rpm
+        env:
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu
+          CC: aarch64-linux-gnu-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
       
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
