@@ -212,7 +212,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dorion-${{ matrix.config.target }}-portable
-          path: Dorion.zip
+          path: src-tauri/target/${{ matrix.config.target }}/release/Dorion.zip
 
       # Windows MSI
       - name: (Windows) Upload .msi
