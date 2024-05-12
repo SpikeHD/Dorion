@@ -1,5 +1,5 @@
 :root {
-  --os-accent-color: {{os_accent}};
+  --os-accent-color: "{{os_accent}}";
 }
 
 ul[class^='tree']
