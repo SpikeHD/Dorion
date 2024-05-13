@@ -181,17 +181,14 @@ jobs:
         if: matrix.config.platform != 'windows-latest'
         run: mkdir -p src-tauri/target/${{ matrix.config.target }}/release/plugins && mkdir -p src-tauri/target/${{ matrix.config.target }}/release/themes
 
-      - name: Create empty config.json
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && echo {} > config.json
-
       - name: Create .portable file for portable builds
         run: cd src-tauri/target/${{ matrix.config.target }}/release && touch .portable
         
       # paths:
       # Windows:
-      # - src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe|config.json|plugins|themes|injection|icons
+      # - src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe|plugins|themes|injection|icons
       # Ubuntu:
-      # - src-tauri/target/${{ matrix.config.target }}/release/dorion|config.json|plugins|themes|injection|icons
+      # - src-tauri/target/${{ matrix.config.target }}/release/dorion|plugins|themes|injection|icons
       # MacOS:
       # - src-tauri/target/${{ matrix.config.target }}/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
