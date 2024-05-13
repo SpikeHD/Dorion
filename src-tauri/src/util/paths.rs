@@ -18,6 +18,15 @@ pub fn get_config_dir() -> PathBuf {
   let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   if is_portable() {
+    // Create file if it doesn't exist
+    if fs::metadata(&local_config_dir).is_err() {
+      fs::write(
+        &local_config_dir,
+        serde_json::to_string_pretty(&default_config()).unwrap_or_default(),
+      )
+      .unwrap_or(());
+    }
+
     return local_config_dir;
   }
 
@@ -60,6 +69,17 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
   let local_plugin_dir = current_exe.parent().unwrap().join("plugins");
 
   if is_portable() {
+    // Create dir if it doesn't exist
+    if fs::metadata(&local_plugin_dir).is_err() {
+      match fs::create_dir_all(&local_plugin_dir) {
+        Ok(()) => (),
+        Err(e) => {
+          log!("Error creating local plugins dir: {}", e);
+          return local_plugin_dir;
+        }
+      };
+    }
+
     return local_plugin_dir;
   }
 
@@ -96,6 +116,17 @@ pub fn get_theme_dir() -> std::path::PathBuf {
   let local_theme_dir = current_exe.parent().unwrap().join("themes");
 
   if is_portable() {
+    // Create dir if it doesn't exist
+    if fs::metadata(&local_theme_dir).is_err() {
+      match fs::create_dir_all(&local_theme_dir) {
+        Ok(()) => (),
+        Err(e) => {
+          log!("Error creating local themes dir: {}", e);
+          return local_theme_dir;
+        }
+      };
+    }
+
     return local_theme_dir;
   }
 
@@ -145,6 +176,17 @@ pub fn profiles_dir() -> PathBuf {
   // Check for local/portable file paths
   if is_portable() {
     let profile_folder = current_exe.parent().unwrap().join("profiles");
+
+    if fs::metadata(&profile_folder).is_err() {
+      match fs::create_dir_all(&profile_folder) {
+        Ok(()) => (),
+        Err(e) => {
+          log!("Error creating local profiles dir: {}", e);
+          return profile_folder;
+        }
+      };
+    }
+
     return profile_folder;
   }
 
