@@ -2,7 +2,7 @@ use std::{fs, path::PathBuf};
 
 use tauri::Manager;
 
-use crate::config::get_config;
+use crate::config::{default_config, get_config};
 use crate::log;
 
 pub fn is_portable() -> bool {
@@ -39,7 +39,7 @@ pub fn get_config_dir() -> PathBuf {
   if fs::metadata(&config_file).is_err() {
     fs::write(
       &config_file,
-      r#"{ "theme": "none", "zoom": "1.0", "client_type": "default", "sys_tray": false, "block_telemetry": false }"#,
+      serde_json::to_string_pretty(&default_config()).unwrap_or_default(),
     )
     .unwrap_or(());
   }
