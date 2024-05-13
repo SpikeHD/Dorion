@@ -46,13 +46,13 @@ pub fn clear_cache() {
 
   use cocoa::base::id;
   use cocoa::foundation::NSAutoreleasePool;
-  use objc::{msg_send, sel, sel_impl, class};
+  use objc::{class, msg_send, sel, sel_impl};
 
   unsafe {
     let pool = cocoa::foundation::NSAutoreleasePool::new(cocoa::base::nil);
     let configuration: id = msg_send![class!(WKWebViewConfiguration), new];
     let store: id = msg_send![configuration, websiteDataStore];
-    
+
     // Specify cache so as to not clear login stuff
     let data_types = vec![
       WKWebsiteDataTypeDiskCache,
@@ -61,11 +61,12 @@ pub fn clear_cache() {
     ];
 
     let date: id = msg_send![class!(NSDate), dateWithTimeIntervalSince1970:0.0];
-    
+
     // Define a completion handler using a closure
     let handler = |_: id| {};
-    
-    let _: id = msg_send![store, removeDataOfTypes:data_types modifiedSince:date completionHandler:handler];
+
+    let _: id =
+      msg_send![store, removeDataOfTypes:data_types modifiedSince:date completionHandler:handler];
     pool.drain();
   }
 }

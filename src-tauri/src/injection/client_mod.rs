@@ -52,13 +52,16 @@ pub fn load_mods_js() -> String {
   let mut tasks = Vec::new();
 
   for mod_name in enabled_mods {
-    let script_url = CLIENT_MODS.get(mod_name.as_str()).unwrap_or(
-      // Prevent panics
-      &ClientMod {
-        script: "",
-        styles: "",
-      },
-    ).script;
+    let script_url = CLIENT_MODS
+      .get(mod_name.as_str())
+      .unwrap_or(
+        // Prevent panics
+        &ClientMod {
+          script: "",
+          styles: "",
+        },
+      )
+      .script;
 
     tasks.push(std::thread::spawn(move || {
       let response = match reqwest::blocking::get(script_url) {
@@ -122,13 +125,16 @@ pub fn load_mods_css() -> String {
   let mut tasks = Vec::new();
 
   for mod_name in enabled_mods {
-    let styles_url = CLIENT_MODS.get(mod_name.as_str()).unwrap_or(
-      // Prevent panics
-      &ClientMod {
-        script: "",
-        styles: "",
-      },
-    ).styles;
+    let styles_url = CLIENT_MODS
+      .get(mod_name.as_str())
+      .unwrap_or(
+        // Prevent panics
+        &ClientMod {
+          script: "",
+          styles: "",
+        },
+      )
+      .styles;
 
     if styles_url.is_empty() {
       continue;

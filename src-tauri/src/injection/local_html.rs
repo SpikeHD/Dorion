@@ -28,7 +28,6 @@ pub fn get_top_bar() -> String {
 pub fn get_extra_css() -> String {
   let os_accent = get_os_accent();
   let css = EXTRA_CSS.to_string();
-  let css = css.replace("\"{{os_accent}}\"", &os_accent);
 
-  css
+  css.replace("\"{{os_accent}}\"", &os_accent)
 }

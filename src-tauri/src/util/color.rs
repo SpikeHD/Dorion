@@ -6,7 +6,8 @@ pub fn get_os_accent() -> String {
   let mut transparency = Foundation::BOOL(0);
 
   unsafe {
-    Graphics::Dwm::DwmGetColorizationColor(&mut colorization, &mut transparency).unwrap_or_default();
+    Graphics::Dwm::DwmGetColorizationColor(&mut colorization, &mut transparency)
+      .unwrap_or_default();
   }
 
   // This returns in AARRGGBB format, so we need to convert to RRGGBB
