@@ -5,12 +5,19 @@ use tauri::Manager;
 use crate::config::get_config;
 use crate::log;
 
+pub fn is_portable() -> bool {
+  let current_exe = std::env::current_exe().unwrap_or_default();
+  let portable_signifier = current_exe.parent().unwrap().join(".portable");
+
+  fs::metadata(portable_signifier).is_ok()
+}
+
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let current_exe = std::env::current_exe().unwrap_or_default();
   let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
-  if fs::metadata(&local_config_dir).is_ok() {
+  if is_portable() {
     return local_config_dir;
   }
 
@@ -52,7 +59,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
   let local_plugin_dir = current_exe.parent().unwrap().join("plugins");
 
-  if fs::metadata(&local_plugin_dir).is_ok() {
+  if is_portable() {
     return local_plugin_dir;
   }
 
@@ -88,7 +95,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
   let local_theme_dir = current_exe.parent().unwrap().join("themes");
 
-  if fs::metadata(&local_theme_dir).is_ok() {
+  if is_portable() {
     return local_theme_dir;
   }
 
@@ -134,12 +141,10 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
 pub fn profiles_dir() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
   // Check for local/portable file paths
-  if local_config_dir.exists() {
-    let profile_folder = local_config_dir.parent().unwrap().join("profiles");
-
+  if is_portable() {
+    let profile_folder = current_exe.parent().unwrap().join("profiles");
     return profile_folder;
   }
 
@@ -158,10 +163,9 @@ pub fn get_webdata_dir() -> PathBuf {
 
 pub fn updater_dir(win: &tauri::Window) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
-  if fs::metadata(local_config_dir).is_ok() {
-    // This is a portable install, so we can use the local injection dir
+  if is_portable() {
+    // This is a portable install, so we can use the local dir
     return current_exe.parent().unwrap().join("updater");
   }
 
@@ -174,10 +178,9 @@ pub fn updater_dir(win: &tauri::Window) -> PathBuf {
 
 pub fn custom_detectables_path() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
-  if fs::metadata(local_config_dir).is_ok() {
-    // This is a portable install, so we can use the local injection dir
+  if is_portable() {
+    // This is a portable install, so we can use the local dir
     return current_exe.parent().unwrap().join("detectables.json");
   }
 
@@ -192,10 +195,9 @@ pub fn custom_detectables_path() -> PathBuf {
 
 pub fn log_file_path() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
 
-  if fs::metadata(local_config_dir).is_ok() {
-    // This is a portable install, so we can use the local injection dir
+  if is_portable() {
+    // This is a portable install, so we can use the local dir
     return current_exe
       .parent()
       .unwrap()

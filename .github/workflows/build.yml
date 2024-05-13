@@ -183,6 +183,9 @@ jobs:
 
       - name: Create empty config.json
         run: cd src-tauri/target/${{ matrix.config.target }}/release && echo {} > config.json
+
+      - name: Create .portable file for portable builds
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && touch .portable
         
       # paths:
       # Windows:
@@ -195,8 +198,8 @@ jobs:
         if: matrix.config.platform == 'windows-latest'
         run: cd src-tauri/target/${{ matrix.config.target }}/release && 7z a -tzip -mx9 Dorion.zip 
           Dorion.exe
-          config.json
           updater.exe
+          .portable
           plugins/
           themes/
           icons/
@@ -204,7 +207,7 @@ jobs:
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-latest'
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz dorion config.json updater ./plugins ./themes ./injection ./icons
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz dorion updater .portable ./plugins ./themes ./injection ./icons
 
       # Windows portable
       - name: (Windows) Upload portable
