@@ -282,6 +282,9 @@ fn main() {
         )
         .build()?;
 
+      #[cfg(any(windows, target_os = "macos"))]
+      window_shadows::set_shadow(&win, true).unwrap_or_default();
+
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);
 

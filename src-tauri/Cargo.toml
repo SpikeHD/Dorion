@@ -19,6 +19,8 @@ tauri-build = { version = "1.0.0", features = [] }
 
 [dependencies]
 async-recursion = "1.1.0"
+base64 = "0.22.0"
+dirs = "5.0.1"
 include-flate = "0.3.0"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
@@ -26,9 +28,8 @@ tauri = { version = "1.6.1", features = ["macos-private-api", "windows7-compat",
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace" }
 tauri-plugin-deep-link = { version = "^0.1.2" }
 reqwest = { version = "0.12.2", features = ["blocking"] }
-dirs = "5.0.1"
-base64 = "0.22.0"
 phf = "0.11.2"
+window-shadows = { git = "https://github.com/tauri-apps/window-shadows.git", tag = "window-shadows-v0.2.2" }
 
 # For push to talk (and maybe other hotkeys in the future!)
 device_query = "2.0.0"

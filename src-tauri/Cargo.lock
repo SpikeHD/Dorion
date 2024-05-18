@@ -1017,6 +1017,7 @@ dependencies = [
  "tauri-plugin-window-state",
  "webkit2gtk",
  "webview2-com",
+ "window-shadows",
  "window-vibrancy",
  "window_titles",
  "windows 0.39.0",
@@ -5353,6 +5354,17 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
+name = "window-shadows"
+version = "0.2.2"
+source = "git+https://github.com/tauri-apps/window-shadows.git?tag=window-shadows-v0.2.2#00affb720802d5a5f3b51d502b6a0437e553db91"
+dependencies = [
+ "cocoa 0.25.0",
+ "objc",
+ "raw-window-handle",
+ "windows-sys 0.48.0",
+]
 
 [[package]]
 name = "window-vibrancy"
