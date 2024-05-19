@@ -43,6 +43,13 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
       _ => {}
     }
   }
+
+  #[cfg(target_os = "linux")]
+  {
+    // Sorry linux :/
+    let _ = win;
+    let _ = effect;
+  }
 }
 
 // Might use this one day, today is not that day
