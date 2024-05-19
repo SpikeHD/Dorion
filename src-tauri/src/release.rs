@@ -24,12 +24,18 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
   let updater_path = updater_dir(&win);
   let mut updater = std::process::Command::new(updater_path);
 
-  #[cfg(not(target_os = "linux"))]
   if to_update.contains(&"dorion".to_string()) {
-    log!("Updating Dorion...");
+    #[cfg(target_os = "linux")]
+    if config_is_local() {
+      updater.arg(String::from("--main"));
+      updater.arg(String::from("true"));
+    }
 
-    updater.arg(String::from("--main"));
-    updater.arg(String::from("true"));
+    #[cfg(not(target_os = "linux"))]
+    {
+      updater.arg(String::from("--main"));
+      updater.arg(String::from("true"));
+    }
   }
 
   // If we have a local config, we are a portable install, so pass that too
