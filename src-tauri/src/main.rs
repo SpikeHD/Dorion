@@ -272,6 +272,7 @@ fn main() {
           ).as_str()
         )
         .resizable(true)
+        .min_inner_size(100.0, 100.0)
         .disable_file_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
