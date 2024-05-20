@@ -22,6 +22,7 @@ pub fn main() {
 
   // This should happen second
   if args.main {
+    #[cfg(not(target_os = "macos"))]
     if args.local {
       update_main_kinda();
       return;
