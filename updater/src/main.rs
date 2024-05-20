@@ -8,7 +8,7 @@ mod github;
 // If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 struct UpdaterArguments {
   main: bool,
-  #[cfg(not(target_os = "macos"))]
+  #[cfg(target_os = "windows")]
   local: bool,
 }
 
@@ -16,22 +16,19 @@ pub fn main() {
   let mut pargs = Arguments::from_env();
   let args = UpdaterArguments {
     main: pargs.contains("--main"),
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "windows")]
     local: pargs.contains("--local"),
   };
 
   // This should happen second
   if args.main {
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(target_os = "windows")]
     if args.local {
       update_main_kinda();
       return;
     }
 
-    #[cfg(target_os = "windows")]
-    {
-      update_main();
-    }
+    update_main();
   }
 }
 
@@ -50,7 +47,7 @@ pub fn elevate() {
 pub fn needs_to_elevate(path: PathBuf) -> bool {
   // Write a test file to the injection folder to see if we have perms
   let mut test_file = path;
-  test_file.push(".test");
+  test_file.push("test");
 
   let write_perms = match std::fs::write(&test_file, "") {
     Ok(()) => {
