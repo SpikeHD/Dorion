@@ -74,7 +74,6 @@ jobs:
             src-tauri/target/release/deps
             src-tauri/target/release/build
             src-tauri/target/release/.fingerprint
-            src-tauri/target/
             updater/target/
           key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
