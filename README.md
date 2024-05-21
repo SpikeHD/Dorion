@@ -83,6 +83,7 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
   * There is ***no*** BetterDiscord support... [yet](https://github.com/SpikeHD/Dorion/issues/91#issuecomment-1712269268)
 * Almost full [game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
 * (Hopefully) better low-end system performance.
+* ARM support for ALL platforms
 
 ## Plugins
 
