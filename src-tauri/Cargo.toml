@@ -39,7 +39,7 @@ sysinfo = "0.30.7"
 auto-launch = "0.5.0"
 
 # rpc server
-rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.12.0" }
+rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.13.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 
 # window blur
