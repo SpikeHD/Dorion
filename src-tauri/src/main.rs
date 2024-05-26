@@ -66,8 +66,12 @@ fn main() {
   // Ensure config is created
   config::init();
 
-  // ALso init logging
+  // Also init logging
   logger::init(true);
+
+  std::panic::set_hook(Box::new(|info| {
+    log!("Panic occurred: {:?}", info);
+  }));
 
   let config = get_config();
 
