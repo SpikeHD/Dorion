@@ -105,7 +105,7 @@ fn main() {
   let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
 
-  log!("Starting Dorion version {}", context.package_info.version);
+  log!("Starting Dorion version {}", context.config().package.version);
   log!("Opening Discord {}", client_type);
 
   if client_type == "default" {
