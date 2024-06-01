@@ -6,9 +6,9 @@ use crate::{log, util::paths::get_plugin_dir};
 
 #[derive(Serialize, Deserialize)]
 pub struct PluginDetails {
-  name: String,
-  enabled: bool,
-  preload: bool,
+  pub name: String,
+  pub enabled: bool,
+  pub preload: bool,
 }
 
 #[tauri::command]
@@ -145,7 +145,7 @@ fn write_plugins_json(list: HashMap<String, PluginDetails>) {
 
   // If it's empty, something got borked, so just write an empty array
   if plugins_str.is_empty() {
-    fs::write(plugins_json, "[]").unwrap();
+    fs::write(plugins_json, "{}").unwrap();
     return;
   }
 
@@ -160,7 +160,7 @@ pub fn get_plugin_list() -> HashMap<String, PluginDetails> {
   if !plugins_json.exists() {
     // Create the plugins list file
     log!("Plugins.json does not exit, recreating...");
-    fs::write(plugins_json, "[]").unwrap();
+    fs::write(plugins_json, "{}").unwrap();
 
     return HashMap::new();
   }
