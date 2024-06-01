@@ -106,6 +106,8 @@ pub fn get_new_plugins() {
     let plugin_details = plugins_list.get(&filename);
 
     if plugin_details.is_none() {
+      log!("Found new plugin: {}", plugin_name);
+
       plugins_list.insert(
         filename,
         PluginDetails {
