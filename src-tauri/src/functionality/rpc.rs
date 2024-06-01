@@ -53,12 +53,10 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
 }
 
 pub fn start_rpc_server(win: tauri::Window) {
-  let detectable = reqwest::blocking::get(
-      "https://discord.com/api/v9/applications/detectable",
-    )
-        .expect("Request for detectable.json failed")
-        .text()
-        .expect("Failed to get text from response");
+  let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
+    .expect("Request for detectable.json failed")
+    .text()
+    .expect("Failed to get text from response");
 
   // This accepts both a `&str` or a `String`
   let server = Arc::new(Mutex::new(
