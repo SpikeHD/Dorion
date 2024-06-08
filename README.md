@@ -164,6 +164,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 * (Windows) Large images in themes will not load
 * (MacOS) Injection JS does not reinject after reloading the page
+* External images (UserBG, Decor, UserPFP, etc.) will not load
 * Fonts/font-faces will not load
 
 # Troubleshooting
