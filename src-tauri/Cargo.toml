@@ -48,7 +48,7 @@ chrono = "0.4.38"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "0.18.2"
-wgpu = { version = "0.20.0", default-features = false, features = ["dx12"] }
+wgpu = { version = "0.20.0", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
