@@ -100,8 +100,41 @@ fn main() {
     }
   }
 
+  // Disable DMA rendering on Linux + NVIDIA systems
+  // see: https://github.com/SpikeHD/Dorion/issues/237 and https://github.com/tauri-apps/tauri/issues/9304
+  #[cfg(target_os = "linux")]
+  {
+    use wgpu::{
+      Backends,
+      DeviceType,
+      Dx12Compiler,
+      Gles3MinorVersion,
+      Instance,
+      InstanceDescriptor,
+      InstanceFlags,
+    };
+
+    let instance = Instance::new(InstanceDescriptor {
+      flags: InstanceFlags::empty(),
+      backends: Backends::GL | Backends::VULKAN,
+      gles_minor_version: Gles3MinorVersion::Automatic,
+      dx12_shader_compiler: Dx12Compiler::default(),
+    });
+
+    for adapter in instance.enumerate_adapters(Backends::all()) {
+      let info = adapter.get_info();
+
+      match info.device_type {
+        DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu => {
+          log!("NVIDIA GPU detected, disabling DMA");
+          std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        },
+        _ => {}
+      }
+    }
+  }
+
   let context = tauri::generate_context!("tauri.conf.json");
-  let dorion_open = process::process_already_exists();
   let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
 
@@ -128,7 +161,7 @@ fn main() {
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
-  if dorion_open && !config.multi_instance.unwrap_or(false) {
+  if process::process_already_exists() && !config.multi_instance.unwrap_or(false) {
     // Send the dorion://open deep link request
     helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
