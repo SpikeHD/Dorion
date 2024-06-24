@@ -13,6 +13,8 @@ export async function ensurePlugins() {
     'Dorion Tray': 'https://spikehd.github.io/shelter-plugins/dorion-tray/',
     'Dorion Fullscreen':
       'https://spikehd.github.io/shelter-plugins/dorion-fullscreen/',
+    'Dorion Custom Keybinds':
+      'https://spikehd.github.io/shelter-plugins/dorion-custom-keybinds/',
   }
 
   if (window.__DORION_CONFIG__?.client_plugins != null && !window.__DORION_CONFIG__?.client_plugins) {
