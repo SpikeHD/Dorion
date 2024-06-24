@@ -30,9 +30,6 @@ tauri-plugin-deep-link = { version = "^0.1.2" }
 reqwest = { version = "0.12.4", features = ["blocking"] }
 phf = "0.11.2"
 window-shadows = { git = "https://github.com/tauri-apps/window-shadows.git", tag = "window-shadows-v0.2.2" }
-
-# For push to talk (and maybe other hotkeys in the future!)
-device_query = "2.1.0"
 sysinfo = "0.30.12"
 
 # launch on startup
@@ -45,6 +42,7 @@ window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "ma
 # window blur
 window-vibrancy = "0.4.3"
 chrono = "0.4.38"
+device_query = "2.1.0"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "0.18.2"

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs;
 
 use crate::log;
@@ -32,6 +33,8 @@ pub struct Config {
   pub client_mods: Option<Vec<String>>,
   pub unread_badge: Option<bool>,
   pub client_plugins: Option<bool>,
+
+  pub keybinds: Option<HashMap<String, Vec<u16>>>,
 }
 
 pub fn init() {
@@ -85,6 +88,8 @@ pub fn default_config() -> Config {
     client_mods: Option::from(vec!["Shelter".to_string()]),
     unread_badge: Option::from(true),
     client_plugins: Option::from(true),
+
+    keybinds: Option::from(HashMap::new()),
   }
 }
 
@@ -101,4 +106,9 @@ pub fn get_config() -> Config {
       default_config()
     }
   }
+}
+
+pub fn set_config(config: Config) {
+  let config_str = serde_json::to_string(&config).unwrap();
+  write_config_file(config_str);
 }

@@ -1,137 +1,191 @@
-use std::sync::atomic::AtomicBool;
-use std::sync::atomic::Ordering;
-use std::sync::Mutex;
+use device_query::{keymap::Keycode, DeviceState};
+use std::{collections::HashMap, sync::atomic::AtomicBool};
 
-use crate::config;
-use crate::log;
+use crate::config::{get_config, set_config};
 
-// Globally store the PTT keys
-static PTT_KEYS: Mutex<Vec<String>> = Mutex::new(Vec::new());
-static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
+pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
 
-#[derive(serde::Serialize, serde::Deserialize, Clone)]
-pub struct PTTEvent {
-  pub state: bool,
+struct KeyComboState {
+  keys: Vec<Keycode>,
+  pressed: bool,
 }
 
-#[cfg(target_os = "macos")]
-pub fn start_hotkey_watcher(_win: tauri::Window) {}
+#[tauri::command]
+pub fn get_keybinds() -> HashMap<String, Vec<u16>> {
+  let config = get_config();
+  config.keybinds.unwrap_or_default()
+}
 
-#[cfg(not(target_os = "macos"))]
-pub fn start_hotkey_watcher(win: tauri::Window) {
-  use device_query::{DeviceQuery, DeviceState, Keycode};
-  use std::{thread, time::Duration};
+#[tauri::command]
+pub fn set_keybinds(keybinds: HashMap<String, Vec<u16>>) {
+  let mut config = get_config();
+  config.keybinds = Some(keybinds);
+  
+  set_config(config);
+  
+  KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
+}
 
-  let config = config::get_config();
-  let mut ptt_state = false;
+// this sucks
+pub fn js_keycode_to_key(keycode: u16) -> Option<Keycode> {  
+  // Might have to make a PR not gonna lie
+  match keycode {
+    8 => Some(Keycode::Backspace),
+    9 => Some(Keycode::Tab),
+    13 => Some(Keycode::Enter),
+    16 => Some(Keycode::LShift),
+    17 => Some(Keycode::LControl),
+    18 => Some(Keycode::LAlt),
+    // 19 => Some(Keycode::Pause),
+    20 => Some(Keycode::CapsLock),
+    27 => Some(Keycode::Escape),
+    32 => Some(Keycode::Space),
+    33 => Some(Keycode::PageUp),
+    34 => Some(Keycode::PageDown),
+    35 => Some(Keycode::End),
+    36 => Some(Keycode::Home),
+    37 => Some(Keycode::Left),
+    38 => Some(Keycode::Up),
+    39 => Some(Keycode::Right),
+    40 => Some(Keycode::Down),
+    45 => Some(Keycode::Insert),
+    46 => Some(Keycode::Delete),
+    48 => Some(Keycode::Key0),
+    49 => Some(Keycode::Key1),
+    50 => Some(Keycode::Key2),
+    51 => Some(Keycode::Key3),
+    52 => Some(Keycode::Key4),
+    53 => Some(Keycode::Key5),
+    54 => Some(Keycode::Key6),
+    55 => Some(Keycode::Key7),
+    56 => Some(Keycode::Key8),
+    57 => Some(Keycode::Key9),
+    65 => Some(Keycode::A),
+    66 => Some(Keycode::B),
+    67 => Some(Keycode::C),
+    68 => Some(Keycode::D),
+    69 => Some(Keycode::E),
+    70 => Some(Keycode::F),
+    71 => Some(Keycode::G),
+    72 => Some(Keycode::H),
+    73 => Some(Keycode::I),
+    74 => Some(Keycode::J),
+    75 => Some(Keycode::K),
+    76 => Some(Keycode::L),
+    77 => Some(Keycode::M),
+    78 => Some(Keycode::N),
+    79 => Some(Keycode::O),
+    80 => Some(Keycode::P),
+    81 => Some(Keycode::Q),
+    82 => Some(Keycode::R),
+    83 => Some(Keycode::S),
+    84 => Some(Keycode::T),
+    85 => Some(Keycode::U),
+    86 => Some(Keycode::V),
+    87 => Some(Keycode::W),
+    88 => Some(Keycode::X),
+    89 => Some(Keycode::Y),
+    90 => Some(Keycode::Z),
+    91 => Some(Keycode::LMeta),
+    92 => Some(Keycode::RMeta),
+    96 => Some(Keycode::Numpad0),
+    97 => Some(Keycode::Numpad1),
+    98 => Some(Keycode::Numpad2),
+    99 => Some(Keycode::Numpad3),
+    100 => Some(Keycode::Numpad4),
+    101 => Some(Keycode::Numpad5),
+    102 => Some(Keycode::Numpad6),
+    103 => Some(Keycode::Numpad7),
+    104 => Some(Keycode::Numpad8),
+    105 => Some(Keycode::Numpad9),
+    106 => Some(Keycode::NumpadMultiply),
+    107 => Some(Keycode::NumpadAdd),
+    109 => Some(Keycode::NumpadSubtract),
+    110 => Some(Keycode::NumpadDecimal),
+    111 => Some(Keycode::NumpadDivide),
+    112 => Some(Keycode::F1),
+    113 => Some(Keycode::F2),
+    114 => Some(Keycode::F3),
+    115 => Some(Keycode::F4),
+    116 => Some(Keycode::F5),
+    117 => Some(Keycode::F6),
+    118 => Some(Keycode::F7),
+    119 => Some(Keycode::F8),
+    120 => Some(Keycode::F9),
+    121 => Some(Keycode::F10),
+    122 => Some(Keycode::F11),
+    123 => Some(Keycode::F12),
+    // 144 => Some(Keycode::NumLock),
+    // 145 => Some(Keycode::ScrollLock),
+    186 => Some(Keycode::Semicolon),
+    187 => Some(Keycode::Equal),
+    188 => Some(Keycode::Comma),
+    189 => Some(Keycode::Minus),
+    190 => Some(Keycode::Dot),
+    191 => Some(Keycode::Slash),
+    // 192 => Some(Keycode::BackQuote),
+    219 => Some(Keycode::LeftBracket),
+    220 => Some(Keycode::BackSlash),
+    221 => Some(Keycode::RightBracket),
+    222 => Some(Keycode::Apostrophe),
+    _ => None,
+  }
+}
 
-  // Set global PTT keys
-  *PTT_KEYS.lock().unwrap() = config.push_to_talk_keys.unwrap_or_default();
-  PTT_ENABLED.store(config.push_to_talk.unwrap_or_default(), Ordering::Relaxed);
+pub fn start_keybind_watcher(win: &tauri::Window) {
+  win.listen("keybinds_changed", |_payload| {
+    KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
+  });
 
-  thread::spawn(move || {
-    let device_state = DeviceState::new();
+  let win_thrd = win.clone();
+
+  std::thread::spawn(move || loop {
+    let keybinds = get_keybinds();
+    let mut registered_combos = keybinds
+      .iter()
+      .map(|(action, keys)| {
+        let keycodes = keys
+          .iter()
+          .map(|key| js_keycode_to_key(*key).unwrap())
+          .collect::<Vec<Keycode>>();
+
+        (action.clone(), KeyComboState {
+          keys: keycodes,
+          pressed: false,
+        })
+      })
+      .collect::<HashMap<String, KeyComboState>>();
+
     loop {
-      if !PTT_ENABLED.load(Ordering::Relaxed) {
-        thread::sleep(Duration::from_millis(100));
-        continue;
+      std::thread::sleep(std::time::Duration::from_millis(250));
+
+      if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
+        KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
+        break;
       }
 
-      let ptt_keys = PTT_KEYS.lock().unwrap().clone();
-      let keys: Vec<Keycode> = device_state.get_keys();
+      // emit keybind_pressed event when pressed, and keybind_released when released
+      for (action, combo) in registered_combos.iter_mut() {
+        let mut all_pressed = true;
+        let key_state = DeviceState::new().query_keymap();
 
-      // Recreate keys as a string vector
-      let mut keys_str: Vec<String> = Vec::new();
-      for key in keys {
-        if key.to_string() == "LControl" || key.to_string() == "RControl" {
-          keys_str.push("Control".to_string());
-          continue;
+        for key in &combo.keys {
+          if !key_state.contains(key) {
+            all_pressed = false;
+            break;
+          }
         }
 
-        if key.to_string() == "LShift" || key.to_string() == "RShift" {
-          keys_str.push("Shift".to_string());
-          continue;
-        }
-
-        if key.to_string() == "LAlt" || key.to_string() == "RAlt" {
-          keys_str.push("Alt".to_string());
-          continue;
-        }
-
-        keys_str.push(key.to_string());
-      }
-
-      // Check if held keys matches all PTT keys
-      let mut ptt_held = true;
-
-      for key in ptt_keys {
-        if !keys_str.contains(&key) {
-          ptt_held = false;
-          break;
+        if all_pressed && !combo.pressed {
+          win_thrd.emit("keybind_pressed", Some(action.clone())).unwrap_or_default();
+          combo.pressed = true;
+        } else if !all_pressed && combo.pressed {
+          win_thrd.emit("keybind_released", Some(action.clone())).unwrap_or_default();
+          combo.pressed = false;
         }
       }
-
-      if ptt_held && !ptt_state {
-        // Do PTT
-        win
-          .emit("ptt_toggle", PTTEvent { state: true })
-          .unwrap_or_else(|_| log!("Error sending PTT event!"));
-        ptt_state = true;
-      } else if ptt_state && !ptt_held {
-        // Stop PTT
-        win
-          .emit("ptt_toggle", PTTEvent { state: false })
-          .unwrap_or_else(|_| log!("Error sending PTT toggle event!"));
-        ptt_state = false;
-      }
-
-      // Small delay to reduce CPU usage
-      thread::sleep(Duration::from_millis(10));
     }
   });
 }
 
-#[tauri::command]
-pub fn save_ptt_keys(keys: Vec<String>) -> Result<(), String> {
-  let config = config::read_config_file();
-  let mut parsed =
-    serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
 
-  parsed.push_to_talk_keys = Option::from(keys.clone());
-
-  let new_config = serde_json::to_string(&parsed);
-
-  match new_config {
-    Ok(new_config) => {
-      config::write_config_file(new_config);
-
-      *PTT_KEYS.lock().unwrap() = keys;
-      Ok(())
-    }
-    Err(e) => Err(e.to_string()),
-  }
-}
-
-#[tauri::command]
-pub fn toggle_ptt(state: bool) -> Result<(), String> {
-  let config = config::read_config_file();
-  let mut parsed =
-    serde_json::from_str(config.as_str()).unwrap_or_else(|_| config::default_config());
-
-  parsed.push_to_talk = Option::from(state);
-
-  let new_config = serde_json::to_string(&parsed);
-
-  log!("PTT set to: {}", state);
-
-  match new_config {
-    Ok(new_config) => {
-      config::write_config_file(new_config);
-
-      PTT_ENABLED.store(state, Ordering::Relaxed);
-
-      Ok(())
-    }
-    Err(e) => Err(e.to_string()),
-  }
-}
