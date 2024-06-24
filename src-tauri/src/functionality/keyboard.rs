@@ -111,13 +111,18 @@ pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
     "ShiftRight" => Some(Keycode::RShift),
     "ControlLeft" => Some(Keycode::LControl),
     "ControlRight" => Some(Keycode::RControl),
-
     "AltLeft" => Some(Keycode::LAlt),
     "AltRight" => Some(Keycode::RAlt),
 
     // "ContextMenu" => Some(Keycode::Application),
     "MetaLeft" => Some(Keycode::LMeta),
     "MetaRight" => Some(Keycode::RMeta),
+    
+    // TODO fix for PTT since it uses a slightly different system that doesn't differentiate
+    "Contol" => Some(Keycode::LControl),
+    "Shift" => Some(Keycode::LShift),
+    "Alt" => Some(Keycode::LAlt),
+    "Meta" => Some(Keycode::LMeta),
     _ => None,
   }
 }

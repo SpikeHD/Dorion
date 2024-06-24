@@ -210,6 +210,7 @@ fn main() {
       functionality::rpc::get_local_detectables,
       functionality::hotkeys::get_keybinds,
       functionality::hotkeys::set_keybinds,
+      functionality::hotkeys::set_keybind,
       injection_runner::get_injection_js,
       injection_runner::is_injected,
       injection_runner::load_injection_js,

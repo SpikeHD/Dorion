@@ -5,6 +5,7 @@ use std::{collections::HashMap, sync::atomic::AtomicBool};
 use crate::{config::{get_config, set_config}, log, functionality::keyboard::js_keycode_to_key};
 
 pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
+pub static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
 
 #[derive(Debug)]
 struct KeyComboState {
@@ -40,6 +41,14 @@ pub fn set_keybinds(keybinds: HashMap<String, Vec<KeyStruct>>) {
   KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
 }
 
+#[tauri::command]
+pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
+  let mut keybinds = get_keybinds();
+  keybinds.insert(action, keys);
+
+  set_keybinds(keybinds);
+}
+
 pub fn start_keybind_watcher(win: &tauri::Window) {
   win.listen("keybinds_changed", |evt| {
     match evt.payload() {
@@ -57,6 +66,23 @@ pub fn start_keybind_watcher(win: &tauri::Window) {
     }
 
     KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
+  });
+
+  win.listen("ptt_toggled", |evt| {
+    #[derive(Serialize, Deserialize)]
+    struct PTTPayload {
+      state: bool
+    }
+
+    log!("PTT enabled: {:?}", evt.payload());
+
+    match evt.payload() {
+      Some(payload) => {
+        let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
+        PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
+      },
+      None => {}
+    }
   });
 
   let win_thrd = win.clone();
@@ -98,6 +124,14 @@ pub fn start_keybind_watcher(win: &tauri::Window) {
           if !key_state.contains(key) {
             all_pressed = false;
             break;
+          }
+        }
+
+        // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
+        // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
+        if action == "PUSH_TO_TALK" && all_pressed {
+          if !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed) {
+            all_pressed = false;
           }
         }
 
