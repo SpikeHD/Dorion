@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 
+use crate::functionality::hotkeys::KeyStruct;
 use crate::log;
 use crate::util::paths::get_config_dir;
 
@@ -34,7 +35,7 @@ pub struct Config {
   pub unread_badge: Option<bool>,
   pub client_plugins: Option<bool>,
 
-  pub keybinds: Option<HashMap<String, Vec<u16>>>,
+  pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
 }
 
 pub fn init() {
