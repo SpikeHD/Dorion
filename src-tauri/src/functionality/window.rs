@@ -47,7 +47,10 @@ pub fn after_build(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
   let config = get_config();
 
-  super::hotkeys::start_keybind_watcher(window);
+  if config.keybinds_enabled.unwrap_or(false) {
+    log!("Starting global keybind watcher...");
+    super::hotkeys::start_keybind_watcher(window);
+  }
 
   // Deep link registry
   if !config.multi_instance.unwrap_or(false) {

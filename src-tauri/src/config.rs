@@ -36,6 +36,7 @@ pub struct Config {
   pub client_plugins: Option<bool>,
 
   pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
+  pub keybinds_enabled: Option<bool>,
 }
 
 pub fn init() {
@@ -91,6 +92,7 @@ pub fn default_config() -> Config {
     client_plugins: Option::from(true),
 
     keybinds: Option::from(HashMap::new()),
+    keybinds_enabled: Option::from(true),
   }
 }
 
