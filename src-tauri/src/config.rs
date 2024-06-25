@@ -96,6 +96,7 @@ pub fn default_config() -> Config {
   }
 }
 
+#[tauri::command]
 pub fn get_config() -> Config {
   let config_str = read_config_file();
   let config_str = config_str.as_str();

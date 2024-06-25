@@ -36,6 +36,7 @@ use crate::{
 mod config;
 mod deep_link;
 mod functionality;
+mod gpu;
 mod injection;
 mod processors;
 mod profiles;
@@ -90,49 +91,11 @@ fn main() {
   // maybe disable hardware acceleration for windows
   if config.disable_hardware_accel.unwrap_or(false) {
     #[cfg(target_os = "windows")]
-    {
-      let existing_args =
-        std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
-      std::env::set_var(
-        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-        format!("{} --disable-gpu", existing_args),
-      );
-    }
+    gpu::disable_hardware_accel_windows();
   }
 
-  // Disable DMA rendering on Linux + NVIDIA systems
-  // see: https://github.com/SpikeHD/Dorion/issues/237 and https://github.com/tauri-apps/tauri/issues/9304
   #[cfg(target_os = "linux")]
-  {
-    use wgpu::{
-      Backends,
-      DeviceType,
-      Dx12Compiler,
-      Gles3MinorVersion,
-      Instance,
-      InstanceDescriptor,
-      InstanceFlags,
-    };
-
-    let instance = Instance::new(InstanceDescriptor {
-      flags: InstanceFlags::empty(),
-      backends: Backends::GL | Backends::VULKAN,
-      gles_minor_version: Gles3MinorVersion::Automatic,
-      dx12_shader_compiler: Dx12Compiler::default(),
-    });
-
-    for adapter in instance.enumerate_adapters(Backends::all()) {
-      let info = adapter.get_info();
-
-      match info.device_type {
-        DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu => {
-          log!("NVIDIA GPU detected, disabling DMA");
-          std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
-        },
-        _ => {}
-      }
-    }
-  }
+  gpu::disable_dma();
 
   let context = tauri::generate_context!("tauri.conf.json");
   let client_type = config.client_type.unwrap_or("default".to_string());
