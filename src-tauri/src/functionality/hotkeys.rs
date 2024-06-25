@@ -111,7 +111,7 @@ pub fn start_keybind_watcher(win: &tauri::Window) {
       .collect::<HashMap<String, KeyComboState>>();
 
     loop {
-      std::thread::sleep(std::time::Duration::from_millis(150));
+      std::thread::sleep(std::time::Duration::from_millis(100));
 
       if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
         KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
