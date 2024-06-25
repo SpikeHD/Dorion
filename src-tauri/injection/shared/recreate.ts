@@ -94,16 +94,10 @@ export function badPostMessagePatch() {
   const nativePostMessage = window?.chrome?.webview?.postMessage
 
   if (!nativePostMessage) {
-    // overwrite window.chrome
-    Object.defineProperty(window, 'chrome', {
-      value: {
-        webview: {
-          postMessage: () => {
-            // we just gonna have to deal with this not existing
-            return null
-          }
-        }
-      }
-    })
+    // this should support all OS
+    // @ts-expect-error shut up
+    window.__TAURI_POST_MESSAGE__ = () => {
+      return null
+    }
   }
 }
