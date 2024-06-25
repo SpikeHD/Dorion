@@ -88,3 +88,22 @@ export function createLocalStorage() {
     clearInterval(interval)
   }, 50)
 }
+
+export function badPostMessagePatch() {
+  // @ts-expect-error shut up
+  const nativePostMessage = window?.chrome?.webview?.postMessage
+
+  if (!nativePostMessage) {
+    // overwrite window.chrome
+    Object.defineProperty(window, 'chrome', {
+      value: {
+        webview: {
+          postMessage: () => {
+            // we just gonna have to deal with this not existing
+            return null
+          }
+        }
+      }
+    })
+  }
+}

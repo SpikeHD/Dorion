@@ -1,4 +1,4 @@
-import { createLocalStorage, proxyFetch } from './shared/recreate'
+import { badPostMessagePatch, createLocalStorage, proxyFetch } from './shared/recreate'
 import { safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm } from './shared/util'
 import { applyNotificationCount } from './shared/window'
@@ -26,6 +26,16 @@ window.Dorion = {
 if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 
 ;(async () => {
+  // if we are in an iframe we don't really need to load anything, else we bork whatever is inside
+  if (window.self !== window.top) {
+    // fixes activities
+    console.log('Patching postMessage...')
+    badPostMessagePatch()
+
+    console.log('Stopping here, we are in an iframe!')
+    return
+  }
+
   createLocalStorage()
   proxyFetch()
 
@@ -77,6 +87,7 @@ async function init() {
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
   // Run a couple other background tasks before we begin the main stuff
+  // TODO move to backend this is dumb
   invoke('start_streamer_mode_watcher')
 
   const plugins = await invoke('load_plugins')
