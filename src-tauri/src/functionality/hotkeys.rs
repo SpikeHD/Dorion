@@ -100,7 +100,10 @@ pub fn start_keybind_watcher(win: &tauri::Window) {
       .map(|(action, keys)| {
         let keycodes = keys
           .iter()
-          .map(|key| js_keycode_to_key(key.code.clone()).unwrap())
+          .map(|key| js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
+            log!("Error converting key: {:?}", key);
+            Keycode::Key0
+          }).clone())
           .collect::<Vec<Keycode>>();
 
         (action.clone(), KeyComboState {
