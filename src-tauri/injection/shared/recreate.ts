@@ -90,14 +90,9 @@ export function createLocalStorage() {
 }
 
 export function badPostMessagePatch() {
+  // this should support all OS
   // @ts-expect-error shut up
-  const nativePostMessage = window?.chrome?.webview?.postMessage
-
-  if (!nativePostMessage) {
-    // this should support all OS
-    // @ts-expect-error shut up
-    window.__TAURI_POST_MESSAGE__ = () => {
-      return null
-    }
+  window.__TAURI_POST_MESSAGE__ = () => {
+    return null
   }
 }
