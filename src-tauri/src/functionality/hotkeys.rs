@@ -49,6 +49,12 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
   set_keybinds(keybinds);
 }
 
+#[cfg(target_os = "macos")]
+pub fn start_keybind_watcher(_win: &tauri::Window) {
+  log!("Keybinds are not supported on macOS yet.");
+}
+
+#[cfg(not(target_os = "macos"))]
 pub fn start_keybind_watcher(win: &tauri::Window) {
   win.listen("keybinds_changed", |evt| {
     match evt.payload() {
