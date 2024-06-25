@@ -190,7 +190,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Global push-to-talk
 * [x] Rich presence(?)
   * [ ] FULL rich presence
-* [ ] Custom keybinds
+* [x] Custom keybinds
 * [ ] Helper API methods and events for plugins
 * [x] Backup localized themes
 * [x] Localization timeout
