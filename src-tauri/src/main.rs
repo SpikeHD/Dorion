@@ -144,7 +144,6 @@ fn main() {
     .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
-      functionality::streamer_mode::start_streamer_mode_watcher,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
       functionality::window::close,

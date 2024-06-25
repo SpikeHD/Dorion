@@ -47,6 +47,11 @@ pub fn after_build(window: &Window) {
   let startup = std::env::args().any(|arg| arg == "--startup");
   let config = get_config();
 
+  if config.streamer_mode_detection.unwrap_or(false) {
+    log!("Starting streamer mode watcher...");
+    super::streamer_mode::start_streamer_mode_watcher(window.clone());
+  }
+
   if config.keybinds_enabled.unwrap_or(false) {
     log!("Starting global keybind watcher...");
     super::hotkeys::start_keybind_watcher(window);

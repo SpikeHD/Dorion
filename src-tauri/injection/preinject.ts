@@ -86,10 +86,6 @@ async function init() {
 
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
-  // Run a couple other background tasks before we begin the main stuff
-  // TODO move to backend this is dumb
-  invoke('start_streamer_mode_watcher')
-
   const plugins = await invoke('load_plugins')
     .catch(e => console.error('Error reading plugins: ', e))
   const version = await window.__TAURI__.app.getVersion()
