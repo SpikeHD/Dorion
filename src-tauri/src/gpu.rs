@@ -44,10 +44,11 @@ pub fn disable_hardware_accel_windows() {
 
 #[cfg(target_os = "linux")]
 pub fn disable_hardware_accel_linux(window: &tauri::Window) {
-  window.with_webview(move |webview| {
-    use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
-    use crate::config::get_config;
+  use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
+  use crate::config::get_config;
+  use crate::log;
 
+  window.with_webview(move |webview| {
     let config = get_config();
     let wv = webview.inner();
     let wv = wv.as_ref();
