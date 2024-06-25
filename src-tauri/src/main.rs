@@ -177,6 +177,8 @@ fn main() {
       injection_runner::get_injection_js,
       injection_runner::is_injected,
       injection_runner::load_injection_js,
+      config::get_config,
+      config::set_config,
       config::read_config_file,
       config::write_config_file,
       config::default_config,
