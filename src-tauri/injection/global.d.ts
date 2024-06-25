@@ -6,7 +6,7 @@ declare global {
     __TAURI__: {
       invoke: (cmd: string, args?: Record<string, any>) => Promise<any>
       event: {
-        listen: (event: string, handler: (event: TauriEvent) => void) => void
+        listen: (event: string, handler: (event: TauriEvent) => void) => () => void
         emit: (event: string, payload: unknown) => void
         TauriEvent: {
           WINDOW_RESIZED: string

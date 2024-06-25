@@ -105,7 +105,7 @@ async function init() {
   typingAnim()
 
   // Start the loading_log event listener
-  event.listen('loading_log', (event: TauriEvent) => {
+  const logUnlisten = event.listen('loading_log', (event: TauriEvent) => {
     const log = event.payload as string
 
     updateOverlay({
@@ -140,6 +140,9 @@ async function init() {
   setTimeout(() => {
     document.querySelector('#loadingContainer')?.remove()
   }, 200)
+
+  // Unlisten from the log event
+  logUnlisten()
 }
 
 /**
