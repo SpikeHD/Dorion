@@ -28,7 +28,9 @@ Installers are available on [the releases page](https://github.com/SpikeHD/Dorio
 > [!NOTE]
 > ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`.
 >
-> ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
+> ***Windows Users***: Dorion is available through portable installs OR through an `.msi` installer file. Also, Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
+>
+> ***Ubuntu Users***: If you are on 24.04 or later, you may be unable to satisfy dependencies (`libwebkit2gtk-4.1` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241)).
 
 # Table of Contents
 
