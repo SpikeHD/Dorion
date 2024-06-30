@@ -68,6 +68,29 @@ export function proxyFetch() {
   }
 }
 
+export function proxyXHR() {
+  const open = XMLHttpRequest.prototype.open
+  
+  XMLHttpRequest.prototype.open = function(...args: any[]) {
+    // @ts-expect-error this is fine
+    open.apply(this, args)
+
+    const [_method, url] = args
+    const send = this.send
+
+    this.send = function() {
+      const rgx = /\/api\/v.*\/(science|track)/g
+
+      if (!String(url).match(rgx)) {
+        // @ts-expect-error this is fine
+        return send.apply(this, args)
+      }
+
+      console.log(`[XHR Blocker] Blocked URL: ${url}`)
+    }
+  }
+}
+
 export function createLocalStorage() {
   const iframe = document.createElement('iframe')
 
