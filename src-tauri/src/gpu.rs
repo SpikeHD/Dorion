@@ -2,16 +2,11 @@
 pub fn disable_dma() {
   // Disable DMA rendering on Linux + NVIDIA systems
   // see: https://github.com/SpikeHD/Dorion/issues/237 and https://github.com/tauri-apps/tauri/issues/9304
+  use crate::log;
   use wgpu::{
-    Backends,
-    DeviceType,
-    Dx12Compiler,
-    Gles3MinorVersion,
-    Instance,
-    InstanceDescriptor,
+    Backends, DeviceType, Dx12Compiler, Gles3MinorVersion, Instance, InstanceDescriptor,
     InstanceFlags,
   };
-  use crate::log;
 
   let instance = Instance::new(InstanceDescriptor {
     flags: InstanceFlags::empty(),
@@ -27,7 +22,7 @@ pub fn disable_dma() {
       DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu => {
         log!("NVIDIA GPU detected, disabling DMA");
         std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
-      },
+      }
       _ => {}
     }
   }
@@ -43,10 +38,10 @@ pub fn disable_hardware_accel_windows() {
 }
 
 #[cfg(target_os = "linux")]
-pub fn disable_hardware_accel_linux(window: &tauri::Window) {
-  use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
+pub fn disable_hardware_accel_linux(window: &tauri::WebviewWindow) {
   use crate::config::get_config;
   use crate::log;
+  use webkit2gtk::{HardwareAccelerationPolicy, PermissionRequestExt, SettingsExt, WebViewExt};
 
   window.with_webview(move |webview| {
     let config = get_config();

@@ -1,5 +1,11 @@
 use include_flate::flate;
-use tauri::{AppHandle, Icon};
+use tauri::{
+  image::Image, menu::{
+    MenuBuilder,
+    MenuItemBuilder,
+  }, tray::TrayIconBuilder, AppHandle, Manager
+};
+
 
 use crate::log;
 
@@ -16,15 +22,58 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
   log!("Setting tray icon to {}", event.as_str());
 
   let icon = match event.as_str() {
-    "connected" => Icon::Raw(CONNECTED.to_vec()),
-    "disconnected" => Icon::Raw(DEFAULT.to_vec()),
-    "muted" => Icon::Raw(MUTED.to_vec()),
-    "deafened" => Icon::Raw(DEAFENED.to_vec()),
-    "speaking" => Icon::Raw(SPEAKING.to_vec()),
-    "video" => Icon::Raw(VIDEO.to_vec()),
-    "streaming" => Icon::Raw(STREAMING.to_vec()),
-    _ => Icon::Raw(DEFAULT.to_vec()),
+    "connected" => Image::new(&CONNECTED, 48, 48),
+    "disconnected" =>Image::new(&DEFAULT, 48, 48),
+    "muted" => Image::new(&MUTED, 48, 48),
+    "deafened" => Image::new(&DEAFENED, 48, 48),
+    "speaking" => Image::new(&SPEAKING, 48, 48),
+    "video" => Image::new(&VIDEO, 48, 48),
+    "streaming" => Image::new(&STREAMING, 48, 48),
+    _ => Image::new(&DEFAULT, 48, 48),
   };
 
-  app.tray_handle().set_icon(icon).unwrap_or_default();
+  if let Some(tray) = app.tray_by_id("main") {
+    tray.set_icon(Some(icon)).unwrap_or_default();
+  }
+}
+
+pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
+  let open_item = MenuItemBuilder::with_id("open", "Open").build(app)?;
+  let reload_item = MenuItemBuilder::with_id("reload", "Reload").build(app)?;
+  let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
+  let quit_item = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
+
+  let menu = MenuBuilder::new(app).items(&[&open_item, &reload_item, &restart_item, &quit_item]).build()?;
+  
+  TrayIconBuilder::with_id("main")
+    .menu(&menu)
+    .on_menu_event(move |app, event| match event.id().as_ref() {
+      "quit" => {
+        app.exit(0);
+      }
+      "open" => {
+        match app.get_webview_window("main") {
+          Some(win) => {
+            win.show().unwrap_or_default();
+            win.set_focus().unwrap_or_default();
+            win.unminimize().unwrap_or_default();
+          }
+          None => {}
+        }
+      }
+      "restart" => {
+        app.restart();
+      }
+      "reload" => {
+        let window = match app.get_webview_window("main") {
+          Some(win) => win,
+          None => return,
+        };
+        window.eval("window.location.reload();").unwrap_or_default();
+      }
+      _ => {}
+    })
+    .build(app)?;
+
+  Ok(())
 }

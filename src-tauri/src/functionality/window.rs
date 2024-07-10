@@ -1,6 +1,7 @@
 use auto_launch::AutoLaunchBuilder;
 use tauri::Manager;
-use tauri::Window;
+use tauri::WebviewWindow;
+use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
@@ -90,36 +91,17 @@ pub fn after_build(window: &Window) {
 }
 
 pub fn setup_autostart(app: &mut tauri::App) {
-  let app_name = &app.package_info().name;
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let exe_str = current_exe.to_str().unwrap_or_default();
-
-  // if the string is empty, just return
-  if exe_str.is_empty() {
-    return;
-  }
-
-  let autolaunch = match AutoLaunchBuilder::new()
-    .set_app_name(app_name)
-    .set_app_path(exe_str)
-    .set_use_launch_agent(true)
-    .set_args(&["--startup"])
-    .build()
-  {
-    Ok(autolaunch) => autolaunch,
-    Err(_) => return,
-  };
-
+  let autostart_manager = app.autolaunch();
   let should_enable = get_config().open_on_startup.unwrap_or(false);
 
-  autolaunch.enable().unwrap_or_default();
-
   if !should_enable {
-    autolaunch.disable().unwrap_or_default();
+    autostart_manager.disable().unwrap_or_default();
+  } else {
+    autostart_manager.enable().unwrap_or_default();
   }
 
   log!(
     "Autolaunch enabled: {}",
-    autolaunch.is_enabled().unwrap_or_default()
+    autostart_manager.is_enabled().unwrap_or_default()
   );
 }

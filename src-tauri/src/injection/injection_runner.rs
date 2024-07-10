@@ -30,7 +30,7 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
   Ok(rewritten_all)
 }
 
-fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
+fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>) {
   let plugin_list = get_plugin_list();
 
   // Eval plugin imports
@@ -77,7 +77,7 @@ fn load_plugins(win: &tauri::Window, plugins: HashMap<String, String>) {
 
 #[tauri::command]
 pub fn load_injection_js(
-  window: tauri::Window,
+  window: tauri::WebviewWindow,
   contents: String,
   plugins: HashMap<String, String>,
 ) {

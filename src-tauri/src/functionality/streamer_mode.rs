@@ -7,7 +7,7 @@ use sysinfo::System;
 static OBS_OPEN: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
-pub fn start_streamer_mode_watcher(win: tauri::Window) {
+pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
   let enabled = get_config().streamer_mode_detection.unwrap_or(false);
   let mut system = System::new_all();
 

@@ -2,7 +2,7 @@ use crate::log;
 use tauri::{api::notification, Manager};
 
 #[tauri::command]
-pub fn send_notification(win: tauri::Window, title: String, body: String, icon: String) {
+pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
   // Write the result of the icon
   let client = reqwest::blocking::Client::new();
   let mut res = match client.get(icon).send() {
@@ -46,7 +46,7 @@ pub fn send_notification(win: tauri::Window, title: String, body: String, icon: 
   send_notification_internal(win, title, body, icon_path);
 }
 
-fn send_notification_internal(win: tauri::Window, title: String, body: String, icon: String) {
+fn send_notification_internal(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
   let app = win.app_handle();
 
   notification::Notification::new(&app.config().tauri.bundle.identifier)
@@ -58,7 +58,7 @@ fn send_notification_internal(win: tauri::Window, title: String, body: String, i
 }
 
 #[tauri::command]
-pub fn notif_count(window: tauri::Window, amount: i32) {
+pub fn notif_count(window: tauri::WebviewWindow, amount: i32) {
   log!("Setting notification count: {}", amount);
 
   #[cfg(not(target_os = "linux"))]
@@ -71,7 +71,7 @@ pub fn notif_count(window: tauri::Window, amount: i32) {
 }
 
 #[cfg(target_os = "windows")]
-pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
+pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
   use include_flate::flate;
   use windows::Win32::{
     System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL},
@@ -161,7 +161,7 @@ pub unsafe fn set_notif_icon(window: &tauri::Window, amount: i32) {
 
 // https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
 #[cfg(target_os = "macos")]
-pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: i32) {
+pub unsafe fn set_notif_icon(_window: &tauri::WebviewWindow, amount: i32) {
   use cocoa::{appkit::NSApp, base::nil, foundation::NSString};
   use objc::{msg_send, sel, sel_impl};
 
@@ -175,4 +175,4 @@ pub unsafe fn set_notif_icon(_window: &tauri::Window, amount: i32) {
 }
 
 #[cfg(target_os = "linux")]
-pub fn set_notif_icon(_window: &tauri::Window, _amount: i32) {}
+pub fn set_notif_icon(_window: &tauri::WebviewWindow, _amount: i32) {}

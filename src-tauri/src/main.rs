@@ -3,12 +3,8 @@
   windows_subsystem = "windows"
 )]
 
-use functionality::tray;
 use std::time::Duration;
-use tauri::{
-  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  WindowBuilder,
-};
+use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
@@ -43,20 +39,6 @@ mod profiles;
 mod release;
 mod util;
 mod window;
-
-fn create_systray() -> SystemTray {
-  let open_btn = CustomMenuItem::new("open".to_string(), "Open");
-  let reload_btn = CustomMenuItem::new("reload".to_string(), "Reload");
-  let restart_brn = CustomMenuItem::new("restart".to_string(), "Restart");
-  let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
-  let tray_menu = SystemTrayMenu::new()
-    .add_item(open_btn)
-    .add_item(reload_btn)
-    .add_item(restart_brn)
-    .add_item(quit_btn);
-
-  SystemTray::new().with_menu(tray_menu)
-}
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
@@ -105,7 +87,6 @@ fn main() {
     "Starting Dorion version v{}",
     context
       .config()
-      .package
       .version
       .as_ref()
       .unwrap_or(&String::from("0.0.0"))
@@ -119,7 +100,7 @@ fn main() {
   }
 
   let parsed = reqwest::Url::parse(&url).unwrap();
-  let url_ext = tauri::WindowUrl::External(parsed);
+  let url_ext = tauri::WebviewUrl::External(parsed);
 
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
@@ -140,8 +121,14 @@ fn main() {
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
+    .plugin(tauri_plugin_deep_link::init())
+    .plugin(tauri_plugin_window_state::Builder::new().build())
+    .plugin(tauri_plugin_autostart::init(
+      tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+      None,
+    ))
+    .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_window_state::Builder::default().build())
-    .system_tray(create_systray())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       functionality::window::minimize,
@@ -194,9 +181,9 @@ fn main() {
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,
-      tray::set_tray_icon,
+      functionality::tray::set_tray_icon,
     ])
-    .on_window_event(|event| match event.event() {
+    .on_window_event(|window, event| match event.event() {
       tauri::WindowEvent::Resized { .. } => {
         // Sleep for a millisecond (blocks the thread but it doesn't really matter)
         // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495
@@ -208,12 +195,11 @@ fn main() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
         // Just hide the window if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
-          event.window().hide().unwrap_or_default();
+          window.hide().unwrap_or_default();
           api.prevent_close();
         }
 
-        event
-          .window()
+        window
           .app_handle()
           .save_window_state(StateFlags::all())
           .unwrap_or_default();
@@ -236,35 +222,6 @@ fn main() {
           None => {}
         }
       }
-      SystemTrayEvent::MenuItemClick { id, .. } => {
-        let window = match app.get_window("main") {
-          Some(win) => win,
-          None => return,
-        };
-
-        if id == "quit" {
-          // Close the process
-          window.close().unwrap_or_default();
-        }
-
-        if id == "open" {
-          // Reopen the window
-          window.show().unwrap_or_default();
-          window.set_focus().unwrap_or_default();
-          window.unminimize().unwrap_or_default();
-        }
-
-        if id == "restart" {
-          // Restart the process
-          restart(&app.env());
-        }
-
-        if id == "reload" {
-          // Reload the window
-          window.eval("window.location.reload();").unwrap_or_default();
-        }
-      }
-      _ => {}
     })
     .setup(move |app| {
       // Init plugin list
@@ -277,9 +234,11 @@ fn main() {
         preload_str += format!("{};", script).as_str();
       }
 
+      tray::create_tray(app).unwrap_or_default();
+
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
-      let win = WindowBuilder::new(app, "main", url_ext)
+      let win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
           format!(
@@ -326,7 +285,7 @@ fn main() {
 
       after_build(&win);
 
-      setup_autostart(app);
+      setup_autostart(&mut app);
 
       Ok(())
     })

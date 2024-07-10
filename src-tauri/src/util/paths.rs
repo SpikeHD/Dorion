@@ -203,7 +203,7 @@ pub fn get_webdata_dir() -> PathBuf {
   profiles.join(profile).join("webdata")
 }
 
-pub fn updater_dir(win: &tauri::Window) -> PathBuf {
+pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 
   if is_portable() {

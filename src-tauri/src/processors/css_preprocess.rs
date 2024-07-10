@@ -25,7 +25,7 @@ pub async fn clear_css_cache() {
 
 #[tauri::command]
 #[async_recursion]
-pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> String {
+pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
@@ -164,7 +164,7 @@ pub async fn localize_imports(win: tauri::Window, css: String, name: String) -> 
   new_css
 }
 
-pub async fn localize_images(win: tauri::Window, css: String) -> String {
+pub async fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
   let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
@@ -289,7 +289,7 @@ pub async fn localize_images(win: tauri::Window, css: String) -> String {
   new_css
 }
 
-async fn localize_fonts(win: tauri::Window, css: String) -> String {
+async fn localize_fonts(win: tauri::WebviewWindow, css: String) -> String {
   let font_reg = Regex::new(
     r#"@font-face.{0,1}\{(?:.|\n)+?src:.{0,1}url\((?:'|"|)(http.+?)\.([a-zA-Z0-9]{0,5})(?:'|"|)\)"#,
   )

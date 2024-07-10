@@ -1,7 +1,7 @@
 use device_query::keymap::Keycode;
 
 // this sucks
-pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {  
+pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
   // Might have to make a PR not gonna lie
   match keycode.as_str() {
     "KeyA" => Some(Keycode::A),
@@ -76,7 +76,6 @@ pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
     //"PrintScreen" => Some(Keycode::PrintScreen),
     //"ScrollLock" => Some(Keycode::ScrollLock),
     //"Pause" => Some(Keycode::Pause),
-
     "Insert" => Some(Keycode::Insert),
     "Home" => Some(Keycode::Home),
     "PageUp" => Some(Keycode::PageUp),
@@ -117,7 +116,7 @@ pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
     // "ContextMenu" => Some(Keycode::Application),
     "MetaLeft" => Some(Keycode::LMeta),
     "MetaRight" => Some(Keycode::RMeta),
-    
+
     // TODO fix for PTT since it uses a slightly different system that doesn't differentiate
     "Control" => Some(Keycode::LControl),
     "Shift" => Some(Keycode::LShift),

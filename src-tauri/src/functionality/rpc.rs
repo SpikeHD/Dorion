@@ -52,7 +52,7 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
   .unwrap_or_default();
 }
 
-pub fn start_rpc_server(win: tauri::Window) {
+pub fn start_rpc_server(win: tauri::WebviewWindow) {
   let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
     .expect("Request for detectable.json failed")
     .text()

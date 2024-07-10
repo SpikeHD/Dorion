@@ -4,6 +4,20 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  '@tauri-apps/plugin-autostart':
+    specifier: 2.0.0-beta.6
+    version: 2.0.0-beta.6
+  '@tauri-apps/plugin-deep-link':
+    specifier: 2.0.0-beta.8
+    version: 2.0.0-beta.8
+  '@tauri-apps/plugin-process':
+    specifier: 2.0.0-beta.6
+    version: 2.0.0-beta.6
+  '@tauri-apps/plugin-window-state':
+    specifier: 2.0.0-beta.7
+    version: 2.0.0-beta.7
+
 devDependencies:
   '@tauri-apps/api':
     specifier: ^1.5.3
@@ -450,6 +464,11 @@ packages:
     engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
     dev: true
 
+  /@tauri-apps/api@2.0.0-beta.14:
+    resolution: {integrity: sha512-YLYgHqdwWswr4Y70+hRzaLD6kLIUgHhE3shLXNquPiTaQ9+cX3Q2dB0AFfqsua6NXYFNe7LfkmMzaqEzqv3yQg==}
+    engines: {node: '>= 18.18', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
+
   /@tauri-apps/cli-darwin-arm64@2.0.0-beta.21:
     resolution: {integrity: sha512-okI7PRSC6RO4JfrOTqu4oWf0IfBPbkGHisyDOTay6K5uhz4zzry5fFJVa8S/DTrKtdjau4vcik/EDCxiGRun9Q==}
     engines: {node: '>= 10'}
@@ -556,6 +575,30 @@ packages:
       '@tauri-apps/cli-win32-ia32-msvc': 2.0.0-beta.21
       '@tauri-apps/cli-win32-x64-msvc': 2.0.0-beta.21
     dev: true
+
+  /@tauri-apps/plugin-autostart@2.0.0-beta.6:
+    resolution: {integrity: sha512-I/iw3JBGufWQHdAbQ7lVxLkztfMGuxB+SZW61lbhku3rGQf2rg8qfQh2fr6aRT6gTHtHnqd7jkBlmoefQbj44A==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.14
+    dev: false
+
+  /@tauri-apps/plugin-deep-link@2.0.0-beta.8:
+    resolution: {integrity: sha512-lFpMaz2pmbz6YbMEWaokR7nQ3UMgYjIqzFt+EWDdFJsM5hTnLf72/4hK++WHgXepXhZbPWcm5PLL6BtibXebyA==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.14
+    dev: false
+
+  /@tauri-apps/plugin-process@2.0.0-beta.6:
+    resolution: {integrity: sha512-Rem3r8lGe6ZSvncqIV9xpq2hOey7krMoPh5nu7WxbR73LOSkRBUDaYMvZjXu1DrJ3LEyXxo48sp76+9MW2Rp/w==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.14
+    dev: false
+
+  /@tauri-apps/plugin-window-state@2.0.0-beta.7:
+    resolution: {integrity: sha512-IM6X87sSVUwfVz/sUTw+UYFfqeSSsasTADVQ45gzmVbT+IyQpQgKuKyPEQGDzxPcC8bEu580803di+qSTbt5zQ==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.14
+    dev: false
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
