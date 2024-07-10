@@ -60,10 +60,6 @@ fn main() {
 
   std::thread::sleep(Duration::from_millis(200));
 
-  if !config.multi_instance.unwrap_or(false) {
-    tauri_plugin_deep_link::prepare("com.dorion.dev");
-  }
-
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
 
@@ -206,23 +202,6 @@ fn main() {
       }
       _ => {}
     })
-    .on_system_tray_event(|app, event| match event {
-      SystemTrayEvent::LeftClick {
-        position: _,
-        size: _,
-        ..
-      } => {
-        // Reopen the window if the tray menu icon is clicked
-        match app.get_window("main") {
-          Some(win) => {
-            win.show().unwrap_or_default();
-            win.set_focus().unwrap_or_default();
-            win.unminimize().unwrap_or_default();
-          }
-          None => {}
-        }
-      }
-    })
     .setup(move |app| {
       // Init plugin list
       plugin::get_new_plugins();
@@ -234,7 +213,7 @@ fn main() {
         preload_str += format!("{};", script).as_str();
       }
 
-      tray::create_tray(app).unwrap_or_default();
+      functionality::tray::create_tray(app).unwrap_or_default();
 
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
@@ -250,18 +229,16 @@ fn main() {
         )
         .resizable(true)
         .min_inner_size(100.0, 100.0)
-        .disable_file_drop_handler()
+        .disable_drag_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
         .visible(false)
         .decorations(true)
+        .shadow(true)
         .transparent(
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .build()?;
-
-      #[cfg(any(windows, target_os = "macos"))]
-      window_shadows::set_shadow(&win, true).unwrap_or_default();
 
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);

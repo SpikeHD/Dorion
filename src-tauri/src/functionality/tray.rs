@@ -3,9 +3,8 @@ use tauri::{
   image::Image, menu::{
     MenuBuilder,
     MenuItemBuilder,
-  }, tray::TrayIconBuilder, AppHandle, Manager
+  }, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, AppHandle, Manager
 };
-
 
 use crate::log;
 
@@ -72,6 +71,20 @@ pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
         window.eval("window.location.reload();").unwrap_or_default();
       }
       _ => {}
+    })
+    .on_tray_icon_event(|tray, event| {
+      if let TrayIconEvent::Click {
+        button: MouseButton::Left,
+        button_state: MouseButtonState::Up,
+        ..
+      } = event
+      {
+          let app = tray.app_handle();
+          if let Some(webview_window) = app.get_webview_window("main") {
+          let _ = webview_window.show();
+          let _ = webview_window.set_focus();
+          }
+      }
     })
     .build(app)?;
 
