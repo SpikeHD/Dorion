@@ -106,7 +106,7 @@ jobs:
         if: matrix.config.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev \
+          sudo apt-get install -y libwebkit2gtk-4.1-dev \
             build-essential \
             curl \
             wget \
@@ -120,7 +120,7 @@ jobs:
         run: |
           sudo apt-get install -y \
             libc6:armhf \
-            libwebkit2gtk-4.0-dev:armhf \
+            libwebkit2gtk-4.1-dev:armhf \
             libssl-dev:armhf \
             gcc-arm-linux-gnueabihf
     
@@ -129,7 +129,7 @@ jobs:
         run: |
           sudo apt-get install -y \
             libc6:arm64 \
-            libwebkit2gtk-4.0-dev:arm64 \
+            libwebkit2gtk-4.1-dev:arm64 \
             libssl-dev:arm64 \
             gcc-aarch64-linux-gnu
 

@@ -1,5 +1,6 @@
 use tauri::Manager;
-use tauri_plugin_deep_link::DeepLinkExt;
+
+use crate::log;
 
 pub fn register_deep_link_handler(app: &tauri::AppHandle) {
   app.listen("dorion://open", |url| {
