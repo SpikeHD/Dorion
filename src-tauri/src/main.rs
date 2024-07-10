@@ -197,6 +197,11 @@ fn main() {
       tray::set_tray_icon,
     ])
     .on_window_event(|event| match event.event() {
+      tauri::WindowEvent::Resized { .. } => {
+        // Sleep for a millisecond (blocks the thread but it doesn't really matter)
+        // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495
+        std::thread::sleep(Duration::from_millis(1));
+      }
       tauri::WindowEvent::Destroyed { .. } => {
         functionality::cache::maybe_clear_cache();
       }
