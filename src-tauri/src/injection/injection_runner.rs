@@ -3,7 +3,7 @@ use std::{
   collections::HashMap,
   sync::atomic::{AtomicBool, Ordering},
 };
-use tauri::regex::Regex;
+use regex::Regex;
 
 use crate::{log, processors::js_preprocess::eval_js_imports};
 

@@ -1,5 +1,6 @@
 use std::{fs, path::PathBuf};
 
+use tauri::path::BaseDirectory;
 use tauri::Manager;
 
 use crate::config::{default_config, get_config};
@@ -213,8 +214,8 @@ pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
 
   win
     .app_handle()
-    .path_resolver()
-    .resolve_resource(PathBuf::from("updater"))
+    .path()
+    .resolve(PathBuf::from("updater"), BaseDirectory::Resource)
     .unwrap_or_default()
 }
 

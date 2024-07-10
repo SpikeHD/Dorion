@@ -117,6 +117,7 @@ fn main() {
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
+    .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_window_state::Builder::new().build())
     .plugin(tauri_plugin_autostart::init(
@@ -124,6 +125,7 @@ fn main() {
       None,
     ))
     .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_window_state::Builder::default().build())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
@@ -202,7 +204,7 @@ fn main() {
       }
       _ => {}
     })
-    .setup(move |app| {
+    .setup(move |app: &mut tauri::App| {
       // Init plugin list
       plugin::get_new_plugins();
 
@@ -262,7 +264,7 @@ fn main() {
 
       after_build(&win);
 
-      setup_autostart(&mut app);
+      setup_autostart(app);
 
       Ok(())
     })

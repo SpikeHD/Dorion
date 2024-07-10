@@ -1,9 +1,9 @@
 use include_flate::flate;
 use tauri::{
-  image::Image, menu::{
-    MenuBuilder,
-    MenuItemBuilder,
-  }, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, AppHandle, Manager
+  image::Image,
+  menu::{MenuBuilder, MenuItemBuilder},
+  tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+  AppHandle, Manager,
 };
 
 use crate::log;
@@ -22,7 +22,7 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
 
   let icon = match event.as_str() {
     "connected" => Image::new(&CONNECTED, 48, 48),
-    "disconnected" =>Image::new(&DEFAULT, 48, 48),
+    "disconnected" => Image::new(&DEFAULT, 48, 48),
     "muted" => Image::new(&MUTED, 48, 48),
     "deafened" => Image::new(&DEAFENED, 48, 48),
     "speaking" => Image::new(&SPEAKING, 48, 48),
@@ -42,24 +42,24 @@ pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
   let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
   let quit_item = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
 
-  let menu = MenuBuilder::new(app).items(&[&open_item, &reload_item, &restart_item, &quit_item]).build()?;
-  
+  let menu = MenuBuilder::new(app)
+    .items(&[&open_item, &reload_item, &restart_item, &quit_item])
+    .build()?;
+
   TrayIconBuilder::with_id("main")
     .menu(&menu)
     .on_menu_event(move |app, event| match event.id().as_ref() {
       "quit" => {
         app.exit(0);
       }
-      "open" => {
-        match app.get_webview_window("main") {
-          Some(win) => {
-            win.show().unwrap_or_default();
-            win.set_focus().unwrap_or_default();
-            win.unminimize().unwrap_or_default();
-          }
-          None => {}
+      "open" => match app.get_webview_window("main") {
+        Some(win) => {
+          win.show().unwrap_or_default();
+          win.set_focus().unwrap_or_default();
+          win.unminimize().unwrap_or_default();
         }
-      }
+        None => {}
+      },
       "restart" => {
         app.restart();
       }
@@ -79,11 +79,11 @@ pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
         ..
       } = event
       {
-          let app = tray.app_handle();
-          if let Some(webview_window) = app.get_webview_window("main") {
+        let app = tray.app_handle();
+        if let Some(webview_window) = app.get_webview_window("main") {
           let _ = webview_window.show();
           let _ = webview_window.set_focus();
-          }
+        }
       }
     })
     .build(app)?;

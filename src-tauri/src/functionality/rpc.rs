@@ -67,7 +67,7 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
 
   // When the "add_detectable" event is emitted, add the detectable to the server
   win.listen("add_detectable", move |event| {
-    let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
+    let payload: Payload = serde_json::from_str(event.payload()).unwrap_or(Payload {
       name: String::from(""),
       exe: String::from(""),
     });
@@ -108,7 +108,7 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
   });
 
   win.listen("remove_detectable", move |event| {
-    let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
+    let payload: Payload = serde_json::from_str(event.payload()).unwrap_or(Payload {
       name: String::from(""),
       exe: String::from(""),
     });

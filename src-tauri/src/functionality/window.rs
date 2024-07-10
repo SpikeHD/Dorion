@@ -1,6 +1,4 @@
-use auto_launch::AutoLaunchBuilder;
 use tauri::Manager;
-use tauri::WebviewWindow;
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
@@ -12,13 +10,13 @@ use crate::window::blur::apply_effect;
 
 // Minimize
 #[tauri::command]
-pub fn minimize(win: Window) {
+pub fn minimize(win: tauri::WebviewWindow) {
   win.minimize().unwrap_or_default();
 }
 
 // Toggle maximize
 #[tauri::command]
-pub fn toggle_maximize(win: Window) {
+pub fn toggle_maximize(win: tauri::WebviewWindow) {
   if win.is_maximized().unwrap_or_default() {
     win.unmaximize().unwrap_or_default();
   } else {
@@ -28,7 +26,7 @@ pub fn toggle_maximize(win: Window) {
 
 // Close
 #[tauri::command]
-pub fn close(win: Window) {
+pub fn close(win: tauri::WebviewWindow) {
   // Save window state
   let app = win.app_handle();
   app.save_window_state(StateFlags::all()).unwrap_or_default();
@@ -44,8 +42,9 @@ pub fn close(win: Window) {
 /**
  * Applies various window modifications, most being platform-dependent
  */
-pub fn after_build(window: &Window) {
+pub fn after_build(window: &tauri::WebviewWindow) {
   let startup = std::env::args().any(|arg| arg == "--startup");
+  let app = window.app_handle();
   let config = get_config();
 
   if config.streamer_mode_detection.unwrap_or(false) {
@@ -60,7 +59,7 @@ pub fn after_build(window: &Window) {
 
   // Deep link registry
   if !config.multi_instance.unwrap_or(false) {
-    deep_link::register_deep_link_handler(window.clone());
+    deep_link::register_deep_link_handler(app);
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized

@@ -29,6 +29,7 @@ tauri-plugin-shell = "2.0.0-beta.8"
 tauri-plugin-deep-link = "2.0.0-beta"
 tauri-plugin-process = "2.0.0-beta.7"
 tauri-plugin-autostart = "2.0.0-beta.8"
+tauri-plugin-notification = { version = "2.0.0-beta.9", features = ["win7-notifications", "windows7-compat"] }
 reqwest = { version = "0.12.4", features = ["blocking"] }
 phf = "0.11.2"
 sysinfo = "0.30.12"
@@ -44,10 +45,10 @@ window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "ma
 window-vibrancy = "0.5.0"
 chrono = "0.4.38"
 device_query = "2.1.0"
+regex = "1.10.5"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "2.0.1"
-windows-core = "0.58.0"
 wgpu = { version = "0.20.0", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -61,18 +62,22 @@ embed_plist = "1.2.2"
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
 
 [target.'cfg(windows)'.dependencies]
-webview2-com = "0.19.0"
+webview2-com = "0.19.1"
+windows-core = "0.58.0"
 windows-implement = "0.39.0"
 
 [target.'cfg(windows)'.dependencies.windows]
-version = "0.39.0"
+version = "0.57.0"
 features = [
     "Data_Xml_Dom",
     "Win32_Foundation",
     "Win32_Security",
     "Win32_System_Threading",
+    "Win32_UI_Shell",
     "Win32_UI_WindowsAndMessaging",
     "Win32_System_Com",
+    "Win32_Graphics",
+    "Win32_Graphics_Dwm",
 ]
 
 [target.armv7-unknown-linux-gnueabihf]

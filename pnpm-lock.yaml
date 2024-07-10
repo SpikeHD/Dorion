@@ -11,6 +11,9 @@ dependencies:
   '@tauri-apps/plugin-deep-link':
     specifier: 2.0.0-beta.8
     version: 2.0.0-beta.8
+  '@tauri-apps/plugin-notification':
+    specifier: 2.0.0-beta.6
+    version: 2.0.0-beta.6
   '@tauri-apps/plugin-process':
     specifier: 2.0.0-beta.6
     version: 2.0.0-beta.6
@@ -584,6 +587,12 @@ packages:
 
   /@tauri-apps/plugin-deep-link@2.0.0-beta.8:
     resolution: {integrity: sha512-lFpMaz2pmbz6YbMEWaokR7nQ3UMgYjIqzFt+EWDdFJsM5hTnLf72/4hK++WHgXepXhZbPWcm5PLL6BtibXebyA==}
+    dependencies:
+      '@tauri-apps/api': 2.0.0-beta.14
+    dev: false
+
+  /@tauri-apps/plugin-notification@2.0.0-beta.6:
+    resolution: {integrity: sha512-KoYxGuBn3MIzTFyEhwh5O1VYGSwIplmABlYrDnLudf81Y8zKAIuJ8lnGprtiiUfU2ycXQH/0Zr/ku/NU8a+wdA==}
     dependencies:
       '@tauri-apps/api': 2.0.0-beta.14
     dev: false

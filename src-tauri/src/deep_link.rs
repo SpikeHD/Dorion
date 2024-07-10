@@ -1,7 +1,7 @@
 use tauri::Manager;
 use tauri_plugin_deep_link::DeepLinkExt;
 
-pub fn register_deep_link_handler(app: &tauri::App) {
+pub fn register_deep_link_handler(app: &tauri::AppHandle) {
   app.listen("dorion://open", |url| {
     // TODO do this
     // let win = app.get_webview_window("main");

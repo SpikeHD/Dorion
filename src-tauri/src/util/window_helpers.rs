@@ -96,26 +96,26 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 
 #[cfg(target_os = "windows")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-  use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-  use windows::core::HSTRING;
-  use windows_core::interface::Interface;
+  // TODO fix
+  // use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+  // use windows::core::{Interface, HSTRING};
 
-  win
-    .with_webview(|webview| unsafe {
-      let settings: ICoreWebView2Settings2 = webview
-        .controller()
-        .CoreWebView2()
-        .expect("Failed to get CoreWebView2!")
-        .Settings()
-        .expect("Failed to get Settings!")
-        .cast::<ICoreWebView2Settings2>()
-        .expect("Failed to cast to ICoreWebView2Settings2!");
+  // win
+  //   .with_webview(|webview| unsafe {
+  //     let settings = webview
+  //       .controller()
+  //       .CoreWebView2()
+  //       .expect("Failed to get CoreWebView2!")
+  //       .Settings()
+  //       .expect("Failed to get Settings!");
 
-      settings
-        .SetUserAgent(&HSTRING::from(USERAGENT))
-        .unwrap_or_default();
-    })
-    .expect("Failed to set user agent!");
+  //     let settings = settings.cast::<ICoreWebView2Settings2>().expect("Failed to cast to ICoreWebView2Settings2!");
+
+  //     settings
+  //       .SetUserAgent(&HSTRING::from(USERAGENT))
+  //       .unwrap_or_default();
+  //   })
+  //   .expect("Failed to set user agent!");
 
   log!("Set user agent!");
 }

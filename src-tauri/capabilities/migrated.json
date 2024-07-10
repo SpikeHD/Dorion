@@ -1,7 +1,7 @@
 {
   "identifier": "migrated",
   "description": "permissions that were migrated from v1",
-  "local": true,
+  "local": false,
   "windows": [
     "main"
   ],
@@ -15,6 +15,7 @@
     "tray:default",
     "process:default",
     "autostart:default",
-    "window-state:default"
+    "window-state:default",
+    "notification:default"
   ]
 }

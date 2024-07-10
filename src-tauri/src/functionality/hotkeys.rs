@@ -1,6 +1,7 @@
 use device_query::{keymap::Keycode, DeviceState};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::atomic::AtomicBool};
+use tauri::Manager;
 
 use crate::{
   config::{get_config, set_config},
@@ -61,19 +62,19 @@ pub fn start_keybind_watcher(_win: &tauri::WebviewWindow) {
 #[cfg(not(target_os = "macos"))]
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
   win.listen("keybinds_changed", |evt| {
-    match evt.payload() {
-      Some(payload) => {
-        let keybinds: Vec<KeybindChangedEvent> = serde_json::from_str(payload).unwrap();
-        let mut keybinds_map = HashMap::new();
-
-        for keybind in keybinds {
-          keybinds_map.insert(keybind.key, keybind.keys);
-        }
-
-        set_keybinds(keybinds_map);
-      }
-      None => {}
+    let payload = evt.payload();
+    if payload.is_empty() {
+      return;
     }
+
+    let keybinds: Vec<KeybindChangedEvent> = serde_json::from_str(payload).unwrap();
+    let mut keybinds_map = HashMap::new();
+
+    for keybind in keybinds {
+      keybinds_map.insert(keybind.key, keybind.keys);
+    }
+
+    set_keybinds(keybinds_map);
 
     KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
   });
@@ -84,15 +85,16 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
       state: bool,
     }
 
-    log!("PTT enabled: {:?}", evt.payload());
+    let payload = evt.payload();
 
-    match evt.payload() {
-      Some(payload) => {
-        let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
-        PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
-      }
-      None => {}
+    log!("PTT enabled: {:?}", payload);
+
+    if payload.is_empty() {
+      return;
     }
+
+    let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
+    PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
   });
 
   let win_thrd = win.clone();

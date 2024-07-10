@@ -1,4 +1,5 @@
 use std::sync::atomic::{AtomicBool, Ordering};
+use tauri::Manager;
 
 use crate::config::get_config;
 use sysinfo::System;
