@@ -84,6 +84,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   {
     use crate::gpu::disable_hardware_accel_linux;
     disable_hardware_accel_linux(window);
+    enable_webrtc(window);
   }
 
   window_zoom_level(window.clone(), None);
@@ -103,4 +104,23 @@ pub fn setup_autostart(app: &mut tauri::App) {
     "Autolaunch enabled: {}",
     autostart_manager.is_enabled().unwrap_or_default()
   );
+}
+
+#[cfg(target_os = "linux")]
+pub fn enable_webrtc(window: &tauri::WebviewWindow) {
+  use crate::log;
+  use webkit2gtk::{PermissionRequestExt, SettingsExt, WebViewExt};
+
+  window.with_webview(move |webview| {
+    let wv = webview.inner();
+    let settings = WebViewExt::settings(&wv).unwrap_or_default();
+    
+    settings.set_enable_webrtc(true);
+
+    // We also need to handle permission requests
+    wv.connect_permission_request(|_, req| {
+      req.allow();
+      true
+    });
+  }).unwrap_or_else(|_| log!("Failed to enable WebRTC"));
 }
