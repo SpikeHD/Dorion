@@ -40,14 +40,12 @@
         "depends": []
       }
     },
-    "createUpdaterArtifacts": "v1Compatible"
+    "createUpdaterArtifacts": false
   },
   "productName": "Dorion",
   "version": "5.0.1",
   "identifier": "com.dorion.dev",
-  "plugins": {
-    "updater": {}
-  },
+  "plugins": {},
   "app": {
     "macOSPrivateApi": true,
     "trayIcon": {

@@ -42,7 +42,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 200))
   }
 
   if (window.__DORION_INITIALIZED__) return
