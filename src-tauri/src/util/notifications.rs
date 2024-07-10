@@ -48,13 +48,10 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   send_notification_internal(app, title, body, icon_path);
 }
 
-fn send_notification_internal(
-  app: &tauri::AppHandle,
-  title: String,
-  body: String,
-  icon: String,
-) {
-  app.notification().builder()
+fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+  app
+    .notification()
+    .builder()
     .title(title)
     .body(body)
     .icon(icon)
@@ -79,10 +76,11 @@ pub fn notif_count(window: tauri::WebviewWindow, amount: i32) {
 pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
   use include_flate::flate;
   use windows::Win32::{
-    System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL}, UI::{
+    System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL},
+    UI::{
       Shell::{ITaskbarList3, TaskbarList},
       WindowsAndMessaging::{CreateIconFromResourceEx, LR_DEFAULTCOLOR},
-    }
+    },
   };
 
   // Include icons

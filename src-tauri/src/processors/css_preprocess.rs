@@ -1,8 +1,8 @@
 use std::fs;
 
 use async_recursion::async_recursion;
-use tauri::Manager;
 use regex::Regex;
+use tauri::Manager;
 
 use crate::config::get_config;
 use crate::log;

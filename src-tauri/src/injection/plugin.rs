@@ -1,6 +1,6 @@
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
-use regex::Regex;
 
 use crate::{log, util::paths::get_plugin_dir};
 

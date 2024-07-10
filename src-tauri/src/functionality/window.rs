@@ -111,16 +111,18 @@ pub fn enable_webrtc(window: &tauri::WebviewWindow) {
   use crate::log;
   use webkit2gtk::{PermissionRequestExt, SettingsExt, WebViewExt};
 
-  window.with_webview(move |webview| {
-    let wv = webview.inner();
-    let settings = WebViewExt::settings(&wv).unwrap_or_default();
-    
-    settings.set_enable_webrtc(true);
+  window
+    .with_webview(move |webview| {
+      let wv = webview.inner();
+      let settings = WebViewExt::settings(&wv).unwrap_or_default();
 
-    // We also need to handle permission requests
-    wv.connect_permission_request(|_, req| {
-      req.allow();
-      true
-    });
-  }).unwrap_or_else(|_| log!("Failed to enable WebRTC"));
+      settings.set_enable_webrtc(true);
+
+      // We also need to handle permission requests
+      wv.connect_permission_request(|_, req| {
+        req.allow();
+        true
+      });
+    })
+    .unwrap_or_else(|_| log!("Failed to enable WebRTC"));
 }

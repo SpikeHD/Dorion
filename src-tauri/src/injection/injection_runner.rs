@@ -1,9 +1,9 @@
 use include_flate::flate;
+use regex::Regex;
 use std::{
   collections::HashMap,
   sync::atomic::{AtomicBool, Ordering},
 };
-use regex::Regex;
 
 use crate::{log, processors::js_preprocess::eval_js_imports};
 
