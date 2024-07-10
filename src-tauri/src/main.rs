@@ -221,14 +221,14 @@ fn main() {
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
-        .initialization_script(
-          format!(
-            "!window.__DORION_INITIALIZED__ && {};{};{}",
-            PREINJECT.as_str(),
-            client_mods,
-            preload_str,
-          ).as_str()
-        )
+        // .initialization_script(
+        //   format!(
+        //     "!window.__DORION_INITIALIZED__ && {};{};{}",
+        //     PREINJECT.as_str(),
+        //     client_mods,
+        //     preload_str,
+        //   ).as_str()
+        // )
         .resizable(true)
         .min_inner_size(100.0, 100.0)
         .disable_drag_drop_handler()

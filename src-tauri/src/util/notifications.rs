@@ -79,7 +79,7 @@ pub fn notif_count(window: tauri::WebviewWindow, amount: i32) {
 pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
   use include_flate::flate;
   use windows::Win32::{
-    Foundation::HANDLE, System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL}, UI::{
+    System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL}, UI::{
       Shell::{ITaskbarList3, TaskbarList},
       WindowsAndMessaging::{CreateIconFromResourceEx, LR_DEFAULTCOLOR},
     }
@@ -97,7 +97,10 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
   flate!(static ICO_8: [u8] from "./icons/notifications/8_48.png");
   flate!(static ICO_9: [u8] from "./icons/notifications/9_48.png");
 
-  CoInitialize(Some(std::ptr::null()));
+  if CoInitialize(Some(std::ptr::null())).is_err() {
+    log!("Failed to initialize COM");
+    return;
+  }
 
   let hwnd = window.hwnd();
 

@@ -45,7 +45,9 @@
   "productName": "Dorion",
   "version": "5.0.1",
   "identifier": "com.dorion.dev",
-  "plugins": {},
+  "plugins": {
+    "updater": {}
+  },
   "app": {
     "macOSPrivateApi": true,
     "trayIcon": {
