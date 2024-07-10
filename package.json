@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@tauri-apps/api": "^1.5.3",
-    "@tauri-apps/cli": "^1.5.11",
+    "@tauri-apps/cli": "2.0.0-beta.21",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "esbuild": "^0.20.2",

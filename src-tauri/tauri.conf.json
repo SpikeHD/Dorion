@@ -2,114 +2,59 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "https://discord.com/app",
-    "distDir": "https://discord.com/app",
-    "withGlobalTauri": true
+    "frontendDist": "https://discord.com/app",
+    "devUrl": "https://discord.com/app"
   },
-  "package": {
-    "productName": "Dorion",
-    "version": "5.0.1"
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "",
+    "targets": "all",
+    "externalBin": [],
+    "icon": [
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "resources": [
+      "injection/shelter.js",
+      "icons/icon*.ico",
+      "icons/icon_macos.png",
+      "updater*"
+    ],
+    "shortDescription": "",
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    },
+    "createUpdaterArtifacts": "v1Compatible"
   },
-  "tauri": {
+  "productName": "Dorion",
+  "version": "5.0.1",
+  "identifier": "com.dorion.dev",
+  "plugins": {},
+  "app": {
     "macOSPrivateApi": true,
-    "systemTray": {
+    "trayIcon": {
       "iconPath": "icons/icon.png",
       "iconAsTemplate": true
     },
-    "allowlist": {
-      "all": true,
-      "fs": {
-        "all": false,
-        "scope": [
-          "$RESOURCE/**/*"
-        ]
-      },
-      "os": {
-        "all": false
-      },
-      "process": {
-        "all": false,
-        "exit": false,
-        "relaunch": true,
-        "relaunchDangerousAllowSymlinkMacos": false
-      },
-      "shell": {
-        "all": false,
-        "execute": false,
-        "open": true,
-        "scope": [],
-        "sidecar": false
-      },
-      "http": {
-        "scope": [
-          "https://**/*",
-          "http://**/*"
-        ]
-      },
-      "path": {
-        "all": true
-      },
-      "notification": {
-        "all": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/icon.ico",
-        "icons/icon.png"
-      ],
-      "identifier": "com.dorion.dev",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [
-        "injection/shelter.js",
-        "icons/icon*.ico",
-        "icons/icon_macos.png",
-        "updater*"
-      ],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
+    "withGlobalTauri": true,
     "security": {
-      "dangerousRemoteDomainIpcAccess": [
-        {
-          "enableTauriAPI": true,
-          "domain": "discord.com",
-          "windows": ["main"]
-        },
-        {
-          "enableTauriAPI": true,
-          "domain": "ptb.discord.com",
-          "windows": ["main"]
-        },
-        {
-          "enableTauriAPI": true,
-          "domain": "canary.discord.com",
-          "windows": ["main"]
-        }
-      ],
       "csp": null
-    },
-    "updater": {
-      "active": false
     }
   }
 }
