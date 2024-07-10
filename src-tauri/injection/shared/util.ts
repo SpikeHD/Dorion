@@ -55,6 +55,6 @@ export async function waitForElm(selector: string) {
 }
 
 export async function fetchImage(url: string) {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   return await invoke('fetch_image', { url })
 }

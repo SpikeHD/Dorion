@@ -69,7 +69,8 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 })()
 
 async function init() {
-  const { invoke, event } = window.__TAURI__
+  const { event } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const config = await invoke('read_config_file')
 
   window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : {}
@@ -164,7 +165,7 @@ async function updateOverlay(toUpdate: Record<string, string>) {
 }
 
 async function handleThemeInjection() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
 
   // This needs to exist for hot-switching to work
   const ts = document.createElement('style')
@@ -210,7 +211,7 @@ async function handleThemeInjection() {
 }
 
 async function handleClientModThemeInjection() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
 
   const ts = document.createElement('style')
   ts.id = 'dorion-client-mods-themes'
@@ -244,7 +245,7 @@ async function handleClientModThemeInjection() {
  * Display the splashscreen
  */
 async function displayLoadingTop() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const html = await invoke('get_index')
   const loadingContainer = document.createElement('div') satisfies HTMLDivElement
   loadingContainer.id = 'loadingContainer'

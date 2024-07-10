@@ -223,8 +223,8 @@ fn main() {
         .title(title.as_str())
         .initialization_script(
           format!(
-            "!window.__DORION_INITIALIZED__ && {};{}",
-            //PREINJECT.as_str(),
+            "!window.__DORION_INITIALIZED__ && {};{};{}",
+            PREINJECT.as_str(),
             client_mods,
             preload_str,
           ).as_str()
@@ -241,6 +241,8 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .build()?;
+
+      win.open_devtools();
 
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);

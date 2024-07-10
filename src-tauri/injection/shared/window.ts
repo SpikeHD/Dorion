@@ -2,15 +2,15 @@
  * Functions for window controls
  */
 export function close() {
-  window.__TAURI__.invoke('close')
+  window.__TAURI__.core.invoke('close')
 }
 
 export function minimize() {
-  window.__TAURI__.invoke('minimize')
+  window.__TAURI__.core.invoke('minimize')
 }
 
 export function toggleMaximize() {
-  window.__TAURI__.invoke('toggle_maximize')
+  window.__TAURI__.core.invoke('toggle_maximize')
 }
 
 export async function setMaximizeIcon() {
@@ -27,7 +27,7 @@ export function applyNotificationCount() {
   // Check if we should update
   if (!window.Dorion.shouldShowUnreadBadge) return
 
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const title = document.querySelector('title') as HTMLTitleElement
   const notifs = title.innerHTML.startsWith('•') ? -1 : title.innerHTML?.match(/\((.*)\)/)?.[1]
 
