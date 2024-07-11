@@ -102,6 +102,7 @@ fn main() {
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
   if process::process_already_exists() && !config.multi_instance.unwrap_or(false) {
+    log!("Dorion already open in another process, exiting...");
     // Send the dorion://open deep link request
     helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
@@ -222,9 +223,10 @@ fn main() {
       let win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!(
-            "!window.__DORION_INITIALIZED__ && {};{};{}",
-            PREINJECT.as_str(),
+          format!(r#"
+            window.__localStorage = localStorage;{};{};{}
+          "#,
+            PREINJECT.clone(),
             client_mods,
             preload_str,
           ).as_str()

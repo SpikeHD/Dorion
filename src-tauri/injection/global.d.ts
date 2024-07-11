@@ -31,5 +31,8 @@ declare global {
     Dorion: any
     shelter: any
     nativeOpen: Window['open']
+
+    // Defined in initialization_script
+    __localStorage: Storage
   }
 }

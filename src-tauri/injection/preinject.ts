@@ -37,8 +37,8 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
   }
 
   createLocalStorage()
-  proxyFetch()
-  proxyXHR()
+  // proxyFetch()
+  // proxyXHR()
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
@@ -69,7 +69,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 })()
 
 async function init() {
-  const { event } = window.__TAURI__
+  const { event, app } = window.__TAURI__
   const { invoke } = window.__TAURI__.core
   const config = await invoke('read_config_file')
 
@@ -89,10 +89,11 @@ async function init() {
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
   const plugins = await invoke('load_plugins')
-    .catch(e => console.error('Error reading plugins: ', e))
-  const version = await window.__TAURI__.app.getVersion()
+  const version = await app.getVersion()
 
   await displayLoadingTop()
+  
+  console.log('loading top')
 
   // Start the safemode timer
   safemodeTimer(
