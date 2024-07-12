@@ -88,13 +88,10 @@ async function init() {
   //const plugins = await invoke('load_plugins')
   // TODO fix
   const plugins = {}
-  console.log('loaded plugins')
   const version = await app.getVersion()
 
   await displayLoadingTop()
   
-  console.log('loading top')
-
   // Start the safemode timer
   safemodeTimer(
     document.querySelector('#safemode') as HTMLDivElement

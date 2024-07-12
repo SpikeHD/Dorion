@@ -44,6 +44,7 @@ export function proxyFetch() {
       }
     }
 
+    // TODO this seems to hang
     const response = await http.fetch(url, {
       responseType: 3,
       ...options
