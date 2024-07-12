@@ -63,7 +63,7 @@ embed_plist = "1.2.2"
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
 
 [target.'cfg(windows)'.dependencies]
-webview2-com = "0.19.1"
+webview2-com = "0.31.0"
 windows-core = "0.58.0"
 windows-implement = "0.39.0"
 
