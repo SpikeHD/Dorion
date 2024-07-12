@@ -18,6 +18,7 @@
     "window-state:default",
     "notification:default",
     "window:allow-start-dragging",
+    "webview:default",
     {
       "identifier": "http:default",
       "allow": [
