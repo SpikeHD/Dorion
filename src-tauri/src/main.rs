@@ -118,6 +118,7 @@ fn main() {
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
+    .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_window_state::Builder::new().build())

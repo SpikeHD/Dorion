@@ -16,6 +16,18 @@
     "process:default",
     "autostart:default",
     "window-state:default",
-    "notification:default"
+    "notification:default",
+    "window:allow-start-dragging",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://**/*"
+        },
+        {
+          "url": "http://**/*"
+        }
+      ]
+    }
   ]
 }

@@ -14,7 +14,7 @@ export function toggleMaximize() {
 }
 
 export async function setMaximizeIcon() {
-  if (await window.__TAURI__.window.appWindow.isMaximized()) {
+  if (await window.__TAURI__.webviewWindow.getCurrent().isMaximized()) {
     const topmax = document.querySelector('#topmax') as HTMLDivElement
     topmax.classList.add('maximized')
   } else {

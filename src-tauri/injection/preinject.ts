@@ -85,7 +85,10 @@ async function init() {
 
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
-  const plugins = await invoke('load_plugins')
+  //const plugins = await invoke('load_plugins')
+  // TODO fix
+  const plugins = {}
+  console.log('loaded plugins')
   const version = await app.getVersion()
 
   await displayLoadingTop()
@@ -105,7 +108,7 @@ async function init() {
   typingAnim()
 
   // Start the loading_log event listener
-  const logUnlisten = event.listen('loading_log', (event: TauriEvent) => {
+  const logUnlisten = await event.listen('loading_log', (event: TauriEvent) => {
     const log = event.payload as string
 
     updateOverlay({

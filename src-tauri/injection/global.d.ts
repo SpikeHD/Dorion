@@ -21,7 +21,7 @@ declare global {
         getVersion: () => Promise<string>
       }
       http: any
-      window: any
+      webviewWindow: any
       [key: string]: unknown
     }
 

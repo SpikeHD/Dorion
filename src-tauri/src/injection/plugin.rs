@@ -68,6 +68,9 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
     plugins.insert(plugin_name, plugin_js);
   }
 
+  log!("Done loading plugins");
+  log!("Plugins: {:?}", plugins.len());
+
   plugins
 }
 
