@@ -3,6 +3,10 @@ import { isJson } from './util'
 export function proxyFetch() {
   window.nativeFetch = window.fetch
 
+  // Delete original fetch before we overwrite it
+  // @ts-expect-error womp womp
+  delete window.fetch
+
   window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.com)(?:\/.*)?/g

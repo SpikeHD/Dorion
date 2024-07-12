@@ -1,4 +1,5 @@
 import { ensurePlugins } from './shared/plugins'
+import { proxyFetch, proxyXHR } from './shared/recreate'
 import { applyExtraCSS, createTopBar } from './shared/ui'
 import { waitForApp } from './shared/util'
 import { applyNotificationCount } from './shared/window'
@@ -50,6 +51,9 @@ observer.observe(document, {
  */
 function onClientLoad() {
   observer.disconnect()
+
+  proxyFetch()
+  proxyXHR()
 
   // Notifcation watcher
   notifGetter()
