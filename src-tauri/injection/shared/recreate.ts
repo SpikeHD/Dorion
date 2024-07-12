@@ -47,7 +47,7 @@ export function proxyFetch() {
     const response = await http.fetch(url, {
       responseType: 3,
       ...options
-    })
+    }).catch((e: Error) => console.error('[Proxy Fetch] Failed to fetch: ', e))
 
     // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
     response.json = async () => JSON.parse(await response.text())
