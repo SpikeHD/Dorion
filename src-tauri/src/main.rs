@@ -161,8 +161,6 @@ fn main() {
       functionality::hotkeys::set_keybinds,
       functionality::hotkeys::set_keybind,
       injection_runner::get_injection_js,
-      injection_runner::is_injected,
-      injection_runner::load_injection_js,
       config::get_config,
       config::set_config,
       config::read_config_file,
@@ -244,8 +242,6 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .build()?;
-
-      win.open_devtools();
 
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);

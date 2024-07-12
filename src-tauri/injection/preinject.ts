@@ -1,6 +1,6 @@
 import { badPostMessagePatch, createLocalStorage } from './shared/recreate'
 import { safemodeTimer, typingAnim } from './shared/ui'
-import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm } from './shared/util'
+import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
 // Let's expose some stuff for use in plugins and such
@@ -124,9 +124,16 @@ async function init() {
     themeJs,
   })
 
-  await invoke('load_injection_js', {
-    contents: injectionJs,
-    plugins
+  saferEval(injectionJs)
+  
+  Object.entries(plugins).forEach(async ([name, script]) => {
+    updateOverlay({
+      midtitle: `Loading plugin: ${name}`
+    })
+
+    console.log('[Plugin Loader] Loading plugin:', name)
+
+    saferEval(script)
   })
 
   updateOverlay({
