@@ -183,7 +183,7 @@ fn main() {
       window_helpers::window_zoom_level,
       functionality::tray::set_tray_icon,
     ])
-    .on_window_event(|window, event| match event.event() {
+    .on_window_event(|window, event| match event {
       tauri::WindowEvent::Resized { .. } => {
         // Sleep for a millisecond (blocks the thread but it doesn't really matter)
         // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495
