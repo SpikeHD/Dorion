@@ -85,9 +85,8 @@ async function init() {
 
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
-  //const plugins = await invoke('load_plugins')
-  // TODO fix
-  const plugins = {}
+  await invoke('load_plugins')
+
   const version = await app.getVersion()
 
   await displayLoadingTop()
@@ -125,16 +124,6 @@ async function init() {
   })
 
   saferEval(injectionJs)
-  
-  Object.entries(plugins).forEach(async ([name, script]) => {
-    updateOverlay({
-      midtitle: `Loading plugin: ${name}`
-    })
-
-    console.log('[Plugin Loader] Loading plugin:', name)
-
-    saferEval(script)
-  })
 
   updateOverlay({
     midtitle: 'Done!'

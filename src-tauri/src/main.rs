@@ -208,13 +208,6 @@ fn main() {
       // Init plugin list
       plugin::get_new_plugins();
 
-      // Load preload plugins into a single string
-      let mut preload_str = String::new();
-
-      for script in plugin::load_plugins(Some(true)).values() {
-        preload_str += format!("{};", script).as_str();
-      }
-
       functionality::tray::create_tray(app).unwrap_or_default();
 
       // First, grab preload plugins
@@ -223,11 +216,10 @@ fn main() {
         .title(title.as_str())
         .initialization_script(
           format!(r#"
-            window.__localStorage = localStorage;{};{};{}
+            window.__localStorage = localStorage;{};{}
           "#,
             PREINJECT.clone(),
             client_mods,
-            preload_str,
           ).as_str()
         )
         .resizable(true)
@@ -254,6 +246,8 @@ fn main() {
 
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
+
+      plugin::load_plugins(win.clone(), Some(true));
 
       // begin the RPC server if needed
       if get_config().rpc_server.unwrap_or(false) {

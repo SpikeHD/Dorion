@@ -1,15 +1,10 @@
 use include_flate::flate;
 use regex::Regex;
-use std::{
-  collections::HashMap,
-  sync::atomic::AtomicBool,
-};
-
+use std::collections::HashMap;
+  
 use crate::{log, processors::js_preprocess::eval_js_imports};
 
 use super::plugin::get_plugin_list;
-
-static TAURI_INJECTED: AtomicBool = AtomicBool::new(false);
 
 flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
@@ -25,7 +20,7 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
   Ok(rewritten_all)
 }
 
-fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>) {
+pub fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>) {
   let plugin_list = get_plugin_list();
 
   // Eval plugin imports
