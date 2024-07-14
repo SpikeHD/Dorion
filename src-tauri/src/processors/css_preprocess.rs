@@ -2,7 +2,7 @@ use std::fs;
 
 use async_recursion::async_recursion;
 use regex::Regex;
-use tauri::Manager;
+use tauri::Emitter;
 
 use crate::config::get_config;
 use crate::log;

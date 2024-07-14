@@ -1,4 +1,4 @@
-use tauri::Manager;
+use tauri::{Manager, Listener};
 
 use crate::log;
 

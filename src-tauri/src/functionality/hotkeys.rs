@@ -1,7 +1,7 @@
 use device_query::{keymap::Keycode, DeviceState};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::atomic::AtomicBool};
-use tauri::Manager;
+use tauri::{Emitter, Listener};
 
 use crate::{
   config::{get_config, set_config},

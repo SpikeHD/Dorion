@@ -1,3 +1,4 @@
+use tauri::Listener;
 use rsrpc::{
   detection::{DetectableActivity, Executable},
   RPCServer,

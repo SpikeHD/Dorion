@@ -1,10 +1,14 @@
 {
   "identifier": "migrated",
   "description": "permissions that were migrated from v1",
-  "local": true,
   "windows": [
     "main"
   ],
+  "remote": {
+    "urls": [
+      "https://*.discord.com/*"
+    ]
+  },
   "permissions": [
     "path:default",
     "event:default",
