@@ -9,6 +9,8 @@ on:
       - 'src-tauri/**/*'
       - 'src/**/*'
       - 'updater/**/*'
+    branches:
+      - main
   pull_request:
     paths:
       - '.github/workflows/build.yml'
