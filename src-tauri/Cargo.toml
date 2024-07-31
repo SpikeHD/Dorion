@@ -24,6 +24,7 @@ dirs = "5.0.1"
 include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
+
 tauri = { version = "2.0.0-beta", features = ["macos-private-api", "devtools", "tray-icon"] }
 tauri-plugin-shell = "2.0.0-beta"
 tauri-plugin-deep-link = "2.0.0-beta"
@@ -31,19 +32,19 @@ tauri-plugin-process = "2.0.0-beta"
 tauri-plugin-autostart = "2.0.0-beta"
 tauri-plugin-notification = { version = "2.0.0-beta", features = ["win7-notifications", "windows7-compat"] }
 tauri-plugin-http = "2.0.0-beta"
+# window blur
+window-vibrancy = "0.5.0"
+
 reqwest = { version = "0.12.5", features = ["blocking"] }
 phf = "0.11.2"
 sysinfo = "0.30"
+chrono = "0.4"
+device_query = "2.1.0"
+regex = "1.10"
 
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.14.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
-
-# window blur
-window-vibrancy = "0.5.0"
-chrono = "0.4"
-device_query = "2.1.0"
-regex = "1.10"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "2.0"
