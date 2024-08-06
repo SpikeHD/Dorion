@@ -12,6 +12,23 @@
     "core:app:default",
     "core:resources:default",
     "core:menu:default",
-    "core:tray:default"
+    "core:tray:default",
+    "process:default",
+    "autostart:default",
+    "window-state:default",
+    "notification:default",
+    "core:window:allow-start-dragging",
+    "core:webview:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://**/*"
+        },
+        {
+          "url": "http://**/*"
+        }
+      ]
+    }
   ]
 }
