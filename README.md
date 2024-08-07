@@ -23,14 +23,55 @@
 
 # Download
 
-Installers are available on [the releases page](https://github.com/SpikeHD/Dorion/releases/latest). You can also get it from a [package repository](#package-repositories), or [GitHub Actions](https://github.com/SpikeHD/Dorion/actions/workflows/build.yml?query=branch%3Amain), or you can [build it yourself](#building)!
+<table align="center">
+  <tr>
+    <th>
+      <img src="docs/image/windows.png" width="30%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/apple.png" width="30%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/debian.png" width="30%" align="center" />
+    </th>
+  </tr>
+
+  <tr>
+    <td width="30%">
+      <div align="center">
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_x64_en-US.msi ">x86_64</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_arm64-setup.exe">ARM</a>
+      </div>
+    </td>
+    <td width="30%">
+      <div align="center">
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_x64.dmg">x86_64</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_aarch64.dmg">ARM</a>
+      </div>
+    </td>
+    <td width="30%">
+      <div align="center">
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_amd64.deb">x86_64</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_armhf.deb">ARM v7</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v5.0.1/Dorion_5.0.1_arm64.deb">ARM64</a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+> [!TIP]
+> Dorion can also be used portably or installed via [several package managers](#package-repositories). You can find these builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
 
 > [!NOTE]
 > ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`.
 >
-> ***Windows Users***: Dorion is available through portable installs OR through an `.msi` installer file. Also, Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
+> ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
 >
-> ***Ubuntu Users***: If you are on 24.04 or later, you may be unable to satisfy dependencies (`libwebkit2gtk-4.1` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241)).
+> ***Ubuntu Users***: If you are on 24.04 or later, you may be unable to satisfy dependencies (`libwebkit2gtk-4.0` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241) & [more context](https://github.com/tauri-apps/tauri/issues/9662)).
 
 # Table of Contents
 
