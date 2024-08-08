@@ -29,7 +29,7 @@ pub async fn localize_all_js(urls: Vec<String>) -> Vec<String> {
   localized
 }
 
-pub fn eval_js_imports(window: &tauri::Window, scripts: Vec<String>) {
+pub fn eval_js_imports(window: &tauri::WebviewWindow, scripts: Vec<String>) {
   for script in scripts {
     match window.eval(script.as_str()) {
       Ok(r) => r,

@@ -1,6 +1,5 @@
-use auto_launch::AutoLaunchBuilder;
 use tauri::Manager;
-use tauri::Window;
+use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
@@ -11,13 +10,13 @@ use crate::window::blur::apply_effect;
 
 // Minimize
 #[tauri::command]
-pub fn minimize(win: Window) {
+pub fn minimize(win: tauri::WebviewWindow) {
   win.minimize().unwrap_or_default();
 }
 
 // Toggle maximize
 #[tauri::command]
-pub fn toggle_maximize(win: Window) {
+pub fn toggle_maximize(win: tauri::WebviewWindow) {
   if win.is_maximized().unwrap_or_default() {
     win.unmaximize().unwrap_or_default();
   } else {
@@ -27,7 +26,7 @@ pub fn toggle_maximize(win: Window) {
 
 // Close
 #[tauri::command]
-pub fn close(win: Window) {
+pub fn close(win: tauri::WebviewWindow) {
   // Save window state
   let app = win.app_handle();
   app.save_window_state(StateFlags::all()).unwrap_or_default();
@@ -43,8 +42,9 @@ pub fn close(win: Window) {
 /**
  * Applies various window modifications, most being platform-dependent
  */
-pub fn after_build(window: &Window) {
+pub fn after_build(window: &tauri::WebviewWindow) {
   let startup = std::env::args().any(|arg| arg == "--startup");
+  let app = window.app_handle();
   let config = get_config();
 
   if config.streamer_mode_detection.unwrap_or(false) {
@@ -59,7 +59,7 @@ pub fn after_build(window: &Window) {
 
   // Deep link registry
   if !config.multi_instance.unwrap_or(false) {
-    deep_link::register_deep_link_handler(window.clone());
+    deep_link::register_deep_link_handler(app);
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
@@ -84,42 +84,45 @@ pub fn after_build(window: &Window) {
   {
     use crate::gpu::disable_hardware_accel_linux;
     disable_hardware_accel_linux(window);
+    enable_webrtc(window);
   }
 
   window_zoom_level(window.clone(), None);
 }
 
 pub fn setup_autostart(app: &mut tauri::App) {
-  let app_name = &app.package_info().name;
-  let current_exe = std::env::current_exe().unwrap_or_default();
-  let exe_str = current_exe.to_str().unwrap_or_default();
-
-  // if the string is empty, just return
-  if exe_str.is_empty() {
-    return;
-  }
-
-  let autolaunch = match AutoLaunchBuilder::new()
-    .set_app_name(app_name)
-    .set_app_path(exe_str)
-    .set_use_launch_agent(true)
-    .set_args(&["--startup"])
-    .build()
-  {
-    Ok(autolaunch) => autolaunch,
-    Err(_) => return,
-  };
-
+  let autostart_manager = app.autolaunch();
   let should_enable = get_config().open_on_startup.unwrap_or(false);
 
-  autolaunch.enable().unwrap_or_default();
-
   if !should_enable {
-    autolaunch.disable().unwrap_or_default();
+    autostart_manager.disable().unwrap_or_default();
+  } else {
+    autostart_manager.enable().unwrap_or_default();
   }
 
   log!(
     "Autolaunch enabled: {}",
-    autolaunch.is_enabled().unwrap_or_default()
+    autostart_manager.is_enabled().unwrap_or_default()
   );
+}
+
+#[cfg(target_os = "linux")]
+pub fn enable_webrtc(window: &tauri::WebviewWindow) {
+  use crate::log;
+  use webkit2gtk::{PermissionRequestExt, SettingsExt, WebViewExt};
+
+  window
+    .with_webview(move |webview| {
+      let wv = webview.inner();
+      let settings = WebViewExt::settings(&wv).unwrap_or_default();
+
+      settings.set_enable_webrtc(true);
+
+      // We also need to handle permission requests
+      wv.connect_permission_request(|_, req| {
+        req.allow();
+        true
+      });
+    })
+    .unwrap_or_else(|_| log!("Failed to enable WebRTC"));
 }

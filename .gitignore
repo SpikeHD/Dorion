@@ -28,7 +28,7 @@ src-tauri/injection/preinject_min.js
 src-tauri/injection/shelter.js
 
 src-tauri/html
-
 src-tauri/updater*
+src-tauri/gen
 
 updater/target

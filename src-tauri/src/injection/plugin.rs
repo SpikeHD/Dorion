@@ -1,8 +1,10 @@
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fs};
-use tauri::regex::Regex;
 
 use crate::{log, util::paths::get_plugin_dir};
+
+use super::injection_runner;
 
 #[derive(Serialize, Deserialize)]
 pub struct PluginDetails {
@@ -37,11 +39,14 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
+pub fn load_plugins(win: tauri::WebviewWindow, preload_only: Option<bool>) {
   let plugins_dir = get_plugin_dir();
   let plugins_list = get_plugin_list();
   let mut plugins: HashMap<String, String> = HashMap::new();
   let plugin_files = fs::read_dir(plugins_dir).unwrap();
+
+  log!("Loading plugins...");
+  log!("Preload only: {:?}", preload_only.unwrap_or(false));
 
   for plugin in plugin_files {
     let plugin = plugin.unwrap();
@@ -68,7 +73,7 @@ pub fn load_plugins(preload_only: Option<bool>) -> HashMap<String, String> {
     plugins.insert(plugin_name, plugin_js);
   }
 
-  plugins
+  injection_runner::load_plugins(&win, plugins.clone());
 }
 
 #[tauri::command]

@@ -18,7 +18,7 @@ pub fn available_blurs() -> Vec<&'static str> {
 }
 
 #[tauri::command]
-pub fn apply_effect(win: tauri::Window, effect: &str) {
+pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
   #[cfg(target_os = "windows")]
   {
     use window_vibrancy::{apply_acrylic, apply_blur, apply_mica};
@@ -54,7 +54,7 @@ pub fn apply_effect(win: tauri::Window, effect: &str) {
 
 // Might use this one day, today is not that day
 // #[tauri::command]
-// pub fn remove_effect(win: tauri::Window) {
+// pub fn remove_effect(win: tauri::WebviewWindow) {
 //   #[cfg(target_os = "windows")]
 //   {
 //     use window_vibrancy::{clear_acrylic, clear_blur, clear_mica};

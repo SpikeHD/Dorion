@@ -4,7 +4,9 @@ export {}
 declare global {
   interface Window {
     __TAURI__: {
-      invoke: (cmd: string, args?: Record<string, any>) => Promise<any>
+      core: {
+        invoke: (cmd: string, args?: Record<string, any>) => Promise<any>
+      }
       event: {
         listen: (event: string, handler: (event: TauriEvent) => void) => () => void
         emit: (event: string, payload: unknown) => void
@@ -19,7 +21,7 @@ declare global {
         getVersion: () => Promise<string>
       }
       http: any
-      window: any
+      webviewWindow: any
       [key: string]: unknown
     }
 
@@ -29,5 +31,8 @@ declare global {
     Dorion: any
     shelter: any
     nativeOpen: Window['open']
+
+    // Defined in initialization_script
+    __localStorage: Storage
   }
 }

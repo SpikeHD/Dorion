@@ -3,6 +3,10 @@ import { isJson } from './util'
 export function proxyFetch() {
   window.nativeFetch = window.fetch
 
+  // Delete original fetch before we overwrite it
+  // @ts-expect-error womp womp
+  delete window.fetch
+
   window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.com)(?:\/.*)?/g
@@ -40,10 +44,11 @@ export function proxyFetch() {
       }
     }
 
+    // TODO this seems to hang
     const response = await http.fetch(url, {
       responseType: 3,
       ...options
-    })
+    }).catch((e: Error) => console.error('[Proxy Fetch] Failed to fetch: ', e))
 
     // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
     response.json = async () => JSON.parse(await response.text())
@@ -92,19 +97,10 @@ export function proxyXHR() {
 }
 
 export function createLocalStorage() {
-  const iframe = document.createElement('iframe')
-
   // Wait for document.head to exist, then append the iframe
   const interval = setInterval(() => {
     if (!document.head || window.localStorage) return
-
-    document.head.append(iframe)
-    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage')
-    iframe.remove()
-
-    if (!pd) return
-
-    Object.defineProperty(window, 'localStorage', pd)
+    window.localStorage = window.__localStorage
 
     console.log('[Create LocalStorage] Done!')
 

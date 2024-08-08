@@ -20,7 +20,7 @@ export function safemodeTimer(elm: HTMLDivElement) {
 
     // If F, open plugins folder
     if (evt.code === 'KeyF') {
-      window.__TAURI__.invoke('open_themes')
+      window.__TAURI__.core.invoke('open_themes')
     }
   }
 
@@ -56,7 +56,7 @@ export async function typingAnim() {
 }
 
 export async function applyExtraCSS() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const css = await invoke('get_extra_css')
   const style = document.createElement('style')
 
@@ -87,7 +87,7 @@ async function initTopBarEvents() {
 
 export async function createTopBar() {
   const topbar = document.createElement('div')
-  const content = await window.__TAURI__
+  const content = await window.__TAURI__.core
     .invoke('get_top_bar')
     .catch((e) => console.error('Error reading top bar: ', e))
 
@@ -116,7 +116,7 @@ export async function createTopBar() {
   if (versionElm) versionElm.innerHTML = `Dorion - v${dorionVersion}`
 
   // Once done, remove original top bar
-  window.__TAURI__.invoke('remove_top_bar')
+  window.__TAURI__.core.invoke('remove_top_bar')
 
   initTopBarEvents()
 }
