@@ -3992,8 +3992,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.13.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.13.0#e3fe64fe970a83db3ccbd03a541bf1beaaf4b5c7"
+version = "0.14.0"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.14.0#2784c0913be004a403e26da5bdf245c33c9da6d5"
 dependencies = [
  "chrono",
  "rayon",
@@ -4366,8 +4366,7 @@ checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
 [[package]]
 name = "simple-websockets"
 version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f38cc14717bb624d10e9bb4fff30344e8f540c0d2c0f876f8fb0111d808ee7c"
+source = "git+https://github.com/SpikeHD/simple-websockets.git?branch=master#d59531464cce6958978d7da29a6c6b55817af298"
 dependencies = [
  "flume",
  "futures-util",
@@ -5150,9 +5149,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-tungstenite"
-version = "0.19.0"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec509ac96e9a0c43427c74f003127d953a265737636129424288d27cb5c4b12c"
+checksum = "212d5dcb2a1ce06d81107c3d0ffa3121fe974b73f068c8282cb1c32328113b6c"
 dependencies = [
  "futures-util",
  "log",
@@ -5362,9 +5361,9 @@ checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "tungstenite"
-version = "0.19.0"
+version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15fba1a6d6bb030745759a9a2a588bfe8490fc8b4751a277db3a0be1c9ebbf67"
+checksum = "9e3dac10fd62eaf6617d3a904ae222845979aec67c615d1c842b4002c7666fb9"
 dependencies = [
  "byteorder",
  "bytes",
