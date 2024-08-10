@@ -39,8 +39,7 @@
       "deb": {
         "depends": []
       }
-    },
-    "createUpdaterArtifacts": false
+    }
   },
   "productName": "Dorion",
   "version": "5.0.1",
