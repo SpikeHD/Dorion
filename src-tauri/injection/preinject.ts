@@ -55,7 +55,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     if (target === '_blank' || !target) {
       window.__TAURI__.shell.open(url as string)
       return null
-    } 
+    }
 
     // Otherwise, use the native open
     return window.nativeOpen(url as string, target, features)

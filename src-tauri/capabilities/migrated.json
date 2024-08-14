@@ -13,6 +13,7 @@
     "core:resources:default",
     "core:menu:default",
     "core:tray:default",
+    "shell:default",
     "process:default",
     "autostart:default",
     "window-state:default",
