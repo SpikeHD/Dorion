@@ -4,9 +4,10 @@ use crate::log;
 
 pub fn register_deep_link_handler(app: &tauri::AppHandle) {
   let handle = app.clone();
-  app.listen("dorion://open", move |url| {
-    log!("Received deep link message: {:?}", url);
 
+  log!("Registering deep link handler...");
+
+  app.listen("deep-link://open", move |_| {
     let win = handle.get_webview_window("main");
 
     if win.is_none() {
