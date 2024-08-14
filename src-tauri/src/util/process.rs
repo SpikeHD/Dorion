@@ -5,7 +5,7 @@ pub fn process_already_exists() -> bool {
   let mut system = System::new_all();
   system.refresh_all();
 
-  for p in system.processes_by_name("Dorion") {
+  for p in system.processes_by_name("dorion") {
     if std::process::id() != p.pid().as_u32() {
       exists = true;
       break;
