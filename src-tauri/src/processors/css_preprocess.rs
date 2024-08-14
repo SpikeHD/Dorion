@@ -146,7 +146,6 @@ pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: Stri
 
   // Now localize images to base64 data representations
   new_css = localize_images(win.clone(), new_css).await;
-  new_css = localize_fonts(win.clone(), new_css).await;
 
   // If we need to cache css, do that
   if get_config().cache_css.unwrap_or(true) {
@@ -265,100 +264,6 @@ pub async fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
       Some((
         url.to_owned(),
         format!("data:image/{};base64,{}", filetype, b64),
-      ))
-    }));
-  }
-
-  for task in tasks {
-    let result = match task.join() {
-      Ok(r) => r,
-      Err(e) => {
-        log!("Error joining thread: {:?}", e);
-        continue;
-      }
-    };
-
-    if result.is_none() {
-      continue;
-    }
-
-    let (url, b64) = result.unwrap();
-
-    new_css = new_css.replace(url.as_str(), b64.as_str());
-  }
-
-  new_css
-}
-
-async fn localize_fonts(win: tauri::WebviewWindow, css: String) -> String {
-  let font_reg = Regex::new(
-    r#"@font-face.{0,1}\{(?:.|\n)+?src:.{0,1}url\((?:'|"|)(http.+?)\.([a-zA-Z0-9]{0,5})(?:'|"|)\)"#,
-  )
-  .unwrap();
-  let mut new_css = css.clone();
-  let matches = font_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
-
-  // This could be pretty computationally expensive for just a count, so I should change this sometime
-  let count = font_reg
-    .captures_iter(Box::leak(css.into_boxed_str()))
-    .count();
-
-  let mut tasks = Vec::new();
-
-  // Check if the matches iter is more than 50
-  // If it is, we should just skip it
-  if count > 50 {
-    win
-      .emit(
-        "loading_log",
-        format!("Too many fonts to process ({}), skipping...", count),
-      )
-      .unwrap_or_default();
-    return new_css;
-  }
-
-  for groups in matches {
-    let url = groups.get(1).unwrap().as_str();
-    let filetype = groups.get(2).unwrap().as_str();
-    let full_url = format!("{}.{}", url, filetype);
-
-    // CORS allows discord media
-    if url.is_empty()
-      || url.contains("cdn.discordapp")
-      || url.contains("discord.com/assets")
-      || url.contains("fonts.gstatic.com")
-    {
-      continue;
-    }
-
-    let win_clone = win.clone(); // Clone the Window handle for use in the async block
-
-    tasks.push(std::thread::spawn(move || {
-      log!("Getting: {}", &full_url);
-
-      let response = match reqwest::blocking::get(&full_url) {
-        Ok(r) => r,
-        Err(e) => {
-          log!("Request failed: {}", e);
-          log!("URL: {}", &full_url);
-
-          win_clone
-            .emit("loading_log", "A font failed to import...".to_string())
-            .unwrap_or_default();
-
-          return None;
-        }
-      };
-      let bytes = response.bytes().unwrap();
-      let b64 = general_purpose::STANDARD.encode(&bytes);
-
-      win_clone
-        .emit("loading_log", format!("Processed font import: {}", &url))
-        .unwrap_or_default();
-
-      Some((
-        full_url.to_owned(),
-        format!("data:font/{};charset=utf-8;base64,{}", filetype, b64),
       ))
     }));
   }
