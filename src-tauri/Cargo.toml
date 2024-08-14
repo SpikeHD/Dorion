@@ -17,6 +17,9 @@ lto = true
 [build-dependencies]
 tauri-build = { version = "2.0.0-beta", features = [] }
 
+[patch.crates-io]
+tauri = { git = "https://github.com/tauri-apps/tauri", branch = "dev" }
+
 [dependencies]
 async-recursion = "1.1.1"
 base64 = "0.22.1"
@@ -25,7 +28,7 @@ include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 
-tauri = { version = "2.0.0-beta", features = ["macos-private-api", "devtools", "tray-icon"] }
+tauri = { version = "2.0.0-rc", git = "https://github.com/tauri-apps/tauri", branch = "dev", features = ["macos-private-api", "devtools", "tray-icon"] }
 tauri-plugin-shell = "2.0.0-rc"
 tauri-plugin-deep-link = "2.0.0-rc"
 tauri-plugin-process = "2.0.0-rc"

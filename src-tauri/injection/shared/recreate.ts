@@ -3,17 +3,13 @@ import { isJson } from './util'
 export function proxyFetch() {
   window.nativeFetch = window.fetch
 
-  // Delete original fetch before we overwrite it
-  // @ts-expect-error womp womp
-  delete window.fetch
-
   window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
     const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.com)(?:\/.*)?/g
     const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native OR its a relative URL
-    if (url.toString().match(discordReg) || url.toString().startsWith('/')) {
+    if (url.toString().match(discordReg) || url.toString().startsWith('ipc://') || url.toString().startsWith('/')) {
       // Block science though!
       if (url.toString().match(scienceReg)) {
         console.log(`[Fetch Proxy] Blocked URL: ${url}`)
@@ -44,28 +40,10 @@ export function proxyFetch() {
       }
     }
 
-    // TODO this seems to hang
     const response = await http.fetch(url, {
       responseType: 3,
       ...options
     }).catch((e: Error) => console.error('[Proxy Fetch] Failed to fetch: ', e))
-
-    // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
-    response.json = async () => JSON.parse(await response.text())
-    response.text = async () => {
-      // Decode binary array to string
-      return response.data.reduce((data: string, byte: number) => data + String.fromCharCode(byte), '')
-    }
-    response.arrayBuffer = async () => {
-      // Create a new arraybuffer
-      const buffer = new ArrayBuffer(response.data.length)
-      const view = new Uint8Array(buffer)
-
-      // Copy the data over
-      response.data.forEach((byte: number, i: number) => view[i] = byte)
-
-      return buffer
-    }
 
     response.headers = new Headers(response.headers)
 
@@ -76,7 +54,7 @@ export function proxyFetch() {
 export function proxyXHR() {
   const open = XMLHttpRequest.prototype.open
   
-  XMLHttpRequest.prototype.open = function(...args: any[]) {
+  XMLHttpRequest.prototype.open = function(...args: unknown[]) {
     // @ts-expect-error this is fine
     open.apply(this, args)
 
