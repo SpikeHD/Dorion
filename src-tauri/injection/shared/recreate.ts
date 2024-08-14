@@ -45,8 +45,6 @@ export function proxyFetch() {
       ...options
     }).catch((e: Error) => console.error('[Proxy Fetch] Failed to fetch: ', e))
 
-    response.headers = new Headers(response.headers)
-
     return response
   }
 }
@@ -75,10 +73,19 @@ export function proxyXHR() {
 }
 
 export function createLocalStorage() {
+  const iframe = document.createElement('iframe')
+
   // Wait for document.head to exist, then append the iframe
   const interval = setInterval(() => {
     if (!document.head || window.localStorage) return
-    window.localStorage = window.__localStorage
+
+    document.head.append(iframe)
+    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage')
+    iframe.remove()
+
+    if (!pd) return
+
+    Object.defineProperty(window, 'localStorage', pd)
 
     console.log('[Create LocalStorage] Done!')
 

@@ -216,7 +216,7 @@ fn main() {
         .title(title.as_str())
         .initialization_script(
           format!(r#"
-            window.__localStorage = localStorage;{};{}
+            {};{}
           "#,
             PREINJECT.clone(),
             client_mods,
