@@ -40,7 +40,7 @@ pub fn process_already_exists() -> bool {
       }
 
       unsafe {
-        LOCK = Some(f.try_clone().unwrap());
+        LOCK = Some(f.try_clone().expect("Error cloning file handle"));
       }
     }
     Err(e) => {
