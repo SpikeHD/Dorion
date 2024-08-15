@@ -38,7 +38,6 @@ tauri-plugin-http = "2.0.0-rc"
 # window blur
 window-vibrancy = "0.5.0"
 
-file-lock = "2.1.11"
 reqwest = { version = "0.12.5", features = ["blocking"] }
 phf = "0.11.2"
 sysinfo = "0.30"
@@ -49,6 +48,7 @@ regex = "1.10"
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.14.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
+fs4 = { version = "0.9.1", features = ["sync"] }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "2.0"

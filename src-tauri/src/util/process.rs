@@ -1,11 +1,12 @@
 use std::fs;
-use file_lock::{FileLock, FileOptions};
+use std::fs::File;
+use fs4::fs_std::FileExt;
 
 use crate::log;
 
 use super::paths::get_config_dir;
 
-static mut LOCK: Option<FileLock> = None;
+static mut LOCK: Option<File> = None;
 
 pub fn process_already_exists() -> bool {
   // We store a .running file in the config directory
@@ -26,23 +27,27 @@ pub fn process_already_exists() -> bool {
   }
 
   // Check if we can get a lock on the file with file_lock
-  let options = FileOptions::new()
-    .write(true)
-    .read(true)
-    .create(true);
-  let file = FileLock::lock(running_file, true, options);
+  let file = File::create(running_file);
 
   match file {
-    Ok(file) => {
+    Ok(f) => {
+      match f.try_lock_exclusive() {
+        Ok(_) => {}
+        Err(e) => {
+          log!("Error locking file: {:?}", e);
+          return true
+        }
+      }
+
       unsafe {
-        LOCK = Some(file);
+        LOCK = Some(f.try_clone().unwrap());
       }
     }
     Err(e) => {
-      log!("Error locking file: {:?}", e);
+      log!("Error getting file: {:?}", e);
       return true
     }
   }
 
-   false
+  false
 }

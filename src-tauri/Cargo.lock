@@ -1100,7 +1100,7 @@ dependencies = [
  "device_query",
  "dirs 5.0.1",
  "embed_plist",
- "file-lock",
+ "fs4",
  "include-flate",
  "objc",
  "objc-foundation",
@@ -1301,16 +1301,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "file-lock"
-version = "2.1.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "040b48f80a749da50292d0f47a1e2d5bf1d772f52836c07f64bfccc62ba6e664"
-dependencies = [
- "cc",
- "libc",
-]
-
-[[package]]
 name = "flate2"
 version = "1.0.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1397,6 +1387,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "fs4"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8c6b3bd49c37d2aa3f3f2220233b29a7cd23f79d1fe70e5337d25fb390793de"
+dependencies = [
+ "rustix",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
