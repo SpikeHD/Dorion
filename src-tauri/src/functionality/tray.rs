@@ -1,9 +1,6 @@
 use include_flate::flate;
 use tauri::{
-  image::Image,
-  menu::{MenuBuilder, MenuItemBuilder},
-  tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-  AppHandle, Manager,
+  image::Image, menu::{MenuBuilder, MenuItemBuilder}, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, App, AppHandle, Manager
 };
 
 use crate::log;
@@ -31,12 +28,12 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
     _ => Image::new(&DEFAULT, 48, 48),
   };
 
-  if let Some(tray) = app.tray_by_id("main") {
+  if let Some(tray) = app.tray_by_id("1") {
     tray.set_icon(Some(icon)).unwrap_or_default();
   }
 }
 
-pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
+pub fn create_tray(app: &App) -> Result<(), tauri::Error> {
   let open_item = MenuItemBuilder::with_id("open", "Open").build(app)?;
   let reload_item = MenuItemBuilder::with_id("reload", "Reload").build(app)?;
   let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
@@ -44,9 +41,11 @@ pub fn create_tray(app: &tauri::App) -> Result<(), tauri::Error> {
 
   let menu = MenuBuilder::new(app)
     .items(&[&open_item, &reload_item, &restart_item, &quit_item])
+    .id("1")
     .build()?;
 
-  TrayIconBuilder::with_id("main")
+  TrayIconBuilder::new()
+    .icon(Image::new(&DEFAULT, 48, 48))
     .menu(&menu)
     .on_menu_event(move |app, event| match event.id().as_ref() {
       "quit" => {

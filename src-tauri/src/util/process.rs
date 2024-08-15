@@ -16,7 +16,7 @@ pub fn process_already_exists() -> bool {
 
   if !running_file.exists() {
     // Create the file
-    match fs::File::create(running_file) {
+    match fs::File::create(&running_file) {
       Ok(_) => {}
       Err(e) => {
         log!("Error creating file: {:?}", e);
@@ -25,7 +25,7 @@ pub fn process_already_exists() -> bool {
   }
 
   // Check if we can get a lock on the file with file_lock
-  let file = File::create(&running_file);
+  let file = File::create(running_file);
 
   match file {
     Ok(f) => {

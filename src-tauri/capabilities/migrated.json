@@ -20,6 +20,7 @@
     "autostart:default",
     "window-state:default",
     "notification:default",
+    "http:default",
     {
       "identifier": "http:default",
       "allow": [

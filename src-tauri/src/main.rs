@@ -107,7 +107,7 @@ fn main() {
     // TODO On linux (maybe not all distros but definitely mine), this will infinitely re-open Dorion. I guess the tauri deep
     // link handler has changed to actually register the deep link as a protocol for use when the program isn't running
     // but whatever, future problem for future me
-    #[cfg(not(target = "linux"))]
+    #[cfg(not(target_os = "linux"))]
     helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
     // Exit
@@ -213,7 +213,12 @@ fn main() {
       // Init plugin list
       plugin::get_new_plugins();
 
-      functionality::tray::create_tray(app).unwrap_or_default();
+      match functionality::tray::create_tray(app) {
+        Ok(_) => {}
+        Err(e) => {
+          log!("Error creating tray icon: {:?}", e);
+        }
+      }
 
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
