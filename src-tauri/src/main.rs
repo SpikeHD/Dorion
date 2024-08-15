@@ -104,6 +104,10 @@ fn main() {
   if process::process_already_exists() && !config.multi_instance.unwrap_or(false) {
     log!("Dorion already open in another process, exiting...");
     // Send the dorion://open deep link request
+    // TODO On linux (maybe not all distros but definitely mine), this will infinitely re-open Dorion. I guess the tauri deep
+    // link handler has changed to actually register the deep link as a protocol for use when the program isn't running
+    // but whatever, future problem for future me
+    #[cfg(not(target = "linux"))]
     helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
     // Exit
