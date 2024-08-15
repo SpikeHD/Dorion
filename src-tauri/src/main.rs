@@ -98,9 +98,6 @@ fn main() {
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
 
-  log!("multi_instance: {}", config.multi_instance.unwrap_or(false));
-  log!("process_already_exists: {}", process::process_already_exists());
-
   // If another process of Dorion is already open, show a dialog
   // in the future I want to actually *reveal* the other runnning process
   // instead of showing a popup, but this is fine for now
