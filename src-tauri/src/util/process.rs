@@ -22,8 +22,6 @@ pub fn process_already_exists() -> bool {
         log!("Error creating file: {:?}", e);
       }
     }
-
-    return false;
   }
 
   // Check if we can get a lock on the file with file_lock
