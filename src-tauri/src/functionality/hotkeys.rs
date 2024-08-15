@@ -107,12 +107,10 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
         let keycodes = keys
           .iter()
           .map(|key| {
-            js_keycode_to_key(key.code.clone())
-              .unwrap_or_else(|| {
-                log!("Error converting key: {:?}", key);
-                Keycode::Key0
-              })
-              .clone()
+            js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
+              log!("Error converting key: {:?}", key);
+              Keycode::Key0
+            })
           })
           .collect::<Vec<Keycode>>();
 
@@ -151,10 +149,11 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 
         // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
         // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
-        if action == "PUSH_TO_TALK" && all_pressed {
-          if !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed) {
-            all_pressed = false;
-          }
+        if action == "PUSH_TO_TALK"
+          && all_pressed
+          && !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed)
+        {
+          all_pressed = false;
         }
 
         if all_pressed && !combo.pressed {

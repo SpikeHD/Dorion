@@ -1,7 +1,7 @@
 use include_flate::flate;
 use regex::Regex;
 use std::collections::HashMap;
-  
+
 use crate::{log, processors::js_preprocess::eval_js_imports};
 
 use super::plugin::get_plugin_list;

@@ -1,4 +1,4 @@
-use tauri::{Manager, Emitter};
+use tauri::{Emitter, Manager};
 
 use crate::log;
 use crate::util::paths::{config_is_local, updater_dir};

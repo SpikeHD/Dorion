@@ -1,10 +1,10 @@
-use tauri::Listener;
 use rsrpc::{
   detection::{DetectableActivity, Executable},
   RPCServer,
 };
 use std::sync::{Arc, Mutex};
 use sysinfo::System;
+use tauri::Listener;
 use window_titles::ConnectionTrait;
 
 use crate::util::paths::custom_detectables_path;

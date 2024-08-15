@@ -1,6 +1,6 @@
+use fs4::fs_std::FileExt;
 use std::fs;
 use std::fs::File;
-use fs4::fs_std::FileExt;
 
 use crate::log;
 
@@ -33,7 +33,7 @@ pub fn process_already_exists() -> bool {
         Ok(_) => {}
         Err(e) => {
           log!("Error locking file: {:?}", e);
-          return true
+          return true;
         }
       }
 
@@ -43,7 +43,7 @@ pub fn process_already_exists() -> bool {
     }
     Err(e) => {
       log!("Error getting file: {:?}", e);
-      return true
+      return true;
     }
   }
 

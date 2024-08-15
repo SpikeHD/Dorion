@@ -1,6 +1,9 @@
 use include_flate::flate;
 use tauri::{
-  image::Image, menu::{MenuBuilder, MenuItemBuilder}, tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent}, App, AppHandle, Manager
+  image::Image,
+  menu::{MenuBuilder, MenuItemBuilder},
+  tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+  App, AppHandle, Manager,
 };
 
 use crate::log;
@@ -51,14 +54,13 @@ pub fn create_tray(app: &App) -> Result<(), tauri::Error> {
       "quit" => {
         app.exit(0);
       }
-      "open" => match app.get_webview_window("main") {
-        Some(win) => {
+      "open" => {
+        if let Some(win) = app.get_webview_window("main") {
           win.show().unwrap_or_default();
           win.set_focus().unwrap_or_default();
           win.unminimize().unwrap_or_default();
         }
-        None => {}
-      },
+      }
       "restart" => {
         app.restart();
       }
