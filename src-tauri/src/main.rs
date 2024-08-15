@@ -107,7 +107,7 @@ fn main() {
     helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
     // Exit
-    std::process::exit(0);
+    return;
   }
 
   // Safemode check
