@@ -20,8 +20,10 @@ pub fn disable_dma() {
 
     match info.device_type {
       DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu => {
-        log!("NVIDIA GPU detected, disabling DMA");
-        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        if info.name.contains("NVIDIA") {
+          log!("NVIDIA GPU detected, disabling DMA");
+          std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        }
       }
       _ => {}
     }
