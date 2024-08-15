@@ -4,7 +4,7 @@ use std::fs;
 
 use crate::functionality::hotkeys::KeyStruct;
 use crate::log;
-use crate::util::paths::get_config_dir;
+use crate::util::paths::get_config_file;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -40,14 +40,14 @@ pub struct Config {
 }
 
 pub fn init() {
-  get_config_dir();
+  get_config_file();
 }
 
 #[tauri::command]
 pub fn read_config_file() -> String {
   init();
 
-  let config_file = get_config_dir();
+  let config_file = get_config_file();
 
   fs::read_to_string(config_file).expect("Config does not exist!")
 }
@@ -56,7 +56,7 @@ pub fn read_config_file() -> String {
 pub fn write_config_file(contents: String) {
   init();
 
-  let config_file = get_config_dir();
+  let config_file = get_config_file();
 
   fs::write(config_file, contents).expect("Error writing config!")
 }

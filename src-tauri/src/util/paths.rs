@@ -39,11 +39,18 @@ pub fn get_config_dir() -> PathBuf {
   #[cfg(not(target_os = "windows"))]
   let appdata = dirs::config_dir().unwrap_or_default();
 
-  let config_file = appdata.join("dorion").join("config.json");
+  let config_dir = appdata.join("dorion");
 
-  if fs::metadata(appdata.join("dorion")).is_err() {
+  if fs::metadata(&config_dir).is_err() {
     fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
   }
+
+  config_dir
+}
+
+pub fn get_config_file() -> PathBuf {
+  let config_dir = get_config_dir();
+  let config_file = config_dir.join("config.json");
 
   // Write default config if it doesn't exist
   if fs::metadata(&config_file).is_err() {
