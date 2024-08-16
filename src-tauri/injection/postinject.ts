@@ -21,7 +21,7 @@ const observer = new MutationObserver(() => {
 
     // Ensure top bar exists if we want it
     if (window.__DORION_CONFIG__.use_native_titlebar)
-      window.__TAURI__.webviewWindow.setDecorations(true)
+      window.__TAURI__.webviewWindow.getCurrentWebviewWindow().setDecorations(true)
 
     // This needs to render after discord is loaded
     if (
