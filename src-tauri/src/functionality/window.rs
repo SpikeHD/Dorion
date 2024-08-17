@@ -117,6 +117,7 @@ pub fn enable_webrtc(window: &tauri::WebviewWindow) {
       let settings = WebViewExt::settings(&wv).unwrap_or_default();
 
       settings.set_enable_webrtc(true);
+      settings.set_enable_media_stream(true);
 
       // We also need to handle permission requests
       wv.connect_permission_request(|_, req| {
