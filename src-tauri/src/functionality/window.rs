@@ -8,6 +8,8 @@ use crate::log;
 use crate::util::window_helpers::window_zoom_level;
 use crate::window::blur::apply_effect;
 
+use super::tray;
+
 // Minimize
 #[tauri::command]
 pub fn minimize(win: tauri::WebviewWindow) {
@@ -85,6 +87,13 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     use crate::gpu::disable_hardware_accel_linux;
     disable_hardware_accel_linux(window);
     enable_webrtc(window);
+  }
+
+  match tray::create_tray(app) {
+    Ok(_) => {}
+    Err(e) => {
+      log!("Error creating tray icon: {:?}", e);
+    }
   }
 
   window_zoom_level(window.clone(), None);

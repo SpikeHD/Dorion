@@ -213,13 +213,6 @@ fn main() {
       // Init plugin list
       plugin::get_new_plugins();
 
-      match functionality::tray::create_tray(app) {
-        Ok(_) => {}
-        Err(e) => {
-          log!("Error creating tray icon: {:?}", e);
-        }
-      }
-
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WebviewWindowBuilder::new(app, "main", url_ext)

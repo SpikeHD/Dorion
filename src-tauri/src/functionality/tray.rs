@@ -36,7 +36,7 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
   }
 }
 
-pub fn create_tray(app: &App) -> Result<(), tauri::Error> {
+pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
   let open_item = MenuItemBuilder::with_id("open", "Open").build(app)?;
   let reload_item = MenuItemBuilder::with_id("reload", "Reload").build(app)?;
   let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
