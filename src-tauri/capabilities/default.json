@@ -1,6 +1,6 @@
 {
-  "identifier": "migrated",
-  "description": "permissions that were migrated from v1",
+  "identifier": "default",
+  "description": "Default permissions",
   "local": true,
   "platforms": [
     "macOS",
@@ -25,7 +25,6 @@
     "autostart:default",
     "window-state:default",
     "notification:default",
-    "http:default",
     {
       "identifier": "http:default",
       "allow": [
