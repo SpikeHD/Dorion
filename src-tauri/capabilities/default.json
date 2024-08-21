@@ -1,7 +1,13 @@
 {
   "identifier": "default",
   "description": "Default permissions",
-  "local": true,
+  "local": false,
+  "remote": {
+    "urls": [
+      "https://discord.com/*",
+      "https://*.discord.com/*"
+    ]
+  },
   "platforms": [
     "macOS",
     "windows",
