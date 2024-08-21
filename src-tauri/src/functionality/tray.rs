@@ -3,7 +3,7 @@ use tauri::{
   image::Image,
   menu::{MenuBuilder, MenuItemBuilder},
   tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-  App, AppHandle, Manager,
+  AppHandle, Manager,
 };
 
 use crate::log;
