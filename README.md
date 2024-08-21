@@ -88,6 +88,7 @@
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
 * [Contributing](#contributing)
+  * [Contributors](#contributors)
 * [Screenshots](#screenshots)
 
 # Package Repositories
@@ -276,6 +277,12 @@ so if you download a plugin or theme, just pop it into the `plugins`/`themes` fo
 # Contributing
 
 Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md](https://github.com/SpikeHD/Dorion/blob/main/CONTRIBUTING.md)
+
+## Contributors
+
+<a href="https://github.com/spikehd/dorion/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=spikehd/dorion" />
+</a>
 
 # Screenshots
 
