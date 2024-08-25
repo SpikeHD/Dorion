@@ -31,8 +31,6 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  log!("No local config file found. Using default.");
-
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
 

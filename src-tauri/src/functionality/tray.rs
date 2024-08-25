@@ -8,7 +8,7 @@ use tauri::{
 
 use crate::log;
 
-flate!(static DEFAULT: [u8] from "./icons/icon.png");
+flate!(static DEFAULT: [u8] from "./icons/32x32.png");
 flate!(static CONNECTED: [u8] from "./icons/tray/connected.png");
 flate!(static MUTED: [u8] from "./icons/tray/muted.png");
 flate!(static DEAFENED: [u8] from "./icons/tray/deafened.png");
@@ -21,17 +21,25 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
   log!("Setting tray icon to {}", event.as_str());
 
   let icon = match event.as_str() {
-    "connected" => Image::new(&CONNECTED, 48, 48),
-    "disconnected" => Image::new(&DEFAULT, 48, 48),
-    "muted" => Image::new(&MUTED, 48, 48),
-    "deafened" => Image::new(&DEAFENED, 48, 48),
-    "speaking" => Image::new(&SPEAKING, 48, 48),
-    "video" => Image::new(&VIDEO, 48, 48),
-    "streaming" => Image::new(&STREAMING, 48, 48),
-    _ => Image::new(&DEFAULT, 48, 48),
+    "connected" => Image::from_bytes(&CONNECTED),
+    "disconnected" => Image::from_bytes(&DEFAULT),
+    "muted" => Image::from_bytes(&MUTED),
+    "deafened" => Image::from_bytes(&DEAFENED),
+    "speaking" => Image::from_bytes(&SPEAKING),
+    "video" => Image::from_bytes(&VIDEO),
+    "streaming" => Image::from_bytes(&STREAMING),
+    _ => Image::from_bytes(&DEFAULT),
   };
 
-  if let Some(tray) = app.tray_by_id("1") {
+  let icon = match icon {
+    Ok(icon) => icon,
+    Err(e) => {
+      log!("Error creating tray icon: {}", e);
+      return;
+    }
+  };
+
+  if let Some(tray) = app.tray_by_id("main") {
     tray.set_icon(Some(icon)).unwrap_or_default();
   }
 }
@@ -44,11 +52,11 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
 
   let menu = MenuBuilder::new(app)
     .items(&[&open_item, &reload_item, &restart_item, &quit_item])
-    .id("1")
+    .id("main")
     .build()?;
 
-  TrayIconBuilder::new()
-    .icon(Image::new(&DEFAULT, 48, 48))
+  TrayIconBuilder::with_id("main")
+    .icon(Image::from_bytes(&DEFAULT)?)
     .menu(&menu)
     .on_menu_event(move |app, event| match event.id().as_ref() {
       "quit" => {
