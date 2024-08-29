@@ -203,6 +203,7 @@ jobs:
           themes/
           icons/
           injection/
+          extension/
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-latest'
