@@ -1,4 +1,5 @@
 use tauri::WebviewWindow;
+use crate::log;
 
 #[cfg(target_os = "windows")]
 pub fn add_extension(win: &WebviewWindow) {
@@ -6,8 +7,6 @@ pub fn add_extension(win: &WebviewWindow) {
     ICoreWebView2Profile7, ICoreWebView2_13
   }, ProfileAddBrowserExtensionCompletedHandler};
   use windows::core::{Interface, HSTRING};
-
-  use crate::log;
 
   win.with_webview(|webview| unsafe {
     let core = match webview
