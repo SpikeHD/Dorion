@@ -122,7 +122,7 @@ pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: Stri
 
     let (url, processed) = result.unwrap();
 
-    println!(
+    log!(
       "Replacing URL: {} with CSS that is {} characters long",
       url,
       processed.len()
