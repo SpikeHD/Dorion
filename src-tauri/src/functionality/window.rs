@@ -8,6 +8,7 @@ use crate::log;
 use crate::util::window_helpers::window_zoom_level;
 use crate::window::blur::apply_effect;
 
+use super::extension::add_extension;
 use super::tray;
 
 // Minimize
@@ -95,6 +96,8 @@ pub fn after_build(window: &tauri::WebviewWindow) {
       log!("Error creating tray icon: {:?}", e);
     }
   }
+
+  add_extension(&window);
 
   window_zoom_level(window.clone(), None);
 }

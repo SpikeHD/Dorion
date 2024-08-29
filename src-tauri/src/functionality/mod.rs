@@ -1,4 +1,5 @@
 pub mod cache;
+pub mod extension;
 pub mod hotkeys;
 pub mod keyboard;
 pub mod rpc;
