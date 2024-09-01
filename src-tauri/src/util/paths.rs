@@ -16,7 +16,7 @@ pub fn is_portable() -> bool {
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().to_path_buf();
 
   if is_portable() {
     // Create file if it doesn't exist
