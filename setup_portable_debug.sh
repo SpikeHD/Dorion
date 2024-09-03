@@ -5,5 +5,10 @@
 
 BASE_PATH=./src-tauri/target/debug/
 
-# Create config.json with empty JSON oject
-echo "{}" > $BASE_PATH/config.json
+# mkdir if needed
+if [ ! -d "$BASE_PATH" ]; then
+  mkdir -p $BASE_PATH
+fi
+
+# Create a .portable file
+echo "" > $BASE_PATH/.portable
