@@ -225,19 +225,24 @@ fn main() {
       if !config.multi_instance.unwrap_or(false) {
         log!("Multi-instance disabled, registering single instance plugin...");
 
-        app.handle().plugin(tauri_plugin_single_instance::init(move |app, _argv, _cwd| {
-          let win = match app.get_webview_window("main") {
-            Some(win) => win,
-            None => {
-              log!("No windows open with name \"main\"(???)");
-              return;
+        app
+          .handle()
+          .plugin(tauri_plugin_single_instance::init(
+            move |app, _argv, _cwd| {
+              let win = match app.get_webview_window("main") {
+                Some(win) => win,
+                None => {
+                  log!("No windows open with name \"main\"(???)");
+                  return;
+                }
+              };
+
+              win.set_focus().unwrap_or_default();
+              win.unminimize().unwrap_or_default();
+              win.show().unwrap_or_default();
             },
-          };
-    
-          win.set_focus().unwrap_or_default();
-          win.unminimize().unwrap_or_default();
-          win.show().unwrap_or_default();
-        })).unwrap_or_else(|_| log!("Failed to register single instance plugin"));
+          ))
+          .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
       }
 
       // If safemode is enabled, stop here
