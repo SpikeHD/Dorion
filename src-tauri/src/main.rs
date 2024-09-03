@@ -30,7 +30,6 @@ use crate::{
 };
 
 mod config;
-mod deep_link;
 mod functionality;
 mod gpu;
 mod injection;
@@ -125,15 +124,13 @@ fn main() {
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_notification::init())
-    .plugin(tauri_plugin_deep_link::init())
-    .plugin(tauri_plugin_window_state::Builder::new().build())
     .plugin(tauri_plugin_autostart::init(
       tauri_plugin_autostart::MacosLauncher::LaunchAgent,
       None,
     ))
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_notification::init())
-    .plugin(tauri_plugin_window_state::Builder::default().build())
+    .plugin(tauri_plugin_window_state::Builder::new().build())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       functionality::window::minimize,
@@ -240,6 +237,25 @@ fn main() {
 
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);
+
+      // Multi-instance check
+      if !config.multi_instance.unwrap_or(false) {
+        log!("Multi-instance disabled, registering single instance plugin...");
+        
+        app.handle().plugin(tauri_plugin_single_instance::init(move |app, _argv, _cwd| {
+          let win = match app.get_webview_window("main") {
+            Some(win) => win,
+            None => {
+              log!("No windows open with name \"main\"(???)");
+              return;
+            },
+          };
+    
+          win.set_focus().unwrap_or_default();
+          win.unminimize().unwrap_or_default();
+          win.show().unwrap_or_default();
+        })).unwrap_or_else(|_| log!("Failed to register single instance plugin"));
+      }
 
       // If safemode is enabled, stop here
       if safemode {

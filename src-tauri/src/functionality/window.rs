@@ -3,7 +3,6 @@ use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
-use crate::deep_link;
 use crate::log;
 use crate::util::window_helpers::window_zoom_level;
 use crate::window::blur::apply_effect;
@@ -58,11 +57,6 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   if config.keybinds_enabled.unwrap_or(false) {
     log!("Starting global keybind watcher...");
     super::hotkeys::start_keybind_watcher(window);
-  }
-
-  // Deep link registry
-  if !config.multi_instance.unwrap_or(false) {
-    deep_link::register_deep_link_handler(app);
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
