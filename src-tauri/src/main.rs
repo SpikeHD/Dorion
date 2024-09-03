@@ -20,7 +20,6 @@ use util::{
   logger::log,
   notifications,
   paths::get_webdata_dir,
-  process,
   window_helpers::{self, clear_cache_check, set_user_agent},
 };
 
@@ -96,22 +95,6 @@ fn main() {
 
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
-
-  // If another process of Dorion is already open, show a dialog
-  // in the future I want to actually *reveal* the other runnning process
-  // instead of showing a popup, but this is fine for now
-  if process::process_already_exists() && !config.multi_instance.unwrap_or(false) {
-    log!("Dorion already open in another process, exiting...");
-    // Send the dorion://open deep link request
-    // TODO On linux (maybe not all distros but definitely mine), this will infinitely re-open Dorion. I guess the tauri deep
-    // link handler has changed to actually register the deep link as a protocol for use when the program isn't running
-    // but whatever, future problem for future me
-    #[cfg(not(target_os = "linux"))]
-    helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
-
-    // Exit
-    return;
-  }
 
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
@@ -241,7 +224,7 @@ fn main() {
       // Multi-instance check
       if !config.multi_instance.unwrap_or(false) {
         log!("Multi-instance disabled, registering single instance plugin...");
-        
+
         app.handle().plugin(tauri_plugin_single_instance::init(move |app, _argv, _cwd| {
           let win = match app.get_webview_window("main") {
             Some(win) => win,
