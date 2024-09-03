@@ -97,7 +97,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     }
   }
 
-  add_extension(&window);
+  add_extension(window);
 
   window_zoom_level(window.clone(), None);
 }
