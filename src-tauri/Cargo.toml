@@ -43,7 +43,7 @@ device_query = "2.1.0"
 regex = "1.10"
 
 # rpc server
-rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.14.0" }
+rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.15.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 fs4 = { version = "0.9.1", features = ["sync"] }
 
