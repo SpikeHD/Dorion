@@ -122,6 +122,7 @@ jobs:
         run: |
           sudo apt-get install -y \
             libc6:armhf \
+            libapparmor1:armhf \
             libwebkit2gtk-4.1-dev:armhf \
             libssl-dev:armhf \
             gcc-arm-linux-gnueabihf
@@ -131,6 +132,7 @@ jobs:
         run: |
           sudo apt-get install -y \
             libc6:arm64 \
+            libapparmor1:arm64 \
             libwebkit2gtk-4.1-dev:arm64 \
             libssl-dev:arm64 \
             gcc-aarch64-linux-gnu
