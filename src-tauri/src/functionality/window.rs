@@ -5,6 +5,8 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::log;
 use crate::util::window_helpers::window_zoom_level;
+
+#[cfg(feature = "blur")]
 use crate::window::blur::apply_effect;
 
 use super::extension::add_extension;
@@ -76,6 +78,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     window.maximize().unwrap_or_default();
   }
 
+  #[cfg(feature = "blur")]
   apply_effect(
     window.clone(),
     config.blur.unwrap_or("none".to_string()).as_str(),

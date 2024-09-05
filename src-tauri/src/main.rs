@@ -141,7 +141,9 @@ fn main() {
       profiles::delete_profile,
       release::do_update,
       release::update_check,
+      #[cfg(feature = "rpc")]
       functionality::rpc::get_windows,
+      #[cfg(feature = "rpc")]
       functionality::rpc::get_local_detectables,
       functionality::hotkeys::get_keybinds,
       functionality::hotkeys::set_keybinds,
@@ -159,7 +161,9 @@ fn main() {
       helpers::open_themes,
       helpers::open_plugins,
       helpers::fetch_image,
+      #[cfg(feature = "blur")]
       window::blur::available_blurs,
+      #[cfg(feature = "blur")]
       window::blur::apply_effect,
       // window::blur::remove_effect,
       window_helpers::remove_top_bar,
@@ -258,6 +262,7 @@ fn main() {
       plugin::load_plugins(win.clone(), Some(true));
 
       // begin the RPC server if needed
+      #[cfg(feature = "rpc")]
       if get_config().rpc_server.unwrap_or(false) {
         let win_cln = win.clone();
         std::thread::spawn(|| {
