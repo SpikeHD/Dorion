@@ -3893,8 +3893,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.16.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.16.0#334aff318e6ce34e9671dc0ad4218c3165c41075"
+version = "0.16.1"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.16.1#ab66d46afc75b80237fbec6fda5aef4678bee283"
 dependencies = [
  "chrono",
  "rayon",
