@@ -71,7 +71,7 @@
 >
 > ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
 >
-> ***Ubuntu Users***: If you are on 24.04 or later, you may be unable to satisfy dependencies (`libwebkit2gtk-4.0` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241) & [more context](https://github.com/tauri-apps/tauri/issues/9662)).
+> ***Ubuntu Users***: If you are on 24.04 or later, and Dorion v5.0.1 or below, you may be unable to satisfy dependencies (`libwebkit2gtk-4.0` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241) & [more context](https://github.com/tauri-apps/tauri/issues/9662)).
 
 # Table of Contents
 
@@ -85,6 +85,8 @@
   * [Steps](#steps)
 * [Known Issues](#known-issues)
 * [Troubleshooting](#troubleshooting)
+  * [Windows](#windows)
+  * [Linux](#linux)
 * [TODO](#todo)
 * [Using Plugins and Themes](#using-plugins-and-themes)
 * [Contributing](#contributing)
@@ -93,7 +95,7 @@
 
 # Package Repositories
 
-I do not maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
+I do **not** maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
 
 * Windows:
   * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)): 
@@ -116,7 +118,7 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
     ```
 
 > [!NOTE]
-> Maintaining Dorion in a different package repository that I don't know about? Feel free to open a PR to add it here!
+> Maintaining Dorion in a different package repository that I don't know about? Feel free to [open a PR](https://github.com/SpikeHD/Dorion/pulls) to add it here!
 
 # Features
 
@@ -125,13 +127,18 @@ I do not maintain any instances of Dorion in any package repositories myself, ho
 * [Shelter](https://github.com/uwu/Shelter) included out of the box
 * Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
   * There is ***no*** BetterDiscord support... [yet](https://github.com/SpikeHD/Dorion/issues/91#issuecomment-1712269268)
-* Almost full [game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
+* Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
+  * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
+* Feature flags for picking and choosing features (when building from source) 
 * (Hopefully) better low-end system performance.
 * ARM support for ALL platforms
 
 ## Plugins
 
 Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also enable client mods like [Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page. If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
+
+> [!NOTE]
+> Want official support for another client mod? As long as it works on the web, feel free to submit a [feature request](https://github.com/SpikeHD/Dorion/issues/new/choose)!
 
 ## Themes
 
@@ -153,11 +160,11 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 </div>
 
-<sup>1</sup> While I am told it works fine, Windows 7 support is speculative and not guaranteed. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!).
+<sup>1</sup> While I am told it works fine, Windows 7 support is speculative and not guaranteed. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
 
 <sup>2</sup> Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is a bug in WebkitGTK.
 
-<sup>3</sup> Support for WebRTC is hidden behind a build-time flag that is not used in almost all distros. Even with support, Tauri v1 does not support a high enough version of WebkitGTK bindings to enable the functionality. This will be available when WebkitGTK ships with WebRTC support.
+<sup>3</sup> Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
 
 # Building
 
@@ -166,7 +173,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 * [NodeJS](https://nodejs.org)
 * [PNPM](https://pnpm.io/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
-* [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites/#1-system-dependencies)
+* [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)
 
 ## Steps
 
@@ -178,19 +185,13 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm install
     ```
 
-4. Build the minified versions of the JS/HTML files:
-
-    ```sh
-    pnpm build
-    ```
-
-5. Pull the latest shelter build
+4. Pull the latest shelter build (this is used as a backup if it cannot be fetched on the fly)
 
     ```sh
     pnpm shupdate
     ```
 
-6. Build!
+5. Build!
 
     ```sh
     # Build the updater
@@ -202,7 +203,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm tauri dev
     ```
 
-All built files will be in `src-tauri/target/(release|debug)/`. When using portably, the `icons` and `injection` folders are required. Installation files (eg. `.msi`) are located in `bundle/`
+All built files will be in `src-tauri/target/(release|debug)/`. Installation files (eg. `.msi`, `.deb`) are located in `bundle/`.
 
 # Known Issues
 
@@ -213,15 +214,24 @@ All built files will be in `src-tauri/target/(release|debug)/`. When using porta
 
 # Troubleshooting
 
-If you are having problems opening Dorion, or it instantly crashes, or something similar, try the following:
+## Windows
 
-* Install via MSI instead of the `.zip` file
-* Use the `.zip` file instead of the MSI
-* (If using the `.zip` file) make sure all files were extracted properly (`html`, `injection`, etc.)
-* [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-  * Fully uninstall and reinstall.
-  * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
-  * You can also try [uninstalling from the Command Prompt](https://superuser.com/a/1743626)
+* **Dorion not opening**
+  * Install via MSI instead of the `.zip` file
+  * Use the `.zip` file instead of the MSI
+  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion into it's own folder.
+  * [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+    * Fully uninstall and reinstall.
+    * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
+
+## Linux
+
+* **White/blank/frozen screen**
+  * Run Dorion with either, or both, of the following environment variables:
+    ```sh
+    WEBKIT_DISABLE_COMPOSITING_MODE=1
+    WEBKIT_DISABLE_DMABUF_RENDERER=1
+    ```
 
 # TODO
 
@@ -233,7 +243,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Webpack stuff
 * [x] Global push-to-talk
 * [x] Rich presence(?)
-  * [ ] FULL rich presence
+  * [x] FULL rich presence
 * [x] Custom keybinds
 * [ ] Helper API methods and events for plugins
 * [x] Backup localized themes
@@ -241,7 +251,7 @@ If you are having problems opening Dorion, or it instantly crashes, or something
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
 * [x] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
-* [ ] Move from `device_query` to `rdev` (since `device_query` doesn't work when spawned in a thread on MacOS)
+* [ ] Move from `device_query` to `rdev` (supports more keys. May also just attempt to contribute to `device_query`)
 * [x] API abstractions
 
 # Using Plugins and Themes
