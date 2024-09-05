@@ -21,14 +21,16 @@ const observer = new MutationObserver(() => {
 
     // Ensure top bar exists if we want it
     if (window.__DORION_CONFIG__.use_native_titlebar)
-      window.__TAURI__.webviewWindow.getCurrentWebviewWindow().setDecorations(true)
+      window.__TAURI__.core.invoke('set_decorations', { enable: true })
 
     // This needs to render after discord is loaded
     if (
       !window.__DORION_CONFIG__.use_native_titlebar &&
       !document.querySelector('#dorion_topbar')
-    )
+    ) {
+      window.__TAURI__.core.invoke('set_decorations', { enable: false })
       createTopBar()
+    }
 
     onClientLoad()
 

@@ -26,6 +26,11 @@ pub fn toggle_maximize(win: tauri::WebviewWindow) {
   }
 }
 
+#[tauri::command]
+pub fn set_decorations(win: tauri::WebviewWindow, enable: bool) {
+  win.set_decorations(enable).unwrap_or_default();
+}
+
 // Close
 #[tauri::command]
 pub fn close(win: tauri::WebviewWindow) {

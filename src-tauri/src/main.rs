@@ -118,6 +118,7 @@ fn main() {
       should_disable_plugins,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
+      functionality::window::set_decorations,
       functionality::window::close,
       css_preprocess::clear_css_cache,
       css_preprocess::localize_imports,
