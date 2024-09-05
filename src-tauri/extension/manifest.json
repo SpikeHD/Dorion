@@ -1,0 +1,16 @@
+{
+  "name": "Dorion Header Destroyer",
+  "version": "1.0",
+  "homepage_url": "https://github.com/SpikeHD/Dorion",
+  "description": "Destroy CSP in Discord request headers",
+  "manifest_version": 3,
+  "permissions": ["declarativeNetRequest"],
+  "host_permissions": ["*://*.discord.com/*"],
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "csp_disabler",
+      "path": "dnr-rules.json",
+      "enabled": true
+    }]
+  }
+}

@@ -1,5 +1,6 @@
 use std::{fs, path::PathBuf};
 
+use tauri::path::BaseDirectory;
 use tauri::Manager;
 
 use crate::config::{default_config, get_config};
@@ -15,7 +16,7 @@ pub fn is_portable() -> bool {
 pub fn get_config_dir() -> PathBuf {
   // First check for a local config file
   let current_exe = std::env::current_exe().unwrap_or_default();
-  let local_config_dir = current_exe.parent().unwrap().join("config.json");
+  let local_config_dir = current_exe.parent().unwrap().to_path_buf();
 
   if is_portable() {
     // Create file if it doesn't exist
@@ -30,19 +31,24 @@ pub fn get_config_dir() -> PathBuf {
     return local_config_dir;
   }
 
-  log!("No local config file found. Using default.");
-
   #[cfg(target_os = "windows")]
   let appdata = dirs::data_dir().unwrap_or_default();
 
   #[cfg(not(target_os = "windows"))]
   let appdata = dirs::config_dir().unwrap_or_default();
 
-  let config_file = appdata.join("dorion").join("config.json");
+  let config_dir = appdata.join("dorion");
 
-  if fs::metadata(appdata.join("dorion")).is_err() {
+  if fs::metadata(&config_dir).is_err() {
     fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
   }
+
+  config_dir
+}
+
+pub fn get_config_file() -> PathBuf {
+  let config_dir = get_config_dir();
+  let config_file = config_dir.join("config.json");
 
   // Write default config if it doesn't exist
   if fs::metadata(&config_file).is_err() {
@@ -203,7 +209,7 @@ pub fn get_webdata_dir() -> PathBuf {
   profiles.join(profile).join("webdata")
 }
 
-pub fn updater_dir(win: &tauri::Window) -> PathBuf {
+pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 
   if is_portable() {
@@ -213,8 +219,8 @@ pub fn updater_dir(win: &tauri::Window) -> PathBuf {
 
   win
     .app_handle()
-    .path_resolver()
-    .resolve_resource(PathBuf::from("updater"))
+    .path()
+    .resolve(PathBuf::from("updater"), BaseDirectory::Resource)
     .unwrap_or_default()
 }
 

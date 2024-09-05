@@ -62,19 +62,6 @@ fn open_folder(path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
   Ok(())
 }
 
-pub fn open_scheme(scheme: String) -> Result<(), Box<dyn std::error::Error>> {
-  #[cfg(target_os = "windows")]
-  Command::new("start").arg(scheme).spawn()?;
-
-  #[cfg(target_os = "macos")]
-  Command::new("open").arg(scheme).spawn()?;
-
-  #[cfg(target_os = "linux")]
-  Command::new("xdg-open").arg(scheme).spawn()?;
-
-  Ok(())
-}
-
 #[tauri::command]
 pub fn get_platform() -> &'static str {
   #[cfg(target_os = "windows")]

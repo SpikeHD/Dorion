@@ -22,7 +22,7 @@ pub fn clear_cache_check() {
 }
 
 #[tauri::command]
-pub fn set_clear_cache(win: tauri::Window) {
+pub fn set_clear_cache(win: tauri::WebviewWindow) {
   // Create a file called "clear_cache" in the appdata dir
   // This will be read by the window when it closes
   let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
@@ -51,7 +51,7 @@ pub fn clear_cache() {
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
+pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
   win
     .with_webview(move |webview| unsafe {
       let zoom = value.unwrap_or(
@@ -69,7 +69,7 @@ pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
 
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
-pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
+pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
   let zoom = value.unwrap_or(
     get_config()
       .zoom
@@ -85,30 +85,30 @@ pub fn window_zoom_level(win: tauri::Window, value: Option<f64>) {
 
 #[cfg(not(target_os = "macos"))]
 #[tauri::command]
-pub fn remove_top_bar(win: tauri::Window) {
+pub fn remove_top_bar(win: tauri::WebviewWindow) {
   win.set_decorations(false).unwrap_or(());
 }
 
 // Top bar is broken for MacOS currently
 #[cfg(target_os = "macos")]
 #[tauri::command]
-pub fn remove_top_bar(_win: tauri::Window) {}
+pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 
 #[cfg(target_os = "windows")]
-pub fn set_user_agent(win: &tauri::Window) {
+pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
   use windows::core::{Interface, HSTRING};
 
   win
     .with_webview(|webview| unsafe {
-      let settings: ICoreWebView2Settings2 = webview
+      let settings = webview
         .controller()
         .CoreWebView2()
         .expect("Failed to get CoreWebView2!")
         .Settings()
         .expect("Failed to get Settings!")
         .cast::<ICoreWebView2Settings2>()
-        .expect("Failed to cast to ICoreWebView2Settings2!");
+        .expect("Failed to cast settings!");
 
       settings
         .SetUserAgent(&HSTRING::from(USERAGENT))
@@ -120,7 +120,7 @@ pub fn set_user_agent(win: &tauri::Window) {
 }
 
 #[cfg(target_os = "linux")]
-pub fn set_user_agent(win: &tauri::Window) {
+pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use webkit2gtk::{SettingsExt, WebViewExt};
 
   win
@@ -134,7 +134,7 @@ pub fn set_user_agent(win: &tauri::Window) {
 }
 
 #[cfg(target_os = "macos")]
-pub fn set_user_agent(win: &tauri::Window) {
+pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use objc::{msg_send, sel, sel_impl};
   use objc_foundation::{INSString, NSString};
 

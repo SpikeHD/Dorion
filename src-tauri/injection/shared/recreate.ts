@@ -9,7 +9,7 @@ export function proxyFetch() {
     const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native OR its a relative URL
-    if (url.toString().match(discordReg) || url.toString().startsWith('/')) {
+    if (url.toString().match(discordReg) || url.toString().startsWith('ipc://') || url.toString().startsWith('/')) {
       // Block science though!
       if (url.toString().match(scienceReg)) {
         console.log(`[Fetch Proxy] Blocked URL: ${url}`)
@@ -43,26 +43,7 @@ export function proxyFetch() {
     const response = await http.fetch(url, {
       responseType: 3,
       ...options
-    })
-
-    // Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
-    response.json = async () => JSON.parse(await response.text())
-    response.text = async () => {
-      // Decode binary array to string
-      return response.data.reduce((data: string, byte: number) => data + String.fromCharCode(byte), '')
-    }
-    response.arrayBuffer = async () => {
-      // Create a new arraybuffer
-      const buffer = new ArrayBuffer(response.data.length)
-      const view = new Uint8Array(buffer)
-
-      // Copy the data over
-      response.data.forEach((byte: number, i: number) => view[i] = byte)
-
-      return buffer
-    }
-
-    response.headers = new Headers(response.headers)
+    }).catch((e: Error) => console.error('[Proxy Fetch] Failed to fetch: ', e))
 
     return response
   }
@@ -71,23 +52,17 @@ export function proxyFetch() {
 export function proxyXHR() {
   const open = XMLHttpRequest.prototype.open
   
-  XMLHttpRequest.prototype.open = function(...args: any[]) {
+  XMLHttpRequest.prototype.open = function(...args: unknown[]) {
+    const [_method, url] = args
+    const rgx = /\/api\/v.*\/(science|track)/g
+
+    if (String(url).match(rgx)) {
+      console.log(`[XHR Blocker] Blocked URL: ${url}`)
+      return
+    }
+
     // @ts-expect-error this is fine
     open.apply(this, args)
-
-    const [_method, url] = args
-    const send = this.send
-
-    this.send = function() {
-      const rgx = /\/api\/v.*\/(science|track)/g
-
-      if (!String(url).match(rgx)) {
-        // @ts-expect-error this is fine
-        return send.apply(this, args)
-      }
-
-      console.log(`[XHR Blocker] Blocked URL: ${url}`)
-    }
   }
 }
 

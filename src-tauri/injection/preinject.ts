@@ -1,6 +1,6 @@
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR } from './shared/recreate'
 import { safemodeTimer, typingAnim } from './shared/ui'
-import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm } from './shared/util'
+import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
 // Let's expose some stuff for use in plugins and such
@@ -15,7 +15,6 @@ window.Dorion = {
   },
   recreate: {
     createLocalStorage,
-    proxyFetch
   },
   window: {
     applyNotificationCount
@@ -42,7 +41,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 200))
   }
 
   if (window.__DORION_INITIALIZED__) return
@@ -56,7 +55,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     if (target === '_blank' || !target) {
       window.__TAURI__.shell.open(url as string)
       return null
-    } 
+    }
 
     // Otherwise, use the native open
     return window.nativeOpen(url as string, target, features)
@@ -69,7 +68,8 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 })()
 
 async function init() {
-  const { invoke, event } = window.__TAURI__
+  const { event, app } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const config = await invoke('read_config_file')
 
   window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : {}
@@ -87,12 +87,12 @@ async function init() {
 
   window.Dorion.shouldShowUnreadBadge = window.__DORION_CONFIG__.unread_badge
 
-  const plugins = await invoke('load_plugins')
-    .catch(e => console.error('Error reading plugins: ', e))
-  const version = await window.__TAURI__.app.getVersion()
+  await invoke('load_plugins')
+
+  const version = await app.getVersion()
 
   await displayLoadingTop()
-
+  
   // Start the safemode timer
   safemodeTimer(
     document.querySelector('#safemode') as HTMLDivElement
@@ -106,7 +106,7 @@ async function init() {
   typingAnim()
 
   // Start the loading_log event listener
-  const logUnlisten = event.listen('loading_log', (event: TauriEvent) => {
+  const logUnlisten = await event.listen('loading_log', (event: TauriEvent) => {
     const log = event.payload as string
 
     updateOverlay({
@@ -125,10 +125,7 @@ async function init() {
     themeJs,
   })
 
-  await invoke('load_injection_js', {
-    contents: injectionJs,
-    plugins
-  })
+  saferEval(injectionJs)
 
   updateOverlay({
     midtitle: 'Done!'
@@ -164,7 +161,7 @@ async function updateOverlay(toUpdate: Record<string, string>) {
 }
 
 async function handleThemeInjection() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
 
   // This needs to exist for hot-switching to work
   const ts = document.createElement('style')
@@ -210,7 +207,7 @@ async function handleThemeInjection() {
 }
 
 async function handleClientModThemeInjection() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
 
   const ts = document.createElement('style')
   ts.id = 'dorion-client-mods-themes'
@@ -244,7 +241,7 @@ async function handleClientModThemeInjection() {
  * Display the splashscreen
  */
 async function displayLoadingTop() {
-  const { invoke } = window.__TAURI__
+  const { invoke } = window.__TAURI__.core
   const html = await invoke('get_index')
   const loadingContainer = document.createElement('div') satisfies HTMLDivElement
   loadingContainer.id = 'loadingContainer'

@@ -8,6 +8,8 @@ on:
       - 'package.json'
       - 'src-tauri/**'
       - 'updater/**'
+    branches:
+      - main
   pull_request:
     paths:
       - '.github/workflows/backend.yml'
@@ -69,6 +71,7 @@ jobs:
             build-essential \
             curl \
             wget \
+            libwebkit2gtk-4.1-dev \
             libssl-dev \
             libgtk-3-dev \
             libayatana-appindicator3-dev \

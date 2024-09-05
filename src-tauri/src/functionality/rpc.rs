@@ -4,6 +4,7 @@ use rsrpc::{
 };
 use std::sync::{Arc, Mutex};
 use sysinfo::System;
+use tauri::Listener;
 use window_titles::ConnectionTrait;
 
 use crate::util::paths::custom_detectables_path;
@@ -52,7 +53,7 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
   .unwrap_or_default();
 }
 
-pub fn start_rpc_server(win: tauri::Window) {
+pub fn start_rpc_server(win: tauri::WebviewWindow) {
   let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
     .expect("Request for detectable.json failed")
     .text()
@@ -67,7 +68,7 @@ pub fn start_rpc_server(win: tauri::Window) {
 
   // When the "add_detectable" event is emitted, add the detectable to the server
   win.listen("add_detectable", move |event| {
-    let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
+    let payload: Payload = serde_json::from_str(event.payload()).unwrap_or(Payload {
       name: String::from(""),
       exe: String::from(""),
     });
@@ -108,7 +109,7 @@ pub fn start_rpc_server(win: tauri::Window) {
   });
 
   win.listen("remove_detectable", move |event| {
-    let payload: Payload = serde_json::from_str(event.payload().unwrap()).unwrap_or(Payload {
+    let payload: Payload = serde_json::from_str(event.payload()).unwrap_or(Payload {
       name: String::from(""),
       exe: String::from(""),
     });

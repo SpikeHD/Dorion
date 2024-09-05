@@ -15,38 +15,41 @@ strip = "debuginfo"
 lto = true
 
 [build-dependencies]
-tauri-build = { version = "1.5.2", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
 async-recursion = "1.1.1"
 base64 = "0.22.1"
 dirs = "5.0.1"
-include-flate = "0.3.0"
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.7.2", features = ["macos-private-api", "windows7-compat", "api-all", "icon-ico", "icon-png", "system-tray", "devtools"] }
-tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1"}
-tauri-plugin-deep-link = { version = "^0.1.2" }
-reqwest = { version = "0.12.4", features = ["blocking"] }
-phf = "0.11.2"
-window-shadows = { git = "https://github.com/tauri-apps/window-shadows.git", tag = "window-shadows-v0.2.2" }
-sysinfo = "0.30.12"
+include-flate = "0.3"
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
 
-# launch on startup
-auto-launch = "0.5.0"
+tauri = { version = "2.0.0-rc", features = ["macos-private-api", "devtools", "tray-icon", "image-png"] }
+tauri-plugin-shell = "2.0.0-rc"
+tauri-plugin-single-instance = "2.0.0-rc"
+tauri-plugin-process = "2.0.0-rc"
+tauri-plugin-autostart = "2.0.0-rc"
+tauri-plugin-notification = { version = "2.0.0-rc", features = ["win7-notifications", "windows7-compat"] }
+tauri-plugin-http = "2.0.0-rc"
+# window blur
+window-vibrancy = "0.5.0"
+
+reqwest = { version = "0.12.5", features = ["blocking"] }
+phf = "0.11.2"
+sysinfo = "0.30"
+chrono = { version = "0.4", default-features = false }
+device_query = "2.1.0"
+regex = "1.10"
 
 # rpc server
-rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.14.0" }
+rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.15.0" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
-
-# window blur
-window-vibrancy = "0.4.3"
-chrono = "0.4.38"
-device_query = "2.1.0"
+fs4 = { version = "0.9.1", features = ["sync"] }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
-webkit2gtk = "0.18.2"
-wgpu = { version = "0.20.0", default-features = false }
+webkit2gtk = "2.0"
+wgpu = { version = "22", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
@@ -55,19 +58,26 @@ cocoa = "0.25.0"
 block = "0.1.6"
 embed_plist = "1.2.2"
 
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-window-state = "2.0.0-rc"
+
 [target.'cfg(windows)'.dependencies]
-webview2-com = "0.19.0"
-windows-implement = "0.39.0"
+webview2-com = "0.33.0"
+windows-core = "0.58.0"
+windows-implement = "0.58.0"
 
 [target.'cfg(windows)'.dependencies.windows]
-version = "0.39.0"
+version = "0.58.0"
 features = [
     "Data_Xml_Dom",
     "Win32_Foundation",
     "Win32_Security",
     "Win32_System_Threading",
+    "Win32_UI_Shell",
     "Win32_UI_WindowsAndMessaging",
     "Win32_System_Com",
+    "Win32_Graphics",
+    "Win32_Graphics_Dwm",
 ]
 
 [target.armv7-unknown-linux-gnueabihf]

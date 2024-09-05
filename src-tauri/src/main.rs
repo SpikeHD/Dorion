@@ -3,12 +3,8 @@
   windows_subsystem = "windows"
 )]
 
-use functionality::tray;
 use std::time::Duration;
-use tauri::{
-  api::process::restart, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-  WindowBuilder,
-};
+use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::get_config;
@@ -24,7 +20,6 @@ use util::{
   logger::log,
   notifications,
   paths::get_webdata_dir,
-  process,
   window_helpers::{self, clear_cache_check, set_user_agent},
 };
 
@@ -34,7 +29,6 @@ use crate::{
 };
 
 mod config;
-mod deep_link;
 mod functionality;
 mod gpu;
 mod injection;
@@ -43,20 +37,6 @@ mod profiles;
 mod release;
 mod util;
 mod window;
-
-fn create_systray() -> SystemTray {
-  let open_btn = CustomMenuItem::new("open".to_string(), "Open");
-  let reload_btn = CustomMenuItem::new("reload".to_string(), "Reload");
-  let restart_brn = CustomMenuItem::new("restart".to_string(), "Restart");
-  let quit_btn = CustomMenuItem::new("quit".to_string(), "Quit");
-  let tray_menu = SystemTrayMenu::new()
-    .add_item(open_btn)
-    .add_item(reload_btn)
-    .add_item(restart_brn)
-    .add_item(quit_btn);
-
-  SystemTray::new().with_menu(tray_menu)
-}
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
@@ -77,10 +57,6 @@ fn main() {
   let config = get_config();
 
   std::thread::sleep(Duration::from_millis(200));
-
-  if !config.multi_instance.unwrap_or(false) {
-    tauri_plugin_deep_link::prepare("com.dorion.dev");
-  }
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
@@ -105,7 +81,6 @@ fn main() {
     "Starting Dorion version v{}",
     context
       .config()
-      .package
       .version
       .as_ref()
       .unwrap_or(&String::from("0.0.0"))
@@ -119,18 +94,7 @@ fn main() {
   }
 
   let parsed = reqwest::Url::parse(&url).unwrap();
-  let url_ext = tauri::WindowUrl::External(parsed);
-
-  // If another process of Dorion is already open, show a dialog
-  // in the future I want to actually *reveal* the other runnning process
-  // instead of showing a popup, but this is fine for now
-  if process::process_already_exists() && !config.multi_instance.unwrap_or(false) {
-    // Send the dorion://open deep link request
-    helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
-
-    // Exit
-    std::process::exit(0);
-  }
+  let url_ext = tauri::WebviewUrl::External(parsed);
 
   // Safemode check
   let safemode = std::env::args().any(|arg| arg == "--safemode");
@@ -140,8 +104,16 @@ fn main() {
 
   #[allow(clippy::single_match)]
   tauri::Builder::default()
-    .plugin(tauri_plugin_window_state::Builder::default().build())
-    .system_tray(create_systray())
+    .plugin(tauri_plugin_http::init())
+    .plugin(tauri_plugin_shell::init())
+    .plugin(tauri_plugin_notification::init())
+    .plugin(tauri_plugin_autostart::init(
+      tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+      None,
+    ))
+    .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_notification::init())
+    .plugin(tauri_plugin_window_state::Builder::new().build())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       functionality::window::minimize,
@@ -174,8 +146,6 @@ fn main() {
       functionality::hotkeys::set_keybinds,
       functionality::hotkeys::set_keybind,
       injection_runner::get_injection_js,
-      injection_runner::is_injected,
-      injection_runner::load_injection_js,
       config::get_config,
       config::set_config,
       config::read_config_file,
@@ -194,9 +164,9 @@ fn main() {
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,
-      tray::set_tray_icon,
+      functionality::tray::set_tray_icon,
     ])
-    .on_window_event(|event| match event.event() {
+    .on_window_event(|window, event| match event {
       tauri::WindowEvent::Resized { .. } => {
         // Sleep for a millisecond (blocks the thread but it doesn't really matter)
         // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495
@@ -208,104 +178,72 @@ fn main() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
         // Just hide the window if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
-          event.window().hide().unwrap_or_default();
+          window.hide().unwrap_or_default();
           api.prevent_close();
         }
 
-        event
-          .window()
+        window
           .app_handle()
           .save_window_state(StateFlags::all())
           .unwrap_or_default();
       }
       _ => {}
     })
-    .on_system_tray_event(|app, event| match event {
-      SystemTrayEvent::LeftClick {
-        position: _,
-        size: _,
-        ..
-      } => {
-        // Reopen the window if the tray menu icon is clicked
-        match app.get_window("main") {
-          Some(win) => {
-            win.show().unwrap_or_default();
-            win.set_focus().unwrap_or_default();
-            win.unminimize().unwrap_or_default();
-          }
-          None => {}
-        }
-      }
-      SystemTrayEvent::MenuItemClick { id, .. } => {
-        let window = match app.get_window("main") {
-          Some(win) => win,
-          None => return,
-        };
-
-        if id == "quit" {
-          // Close the process
-          window.close().unwrap_or_default();
-        }
-
-        if id == "open" {
-          // Reopen the window
-          window.show().unwrap_or_default();
-          window.set_focus().unwrap_or_default();
-          window.unminimize().unwrap_or_default();
-        }
-
-        if id == "restart" {
-          // Restart the process
-          restart(&app.env());
-        }
-
-        if id == "reload" {
-          // Reload the window
-          window.eval("window.location.reload();").unwrap_or_default();
-        }
-      }
-      _ => {}
-    })
-    .setup(move |app| {
+    .setup(move |app: &mut tauri::App| {
       // Init plugin list
       plugin::get_new_plugins();
 
-      // Load preload plugins into a single string
-      let mut preload_str = String::new();
-
-      for script in plugin::load_plugins(Some(true)).values() {
-        preload_str += format!("{};", script).as_str();
-      }
-
       // First, grab preload plugins
       let title = format!("Dorion - v{}", app.package_info().version);
-      let win = WindowBuilder::new(app, "main", url_ext)
+      let win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .initialization_script(
-          format!(
-            "!window.__DORION_INITIALIZED__ && {};{};{}",
-            PREINJECT.as_str(),
+          format!(r#"
+            {};{}
+          "#,
+            PREINJECT.clone(),
             client_mods,
-            preload_str,
           ).as_str()
         )
         .resizable(true)
         .min_inner_size(100.0, 100.0)
-        .disable_file_drop_handler()
+        .disable_drag_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
         .visible(false)
         .decorations(true)
+        .shadow(true)
         .transparent(
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .build()?;
 
-      #[cfg(any(windows, target_os = "macos"))]
-      window_shadows::set_shadow(&win, true).unwrap_or_default();
-
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);
+
+      // Multi-instance check
+      if !config.multi_instance.unwrap_or(false) {
+        log!("Multi-instance disabled, registering single instance plugin...");
+
+        app
+          .handle()
+          .plugin(tauri_plugin_single_instance::init(
+            move |app, _argv, _cwd| {
+              let win = match app.get_webview_window("main") {
+                Some(win) => win,
+                None => {
+                  log!("No windows open with name \"main\"(???)");
+                  return;
+                }
+              };
+
+              win.set_focus().unwrap_or_default();
+              win.unminimize().unwrap_or_default();
+              win.show().unwrap_or_default();
+            },
+          ))
+          .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
+      }
 
       // If safemode is enabled, stop here
       if safemode {
@@ -315,6 +253,8 @@ fn main() {
 
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
+
+      plugin::load_plugins(win.clone(), Some(true));
 
       // begin the RPC server if needed
       if get_config().rpc_server.unwrap_or(false) {

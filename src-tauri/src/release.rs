@@ -1,10 +1,10 @@
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 
 use crate::log;
 use crate::util::paths::{config_is_local, updater_dir};
 
 #[tauri::command]
-pub async fn update_check(win: tauri::Window) -> Vec<String> {
+pub async fn update_check(win: tauri::WebviewWindow) -> Vec<String> {
   let mut to_update = vec![];
 
   log!("Checking for updates...");
@@ -20,7 +20,7 @@ pub async fn update_check(win: tauri::Window) -> Vec<String> {
 }
 
 #[tauri::command]
-pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
+pub async fn do_update(win: tauri::WebviewWindow, to_update: Vec<String>) {
   let updater_path = updater_dir(&win);
   let mut updater = std::process::Command::new(updater_path);
 
@@ -65,7 +65,7 @@ pub async fn do_update(win: tauri::Window, to_update: Vec<String>) {
 }
 
 pub async fn maybe_latest_main_release(
-  win: &tauri::Window,
+  win: &tauri::WebviewWindow,
 ) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
   let client = reqwest::Client::new();
