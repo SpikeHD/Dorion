@@ -45,7 +45,6 @@ regex = "1.10"
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.16.1" }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
-fs4 = { version = "0.9.1", features = ["sync"] }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "2.0"

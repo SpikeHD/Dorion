@@ -1141,7 +1141,6 @@ dependencies = [
  "device_query",
  "dirs 5.0.1",
  "embed_plist",
- "fs4",
  "include-flate",
  "objc",
  "objc-foundation",
@@ -1428,16 +1427,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e13624c2627564efccf4934284bdd98cbaa14e79b0b5a141218e507b3a823456"
 dependencies = [
  "percent-encoding",
-]
-
-[[package]]
-name = "fs4"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8c6b3bd49c37d2aa3f3f2220233b29a7cd23f79d1fe70e5337d25fb390793de"
-dependencies = [
- "rustix",
- "windows-sys 0.52.0",
 ]
 
 [[package]]
