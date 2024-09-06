@@ -1,6 +1,5 @@
 use std::fs;
 
-use async_recursion::async_recursion;
 use regex::Regex;
 use tauri::Emitter;
 
@@ -25,8 +24,7 @@ pub async fn clear_css_cache() {
 }
 
 #[tauri::command]
-#[async_recursion]
-pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
+pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
@@ -134,7 +132,7 @@ pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: Stri
   // If any of this css still contains imports, we need to re-process it
   if reg.is_match(new_css.as_str()) {
     log!("Re-processing CSS imports...");
-    new_css = localize_imports(win.clone(), new_css, name.clone()).await;
+    new_css = localize_imports(win.clone(), new_css, name.clone());
   }
 
   win
@@ -145,7 +143,7 @@ pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: Stri
     .unwrap_or_default();
 
   // Now localize images to base64 data representations
-  new_css = localize_images(win.clone(), new_css).await;
+  new_css = localize_images(win.clone(), new_css);
 
   // If we need to cache css, do that
   if get_config().cache_css.unwrap_or(true) {
@@ -164,7 +162,7 @@ pub async fn localize_imports(win: tauri::WebviewWindow, css: String, name: Stri
   new_css
 }
 
-pub async fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
+pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
   let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));

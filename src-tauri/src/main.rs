@@ -126,6 +126,7 @@ fn main() {
       git_hash,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
+      #[cfg(not(target_os = "macos"))]
       functionality::window::set_decorations,
       functionality::window::close,
       css_preprocess::clear_css_cache,

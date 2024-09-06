@@ -18,7 +18,6 @@ lto = true
 tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-async-recursion = "1.1.1"
 base64 = "0.22.1"
 dirs = "5.0.1"
 include-flate = "0.3"
