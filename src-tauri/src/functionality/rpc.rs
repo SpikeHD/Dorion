@@ -3,7 +3,7 @@ use rsrpc::{
   RPCServer,
 };
 use std::sync::{Arc, Mutex};
-use sysinfo::System;
+use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::Listener;
 use window_titles::ConnectionTrait;
 

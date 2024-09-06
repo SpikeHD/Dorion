@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::time::Duration;
+use std::{sync::LazyLock, env, time::Duration};
 use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
@@ -37,6 +37,13 @@ mod profiles;
 mod release;
 mod util;
 mod window;
+
+static GIT_HASH: LazyLock<&str> = LazyLock::new(|| option_env!("GIT_HASH").unwrap_or("Unknown"));
+
+#[tauri::command]
+fn git_hash() -> String {
+  GIT_HASH.to_string()
+}
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
@@ -116,6 +123,7 @@ fn main() {
     .plugin(tauri_plugin_window_state::Builder::new().build())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
+      git_hash,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
       functionality::window::set_decorations,

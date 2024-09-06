@@ -25,6 +25,7 @@ concurrency:
 
 env:
   CARGO_INCREMENTAL: 0
+  GIT_HASH: ${{ github.sha }}
 
 jobs:
   build:

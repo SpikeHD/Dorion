@@ -29,8 +29,8 @@ pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
     for process in system.processes().values() {
       std::thread::sleep(std::time::Duration::from_millis(5));
 
-      if process.name().to_lowercase().contains("obs64")
-        || process.name().to_lowercase().contains("streamlabs")
+      if process.name().to_ascii_lowercase().contains("obs64")
+        || process.name().to_ascii_lowercase().contains("streamlabs")
       {
         // If OBS is running, we can break out of the loop and emit the event
         obs_running = true;
