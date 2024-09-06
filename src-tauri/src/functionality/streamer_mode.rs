@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::Emitter;
 
 use crate::config::get_config;
-use sysinfo::System;
+use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 
 // We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
 static OBS_OPEN: AtomicBool = AtomicBool::new(false);
@@ -10,7 +10,8 @@ static OBS_OPEN: AtomicBool = AtomicBool::new(false);
 #[tauri::command]
 pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
   let enabled = get_config().streamer_mode_detection.unwrap_or(false);
-  let mut system = System::new_all();
+  let mut system =
+    System::new_with_specifics(RefreshKind::new().with_processes(ProcessRefreshKind::everything()));
 
   if !enabled {
     return;
@@ -20,7 +21,7 @@ pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
   std::thread::spawn(move || loop {
     std::thread::sleep(std::time::Duration::from_secs(2));
 
-    system.refresh_all();
+    system.refresh_processes();
 
     let mut obs_running = false;
 

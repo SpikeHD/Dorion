@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::{sync::LazyLock, env, time::Duration};
+use std::{env, sync::LazyLock, time::Duration};
 use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
