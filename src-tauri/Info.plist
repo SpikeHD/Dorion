@@ -15,7 +15,7 @@
   <array>
     <dict>
       <key>CFBundleURLName</key>
-      <string>com.dorion.dev</string>
+      <string>com.spikehd.dorion</string>
       <key>CFBundleURLSchemes</key>
       <array>
         <!-- register the dorion:// scheme -->
