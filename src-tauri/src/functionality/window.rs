@@ -4,6 +4,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
 use crate::log;
+use crate::util::paths::get_main_extension_path;
 use crate::util::window_helpers::window_zoom_level;
 
 #[cfg(feature = "blur")]
@@ -100,7 +101,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     }
   }
 
-  add_extension(window);
+  add_extension(window, get_main_extension_path());
 
   window_zoom_level(window.clone(), None);
 }

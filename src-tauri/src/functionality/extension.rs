@@ -1,8 +1,10 @@
-use crate::log;
+use std::{fs, path::PathBuf};
 use tauri::WebviewWindow;
 
+use crate::{log, util::paths::get_extensions_dir};
+
 #[cfg(target_os = "windows")]
-pub fn add_extension(win: &WebviewWindow) {
+pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
   use webview2_com::{
     Microsoft::Web::WebView2::Win32::{
       ICoreWebView2EnvironmentOptions6, ICoreWebView2Profile7, ICoreWebView2_13,
@@ -12,7 +14,7 @@ pub fn add_extension(win: &WebviewWindow) {
   use windows::core::{Interface, HSTRING};
 
   win
-    .with_webview(|webview| unsafe {
+    .with_webview(move |webview| unsafe {
       let core = match webview.controller().CoreWebView2() {
         Ok(profile) => profile,
         Err(e) => {
@@ -73,31 +75,12 @@ pub fn add_extension(win: &WebviewWindow) {
         Ok(())
       }));
 
-      let exe_path = match std::env::current_exe() {
-        Ok(path) => path,
-        Err(e) => {
-          log!("Failed to get current exe path: {:?}", e);
-          return;
-        }
-      };
-
-      let parent = match exe_path.parent() {
-        Some(path) => path,
-        None => {
-          log!("Failed to get parent path of current exe path!");
-          return;
-        }
-      };
-
-      let mut ext = parent.to_path_buf();
-      ext.push("extension");
-
-      if !ext.exists() {
+      if !path.exists() {
         log!("Extension folder does not exist!");
         return;
       }
 
-      let path_str = ext.to_str().unwrap_or_default();
+      let path_str = path.to_str().unwrap_or_default();
       let ext = HSTRING::from(path_str);
 
       profile
@@ -107,7 +90,27 @@ pub fn add_extension(win: &WebviewWindow) {
     .unwrap_or_default();
 }
 
+pub fn load_extensions(win: &WebviewWindow) {
+  log!("Loading extensions...");
+
+  let extensions_dir = get_extensions_dir();
+
+  // Read all files in the extensions dir
+  if let Ok(files) = fs::read_dir(extensions_dir) {
+    for file in files.flatten() {
+      let path = file.path();
+
+      if path.is_file() {
+        let path = path.to_str().unwrap_or_default();
+        let path = PathBuf::from(path);
+
+        add_extension(win, path);
+      }
+    }
+  }
+}
+
 #[cfg(not(target_os = "windows"))]
-pub fn add_extension(_win: &WebviewWindow) {
+pub fn add_extension(_win: &WebviewWindow, _path: &PathBuf) {
   log!("Extension is unsupported on non-Windows platforms!");
 }

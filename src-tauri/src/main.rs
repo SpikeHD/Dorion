@@ -268,6 +268,7 @@ fn main() {
       // restore state BEFORE after_build, since that may change the window
       win.restore_state(StateFlags::all()).unwrap_or_default();
 
+      functionality::extension::load_extensions(&win);
       plugin::load_plugins(win.clone(), Some(true));
 
       // begin the RPC server if needed

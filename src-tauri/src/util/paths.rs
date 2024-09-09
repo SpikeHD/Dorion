@@ -95,7 +95,6 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     .join("dorion")
     .join("plugins");
 
-
   create_if_not_exists(&plugin_dir);
 
   plugin_dir
@@ -157,6 +156,28 @@ pub fn get_extensions_dir() -> PathBuf {
   create_if_not_exists(&extensions_dir);
 
   extensions_dir
+}
+
+pub fn get_main_extension_path() -> PathBuf {
+  let current_exe = std::env::current_exe().unwrap_or_default();
+
+  // Check for local/portable file paths
+  if is_portable() {
+    let extension_folder = current_exe.parent().unwrap().join("extension");
+
+    create_if_not_exists(&extension_folder);
+
+    return extension_folder;
+  }
+
+  let extension_dir = dirs::config_dir()
+    .unwrap_or_default()
+    .join("dorion")
+    .join("extension");
+
+  create_if_not_exists(&extension_dir);
+
+  extension_dir
 }
 
 pub fn profiles_dir() -> PathBuf {
