@@ -111,6 +111,6 @@ pub fn load_extensions(win: &WebviewWindow) {
 }
 
 #[cfg(not(target_os = "windows"))]
-pub fn add_extension(_win: &WebviewWindow, _path: &PathBuf) {
+pub fn add_extension(_win: &WebviewWindow, _path: PathBuf) {
   log!("Extension is unsupported on non-Windows platforms!");
 }
