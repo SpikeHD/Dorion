@@ -6,6 +6,17 @@ use tauri::Manager;
 use crate::config::{default_config, get_config};
 use crate::log;
 
+fn create_if_not_exists(path: &PathBuf) {
+  if fs::metadata(path).is_err() {
+    match fs::create_dir_all(path) {
+      Ok(()) => (),
+      Err(e) => {
+        log!("Error creating dir: {}", e);
+      }
+    };
+  }
+}
+
 pub fn is_portable() -> bool {
   let current_exe = std::env::current_exe().unwrap_or_default();
   let portable_signifier = current_exe.parent().unwrap().join(".portable");
@@ -19,15 +30,6 @@ pub fn get_config_dir() -> PathBuf {
   let local_config_dir = current_exe.parent().unwrap().to_path_buf();
 
   if is_portable() {
-    // Create file if it doesn't exist
-    if fs::metadata(&local_config_dir).is_err() {
-      fs::write(
-        &local_config_dir,
-        serde_json::to_string_pretty(&default_config()).unwrap_or_default(),
-      )
-      .unwrap_or(());
-    }
-
     return local_config_dir;
   }
 
@@ -39,9 +41,7 @@ pub fn get_config_dir() -> PathBuf {
 
   let config_dir = appdata.join("dorion");
 
-  if fs::metadata(&config_dir).is_err() {
-    fs::create_dir_all(appdata.join("dorion")).expect("Error creating appdata dir");
-  }
+  create_if_not_exists(&config_dir);
 
   config_dir
 }
@@ -76,15 +76,7 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
 
   if is_portable() {
     // Create dir if it doesn't exist
-    if fs::metadata(&local_plugin_dir).is_err() {
-      match fs::create_dir_all(&local_plugin_dir) {
-        Ok(()) => (),
-        Err(e) => {
-          log!("Error creating local plugins dir: {}", e);
-          return local_plugin_dir;
-        }
-      };
-    }
+    create_if_not_exists(&local_plugin_dir);
 
     return local_plugin_dir;
   }
@@ -103,15 +95,8 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     .join("dorion")
     .join("plugins");
 
-  if fs::metadata(&plugin_dir).is_err() {
-    match fs::create_dir_all(&plugin_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        log!("Error creating plugins dir: {}", e);
-        return plugin_dir;
-      }
-    };
-  }
+
+  create_if_not_exists(&plugin_dir);
 
   plugin_dir
 }
@@ -123,15 +108,7 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
   if is_portable() {
     // Create dir if it doesn't exist
-    if fs::metadata(&local_theme_dir).is_err() {
-      match fs::create_dir_all(&local_theme_dir) {
-        Ok(()) => (),
-        Err(e) => {
-          log!("Error creating local themes dir: {}", e);
-          return local_theme_dir;
-        }
-      };
-    }
+    create_if_not_exists(&local_theme_dir);
 
     return local_theme_dir;
   }
@@ -150,30 +127,36 @@ pub fn get_theme_dir() -> std::path::PathBuf {
     .join("dorion")
     .join("themes");
 
-  if fs::metadata(&theme_dir).is_err() {
-    match fs::create_dir_all(&theme_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        log!("Error creating theme dir: {}", e);
-        return theme_dir;
-      }
-    };
-  }
+  create_if_not_exists(&theme_dir);
 
   // Also create theme cache dir
   let cache_dir = theme_dir.join("cache");
 
-  if fs::metadata(&cache_dir).is_err() {
-    match fs::create_dir_all(&cache_dir) {
-      Ok(()) => (),
-      Err(e) => {
-        log!("Error creating theme cache dir: {}", e);
-        return theme_dir;
-      }
-    };
-  }
+  create_if_not_exists(&cache_dir);
 
   theme_dir
+}
+
+pub fn get_extensions_dir() -> PathBuf {
+  let current_exe = std::env::current_exe().unwrap_or_default();
+
+  // Check for local/portable file paths
+  if is_portable() {
+    let extensions_folder = current_exe.parent().unwrap().join("extensions");
+
+    create_if_not_exists(&extensions_folder);
+
+    return extensions_folder;
+  }
+
+  let extensions_dir = dirs::config_dir()
+    .unwrap_or_default()
+    .join("dorion")
+    .join("extensions");
+
+  create_if_not_exists(&extensions_dir);
+
+  extensions_dir
 }
 
 pub fn profiles_dir() -> PathBuf {
@@ -183,19 +166,12 @@ pub fn profiles_dir() -> PathBuf {
   if is_portable() {
     let profile_folder = current_exe.parent().unwrap().join("profiles");
 
-    if fs::metadata(&profile_folder).is_err() {
-      match fs::create_dir_all(&profile_folder) {
-        Ok(()) => (),
-        Err(e) => {
-          log!("Error creating local profiles dir: {}", e);
-          return profile_folder;
-        }
-      };
-    }
+    create_if_not_exists(&profile_folder);
 
     return profile_folder;
   }
 
+  // This is created automatically
   dirs::data_dir()
     .unwrap_or_default()
     .join("dorion")
