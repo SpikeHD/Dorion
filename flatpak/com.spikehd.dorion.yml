@@ -1,0 +1,34 @@
+id: com.spikehd.dorion
+
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+
+command: dorion
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --share=ipc
+
+modules:
+  - name: binary
+    buildsystem: simple
+    sources:
+      - type: file
+        url: https://github.com/SpikeHD/Dorion/releases/download/v5.0.1/dorion_5.0.1_amd64.deb
+        sha256: 70266291367e214de6abf16425f7a08172f2588b161be6b6aaed466e05bddd64
+        only-arches: [x86_64]
+      - type: file
+        url: https://github.com/SpikeHD/Dorion/releases/download/v5.0.1/dorion_5.0.1_arm64.deb
+        sha256: f9df3a47d27e3fa49fd8d22343b68c0bc0153f4950ec19aae2445f1bdbb058a8
+        only-arches: [aarch64]
+    build-commands:
+      - ar -x *.deb
+      - tar -xf data.tar.gz
+      - 'install -Dm755 usr/bin/dorion /app/bin/dorion'
+      - install -Dm644 usr/share/applications/dorion.desktop /app/share/applications/dorion.desktop
+      - install -Dm644 usr/share/icons/hicolor/512x512/apps/dorion.png /app/share/icons/hicolor/512x512/apps/dorion.png
