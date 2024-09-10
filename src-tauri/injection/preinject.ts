@@ -35,6 +35,8 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     return
   }
 
+  if (window.__DORION_INITIALIZED__) return
+
   createLocalStorage()
   proxyFetch()
   proxyXHR()
@@ -44,9 +46,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     await new Promise(resolve => setTimeout(resolve, 200))
   }
 
-  if (window.__DORION_INITIALIZED__) return
-
-  console.log('__TAURI__ defined! Let\'s do this')
+  console.log('__TAURI__ defined!')
 
   // Make window.open become window.__TAURI__.shell.open
   window.nativeOpen = window.open

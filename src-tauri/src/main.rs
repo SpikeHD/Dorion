@@ -207,18 +207,12 @@ fn main() {
       // Init plugin list
       plugin::get_new_plugins();
 
-      // First, grab preload plugins
+      let preinject = PREINJECT.clone();
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
-        .initialization_script(
-          format!(r#"
-            {};{}
-          "#,
-            PREINJECT.clone(),
-            client_mods,
-          ).as_str()
-        )
+        // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
+        .initialization_script(format!("(() => {{ {preinject} }})();{client_mods}").as_str())
         .resizable(true)
         .min_inner_size(100.0, 100.0)
         .disable_drag_drop_handler()
