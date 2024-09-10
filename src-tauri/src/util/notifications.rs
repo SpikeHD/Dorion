@@ -123,7 +123,6 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
     _ => (ICO_9.as_ref(), ICO_9.len()),
   };
 
-  // set the icon
   let taskbar_list: Result<ITaskbarList3, windows::core::Error> = CoCreateInstance(
     // For about an hour, I was trying to use ITaskbarList3, but it turns out that the GUID is wrong. I hate Windows.
     &TaskbarList,
@@ -157,6 +156,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
 
   let hicon = hicon.unwrap();
 
+  // set the icon
   taskbar_list
     .SetOverlayIcon(hwnd, hicon, None)
     .unwrap_or_default();

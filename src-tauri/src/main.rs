@@ -7,7 +7,7 @@ use std::{env, sync::LazyLock, time::Duration};
 use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
-use config::get_config;
+use config::{get_config, Config};
 use injection::{
   client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
@@ -52,7 +52,7 @@ fn should_disable_plugins() -> bool {
 
 fn main() {
   // Ensure config is created
-  config::init();
+  Config::init();
 
   // Also init logging
   logger::init(true);
