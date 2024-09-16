@@ -166,17 +166,30 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
 
 // https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
 #[cfg(target_os = "macos")]
-pub unsafe fn set_notif_icon(_window: &tauri::WebviewWindow, amount: i32) {
-  use cocoa::{appkit::NSApp, base::nil, foundation::NSString};
-  use objc::{msg_send, sel, sel_impl};
+pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
+  use objc2_foundation::NSString;
+  use objc2_app_kit::NSWindow;
 
-  let label = if amount <= 0 {
-    nil
-  } else {
-    NSString::alloc(nil).init_str(&format!("{}", amount))
-  };
-  let dock_tile: cocoa::base::id = msg_send![NSApp(), dockTile];
-  let _: cocoa::base::id = msg_send![dock_tile, setBadgeLabel: label];
+  // TODO this does NOT work right now lmao
+  window.with_webview(move |webview| {
+    let label_str = NSString::from_str(&format!("{}", amount));
+
+    let label = if amount <= 0 {
+      None
+    } else {
+      Some(label_str)
+    };
+
+    unsafe {
+      let window: &NSWindow = &*webview.ns_window().cast();
+      let dock_tile = window.dockTile();
+
+      println!("{:?}", dock_tile);
+      println!("{:?}", label);
+
+      dock_tile.setBadgeLabel(label.as_deref());
+    }
+  }).unwrap();
 }
 
 #[cfg(target_os = "linux")]

@@ -16,22 +16,19 @@ pub fn get_os_accent() -> String {
 
 #[cfg(target_os = "macos")]
 pub fn get_os_accent() -> String {
-  use cocoa::base::{id, nil};
-  use cocoa::foundation::NSString;
-  use objc::{class, msg_send, sel, sel_impl};
+  use objc2_foundation::{NSUserDefaults, NSString};
 
   // From https://github.com/tauri-apps/tao/pull/589
   unsafe {
-    let key = NSString::alloc(nil).init_str("AppleAccentColor");
+    let key = NSString::from_str("AppleAccentColor");
+    let defaults = NSUserDefaults::standardUserDefaults();
+    let color = defaults.objectForKey(&key);
 
-    let user_defaults: id = msg_send![class!(NSUserDefaults), standardUserDefaults];
-    let color_obj: id = msg_send![user_defaults, objectForKey: key];
-
-    if color_obj == nil {
+    if color.is_none() {
       return "#000000".to_string();
     }
 
-    let color_int: i32 = msg_send![user_defaults, integerForKey: key];
+    let color_int: isize = defaults.integerForKey(&key);
     let result_str = match color_int {
       // These are NOT in the order they appear in the settings because why would they be???
       // I love Apple

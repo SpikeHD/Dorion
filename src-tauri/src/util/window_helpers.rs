@@ -135,14 +135,16 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
 
 #[cfg(target_os = "macos")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-  use objc::{msg_send, sel, sel_impl};
-  use objc_foundation::{INSString, NSString};
+  use objc2_foundation::NSString;
+  use objc2_web_kit::WKWebView;
 
   win
     .with_webview(|webview| {
-      let webview = webview.inner();
       unsafe {
-        let _: () = msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
+        let webview: &WKWebView = &*webview.inner().cast();
+        let useragent = NSString::from_str(USERAGENT);
+
+        webview.setCustomUserAgent(Some(&useragent));
       }
     })
     .expect("Failed to set user agent!");

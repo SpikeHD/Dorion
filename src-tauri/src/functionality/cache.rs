@@ -35,38 +35,27 @@ pub fn clear_cache() {
 // TODO: I'm not conviced this works yet, I think the window is destroyed before this stuff runs, so it's not clearing the cache
 #[cfg(target_os = "macos")]
 pub fn clear_cache() {
-  use std::os::raw::c_char;
-
-  extern "C" {
-    // Global Obj-C variables
-    static WKWebsiteDataTypeDiskCache: *const c_char;
-    static WKWebsiteDataTypeMemoryCache: *const c_char;
-    static WKWebsiteDataTypeOfflineWebApplicationCache: *const c_char;
-  }
-
-  use cocoa::base::id;
-  use cocoa::foundation::NSAutoreleasePool;
-  use objc::{class, msg_send, sel, sel_impl};
+  use block2::StackBlock;
+  use objc2_foundation::{NSAutoreleasePool, NSDate, NSSet, NSString};
+  use objc2_web_kit::WKWebViewConfiguration;
 
   unsafe {
-    let pool = cocoa::foundation::NSAutoreleasePool::new(cocoa::base::nil);
-    let configuration: id = msg_send![class!(WKWebViewConfiguration), new];
-    let store: id = msg_send![configuration, websiteDataStore];
+    let pool = NSAutoreleasePool::new();
+    let configuration = WKWebViewConfiguration::new();
+    let store = configuration.websiteDataStore();
 
     // Specify cache so as to not clear login stuff
     let data_types = vec![
-      WKWebsiteDataTypeDiskCache,
-      WKWebsiteDataTypeMemoryCache,
-      WKWebsiteDataTypeOfflineWebApplicationCache,
+      NSString::from_str("WKWebsiteDataTypeDiskCache"),
+      NSString::from_str("WKWebsiteDataTypeMemoryCache"),
+      NSString::from_str("WKWebsiteDataTypeOfflineWebApplicationCache"),
     ];
 
-    let date: id = msg_send![class!(NSDate), dateWithTimeIntervalSince1970:0.0];
+    let data_types = NSSet::from_vec(data_types);
 
-    // Define a completion handler using a closure
-    let handler = |_: id| {};
+    let date = NSDate::dateWithTimeIntervalSince1970(0.0);
 
-    let _: id =
-      msg_send![store, removeDataOfTypes:data_types modifiedSince:date completionHandler:handler];
+    store.removeDataOfTypes_modifiedSince_completionHandler(&data_types, &date, &StackBlock::new(|| {}));
     pool.drain();
   }
 }
