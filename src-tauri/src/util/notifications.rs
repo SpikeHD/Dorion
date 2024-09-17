@@ -184,12 +184,10 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
       let window: &NSWindow = &*webview.ns_window().cast();
       let dock_tile = window.dockTile();
 
-      println!("{:?}", dock_tile);
-      println!("{:?}", label);
-
       dock_tile.setBadgeLabel(label.as_deref());
+      dock_tile.display();
     }
-  }).unwrap();
+  }).unwrap_or_default();
 }
 
 #[cfg(target_os = "linux")]
