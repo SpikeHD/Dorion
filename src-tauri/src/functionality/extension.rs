@@ -7,7 +7,7 @@ use crate::{log, util::paths::get_extensions_dir};
 pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
   use webview2_com::{
     Microsoft::Web::WebView2::Win32::{
-      ICoreWebView2EnvironmentOptions6, ICoreWebView2Profile7, ICoreWebView2_13,
+      ICoreWebView2Profile7, ICoreWebView2_13,
     },
     ProfileAddBrowserExtensionCompletedHandler,
   };
@@ -45,27 +45,6 @@ pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
           log!("Failed to cast profile: {:?}", e);
           return;
         }
-      };
-
-      let environment = match casted.Environment() {
-        Ok(environment) => environment,
-        Err(e) => {
-          log!("Failed to get Environment: {:?}", e);
-          return;
-        }
-      };
-
-      let environment = match environment.cast::<ICoreWebView2EnvironmentOptions6>() {
-        Ok(environment) => environment,
-        Err(e) => {
-          log!("Failed to cast environment: {:?}", e);
-          return;
-        }
-      };
-
-      match environment.SetAreBrowserExtensionsEnabled(true) {
-        Ok(_) => (),
-        Err(e) => log!("Failed to set browser extensions enabled: {:?}", e),
       };
 
       log!("Attempting to add extension...");
@@ -108,6 +87,9 @@ pub fn load_extensions(win: &WebviewWindow) {
       }
     }
   }
+
+  // Refresh the page to ensure extensions are loaded
+  win.eval("window.location.reload();").unwrap_or_default();
 }
 
 #[cfg(not(target_os = "windows"))]
