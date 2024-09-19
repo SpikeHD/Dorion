@@ -225,6 +225,7 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .zoom_hotkeys_enabled(true)
+        .browser_extensions_enabled(true)
         .build()?;
 
       // Set the user agent to one that enables all normal Discord features
