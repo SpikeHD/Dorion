@@ -55,6 +55,7 @@ objc2-foundation = { version = "0.2.2", features = [
   "NSDate",
   "NSUserDefaults",
   "NSAutoreleasePool",
+  "NSThread",
 ] }
 objc2-app-kit = { version = "0.2.2", features = [
   "NSApplication",

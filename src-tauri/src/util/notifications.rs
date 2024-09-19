@@ -166,28 +166,27 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
 
 // https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
 #[cfg(target_os = "macos")]
-pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
-  use objc2_foundation::NSString;
-  use objc2_app_kit::NSWindow;
+pub unsafe fn set_notif_icon(_: &tauri::WebviewWindow, amount: i32) {
+  use objc2_foundation::{MainThreadMarker, NSString};
+  use objc2_app_kit::NSApp;
 
-  // TODO this does NOT work right now lmao
-  window.with_webview(move |webview| {
-    let label_str = NSString::from_str(&format!("{}", amount));
+  let label = if amount > 0 {
+    Some(NSString::from_str(&format!("{}", amount)))
+  } else if amount == -1 {
+    Some(NSString::from_str("●"))
+  } else {
+    None
+  };
 
-    let label = if amount <= 0 {
-      None
-    } else {
-      Some(label_str)
-    };
+  if let Some(thread) = MainThreadMarker::new() {
+    let app = NSApp(thread);
+    let dock_tile = app.dockTile();
 
-    unsafe {
-      let window: &NSWindow = &*webview.ns_window().cast();
-      let dock_tile = window.dockTile();
-
-      dock_tile.setBadgeLabel(label.as_deref());
-      dock_tile.display();
-    }
-  }).unwrap_or_default();
+    dock_tile.setBadgeLabel(label.as_deref());
+    dock_tile.display();
+  } else {
+    log!("Failed to mark main thread!");
+  }
 }
 
 #[cfg(target_os = "linux")]
