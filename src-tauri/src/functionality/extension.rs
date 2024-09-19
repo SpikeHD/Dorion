@@ -6,9 +6,7 @@ use crate::{log, util::paths::get_extensions_dir};
 #[cfg(target_os = "windows")]
 pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
   use webview2_com::{
-    Microsoft::Web::WebView2::Win32::{
-      ICoreWebView2Profile7, ICoreWebView2_13,
-    },
+    Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13},
     ProfileAddBrowserExtensionCompletedHandler,
   };
   use windows::core::{Interface, HSTRING};

@@ -16,7 +16,7 @@ pub fn get_os_accent() -> String {
 
 #[cfg(target_os = "macos")]
 pub fn get_os_accent() -> String {
-  use objc2_foundation::{NSUserDefaults, NSString};
+  use objc2_foundation::{NSString, NSUserDefaults};
 
   // From https://github.com/tauri-apps/tao/pull/589
   unsafe {

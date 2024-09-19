@@ -167,8 +167,8 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
 // https://github.com/tauri-apps/tauri/issues/4489#issuecomment-1170050529
 #[cfg(target_os = "macos")]
 pub unsafe fn set_notif_icon(_: &tauri::WebviewWindow, amount: i32) {
-  use objc2_foundation::{MainThreadMarker, NSString};
   use objc2_app_kit::NSApp;
+  use objc2_foundation::{MainThreadMarker, NSString};
 
   let label = if amount > 0 {
     Some(NSString::from_str(&format!("{}", amount)))

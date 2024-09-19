@@ -139,13 +139,11 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use objc2_web_kit::WKWebView;
 
   win
-    .with_webview(|webview| {
-      unsafe {
-        let webview: &WKWebView = &*webview.inner().cast();
-        let useragent = NSString::from_str(USERAGENT);
+    .with_webview(|webview| unsafe {
+      let webview: &WKWebView = &*webview.inner().cast();
+      let useragent = NSString::from_str(USERAGENT);
 
-        webview.setCustomUserAgent(Some(&useragent));
-      }
+      webview.setCustomUserAgent(Some(&useragent));
     })
     .expect("Failed to set user agent!");
 }

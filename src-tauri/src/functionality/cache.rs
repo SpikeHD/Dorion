@@ -55,7 +55,11 @@ pub fn clear_cache() {
 
     let date = NSDate::dateWithTimeIntervalSince1970(0.0);
 
-    store.removeDataOfTypes_modifiedSince_completionHandler(&data_types, &date, &StackBlock::new(|| {}));
+    store.removeDataOfTypes_modifiedSince_completionHandler(
+      &data_types,
+      &date,
+      &StackBlock::new(|| {}),
+    );
     pool.drain();
   }
 }
