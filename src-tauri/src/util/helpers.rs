@@ -51,7 +51,7 @@ pub fn open_themes() {
 
 #[tauri::command]
 pub fn open_extensions() {
-  let extension_folder = get_extension_dir();
+  let extension_folder = get_extensions_dir();
 
   open_folder(extension_folder).unwrap_or_default()
 }

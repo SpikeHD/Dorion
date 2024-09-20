@@ -149,13 +149,13 @@ pub fn get_extensions_dir() -> PathBuf {
   }
 
   #[cfg(target_os = "windows")]
-  let theme_dir = dirs::home_dir()
+  let extensions_dir = dirs::home_dir()
     .unwrap_or_default()
     .join("dorion")
     .join("extensions");
 
   #[cfg(not(target_os = "windows"))]
-  let theme_dir = dirs::config_dir()
+  let extensions_dir = dirs::config_dir()
     .unwrap_or_default()
     .join("dorion")
     .join("extensions");
