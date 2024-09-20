@@ -77,12 +77,11 @@ pub fn load_extensions(win: &WebviewWindow) {
     for file in files.flatten() {
       let path = file.path();
 
-      if path.is_file() {
-        let path = path.to_str().unwrap_or_default();
-        let path = PathBuf::from(path);
+      // Path can be file or folder, doesn't matter
+      let path = path.to_str().unwrap_or_default();
+      let path = PathBuf::from(path);
 
-        add_extension(win, path);
-      }
+      add_extension(win, path);
     }
   }
 
