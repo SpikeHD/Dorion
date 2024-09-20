@@ -1,3 +1,4 @@
+use tauri::path::BaseDirectory;
 use tauri::Manager;
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -101,11 +102,35 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     }
   }
 
-  // This should be the last extension loaded, the others are loaded early on
-  add_extension(window, get_main_extension_path());
-
   #[cfg(target_os = "windows")]
   {
+    use std::fs;
+    use std::path::PathBuf;    
+
+    // This should be the last extension loaded, the others are loaded early on
+    let main_ext_res_path = window
+      .app_handle()
+      .path()
+      .resolve(PathBuf::from("extension"), BaseDirectory::Resource)
+      .unwrap_or_default();
+
+    let main_ext_path = get_main_extension_path();
+
+    // TODO on Windows, this needs to be copied somewhere more accessible to the user for some reason
+    // Copy the files in the resource dir to the main extension dir if the files don't already exist
+    #[cfg(target_os = "windows")]
+    if let Ok(read_dir) = fs::read_dir(main_ext_res_path) {
+      for file in read_dir.flatten() {
+        let file_path = file.path();
+        let file_name = file_path.clone();
+        let file_name = file_name.file_name().unwrap_or_default();
+
+        fs::copy(file_path, main_ext_path.join(file_name)).unwrap_or_default();
+      }
+    }
+
+    add_extension(window, main_ext_path.clone());
+    
     // Refresh the page to ensure extensions are loaded
     window.eval("window.location.reload();").unwrap_or_default();
   }

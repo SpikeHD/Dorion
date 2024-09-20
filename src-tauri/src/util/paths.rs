@@ -177,10 +177,13 @@ pub fn get_main_extension_path() -> PathBuf {
     return extension_folder;
   }
 
-  let extension_dir = dirs::config_dir()
-    .unwrap_or_default()
-    .join("dorion")
-    .join("extension");
+  #[cfg(target_os = "windows")]
+  let appdata = dirs::data_dir().unwrap_or_default();
+
+  #[cfg(not(target_os = "windows"))]
+  let appdata = dirs::config_dir().unwrap_or_default();
+
+  let extension_dir = appdata.join("dorion").join("extension");
 
   create_if_not_exists(&extension_dir);
 
