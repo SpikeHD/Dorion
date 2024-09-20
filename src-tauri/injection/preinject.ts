@@ -177,7 +177,7 @@ async function handleThemeInjection() {
   // Get the initial theme
   const themeContents = await invoke('get_theme', {
     name: window.__DORION_CONFIG__.theme
-  })
+  }).catch(e => console.error(e)) || ''
 
   updateOverlay({
     midtitle: 'Localizing CSS imports...'
