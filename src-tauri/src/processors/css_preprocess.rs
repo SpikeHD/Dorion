@@ -23,6 +23,7 @@ pub async fn clear_css_cache() {
   }
 }
 
+#[cfg(not(target_os = "windows"))]
 #[tauri::command]
 pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
@@ -162,6 +163,14 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
   new_css
 }
 
+#[cfg(target_os = "windows")]
+#[tauri::command]
+pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
+  log!("Windows no longer requires CSS imports to be localized");
+  return css
+}
+
+#[cfg(not(target_os = "windows"))]
 pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();

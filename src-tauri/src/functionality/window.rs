@@ -101,7 +101,14 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     }
   }
 
+  // This should be the last extension loaded, the others are loaded early on
   add_extension(window, get_main_extension_path());
+
+  #[cfg(target_os = "windows")]
+  {
+    // Refresh the page to ensure extensions are loaded
+    window.eval("window.location.reload();").unwrap_or_default();
+  }
 
   window_zoom_level(window.clone(), None);
 }

@@ -67,6 +67,7 @@ pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
     .unwrap_or_default();
 }
 
+#[cfg(target_os = "windows")]
 pub fn load_extensions(win: &WebviewWindow) {
   log!("Loading extensions...");
 
@@ -75,21 +76,18 @@ pub fn load_extensions(win: &WebviewWindow) {
   // Read all files in the extensions dir
   if let Ok(files) = fs::read_dir(extensions_dir) {
     for file in files.flatten() {
-      let path = file.path();
-
       // Path can be file or folder, doesn't matter
-      let path = path.to_str().unwrap_or_default();
-      let path = PathBuf::from(path);
-
-      add_extension(win, path);
+      add_extension(win, file.path());
     }
   }
+}
 
-  // Refresh the page to ensure extensions are loaded
-  win.eval("window.location.reload();").unwrap_or_default();
+#[cfg(not(target_os = "windows"))]
+pub fn load_extensions(_win: &WebviewWindow) {
+  log!("Extensions are unsupported on non-Windows platforms!");
 }
 
 #[cfg(not(target_os = "windows"))]
 pub fn add_extension(_win: &WebviewWindow, _path: PathBuf) {
-  log!("Extension is unsupported on non-Windows platforms!");
+  log!("Extensions are unsupported on non-Windows platforms!");
 }
