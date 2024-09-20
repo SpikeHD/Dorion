@@ -49,6 +49,13 @@ pub fn open_themes() {
   open_folder(theme_folder).unwrap_or_default()
 }
 
+#[tauri::command]
+pub fn open_extensions() {
+  let extension_folder = get_extension_dir();
+
+  open_folder(extension_folder).unwrap_or_default()
+}
+
 fn open_folder(path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
   #[cfg(target_os = "windows")]
   Command::new("explorer").arg(path).spawn()?;

@@ -169,6 +169,7 @@ fn main() {
       helpers::get_platform,
       helpers::open_themes,
       helpers::open_plugins,
+      helpers::open_extensions,
       helpers::fetch_image,
       #[cfg(feature = "blur")]
       window::blur::available_blurs,
