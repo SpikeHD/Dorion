@@ -46,7 +46,7 @@ device_query = "2.1.0"
 regex = "1.10"
 
 # rpc server
-rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.16.1", optional = true }
+rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.16.3", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
