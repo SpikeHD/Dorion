@@ -105,7 +105,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   #[cfg(target_os = "windows")]
   {
     use std::fs;
-    use std::path::PathBuf;    
+    use std::path::PathBuf;
 
     // This should be the last extension loaded, the others are loaded early on
     let main_ext_res_path = window
@@ -130,7 +130,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     }
 
     add_extension(window, main_ext_path.clone());
-    
+
     // Refresh the page to ensure extensions are loaded
     window.eval("window.location.reload();").unwrap_or_default();
   }

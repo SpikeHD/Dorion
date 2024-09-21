@@ -167,7 +167,7 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
 #[tauri::command]
 pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
   log!("Windows no longer requires CSS imports to be localized");
-  return css
+  css
 }
 
 #[cfg(not(target_os = "windows"))]
