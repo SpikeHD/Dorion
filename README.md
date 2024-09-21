@@ -70,8 +70,6 @@
 > ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`.
 >
 > ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
->
-> ***Ubuntu Users***: If you are on 24.04 or later, and Dorion v5.0.1 or below, you may be unable to satisfy dependencies (`libwebkit2gtk-4.0` will be missing). You can manually install the library via the 22.04 package ([context](https://github.com/SpikeHD/Dorion/issues/241) & [more context](https://github.com/tauri-apps/tauri/issues/9662)).
 
 # Table of Contents
 
@@ -88,7 +86,7 @@
   * [Windows](#windows)
   * [Linux](#linux)
 * [TODO](#todo)
-* [Using Plugins and Themes](#using-plugins-and-themes)
+* [Using Plugins, Extensions, and Themes](#using-plugins-extensions-and-themes)
 * [Contributing](#contributing)
   * [Contributors](#contributors)
 * [Screenshots](#screenshots)
@@ -126,7 +124,6 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 * Theme support
 * [Shelter](https://github.com/uwu/Shelter) included out of the box
 * Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
-  * There is ***no*** BetterDiscord support... [yet](https://github.com/SpikeHD/Dorion/issues/91#issuecomment-1712269268)
 * Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
   * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
 * Feature flags for picking and choosing features (when building from source) 
@@ -207,10 +204,8 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 # Known Issues
 
-* (Windows) Large images in themes will not load
-* (MacOS) Injection JS does not reinject after reloading the page
-* External images (UserBG, Decor, UserPFP, etc.) will not load
-* Fonts/font-faces will not load
+* (non-Windows) External images (UserBG, Decor, UserPFP, etc.) will not load
+* (non-Windows) Fonts/font-faces will not load
 
 # Troubleshooting
 
@@ -254,17 +249,19 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 * [ ] Move from `device_query` to `rdev` (supports more keys. May also just attempt to contribute to `device_query`)
 * [x] API abstractions
 
-# Using Plugins and Themes
+# Using Plugins, Extensions, and Themes
 
 > [!TIP]
 > See the `examples` directory for examples of plugins, including how to include external code and themes.
 
-Plugins and themes are relatively simple to use, the file structure looks like so on Windows:
+Plugins, extensions, and themes are relatively simple to use, the file structure looks like so on Windows:
 
 ```
 C:/Users/%USERNAME%/dorion/
     ├── plugins/
     |   └── plugin.js
+    ├── extensions/
+    |   └── some_unpacked_extension/
     └── themes/
         └── theme.css
 ```
@@ -279,7 +276,7 @@ and like so on Linux:
         └── theme.css
 ```
 
-so if you download a plugin or theme, just pop it into the `plugins`/`themes` folder. If you need help finding them, there are buttons in Dorion settings that'll take you where you need!
+so if you download a plugin, extension, or theme, just pop it into the `plugins`/`extensions`/`themes` folder. If you need help finding them, there are buttons in Dorion settings that'll take you where you need!
 
 > [!NOTE]
 > Themes can also be installed by clicking `Install Theme from Link` in Theme settings, if you prefer
