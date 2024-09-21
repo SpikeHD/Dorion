@@ -17,6 +17,7 @@ pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
     return;
   }
 
+  // TODO integrate this into rsRPC somehow
   // Check processes every couple seconds to see if OBS is open
   std::thread::spawn(move || loop {
     std::thread::sleep(std::time::Duration::from_secs(2));

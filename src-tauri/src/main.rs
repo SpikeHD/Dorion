@@ -20,7 +20,7 @@ use util::{
   logger::log,
   notifications,
   paths::get_webdata_dir,
-  window_helpers::{self, clear_cache_check, set_user_agent},
+  window_helpers::{self, clear_cache_check, set_user_agent, ultrashow},
 };
 
 use crate::{
@@ -248,9 +248,7 @@ fn main() {
                 }
               };
 
-              win.set_focus().unwrap_or_default();
-              win.unminimize().unwrap_or_default();
-              win.show().unwrap_or_default();
+              ultrashow(&win);
             },
           ))
           .unwrap_or_else(|_| log!("Failed to register single instance plugin"));

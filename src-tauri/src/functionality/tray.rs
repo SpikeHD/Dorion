@@ -6,7 +6,7 @@ use tauri::{
   AppHandle, Manager,
 };
 
-use crate::log;
+use crate::{log, util::window_helpers::ultrashow};
 
 flate!(static DEFAULT: [u8] from "./icons/32x32.png");
 flate!(static CONNECTED: [u8] from "./icons/tray/connected.png");
@@ -64,9 +64,7 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       }
       "open" => {
         if let Some(win) = app.get_webview_window("main") {
-          win.show().unwrap_or_default();
-          win.set_focus().unwrap_or_default();
-          win.unminimize().unwrap_or_default();
+          ultrashow(&win);
         }
       }
       "restart" => {
@@ -89,9 +87,8 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       } = event
       {
         let app = tray.app_handle();
-        if let Some(webview_window) = app.get_webview_window("main") {
-          let _ = webview_window.show();
-          let _ = webview_window.set_focus();
+        if let Some(win) = app.get_webview_window("main") {
+          ultrashow(&win);
         }
       }
     })
