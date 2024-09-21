@@ -1,13 +1,7 @@
 use std::fs;
 
-use regex::Regex;
-use tauri::Emitter;
-
-use crate::config::get_config;
 use crate::log;
 use crate::util::paths::get_theme_dir;
-
-use base64::{engine::general_purpose, Engine as _};
 
 #[tauri::command]
 pub async fn clear_css_cache() {
@@ -26,6 +20,11 @@ pub async fn clear_css_cache() {
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
 pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
+  use regex::Regex;
+  use tauri::Emitter;
+  
+  use crate::config::get_config;
+
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
@@ -172,6 +171,10 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 
 #[cfg(not(target_os = "windows"))]
 pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
+  use base64::{engine::general_purpose, Engine as _};
+  use regex::Regex;
+  use tauri::Emitter;
+
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
   let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
