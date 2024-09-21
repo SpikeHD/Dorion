@@ -22,7 +22,7 @@ pub async fn clear_css_cache() {
 pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
   use regex::Regex;
   use tauri::Emitter;
-  
+
   use crate::config::get_config;
 
   let reg = Regex::new(r#"(?m)^@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
