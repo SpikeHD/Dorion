@@ -209,18 +209,23 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 # Troubleshooting
 
-## Windows
+* **"Oops! Something went wrong." (or a similar client crash)**
+  * Disable non-vital client mods/plugins/extensions and try again.
+  * If you cannot get to the settings menu, you can delete the following items:
+    * Windows: `%appdata%\dorion\webdata` & `%appdata%\dorion\config.json`
+    * Linux: `~/.config/dorion/webdata` & `~/.config/dorion/config.json`
+    * MacOS: `~/Library/Application Support/dorion/webdata` & `~/Library/Application Support/dorion/config.json`
 
+## Windows
 * **Dorion not opening**
-  * Install via MSI instead of the `.zip` file
-  * Use the `.zip` file instead of the MSI
-  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion into it's own folder.
+  * Try installing via MSI instead of the `.zip` file
+  * Try using the `.zip` file instead of the MSI
+  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion and it's contentsinto it's own folder.
   * [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
     * Fully uninstall and reinstall.
     * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
 
 ## Linux
-
 * **White/blank/frozen screen**
   * Run Dorion with either, or both, of the following environment variables:
     ```sh
