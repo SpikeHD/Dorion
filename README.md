@@ -39,25 +39,25 @@
   <tr>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_x64_en-US.msi ">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_x64_en-US.msi ">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_arm64-setup.exe">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_arm64-setup.exe">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_x64.dmg">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_x64.dmg">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_aarch64.dmg">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_aarch64.dmg">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_amd64.deb">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_amd64.deb">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_armhf.deb">ARM v7</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_armhf.deb">ARM v7</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.0.2/Dorion_6.0.2_arm64.deb">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_arm64.deb">ARM64</a>
       </div>
     </td>
   </tr>

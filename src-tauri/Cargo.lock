@@ -1081,7 +1081,7 @@ dependencies = [
 
 [[package]]
 name = "dorion"
-version = "6.0.2"
+version = "6.1.0"
 dependencies = [
  "base64 0.22.1",
  "block2",

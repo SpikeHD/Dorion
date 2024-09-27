@@ -19,11 +19,11 @@ modules:
     buildsystem: simple
     sources:
       - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.0.2/dorion_6.0.2_amd64.deb
+        url: https://github.com/SpikeHD/Dorion/releases/download/v6.1.0/dorion_6.1.0_amd64.deb
         sha256: 70266291367e214de6abf16425f7a08172f2588b161be6b6aaed466e05bddd64
         only-arches: [x86_64]
       - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.0.2/dorion_6.0.2_arm64.deb
+        url: https://github.com/SpikeHD/Dorion/releases/download/v6.1.0/dorion_6.1.0_arm64.deb
         sha256: f9df3a47d27e3fa49fd8d22343b68c0bc0153f4950ec19aae2445f1bdbb058a8
         only-arches: [aarch64]
     build-commands:
