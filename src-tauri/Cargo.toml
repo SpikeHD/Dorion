@@ -14,10 +14,6 @@ rust-version = "1.80"
 strip = "debuginfo"
 lto = true
 
-# Temp while I wait for official release
-[patch.crates-io]
-tauri = { git = "https://github.com/tauri-apps/tauri", rev = "a247170" }
-
 [build-dependencies]
 tauri-build = { version = "2.0.0-beta", features = [] }
 
