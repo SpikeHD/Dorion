@@ -24,7 +24,7 @@ struct KeybindChangedEvent {
   key: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct KeyStruct {
   name: String,
   code: String,

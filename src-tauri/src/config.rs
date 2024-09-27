@@ -7,9 +7,12 @@ use crate::functionality::hotkeys::KeyStruct;
 use crate::log;
 use crate::util::paths::get_config_file;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
+  /// Deprecated
   pub theme: Option<String>,
+
+  pub themes: Option<Vec<String>>,
   pub zoom: Option<String>,
   pub client_type: Option<String>,
   pub sys_tray: Option<bool>,
@@ -42,7 +45,10 @@ pub struct Config {
 impl Config {
   pub fn default() -> Self {
     Config {
+      // Deprecated
       theme: Option::from("none".to_string()),
+
+      themes: Option::from(vec!["none".to_string()]),
       zoom: Option::from("1.0".to_string()),
       client_type: Option::from("default".to_string()),
       sys_tray: Option::from(false),

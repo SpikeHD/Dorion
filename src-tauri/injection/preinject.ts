@@ -168,25 +168,30 @@ async function handleThemeInjection() {
   ts.id = 'dorion-theme'
   document.body.appendChild(ts)
 
-  if (!window.__DORION_CONFIG__?.theme || window.__DORION_CONFIG__?.theme === 'none') return ''
+  if (!window.__DORION_CONFIG__?.themes || window.__DORION_CONFIG__?.themes.length === 0) return ''
 
   updateOverlay({
     midtitle: 'Loading theme CSS...'
   })
 
   // Get the initial theme
-  const themeContents = await invoke('get_theme', {
-    name: window.__DORION_CONFIG__.theme
-  }).catch(e => console.error(e)) || ''
+  const themeContents = await invoke('get_themes').catch(e => console.error(e)) || ''
 
   updateOverlay({
     midtitle: 'Localizing CSS imports...'
   })
 
-  // Localize the imports
+  // Create a "name" for the "theme" (or combo) based on the retrieved enabled theme list
+  const themeNames = await invoke('get_enabled_themes').catch(e => console.error(e)) || []
+  // Gotta adhere to filename length restrictions
+  const themeName = themeNames.join('').substring(0, 254)
+
+  console.log(themeName)
+
+  // Localize the imports. On windows this no longer does anything
   const localized = await invoke('localize_imports', {
     css: themeContents,
-    name: window.__DORION_CONFIG__.theme
+    name: themeName
   })
 
   // This will use the DOM in a funky way to validate the css, then we make sure to fix up quotes

@@ -7,7 +7,7 @@ use std::{env, sync::LazyLock, time::Duration};
 use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
-use config::{get_config, Config};
+use config::{get_config, set_config, Config};
 use injection::{
   client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
@@ -61,9 +61,22 @@ fn main() {
     log!("Panic occurred: {:?}", info);
   }));
 
-  let config = get_config();
+  let mut config = get_config();
 
-  std::thread::sleep(Duration::from_millis(200));
+  // Check if the deprecated theme option is being used
+  if let Some(theme) = config.theme {
+    if config.themes.is_none() {
+      // If this is "none" then it's fine to leave the vec empty
+      if theme != "none" {
+        log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
+  
+        config.themes = Option::from(vec![theme]);
+        config.theme = Option::from("none".to_string());
+  
+        set_config(config.clone());
+      }
+    }
+  }
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
@@ -163,8 +176,9 @@ fn main() {
       config::read_config_file,
       config::write_config_file,
       config::default_config,
-      theme::get_theme,
+      theme::get_themes,
       theme::get_theme_names,
+      theme::get_enabled_themes,
       theme::theme_from_link,
       helpers::get_platform,
       helpers::open_themes,
@@ -208,6 +222,7 @@ fn main() {
       // Init plugin list
       plugin::get_new_plugins();
 
+      let config = get_config();
       let preinject = PREINJECT.clone();
       let title = format!("Dorion - v{}", app.package_info().version);
       let win = WebviewWindowBuilder::new(app, "main", url_ext)
