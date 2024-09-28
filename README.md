@@ -220,7 +220,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 * **Dorion not opening**
   * Try installing via MSI instead of the `.zip` file
   * Try using the `.zip` file instead of the MSI
-  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion and it's contentsinto it's own folder.
+  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion and it's contents into it's own folder.
   * [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
     * Fully uninstall and reinstall.
     * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
