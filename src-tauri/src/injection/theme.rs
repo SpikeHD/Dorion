@@ -2,6 +2,11 @@ use std::fs;
 
 use crate::{config::get_config, util::paths::get_theme_dir};
 
+fn theme_is_enabled(name: String) -> bool {
+  let config = get_config();
+  config.themes.unwrap_or_default().contains(&name)
+}
+
 #[tauri::command]
 pub fn get_themes() -> Result<String, String> {
   let themes = get_theme_dir();
@@ -16,7 +21,7 @@ pub fn get_themes() -> Result<String, String> {
       .filter(|name| name != "cache" && name != ".ds_store")
       .unwrap_or_default();
 
-    if file_name.ends_with(".css") {
+    if file_name.ends_with(".css") && theme_is_enabled(file_name) {
       all_contents.push_str(fs::read_to_string(entry.path()).unwrap_or_default().as_str());
     }
   }

@@ -186,8 +186,6 @@ async function handleThemeInjection() {
   // Gotta adhere to filename length restrictions
   const themeName = themeNames.join('').substring(0, 254)
 
-  console.log(themeName)
-
   // Localize the imports. On windows this no longer does anything
   const localized = await invoke('localize_imports', {
     css: themeContents,

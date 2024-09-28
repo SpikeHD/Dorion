@@ -1,4 +1,5 @@
 use std::fs;
+use regex::Regex;
 
 use crate::log;
 use crate::util::paths::get_theme_dir;
@@ -20,7 +21,6 @@ pub async fn clear_css_cache() {
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
 pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
-  use regex::Regex;
   use tauri::Emitter;
 
   use crate::config::get_config;
@@ -166,13 +166,45 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
 #[tauri::command]
 pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
   log!("Windows no longer requires CSS imports to be localized");
-  css
+
+  // We do still need to shuffle the @import statements to all be at the top
+  let mut new_css = css.clone();
+  let mut seen_imports: Vec<String> = vec![];
+
+  let reg = Regex::new(r#"@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
+
+  for groups in reg.captures_iter(Box::leak(css.clone().into_boxed_str())) {
+    let full_import = groups.get(0).unwrap().as_str();
+    let url = groups.get(1).unwrap().as_str().replace(['\'', '\"'], "");
+
+    if url.is_empty() {
+      continue;
+    }
+
+    log!("Importing: {}", &url);
+
+    if seen_imports.contains(&url) {
+      // Remove the import statement from the css
+      new_css = new_css.replace(full_import, "");
+      continue;
+    } else {
+      seen_imports.push(url.to_string());
+    }
+  }
+
+  // Now add all the @import statements to the top
+  for import in seen_imports {
+    log!("Appending import: {}", &import);
+    let import = format!("@import url(\"https://{}\");", import);
+    new_css = format!("{}\n{}", import, new_css);
+  }
+
+  new_css
 }
 
 #[cfg(not(target_os = "windows"))]
 pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
   use base64::{engine::general_purpose, Engine as _};
-  use regex::Regex;
   use tauri::Emitter;
 
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
