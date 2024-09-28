@@ -165,7 +165,7 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
-  log!("Windows no longer requires CSS imports to be localized");
+  log!("Windows no longer requires CSS imports to be localized, but it does require import shuffling!");
 
   // We do still need to shuffle the @import statements to all be at the top
   let mut new_css = css.clone();
@@ -181,8 +181,6 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
       continue;
     }
 
-    log!("Importing: {}", &url);
-
     if seen_imports.contains(&url) {
       // Remove the import statement from the css
       new_css = new_css.replace(full_import, "");
@@ -194,7 +192,6 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 
   // Now add all the @import statements to the top
   for import in seen_imports {
-    log!("Appending import: {}", &import);
     let import = format!("@import url(\"https://{}\");", import);
     new_css = format!("{}\n{}", import, new_css);
   }
