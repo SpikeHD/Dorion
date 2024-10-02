@@ -69,10 +69,10 @@ fn main() {
       // If this is "none" then it's fine to leave the vec empty
       if theme != "none" {
         log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
-  
+
         config.themes = Option::from(vec![theme]);
         config.theme = Option::from("none".to_string());
-  
+
         set_config(config.clone());
       }
     }
@@ -280,6 +280,9 @@ fn main() {
 
       functionality::extension::load_extensions(&win);
       plugin::load_plugins(win.clone(), Some(true));
+
+      #[cfg(target_os = "macos")]
+      functionality::menu::create_menubar(&app.handle()).unwrap_or_default();
 
       // begin the RPC server if needed
       #[cfg(feature = "rpc")]

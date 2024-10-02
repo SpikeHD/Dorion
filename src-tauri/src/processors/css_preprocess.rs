@@ -1,5 +1,5 @@
-use std::fs;
 use regex::Regex;
+use std::fs;
 
 use crate::log;
 use crate::util::paths::get_theme_dir;
@@ -165,7 +165,9 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
-  log!("Windows no longer requires CSS imports to be localized, but it does require import shuffling!");
+  log!(
+    "Windows no longer requires CSS imports to be localized, but it does require import shuffling!"
+  );
 
   // We do still need to shuffle the @import statements to all be at the top
   let mut new_css = css.clone();

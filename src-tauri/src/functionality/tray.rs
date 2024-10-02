@@ -2,7 +2,7 @@ use include_flate::flate;
 use tauri::{
   image::Image,
   menu::{MenuBuilder, MenuItemBuilder},
-  tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+  tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
   AppHandle, Manager,
 };
 
@@ -95,4 +95,8 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
     .build(app)?;
 
   Ok(())
+}
+
+pub fn get_tray(app: &AppHandle) -> Option<TrayIcon> {
+  app.tray_by_id("main")
 }

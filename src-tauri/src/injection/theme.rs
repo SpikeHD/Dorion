@@ -22,10 +22,14 @@ pub fn get_themes() -> Result<String, String> {
       .unwrap_or_default();
 
     if file_name.ends_with(".css") && theme_is_enabled(file_name) {
-      all_contents.push_str(fs::read_to_string(entry.path()).unwrap_or_default().as_str());
+      all_contents.push_str(
+        fs::read_to_string(entry.path())
+          .unwrap_or_default()
+          .as_str(),
+      );
     }
   }
-  
+
   Ok(all_contents)
 }
 

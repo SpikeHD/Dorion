@@ -37,6 +37,7 @@ pub struct Config {
   pub client_mods: Option<Vec<String>>,
   pub unread_badge: Option<bool>,
   pub client_plugins: Option<bool>,
+  pub tray_icon_enabled: Option<bool>,
 
   pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
   pub keybinds_enabled: Option<bool>,
@@ -73,6 +74,7 @@ impl Config {
       client_mods: Option::from(vec!["Shelter".to_string()]),
       unread_badge: Option::from(true),
       client_plugins: Option::from(true),
+      tray_icon_enabled: Option::from(true),
 
       keybinds: Option::from(HashMap::new()),
       keybinds_enabled: Option::from(true),
