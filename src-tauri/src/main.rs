@@ -282,7 +282,7 @@ fn main() {
       plugin::load_plugins(win.clone(), Some(true));
 
       #[cfg(target_os = "macos")]
-      functionality::menu::create_menubar(&app.handle()).unwrap_or_default();
+      functionality::menu::create_menubar(app.handle()).unwrap_or_default();
 
       // begin the RPC server if needed
       #[cfg(feature = "rpc")]
