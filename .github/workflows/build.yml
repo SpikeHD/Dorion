@@ -210,7 +210,7 @@ jobs:
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-latest'
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz dorion updater .portable ./plugins ./themes ./injection ./icons
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz Dorion updater .portable ./plugins ./themes ./injection ./icons
 
       # Windows portable
       - name: (Windows) Upload portable
