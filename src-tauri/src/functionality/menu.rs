@@ -30,7 +30,18 @@ pub fn create_menubar(app: &tauri::AppHandle) -> Result<(), tauri::Error> {
     .quit()
     .build()?;
 
-  let menu = MenuBuilder::new(app).items(&[&submenu]).build()?;
+  let file_submenu = SubmenuBuilder::new(app, "File")
+    .select_all()
+    .copy()
+    .cut()
+    .paste()
+    .fullscreen()
+    .quit()
+    .build()?;
+
+  let menu = MenuBuilder::new(app)
+    .items(&[&submenu, &file_submenu])
+    .build()?;
 
   app.set_menu(menu).unwrap_or_default();
 
