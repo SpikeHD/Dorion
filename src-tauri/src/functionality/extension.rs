@@ -68,8 +68,8 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
 
 #[cfg(target_os = "windows")]
 pub fn load_extensions(win: &WebviewWindow) {
-  use std::fs;
   use crate::util::paths::get_extensions_dir;
+  use std::fs;
 
   log!("Loading extensions...");
 

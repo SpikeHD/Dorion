@@ -1,8 +1,10 @@
 #[cfg(feature = "hotkeys")]
+#[cfg(not(target_os = "macos"))]
 use device_query::keymap::Keycode;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "hotkeys")]
+#[cfg(not(target_os = "macos"))]
 #[derive(Debug)]
 pub struct KeyComboState {
   pub keys: Vec<Keycode>,
@@ -23,6 +25,7 @@ pub struct KeyStruct {
 
 // this sucks
 #[cfg(feature = "hotkeys")]
+#[cfg(not(target_os = "macos"))]
 pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
   // Might have to make a PR not gonna lie
   match keycode.as_str() {

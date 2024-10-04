@@ -233,6 +233,7 @@ pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
 }
 
 #[cfg(feature = "rpc")]
+#[cfg(not(target_os = "macos"))]
 pub fn custom_detectables_path() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 

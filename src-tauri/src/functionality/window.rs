@@ -62,6 +62,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   }
 
   #[cfg(feature = "hotkeys")]
+  #[cfg(not(target_os = "macos"))]
   if config.keybinds_enabled.unwrap_or(false) {
     log!("Starting global keybind watcher...");
     super::hotkeys::start_keybind_watcher(window);
@@ -102,10 +103,10 @@ pub fn after_build(window: &tauri::WebviewWindow) {
 
   #[cfg(target_os = "windows")]
   {
+    use super::extension::add_extension;
+    use crate::util::paths::get_main_extension_path;
     use std::fs;
     use std::path::PathBuf;
-    use crate::util::paths::get_main_extension_path;
-    use super::extension::add_extension;
     use tauri::path::BaseDirectory;
 
     // This should be the last extension loaded, the others are loaded early on

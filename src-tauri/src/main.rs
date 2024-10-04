@@ -3,7 +3,7 @@
   windows_subsystem = "windows"
 )]
 
-use std::{env, sync::LazyLock, time::Duration};
+use std::{env, time::Duration};
 use tauri::{Manager, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
@@ -38,11 +38,9 @@ mod release;
 mod util;
 mod window;
 
-static GIT_HASH: LazyLock<&str> = LazyLock::new(|| option_env!("GIT_HASH").unwrap_or("Unknown"));
-
 #[tauri::command]
 fn git_hash() -> String {
-  GIT_HASH.to_string()
+  option_env!("GIT_HASH").unwrap_or("Unknown").to_string()
 }
 
 #[tauri::command]
@@ -164,14 +162,19 @@ fn main() {
       release::do_update,
       release::update_check,
       #[cfg(feature = "rpc")]
+      #[cfg(not(target_os = "macos"))]
       functionality::rpc::get_windows,
       #[cfg(feature = "rpc")]
+      #[cfg(not(target_os = "macos"))]
       functionality::rpc::get_local_detectables,
       #[cfg(feature = "hotkeys")]
+      #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::get_keybinds,
       #[cfg(feature = "hotkeys")]
+      #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::set_keybinds,
       #[cfg(feature = "hotkeys")]
+      #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::set_keybind,
       injection_runner::get_injection_js,
       config::get_config,
@@ -286,6 +289,7 @@ fn main() {
 
       // begin the RPC server if needed
       #[cfg(feature = "rpc")]
+      #[cfg(not(target_os = "macos"))]
       if get_config().rpc_server.unwrap_or(false) {
         let win_cln = win.clone();
         std::thread::spawn(|| {
