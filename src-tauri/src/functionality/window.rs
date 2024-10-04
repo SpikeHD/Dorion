@@ -12,7 +12,7 @@ use crate::util::window_helpers::window_zoom_level;
 use crate::window::blur::apply_effect;
 
 use super::extension::add_extension;
-use super::tray;
+use super::{menu, tray};
 
 // Minimize
 #[tauri::command]
@@ -134,6 +134,9 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     // Refresh the page to ensure extensions are loaded
     window.eval("window.location.reload();").unwrap_or_default();
   }
+
+  #[cfg(target_os = "macos")]
+  menu::create_menubar(app).unwrap_or_default();
 
   window_zoom_level(window.clone(), None);
 }

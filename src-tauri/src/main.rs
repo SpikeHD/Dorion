@@ -281,9 +281,6 @@ fn main() {
       functionality::extension::load_extensions(&win);
       plugin::load_plugins(win.clone(), Some(true));
 
-      #[cfg(target_os = "macos")]
-      functionality::menu::create_menubar(app.handle()).unwrap_or_default();
-
       // begin the RPC server if needed
       #[cfg(feature = "rpc")]
       if get_config().rpc_server.unwrap_or(false) {
