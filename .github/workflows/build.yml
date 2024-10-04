@@ -150,12 +150,17 @@ jobs:
         run: pnpm install && pnpm shupdate
           
       - name: Build
-        if: matrix.config.target != 'armv7-unknown-linux-gnueabihf' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        if: matrix.config.target != 'armv7-unknown-linux-gnueabihf' && matrix.config.target != 'aarch64-unknown-linux-gnu' && matrix.config.platform != 'macos-latest'
         # If we are compiling for Windows ARM, we can only support NSIS
         # However, I cannot phase out the MSI or a buncha package managers will explode
         run: pnpm tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
         env:
           RUSTFLAGS: -Awarnings
+
+      - name: Build (macOS)
+        if: matrix.config.platform == 'macos-latest'
+        # Don't compile features that don't work anyways
+        run: pnpm tauri build --target ${{ matrix.config.target }} --no-default-features --features blur
 
       - name: (Linux) (ARMv7) Build
         if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'

@@ -1,6 +1,28 @@
+#[cfg(feature = "hotkeys")]
 use device_query::keymap::Keycode;
+use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "hotkeys")]
+#[derive(Debug)]
+pub struct KeyComboState {
+  keys: Vec<Keycode>,
+  pressed: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct KeybindChangedEvent {
+  keys: Vec<KeyStruct>,
+  key: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct KeyStruct {
+  name: String,
+  code: String,
+}
 
 // this sucks
+#[cfg(feature = "hotkeys")]
 pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
   // Might have to make a PR not gonna lie
   match keycode.as_str() {

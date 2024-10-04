@@ -165,6 +165,7 @@ pub fn get_extensions_dir() -> PathBuf {
   extensions_dir
 }
 
+#[cfg(target_os = "windows")]
 pub fn get_main_extension_path() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 

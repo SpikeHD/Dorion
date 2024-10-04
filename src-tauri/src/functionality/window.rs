@@ -1,17 +1,14 @@
-use tauri::path::BaseDirectory;
 use tauri::Manager;
 use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
 use crate::log;
-use crate::util::paths::get_main_extension_path;
 use crate::util::window_helpers::window_zoom_level;
 
 #[cfg(feature = "blur")]
 use crate::window::blur::apply_effect;
 
-use super::extension::add_extension;
 use super::{menu, tray};
 
 // Minimize
@@ -64,6 +61,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     super::streamer_mode::start_streamer_mode_watcher(window.clone());
   }
 
+  #[cfg(feature = "hotkeys")]
   if config.keybinds_enabled.unwrap_or(false) {
     log!("Starting global keybind watcher...");
     super::hotkeys::start_keybind_watcher(window);
@@ -106,6 +104,9 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   {
     use std::fs;
     use std::path::PathBuf;
+    use crate::util::paths::get_main_extension_path;
+    use super::extension::add_extension;
+    use tauri::path::BaseDirectory;
 
     // This should be the last extension loaded, the others are loaded early on
     let main_ext_res_path = window

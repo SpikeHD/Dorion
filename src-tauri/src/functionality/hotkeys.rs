@@ -9,26 +9,10 @@ use crate::{
   log,
 };
 
+use super::keyboard::KeyStruct;
+
 pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
 pub static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
-
-#[derive(Debug)]
-struct KeyComboState {
-  keys: Vec<Keycode>,
-  pressed: bool,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct KeybindChangedEvent {
-  keys: Vec<KeyStruct>,
-  key: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct KeyStruct {
-  name: String,
-  code: String,
-}
 
 #[tauri::command]
 pub fn get_keybinds() -> HashMap<String, Vec<KeyStruct>> {

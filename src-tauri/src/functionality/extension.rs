@@ -1,10 +1,9 @@
-use std::{fs, path::PathBuf};
 use tauri::WebviewWindow;
 
-use crate::{log, util::paths::get_extensions_dir};
+use crate::log;
 
 #[cfg(target_os = "windows")]
-pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
+pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
   use webview2_com::{
     Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13},
     ProfileAddBrowserExtensionCompletedHandler,
@@ -69,6 +68,9 @@ pub fn add_extension(win: &WebviewWindow, path: PathBuf) {
 
 #[cfg(target_os = "windows")]
 pub fn load_extensions(win: &WebviewWindow) {
+  use std::fs;
+  use crate::util::paths::get_extensions_dir;
+
   log!("Loading extensions...");
 
   let extensions_dir = get_extensions_dir();
@@ -84,10 +86,5 @@ pub fn load_extensions(win: &WebviewWindow) {
 
 #[cfg(not(target_os = "windows"))]
 pub fn load_extensions(_win: &WebviewWindow) {
-  log!("Extensions are unsupported on non-Windows platforms!");
-}
-
-#[cfg(not(target_os = "windows"))]
-pub fn add_extension(_win: &WebviewWindow, _path: PathBuf) {
   log!("Extensions are unsupported on non-Windows platforms!");
 }

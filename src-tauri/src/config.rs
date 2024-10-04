@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 
-use crate::functionality::hotkeys::KeyStruct;
+use crate::functionality::keyboard::KeyStruct;
 use crate::log;
 use crate::util::paths::get_config_file;
 

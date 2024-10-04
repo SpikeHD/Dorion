@@ -167,8 +167,11 @@ fn main() {
       functionality::rpc::get_windows,
       #[cfg(feature = "rpc")]
       functionality::rpc::get_local_detectables,
+      #[cfg(feature = "hotkeys")]
       functionality::hotkeys::get_keybinds,
+      #[cfg(feature = "hotkeys")]
       functionality::hotkeys::set_keybinds,
+      #[cfg(feature = "hotkeys")]
       functionality::hotkeys::set_keybind,
       injection_runner::get_injection_js,
       config::get_config,
