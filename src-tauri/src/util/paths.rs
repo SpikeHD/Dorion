@@ -232,6 +232,7 @@ pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
     .unwrap_or_default()
 }
 
+#[cfg(feature = "rpc")]
 pub fn custom_detectables_path() -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 
