@@ -196,7 +196,8 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
     # Build Dorion
     pnpm tauri build
-    # or to debug/open in dev mode
+    # or to debug/open in dev mode. JS needs to be built manually when building in dev mode
+    pnpm build:js
     pnpm tauri dev
     ```
 
