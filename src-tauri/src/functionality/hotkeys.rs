@@ -38,10 +38,6 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
   set_keybinds(keybinds);
 }
 
-pub fn start_keybind_watcher(_win: &tauri::WebviewWindow) {
-  log!("Keybinds are not supported on macOS yet.");
-}
-
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
   win.listen("keybinds_changed", |evt| {
     let payload = evt.payload();
