@@ -5,20 +5,20 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "hotkeys")]
 #[derive(Debug)]
 pub struct KeyComboState {
-  keys: Vec<Keycode>,
-  pressed: bool,
+  pub keys: Vec<Keycode>,
+  pub pressed: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeybindChangedEvent {
-  keys: Vec<KeyStruct>,
-  key: String,
+  pub keys: Vec<KeyStruct>,
+  pub key: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct KeyStruct {
-  name: String,
-  code: String,
+  pub name: String,
+  pub code: String,
 }
 
 // this sucks

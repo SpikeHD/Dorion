@@ -9,7 +9,7 @@ use crate::{
   log,
 };
 
-use super::keyboard::KeyStruct;
+use super::keyboard::{KeyComboState, KeyStruct, KeybindChangedEvent};
 
 pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
 pub static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
