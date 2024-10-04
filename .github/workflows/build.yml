@@ -160,7 +160,7 @@ jobs:
       - name: Build (macOS)
         if: matrix.config.platform == 'macos-latest'
         # Don't compile features that don't work anyways
-        run: pnpm tauri build --target ${{ matrix.config.target }} --no-default-features --features blur
+        run: pnpm tauri build --target ${{ matrix.config.target }} -- --no-default-features --features blur
 
       - name: (Linux) (ARMv7) Build
         if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
