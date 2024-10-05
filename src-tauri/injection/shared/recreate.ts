@@ -77,9 +77,13 @@ export function proxyAddEventListener() {
         const isTrustedOverwrite = listenerArgs[0]?.isTrustedOverwrite
 
         if (isTrustedOverwrite !== undefined) {
-          listenerArgs[0] = Object.assign({}, listenerArgs[0])
-          // @ts-expect-error this is fine
-          listenerArgs[0].isTrusted = isTrustedOverwrite
+          const event = listenerArgs[0]
+          listenerArgs[0] = new Proxy(event, {
+            get(target, prop, receiver) {
+              if (prop === "isTrusted") return isTrustedOverwrite
+              return Reflect.get(target, prop, receiver)
+            }
+          })
         }
 
         return ('handleEvent' in listener) ? listener.handleEvent(...listenerArgs) : listener(...listenerArgs)
