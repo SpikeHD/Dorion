@@ -12,6 +12,7 @@ declare global {
         emit: (event: string, payload: unknown) => void
         TauriEvent: {
           WINDOW_RESIZED: string
+          WINDOW_CLOSE_REQUESTED: string
         }
       }
       shell: {
