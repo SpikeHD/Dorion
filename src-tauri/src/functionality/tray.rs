@@ -2,7 +2,7 @@ use include_flate::flate;
 use tauri::{
   image::Image,
   menu::{MenuBuilder, MenuItemBuilder},
-  tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
+  tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
   AppHandle, Manager,
 };
 
@@ -97,6 +97,7 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
   Ok(())
 }
 
-pub fn get_tray(app: &AppHandle) -> Option<TrayIcon> {
+#[cfg(target_os = "macos")]
+pub fn get_tray(app: &AppHandle) -> Option<tauri::tray::TrayIcon> {
   app.tray_by_id("main")
 }

@@ -6,6 +6,8 @@ pub mod extension;
 pub mod hotkeys;
 
 pub mod keyboard;
+
+#[cfg(target_os = "macos")]
 pub mod menu;
 
 #[cfg(feature = "rpc")]

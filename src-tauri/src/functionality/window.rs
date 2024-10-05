@@ -9,8 +9,6 @@ use crate::util::window_helpers::window_zoom_level;
 #[cfg(feature = "blur")]
 use crate::window::blur::apply_effect;
 
-use super::{menu, tray};
-
 // Minimize
 #[tauri::command]
 pub fn minimize(win: tauri::WebviewWindow) {
@@ -94,7 +92,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     enable_webrtc(window);
   }
 
-  match tray::create_tray(app) {
+  match super::tray::create_tray(app) {
     Ok(_) => {}
     Err(e) => {
       log!("Error creating tray icon: {:?}", e);
@@ -138,7 +136,7 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   }
 
   #[cfg(target_os = "macos")]
-  menu::create_menubar(app).unwrap_or_default();
+  super::menu::create_menubar(app).unwrap_or_default();
 
   window_zoom_level(window.clone(), None);
 }
