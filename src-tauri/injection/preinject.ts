@@ -110,7 +110,7 @@ async function init() {
   // a tab is closed. However, this event is not triggered by the Webview so we need to
   // dispatch the `beforeunload` event ourselves.
   const dispatchBeforeUnload = () => {
-    let event = new Event("beforeunload") as Event & { isTrustedOverwrite: boolean }
+    const event = new Event('beforeunload') as Event & { isTrustedOverwrite: boolean }
     event.isTrustedOverwrite = true
     window.dispatchEvent(event)
   }

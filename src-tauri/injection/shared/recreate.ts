@@ -71,7 +71,7 @@ export function proxyAddEventListener() {
 
   window.addEventListener = function(...args: Parameters<typeof window.addEventListener>) {
     const [type, listener] = args
-    if (type === "beforeunload") {
+    if (type === 'beforeunload') {
       args[1] = (...listenerArgs: Parameters<EventListener>) => {
         // @ts-expect-error this is fine
         const isTrustedOverwrite = listenerArgs[0]?.isTrustedOverwrite
@@ -80,7 +80,7 @@ export function proxyAddEventListener() {
           const event = listenerArgs[0]
           listenerArgs[0] = new Proxy(event, {
             get(target, prop, receiver) {
-              if (prop === "isTrusted") return isTrustedOverwrite
+              if (prop === 'isTrusted') return isTrustedOverwrite
               return Reflect.get(target, prop, receiver)
             }
           })
