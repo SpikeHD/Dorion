@@ -1,6 +1,9 @@
 use std::sync::atomic::Ordering;
 
-use crate::{functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE}, log};
+use crate::{
+  functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
+  log,
+};
 use tauri::Manager;
 use tauri_plugin_notification::NotificationExt;
 
@@ -73,7 +76,7 @@ pub fn notif_count(window: tauri::WebviewWindow, amount: i32) {
   #[cfg(target_os = "linux")]
   set_notif_icon(&window, amount);
 
-  // If the tray state is unread or default, 
+  // If the tray state is unread or default,
   if TrayIcon::from_usize(TRAY_STATE.load(Ordering::Relaxed)).is_overwrite() {
     let state = if amount == 0 { "default" } else { "unread" };
     set_tray_icon(window.app_handle().to_owned(), state.to_string());

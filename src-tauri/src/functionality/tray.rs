@@ -1,4 +1,7 @@
-use std::{str::FromStr, sync::atomic::{AtomicUsize, Ordering}};
+use std::{
+  str::FromStr,
+  sync::atomic::{AtomicUsize, Ordering},
+};
 
 use include_flate::flate;
 use tauri::{
@@ -73,11 +76,7 @@ impl TrayIcon {
 
   // Check if it makes sense for us to overwrite the tray icon (basically, "is the tray anything other than default/unread?")
   pub fn is_overwrite(&self) -> bool {
-    match self {
-      TrayIcon::Default => true,
-      TrayIcon::Unread => true,
-      _ => false,
-    }
+    matches!(self, TrayIcon::Default | TrayIcon::Unread)
   }
 }
 
