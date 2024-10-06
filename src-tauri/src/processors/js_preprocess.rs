@@ -33,7 +33,7 @@ pub fn eval_js_imports(window: &tauri::WebviewWindow, scripts: Vec<String>) {
   for script in scripts {
     match window.eval(script.as_str()) {
       Ok(r) => r,
-      Err(e) => log(format!("Error evaluating import: {}", e)),
+      Err(e) => log(format!("Error evaluating import: {e}")),
     };
   }
 }

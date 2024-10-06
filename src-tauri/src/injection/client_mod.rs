@@ -110,7 +110,7 @@ pub fn load_mods_js() -> String {
       continue;
     }
 
-    exec = format!("{};{}", exec, result);
+    exec = format!("{exec};{result}");
   }
 
   exec
@@ -175,7 +175,7 @@ pub fn load_mods_css() -> String {
       continue;
     }
 
-    exec = format!("{} {}", exec, result);
+    exec = format!("{exec};{result}");
   }
 
   exec

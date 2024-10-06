@@ -171,7 +171,7 @@ pub unsafe fn set_notif_icon(_: &tauri::WebviewWindow, amount: i32) {
   use objc2_foundation::{MainThreadMarker, NSString};
 
   let label = if amount > 0 {
-    Some(NSString::from_str(&format!("{}", amount)))
+    Some(NSString::from_str(&format!("{amount}")))
   } else if amount == -1 {
     Some(NSString::from_str("●"))
   } else {

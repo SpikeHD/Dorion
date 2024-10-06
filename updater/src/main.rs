@@ -75,7 +75,7 @@ pub fn reopen_as_elevated() {
     // get program args (without first one) and join by ,
     std::env::args()
       .skip(1)
-      .map(|arg| format!("'\"{}\"'", arg))
+      .map(|arg| format!("'\"{arg}\"'"))
       .collect::<Vec<String>>()
       .join(",")
   ));

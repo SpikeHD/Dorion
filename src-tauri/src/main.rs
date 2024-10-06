@@ -108,7 +108,7 @@ fn main() {
   if client_type == "default" {
     url += "https://discord.com/app";
   } else {
-    url = format!("https://{}.discord.com/app", client_type);
+    url = format!("https://{client_type}.discord.com/app");
   }
 
   let parsed = reqwest::Url::parse(&url).unwrap();

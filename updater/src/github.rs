@@ -20,14 +20,14 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<Relea
     .get(url)
     .header("User-Agent", "Dorion")
     .send()
-    .map_err(|e| format!("Failed to get latest release from GitHub: {}", e))?;
+    .map_err(|e| format!("Failed to get latest release from GitHub: {e}"))?;
 
   let text = response
     .text()
-    .map_err(|e| format!("Failed to read response text: {}", e))?;
+    .map_err(|e| format!("Failed to read response text: {e}"))?;
 
   let release: Value =
-    serde_json::from_str(&text).map_err(|e| format!("Failed to parse JSON: {}", e))?;
+    serde_json::from_str(&text).map_err(|e| format!("Failed to parse JSON: {e}"))?;
 
   let asset_array = release["assets"].as_array();
 
@@ -55,8 +55,7 @@ pub fn download_release(
   path: PathBuf,
 ) -> PathBuf {
   let url = format!(
-    "https://github.com/{}/{}/releases/download/{}/{}",
-    user, repo, tag_name, release_name
+    "https://github.com/{user}/{repo}/releases/download/{tag_name}/{release_name}",
   );
 
   let client = reqwest::blocking::Client::new();

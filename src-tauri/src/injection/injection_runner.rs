@@ -40,24 +40,18 @@ pub fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>
       }
     }
 
-    // Scuffed logging solution.
-    win
-      .eval(format!("console.log('Executing plugin: {}')", name).as_str())
-      .unwrap_or(());
-
     // Execute the plugin in a try/catch, so we can capture whatever error occurs
     win
       .eval(
         format!(
           "
+        console.log('Executing plugin: {name}')
         try {{
-          {}
+          {script}
         }} catch(e) {{
-          console.error(`Plugin {} returned error: ${{e}}`)
+          console.error(`Plugin {name} returned error: ${{e}}`)
           console.log('The plugin could still work! Just don\\'t expect it to.')
-        }}
-        ",
-          script, name
+        }}"
         )
         .as_str(),
       )

@@ -37,7 +37,7 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
   if get_config().cache_css.unwrap_or(true) {
     let cache_path = get_theme_dir().join("cache");
 
-    let cache_file = cache_path.join(format!("{}_cache.css", name));
+    let cache_file = cache_path.join(format!("{name}_cache.css"));
 
     if fs::metadata(&cache_file).is_ok() {
       log!("Using cached CSS for {}", name);
@@ -154,7 +154,7 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
       fs::create_dir(&cache_path).expect("Failed to create cache directory!");
     }
 
-    let cache_file = cache_path.join(format!("{}_cache.css", name));
+    let cache_file = cache_path.join(format!("{name}_cache.css"));
 
     fs::write(cache_file, new_css.clone()).expect("Failed to write cache file!");
   }
@@ -194,8 +194,8 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 
   // Now add all the @import statements to the top
   for import in seen_imports {
-    let import = format!("@import url(\"https://{}\");", import);
-    new_css = format!("{}\n{}", import, new_css);
+    let import = format!("@import url(\"https://{import}\");");
+    new_css = format!("{import}\n{new_css}");
   }
 
   new_css
@@ -225,7 +225,7 @@ pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
     win
       .emit(
         "loading_log",
-        format!("Too many images to process ({}), skipping...", count),
+        format!("Too many images to process ({count}), skipping...",),
       )
       .unwrap_or_default();
     return new_css;
@@ -304,7 +304,7 @@ pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
 
       Some((
         url.to_owned(),
-        format!("data:image/{};base64,{}", filetype, b64),
+        format!("data:image/{filetype};base64,{b64}"),
       ))
     }));
   }

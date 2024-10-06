@@ -30,7 +30,7 @@ pub async fn fetch_image(url: String) -> Option<String> {
 
   let bytes = response.bytes().await.unwrap();
   let base64 = general_purpose::STANDARD.encode(bytes);
-  let image = format!("data:{};base64,{}", content_type, base64);
+  let image = format!("data:{content_type};base64,{base64}");
 
   Some(image)
 }

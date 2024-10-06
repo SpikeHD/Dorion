@@ -12,8 +12,8 @@ pub fn get_themes() -> Result<String, String> {
   let themes = get_theme_dir();
   let mut all_contents = String::new();
 
-  for entry in fs::read_dir(themes).map_err(|e| format!("Error reading theme directory: {}", e))? {
-    let entry = entry.map_err(|e| format!("Error reading theme directory: {}", e))?;
+  for entry in fs::read_dir(themes).map_err(|e| format!("Error reading theme directory: {e}"))? {
+    let entry = entry.map_err(|e| format!("Error reading theme directory: {e}"))?;
     let file_name = entry
       .file_name()
       .to_str()
@@ -37,7 +37,7 @@ pub fn get_themes() -> Result<String, String> {
 pub fn get_theme_names() -> Result<Vec<String>, String> {
   let themes_dir = get_theme_dir();
   let theme_folders =
-    fs::read_dir(themes_dir).map_err(|e| format!("Error reading theme directory: {}", e))?;
+    fs::read_dir(themes_dir).map_err(|e| format!("Error reading theme directory: {e}"))?;
   let names = theme_folders
     .filter_map(|entry| {
       entry.ok().and_then(|file| {

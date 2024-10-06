@@ -35,7 +35,7 @@ pub fn disable_hardware_accel_windows() {
   let existing_args = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
   std::env::set_var(
     "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-    format!("{} --disable-gpu", existing_args),
+    format!("{existing_args} --disable-gpu"),
   );
 }
 
