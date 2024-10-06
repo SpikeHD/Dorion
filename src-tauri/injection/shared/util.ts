@@ -19,7 +19,7 @@ export async function timeout(ms: number) {
 export function isJson(s: string) {
   try {
     JSON.parse(s)
-  } catch (e) {
+  } catch (_e) {
     return false
   }
   return true
