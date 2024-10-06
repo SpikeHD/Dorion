@@ -1,3 +1,5 @@
+use std::{str::FromStr, sync::atomic::{AtomicUsize, Ordering}};
+
 use include_flate::flate;
 use tauri::{
   image::Image,
@@ -17,32 +19,107 @@ flate!(static SPEAKING: [u8] from "./icons/tray/speaking.png");
 flate!(static VIDEO: [u8] from "./icons/tray/video.png");
 flate!(static STREAMING: [u8] from "./icons/tray/streaming.png");
 
+pub enum TrayIcon {
+  Default,
+  Unread,
+  Connected,
+  Muted,
+  Deafened,
+  Speaking,
+  Video,
+  Streaming,
+}
+
+impl TrayIcon {
+  pub fn image(&self) -> Result<Image<'_>, tauri::Error> {
+    match self {
+      TrayIcon::Default => Image::from_bytes(&DEFAULT),
+      TrayIcon::Unread => Image::from_bytes(&UNREAD),
+      TrayIcon::Connected => Image::from_bytes(&CONNECTED),
+      TrayIcon::Muted => Image::from_bytes(&MUTED),
+      TrayIcon::Deafened => Image::from_bytes(&DEAFENED),
+      TrayIcon::Speaking => Image::from_bytes(&SPEAKING),
+      TrayIcon::Video => Image::from_bytes(&VIDEO),
+      TrayIcon::Streaming => Image::from_bytes(&STREAMING),
+    }
+  }
+
+  pub fn get_usize(&self) -> usize {
+    match self {
+      TrayIcon::Default => 0,
+      TrayIcon::Unread => 1,
+      TrayIcon::Connected => 2,
+      TrayIcon::Muted => 3,
+      TrayIcon::Deafened => 4,
+      TrayIcon::Speaking => 5,
+      TrayIcon::Video => 6,
+      TrayIcon::Streaming => 7,
+    }
+  }
+
+  pub fn from_usize(value: usize) -> Self {
+    match value {
+      0 => TrayIcon::Default,
+      1 => TrayIcon::Unread,
+      2 => TrayIcon::Connected,
+      3 => TrayIcon::Muted,
+      4 => TrayIcon::Deafened,
+      5 => TrayIcon::Speaking,
+      6 => TrayIcon::Video,
+      7 => TrayIcon::Streaming,
+      _ => TrayIcon::Default,
+    }
+  }
+
+  // Check if it makes sense for us to overwrite the tray icon (basically, "is the tray anything other than default/unread?")
+  pub fn is_overwrite(&self) -> bool {
+    match self {
+      TrayIcon::Default => true,
+      TrayIcon::Unread => true,
+      _ => false,
+    }
+  }
+}
+
+impl FromStr for TrayIcon {
+  type Err = String;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
+    match s {
+      "unread" => Ok(TrayIcon::Unread),
+      "connected" => Ok(TrayIcon::Connected),
+      "muted" => Ok(TrayIcon::Muted),
+      "deafened" => Ok(TrayIcon::Deafened),
+      "speaking" => Ok(TrayIcon::Speaking),
+      "video" => Ok(TrayIcon::Video),
+      "streaming" => Ok(TrayIcon::Streaming),
+      _ => Ok(TrayIcon::Default),
+    }
+  }
+}
+
+pub static TRAY_STATE: AtomicUsize = AtomicUsize::new(0);
+
 #[tauri::command]
 pub fn set_tray_icon(app: AppHandle, event: String) {
   log!("Setting tray icon to {}", event.as_str());
 
-  let icon = match event.as_str() {
-    "connected" => Image::from_bytes(&CONNECTED),
-    "disconnected" => Image::from_bytes(&DEFAULT),
-    "muted" => Image::from_bytes(&MUTED),
-    "deafened" => Image::from_bytes(&DEAFENED),
-    "speaking" => Image::from_bytes(&SPEAKING),
-    "video" => Image::from_bytes(&VIDEO),
-    "streaming" => Image::from_bytes(&STREAMING),
-    "unread" => Image::from_bytes(&UNREAD),
-    _ => Image::from_bytes(&DEFAULT),
+  let tray_icon = match event.as_str().parse::<TrayIcon>() {
+    Ok(i) => i,
+    Err(_) => TrayIcon::Default,
   };
 
-  let icon = match icon {
-    Ok(icon) => icon,
+  let icon = match tray_icon.image() {
+    Ok(i) => i,
     Err(e) => {
-      log!("Error creating tray icon: {}", e);
+      log!("Error creating tray icon: {:?}", e);
       return;
     }
   };
 
   if let Some(tray) = app.tray_by_id("main") {
     tray.set_icon(Some(icon)).unwrap_or_default();
+    TRAY_STATE.store(tray_icon.get_usize(), Ordering::Relaxed);
   }
 }
 

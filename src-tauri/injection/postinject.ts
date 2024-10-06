@@ -53,7 +53,7 @@ observer.observe(document, {
 function onClientLoad() {
   observer.disconnect()
 
-  // Notifcation watcher
+  // Notification watcher
   notifGetter()
 
   // Assign notification count
@@ -73,7 +73,7 @@ function notifGetter() {
   notifObserver.observe(document.querySelector('title') as HTMLTitleElement, {
     subtree: true,
     childList: true,
-    attributes: true,
-    characterData: true,
+    attributes: false,
+    characterData: false,
   })
 }
