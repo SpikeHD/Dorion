@@ -9,6 +9,7 @@ use tauri::{
 use crate::{log, util::window_helpers::ultrashow};
 
 flate!(static DEFAULT: [u8] from "./icons/32x32.png");
+flate!(static UNREAD: [u8] from "./icons/tray/unread.png");
 flate!(static CONNECTED: [u8] from "./icons/tray/connected.png");
 flate!(static MUTED: [u8] from "./icons/tray/muted.png");
 flate!(static DEAFENED: [u8] from "./icons/tray/deafened.png");
@@ -28,6 +29,7 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
     "speaking" => Image::from_bytes(&SPEAKING),
     "video" => Image::from_bytes(&VIDEO),
     "streaming" => Image::from_bytes(&STREAMING),
+    "unread" => Image::from_bytes(&UNREAD),
     _ => Image::from_bytes(&DEFAULT),
   };
 
