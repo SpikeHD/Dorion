@@ -54,9 +54,7 @@ pub fn download_release(
   release_name: impl AsRef<str> + Display,
   path: PathBuf,
 ) -> PathBuf {
-  let url = format!(
-    "https://github.com/{user}/{repo}/releases/download/{tag_name}/{release_name}",
-  );
+  let url = format!("https://github.com/{user}/{repo}/releases/download/{tag_name}/{release_name}");
 
   let client = reqwest::blocking::Client::new();
 
