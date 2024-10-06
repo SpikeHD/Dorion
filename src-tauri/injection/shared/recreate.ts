@@ -66,6 +66,34 @@ export function proxyXHR() {
   }
 }
 
+export function proxyAddEventListener() {
+  const original = window.addEventListener
+
+  window.addEventListener = function(...args: Parameters<typeof window.addEventListener>) {
+    const [type, listener] = args
+    if (type === 'beforeunload') {
+      args[1] = (...listenerArgs: Parameters<EventListener>) => {
+        // @ts-expect-error this is fine
+        const isTrustedOverwrite = listenerArgs[0]?.isTrustedOverwrite
+
+        if (isTrustedOverwrite !== undefined) {
+          const event = listenerArgs[0]
+          listenerArgs[0] = new Proxy(event, {
+            get(target, prop, receiver) {
+              if (prop === 'isTrusted') return isTrustedOverwrite
+              return Reflect.get(target, prop, receiver)
+            }
+          })
+        }
+
+        return ('handleEvent' in listener) ? listener.handleEvent(...listenerArgs) : listener(...listenerArgs)
+      }
+    }
+
+    return original(...args)
+  }
+}
+
 export function createLocalStorage() {
   const iframe = document.createElement('iframe')
 

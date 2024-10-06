@@ -3,7 +3,7 @@ use tauri::{
   image::Image,
   menu::{MenuBuilder, MenuItemBuilder},
   tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-  AppHandle, Manager,
+  AppHandle, Emitter, Manager,
 };
 
 use crate::{log, util::window_helpers::ultrashow};
@@ -60,6 +60,9 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
     .menu(&menu)
     .on_menu_event(move |app, event| match event.id().as_ref() {
       "quit" => {
+        if let Some(win) = app.get_webview_window("main") {
+          win.emit("beforeunload", ()).unwrap_or_default();
+        }
         app.exit(0);
       }
       "open" => {
@@ -68,6 +71,9 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
         }
       }
       "restart" => {
+        if let Some(win) = app.get_webview_window("main") {
+          win.emit("beforeunload", ()).unwrap_or_default();
+        }
         app.restart();
       }
       "reload" => {

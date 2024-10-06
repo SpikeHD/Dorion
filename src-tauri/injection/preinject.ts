@@ -1,4 +1,4 @@
-import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR } from './shared/recreate'
+import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener } from './shared/recreate'
 import { safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
@@ -40,6 +40,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
   createLocalStorage()
   proxyFetch()
   proxyXHR()
+  proxyAddEventListener()
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
@@ -104,6 +105,18 @@ async function init() {
   })
 
   typingAnim()
+
+  // Discord Web depends on the `beforeunload` event being dispatched by the browser when
+  // a tab is closed. However, this event is not triggered by the Webview so we need to
+  // dispatch the `beforeunload` event ourselves.
+  const dispatchBeforeUnload = () => {
+    const event = new Event('beforeunload') as Event & { isTrustedOverwrite: boolean }
+    event.isTrustedOverwrite = true
+    window.dispatchEvent(event)
+  }
+
+  event.listen('beforeunload', dispatchBeforeUnload)
+  event.listen(event.TauriEvent.WINDOW_CLOSE_REQUESTED, dispatchBeforeUnload)
 
   // Start the loading_log event listener
   const logUnlisten = await event.listen('loading_log', (event: TauriEvent) => {
