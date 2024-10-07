@@ -148,6 +148,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
+
+      - name: Install patch-crate
+        run: cargo install patch-crate
+
+      - name: Apply patches
+        run: cd src-tauri && cargo patch-crate
           
       - name: Build
         if: matrix.config.target != 'armv7-unknown-linux-gnueabihf' && matrix.config.target != 'aarch64-unknown-linux-gnu'
