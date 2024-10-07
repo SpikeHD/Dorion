@@ -106,12 +106,6 @@ features = [
     "Win32_Graphics_Dwm",
 ]
 
-[target.armv7-unknown-linux-gnueabihf]
-linker = "arm-linux-gnueabihf-gcc"
-
-[target.aarch64-unknown-linux-gnu]
-linker = "aarch64-linux-gnu-gcc"
-
 [features]
 # I would love to be able to specify default features by OS someday, because macOS
 # does not support rpc and hotkeys lol
