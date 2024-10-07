@@ -66,8 +66,8 @@ pub fn load_mods_js() -> String {
     tasks.push(std::thread::spawn(move || {
       let response = match reqwest::blocking::get(script_url) {
         Ok(r) => r,
-        Err(_) => {
-          log!("Failed to load client mod JS for {}.", mod_name);
+        Err(e) => {
+          log!("Failed to load client mod JS for {}: {:?}", mod_name, e);
 
           if mod_name == "Shelter" {
             log!("Shelter detected: loading fallback!");
@@ -81,7 +81,7 @@ pub fn load_mods_js() -> String {
       let status = response.status();
 
       if status != 200 {
-        log!("Failed to load client mod JS for {}.", mod_name);
+        log!("Failed to load client mod JS for {}: Status {:?}", mod_name, status);
 
         if mod_name == "Shelter" {
           log!("Shelter detected: loading fallback!");
@@ -143,8 +143,8 @@ pub fn load_mods_css() -> String {
     tasks.push(std::thread::spawn(move || {
       let response = match reqwest::blocking::get(styles_url) {
         Ok(r) => r,
-        Err(_) => {
-          log!("Failed to load client mod CSS for {}.", mod_name);
+        Err(e) => {
+          log!("Failed to load client mod CSS for {}: {:?}", mod_name, e);
           return String::new();
         }
       };
@@ -152,7 +152,7 @@ pub fn load_mods_css() -> String {
       let status = response.status();
 
       if status != 200 {
-        log!("Failed to load client mod CSS for {}.", mod_name);
+        log!("Failed to load client mod CSS for {}: Status {:?}", mod_name, status);
         return String::new();
       }
 
