@@ -39,25 +39,25 @@
   <tr>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_x64_en-US.msi ">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_x64_en-US.msi ">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_arm64-setup.exe">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_arm64-setup.exe">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_x64.dmg">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_x64.dmg">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_aarch64.dmg">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_aarch64.dmg">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_amd64.deb">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_amd64.deb">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_armhf.deb">ARM v7</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_armhf.deb">ARM v7</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.1.0/Dorion_6.1.0_arm64.deb">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.2.0/Dorion_6.2.0_arm64.deb">ARM64</a>
       </div>
     </td>
   </tr>
@@ -171,6 +171,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 * [PNPM](https://pnpm.io/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 * [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)
+* [`cargo patch-crate`](https://github.com/mokeyish/cargo-patch-crate)
 
 ## Steps
 
@@ -187,16 +188,27 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     ```sh
     pnpm shupdate
     ```
-
-5. Build!
+5. Apply the patches
 
     ```sh
-    # Build the updater
-    pnpm build:updater
+    cd src-tauri
+    cargo patch-crate
+    ```
 
-    # Build Dorion
+6. Build the updater
+
+    ```sh
+    pnpm build:updater
+    ```
+
+7. Build!
+
+    ```sh
+    # Build Dorion...
     pnpm tauri build
-    # or to debug/open in dev mode. JS needs to be built manually when building in dev mode
+
+    # ...or to debug/open in dev mode
+    # (JS needs to be built manually when building in dev mode)
     pnpm build:js
     pnpm tauri dev
     ```
