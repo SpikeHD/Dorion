@@ -35,11 +35,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - platform: ubuntu-latest
+          - platform: ubuntu-20.04
             target: 'x86_64-unknown-linux-gnu'
-          - platform: ubuntu-latest
+          - platform: ubuntu-20.04
             target: 'aarch64-unknown-linux-gnu'
-          - platform: ubuntu-latest
+          - platform: ubuntu-20.04
             target: 'armv7-unknown-linux-gnueabihf'
 
           - platform: macos-latest
