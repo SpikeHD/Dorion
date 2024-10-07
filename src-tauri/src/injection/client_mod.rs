@@ -81,7 +81,11 @@ pub fn load_mods_js() -> String {
       let status = response.status();
 
       if status != 200 {
-        log!("Failed to load client mod JS for {}: Status {:?}", mod_name, status);
+        log!(
+          "Failed to load client mod JS for {}: Status {:?}",
+          mod_name,
+          status
+        );
 
         if mod_name == "Shelter" {
           log!("Shelter detected: loading fallback!");
@@ -152,7 +156,11 @@ pub fn load_mods_css() -> String {
       let status = response.status();
 
       if status != 200 {
-        log!("Failed to load client mod CSS for {}: Status {:?}", mod_name, status);
+        log!(
+          "Failed to load client mod CSS for {}: Status {:?}",
+          mod_name,
+          status
+        );
         return String::new();
       }
 
