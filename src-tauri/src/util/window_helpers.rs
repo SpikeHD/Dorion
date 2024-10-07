@@ -114,7 +114,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
         .SetUserAgent(&HSTRING::from(USERAGENT))
         .unwrap_or_default();
     })
-    .expect("Failed to set user agent!");
+    .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 
   log!("Set user agent!");
 }
@@ -130,7 +130,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
 
       settings.set_user_agent(Some(USERAGENT));
     })
-    .expect("Failed to set user agent!");
+    .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 }
 
 #[cfg(target_os = "macos")]
@@ -145,7 +145,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
 
       webview.setCustomUserAgent(Some(&useragent));
     })
-    .expect("Failed to set user agent!");
+    .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 }
 
 /// Stupid name but this just ensures the window is visible regardless of being unfocused/minimized/hidden
