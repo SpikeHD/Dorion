@@ -23,7 +23,6 @@ tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.0.1" }
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
-patch-crate = "0.1.10"
 
 [dependencies]
 base64 = "0.22.1"
