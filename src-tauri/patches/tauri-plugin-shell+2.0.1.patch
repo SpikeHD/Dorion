@@ -1,0 +1,17 @@
+diff --git a/.DS_Store b/.DS_Store
+new file mode 100644
+index 0000000..5f390bb
+Binary files /dev/null and b/.DS_Store differ
+diff --git a/src/init-iife.js b/src/init-iife.js
+index 3c91c81..4600fc4 100644
+--- a/src/init-iife.js
++++ b/src/init-iife.js
+@@ -1 +1,7 @@
+-!function(){"use strict";async function e(e,t={},n){return window.__TAURI_INTERNALS__.invoke(e,t,n)}function t(){document.querySelector("body")?.addEventListener("click",(function(t){let n=t.target;for(;n;){if(n.matches("a")){const r=n;""!==r.href&&["http://","https://","mailto:","tel:"].some((e=>r.href.startsWith(e)))&&"_blank"===r.target&&(e("plugin:shell|open",{path:r.href}),t.preventDefault());break}n=n.parentElement}}))}"function"==typeof SuppressedError&&SuppressedError,"complete"===document.readyState||"interactive"===document.readyState?t():window.addEventListener("DOMContentLoaded",t,!0)}();
++function sameOrigin(a, b) {
++  const uA = new URL(a)
++  const uB = new URL(b)
++  return uA.origin === uB.origin;
++}
++
++!function(){"use strict";async function e(e,t={},n){return window.__TAURI_INTERNALS__.invoke(e,t,n)}function t(){document.querySelector("body")?.addEventListener("click",(function(t){let n=t.target;for(;n;){if(n.matches("a")){const r=n;""!==r.href&&["http://","https://","mailto:","tel:"].some((e=>r.href.startsWith(e)))&&"_blank"===r.target&&!sameOrigin(r.href, window.location.href)&&(e("plugin:shell|open",{path:r.href}),t.preventDefault());break}n=n.parentElement}}),true)}"function"==typeof SuppressedError&&SuppressedError,"complete"===document.readyState||"interactive"===document.readyState?t():window.addEventListener("DOMContentLoaded",t,!0)}();
