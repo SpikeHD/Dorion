@@ -1,7 +1,3 @@
-diff --git a/.DS_Store b/.DS_Store
-new file mode 100644
-index 0000000..5f390bb
-Binary files /dev/null and b/.DS_Store differ
 diff --git a/src/init-iife.js b/src/init-iife.js
 index 3c91c81..4600fc4 100644
 --- a/src/init-iife.js
