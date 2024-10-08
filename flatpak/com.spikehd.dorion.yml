@@ -1,4 +1,4 @@
-id: com.spikehd.dorion
+id: io.github.spikehd.dorion
 
 runtime: org.gnome.Platform
 runtime-version: '46'
@@ -20,15 +20,19 @@ modules:
     sources:
       - type: file
         url: https://github.com/SpikeHD/Dorion/releases/download/v6.2.0/dorion_6.2.0_amd64.deb
-        sha256: 70266291367e214de6abf16425f7a08172f2588b161be6b6aaed466e05bddd64
+        sha256: 7934AE579EC041A46D5877531FFC6CF520FB5BD1A2F583A1EBA3D7B8B9F5FF41
         only-arches: [x86_64]
       - type: file
         url: https://github.com/SpikeHD/Dorion/releases/download/v6.2.0/dorion_6.2.0_arm64.deb
-        sha256: f9df3a47d27e3fa49fd8d22343b68c0bc0153f4950ec19aae2445f1bdbb058a8
+        sha256: 173E922B06105F714DC7804A0F51C368CFF2904BF666D7BA8677DE3C5288DB63
         only-arches: [aarch64]
+      - type: file
+        url: https://github.com/SpikeHD/Dorion/releases/download/v6.2.0/dorion_6.2.0_armhf.deb
+        sha256: 9B6982DD2F256DAA0D69348A8F370331390D199F7BC9E610895F67D142A49B55
+        only-arches: [arm]
     build-commands:
       - ar -x *.deb
       - tar -xf data.tar.gz
-      - 'install -Dm755 usr/bin/dorion /app/bin/dorion'
-      - install -Dm644 usr/share/applications/dorion.desktop /app/share/applications/dorion.desktop
-      - install -Dm644 usr/share/icons/hicolor/512x512/apps/dorion.png /app/share/icons/hicolor/512x512/apps/dorion.png
+      - 'install -Dm755 usr/bin/Dorion /app/bin/Dorion'
+      - install -Dm644 usr/share/applications/Dorion.desktop /app/share/applications/io.github.spikehd.dorion.desktop
+      - install -Dm644 usr/share/icons/hicolor/512x512/apps/Dorion.png /app/share/icons/hicolor/128x128/apps/io.github.spikehd.dorion.png
