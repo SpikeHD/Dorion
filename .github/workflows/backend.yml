@@ -94,6 +94,13 @@ jobs:
       - name: Create empty file named "updater" in src-tauri
         run: touch src-tauri/updater
 
+      - name: Install patch-crate
+        run: cargo install patch-crate
+        continue-on-error: true
+
+      - name: Apply patches
+        run: cd src-tauri && cargo patch-crate
+
       - name: Clippy check
         run: cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings
 
