@@ -120,3 +120,15 @@ export async function createTopBar() {
 
   initTopBarEvents()
 }
+
+export function extraCssChangeWatch() {
+  const { event } = window.__TAURI__
+  const style = document.createElement('style')
+  style.id = 'dorion-os-accent'
+
+  const elm = document.body.appendChild(style)
+
+  event.listen('os_accent_update', (color) => {
+    elm.innerText = `:root { --os-accent-color: ${color}; }`
+  })
+}

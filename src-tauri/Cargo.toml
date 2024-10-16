@@ -6,7 +6,7 @@ authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.77.2"
+rust-version = "1.81"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -51,6 +51,7 @@ regex = "1.11"
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.16.4", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
+mundy = { version = "0.1.1", default-features = false, features = ["accent-color", "callback"] }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = "2.0"

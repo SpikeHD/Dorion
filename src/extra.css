@@ -1,7 +1,3 @@
-:root {
-  --os-accent-color: '{{os_accent}}';
-}
-
 ul[class^='tree']
   > div[class^='scroller']
   > div[class^='listItem']:nth-last-child(2),

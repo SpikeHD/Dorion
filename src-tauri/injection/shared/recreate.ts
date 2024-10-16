@@ -94,6 +94,21 @@ export function proxyAddEventListener() {
   }
 }
 
+export function proxyOpen() {
+  // Make window.open become window.__TAURI__.shell.open
+  window.nativeOpen = window.open
+  window.open = (url: string | undefined | URL, target?: string, features?: string) => {
+    // If this needs to open externally, do so
+    if (target === '_blank' || !target) {
+      window.__TAURI__.shell.open(url as string)
+      return null
+    }
+
+    // Otherwise, use the native open
+    return window.nativeOpen(url as string, target, features)
+  }
+}
+
 export function createLocalStorage() {
   const iframe = document.createElement('iframe')
 

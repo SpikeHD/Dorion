@@ -1,5 +1,5 @@
-import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener } from './shared/recreate'
-import { safemodeTimer, typingAnim } from './shared/ui'
+import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen } from './shared/recreate'
+import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
@@ -11,7 +11,7 @@ window.Dorion = {
     fetchImage,
     waitForApp,
     waitForElm,
-    applyNotificationCount
+    applyNotificationCount,
   },
   recreate: {
     createLocalStorage,
@@ -49,18 +49,8 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
 
   console.log('__TAURI__ defined!')
 
-  // Make window.open become window.__TAURI__.shell.open
-  window.nativeOpen = window.open
-  window.open = (url: string | undefined | URL, target?: string, features?: string) => {
-    // If this needs to open externally, do so
-    if (target === '_blank' || !target) {
-      window.__TAURI__.shell.open(url as string)
-      return null
-    }
-
-    // Otherwise, use the native open
-    return window.nativeOpen(url as string, target, features)
-  }
+  extraCssChangeWatch()
+  proxyOpen()
 
   // Set the app as initialized
   window.__DORION_INITIALIZED__ = true
