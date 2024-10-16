@@ -2626,6 +2626,7 @@ checksum = "6c899bf6455e072b31ddad5bc528b3ae857e0092330c0b350bdef6f2744ab926"
 dependencies = [
  "beul",
  "cfg-if",
+ "dispatch",
  "futures-channel",
  "futures-core",
  "futures-util",
