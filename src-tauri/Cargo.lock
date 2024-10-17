@@ -2624,6 +2624,7 @@ version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c899bf6455e072b31ddad5bc528b3ae857e0092330c0b350bdef6f2744ab926"
 dependencies = [
+ "async-io",
  "beul",
  "cfg-if",
  "dispatch",
