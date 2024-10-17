@@ -4,7 +4,7 @@
 )]
 
 use std::{env, time::Duration};
-use tauri::{Manager, WebviewWindowBuilder};
+use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 
 use config::{get_config, set_config, Config};
@@ -225,9 +225,11 @@ fn main() {
       plugin::get_new_plugins();
 
       let config = get_config();
+      let proxy_uri = config.proxy_uri.unwrap_or("".to_string());
+      let proxy_uri = Url::parse(&proxy_uri);
       let preinject = PREINJECT.clone();
       let title = format!("Dorion - v{}", app.package_info().version);
-      let win = WebviewWindowBuilder::new(app, "main", url_ext)
+      let mut win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
         .initialization_script(format!("(() => {{ {preinject} }})();{client_mods}").as_str())
@@ -243,8 +245,13 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .zoom_hotkeys_enabled(true)
-        .browser_extensions_enabled(true)
-        .build()?;
+        .browser_extensions_enabled(true);
+
+      if let Ok(proxy_uri) = proxy_uri {
+        win = win.proxy_url(proxy_uri);
+      }
+
+      let win = win.build()?;
 
       // Set the user agent to one that enables all normal Discord features
       set_user_agent(&win);

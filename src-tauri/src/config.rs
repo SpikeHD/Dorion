@@ -38,6 +38,7 @@ pub struct Config {
   pub unread_badge: Option<bool>,
   pub client_plugins: Option<bool>,
   pub tray_icon_enabled: Option<bool>,
+  pub proxy_uri: Option<String>,
 
   pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
   pub keybinds_enabled: Option<bool>,
@@ -75,6 +76,7 @@ impl Config {
       unread_badge: Option::from(true),
       client_plugins: Option::from(true),
       tray_icon_enabled: Option::from(true),
+      proxy_uri: Option::from("".to_string()),
 
       keybinds: Option::from(HashMap::new()),
       keybinds_enabled: Option::from(true),
