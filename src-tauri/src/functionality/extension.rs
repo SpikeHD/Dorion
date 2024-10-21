@@ -79,6 +79,7 @@ pub fn load_extensions(win: &WebviewWindow) {
   if let Ok(files) = fs::read_dir(extensions_dir) {
     for file in files.flatten() {
       // Path can be file or folder, doesn't matter
+      log!("Loading extension: {:?}", file.path());
       add_extension(win, file.path());
     }
   }
