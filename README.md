@@ -114,6 +114,12 @@ I do **not** maintain any instances of Dorion in any package repositories myself
     ```sh
     nix-shell -p dorion
     ```
+* MacOS:
+  * Homebrew (Maintained by [psharma04](https://github.com/psharma04))
+    ```sh
+    brew tap psharma04/dorion
+    brew install --cask dorion
+    ```
 
 > [!NOTE]
 > Maintaining Dorion in a different package repository that I don't know about? Feel free to [open a PR](https://github.com/SpikeHD/Dorion/pulls) to add it here!
