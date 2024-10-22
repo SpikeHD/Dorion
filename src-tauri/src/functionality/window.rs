@@ -118,7 +118,6 @@ pub fn after_build(window: &tauri::WebviewWindow) {
 
     // TODO on Windows, this needs to be copied somewhere more accessible to the user for some reason
     // Copy the files in the resource dir to the main extension dir if the files don't already exist
-    #[cfg(target_os = "windows")]
     if let Ok(read_dir) = fs::read_dir(main_ext_res_path) {
       for file in read_dir.flatten() {
         let file_path = file.path();

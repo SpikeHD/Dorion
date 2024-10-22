@@ -181,6 +181,10 @@ jobs:
           CC: aarch64-linux-gnu-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+
+      - name: (Linux) Build Webkit extension
+        if: matrix.config.platform != 'ubuntu-22.04'
+        run: cd src-tauri/extension_webkit && cmake . && cmake --build .
       
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
