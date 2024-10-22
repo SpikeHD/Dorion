@@ -16,7 +16,12 @@ use injection::{
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  color::start_os_accent_subscriber, helpers, logger::log, notifications, paths::get_webdata_dir, window_helpers::{self, clear_cache_check, set_user_agent, ultrashow}
+  color::start_os_accent_subscriber,
+  helpers,
+  logger::log,
+  notifications,
+  paths::get_webdata_dir,
+  window_helpers::{self, clear_cache_check, set_user_agent, ultrashow},
 };
 
 use crate::{

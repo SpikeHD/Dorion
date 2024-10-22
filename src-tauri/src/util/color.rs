@@ -1,5 +1,5 @@
-use std::sync::Mutex;
 use mundy::{self, Interest, Preferences};
+use std::sync::Mutex;
 use tauri::Emitter;
 
 use crate::log;
@@ -22,9 +22,14 @@ pub fn start_os_accent_subscriber(win: &tauri::WebviewWindow) {
       let g = accent.green * 255.;
       let a = accent.alpha * 255.;
 
-      win.emit("os_accent_update", format!("rgba({:.0}, {:.0}, {:.0}, {:.0})", r, g, b, a)).unwrap_or_else(|e| {
-        log!("Error emitting os_accent_update event: {}", e);
-      });
+      win
+        .emit(
+          "os_accent_update",
+          format!("rgba({:.0}, {:.0}, {:.0}, {:.0})", r, g, b, a),
+        )
+        .unwrap_or_else(|e| {
+          log!("Error emitting os_accent_update event: {}", e);
+        });
 
       set_accent_color(r as u8, g as u8, b as u8, a as u8);
     }
@@ -35,8 +40,11 @@ pub fn _get_os_accent() -> String {
   let accent = ACCENT_COLOR.lock().unwrap();
 
   if let Some(accent) = accent.as_ref() {
-    return format!("rgba({}, {}, {}, {})", accent.0, accent.1, accent.2, accent.3);
+    return format!(
+      "rgba({}, {}, {}, {})",
+      accent.0, accent.1, accent.2, accent.3
+    );
   }
-  
+
   "".to_string()
 }
