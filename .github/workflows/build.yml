@@ -126,7 +126,8 @@ jobs:
             libapparmor1:armhf \
             libwebkit2gtk-4.1-dev:armhf \
             libssl-dev:armhf \
-            gcc-arm-linux-gnueabihf
+            gcc-arm-linux-gnueabihf \
+            g++-arm-linux-gnueabihf
     
       - name: (Linux) (ARM64) Install dependencies
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -136,7 +137,8 @@ jobs:
             libapparmor1:arm64 \
             libwebkit2gtk-4.1-dev:arm64 \
             libssl-dev:arm64 \
-            gcc-aarch64-linux-gnu
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu
 
       - name: Add target
         run: rustup target add ${{ matrix.config.target }}
@@ -155,6 +157,7 @@ jobs:
         run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-armv7.cmake . && cmake --build .
         env:
           CC: arm-linux-gnueabihf-gcc
+          CXX: arm-linux-gnueabihf-g++
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
           
@@ -163,6 +166,7 @@ jobs:
         run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-arm64.cmake . && cmake --build .
         env:
           CC: aarch64-linux-gnu-gcc
+          CXX: aarch64-linux-gnu-g++
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
 
