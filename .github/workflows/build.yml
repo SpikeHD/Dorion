@@ -146,9 +146,25 @@ jobs:
         env:
           RUSTFLAGS: -Awarnings
 
-      - name: (Linux) Build Webkit extension
-        if: matrix.config.platform == 'ubuntu-22.04'
+      - name: (Linux x86_64) Build Webkit extension
+        if: matrix.config.target == 'x86_64-unknown-linux-gnu'
         run: cd src-tauri/extension_webkit && cmake . && cmake --build .
+
+      - name: (Linux ARMv7) Build Webkit extension
+        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        run: cd src-tauri/extension_webkit && cmake . && cmake --build .
+        env:
+          CC: arm-linux-gnueabihf-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
+          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
+          
+      - name: (Linux ARM64) Build Webkit extension
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cd src-tauri/extension_webkit && cmake . && cmake --build .
+        env:
+          CC: aarch64-linux-gnu-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
