@@ -147,7 +147,7 @@ jobs:
           RUSTFLAGS: -Awarnings
 
       - name: (Linux) Build Webkit extension
-        if: matrix.config.platform != 'ubuntu-22.04'
+        if: matrix.config.platform == 'ubuntu-22.04'
         run: cd src-tauri/extension_webkit && cmake . && cmake --build .
 
       - name: Install dependencies
