@@ -181,16 +181,22 @@ jobs:
         run: cd src-tauri && cargo patch-crate
           
       - name: Build
-        if: matrix.config.target != 'armv7-unknown-linux-gnueabihf' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        if: matrix.config.platform != 'ubuntu-22.04'
         # If we are compiling for Windows ARM, we can only support NSIS
         # However, I cannot phase out the MSI or a buncha package managers will explode
         run: pnpm tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
         env:
           RUSTFLAGS: -Awarnings
 
+      - name: (Linux) (x86_64) Build
+        if: matrix.config.target == 'x86_64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings
+
       - name: (Linux) (ARMv7) Build
         if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
-        run: pnpm tauri build --target ${{ matrix.config.target }} --bundles deb -- --config target.armv7-unknown-linux-gnueabihf.linker=\'arm-linux-gnueabihf-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.armv7-unknown-linux-gnueabihf.linker=\'arm-linux-gnueabihf-gcc\'
         env:
           RUSTFLAGS: -Awarnings -L/usr/lib/arm-linux-gnueabihf
           CC: arm-linux-gnueabihf-gcc
@@ -199,7 +205,7 @@ jobs:
   
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: pnpm tauri build --target ${{ matrix.config.target }} --bundles deb -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu
           CC: aarch64-linux-gnu-gcc
