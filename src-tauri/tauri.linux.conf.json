@@ -3,9 +3,6 @@
     "resources": [
       "injection/shelter.js",
       "icons/icon*.ico",
-      "icons/icon_macos.png",
-      "extension/*",
-      "updater*",
       "extension_webkit/libextension.so"
     ]
   }

@@ -145,7 +145,8 @@ jobs:
       - name: Add target
         run: rustup target add ${{ matrix.config.target }}
 
-      - name: Build updater
+      - name: (Non-Linux) Build updater
+        if: matrix.config.platform != 'ubuntu-22.04'
         run: pnpm build:updater
         env:
           RUSTFLAGS: -Awarnings
