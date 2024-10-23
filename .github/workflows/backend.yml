@@ -95,6 +95,9 @@ jobs:
       - name: Create empty file named "updater" in src-tauri
         run: touch src-tauri/updater
 
+      - name: Create empty file `extension_webkit/libextension.so` in src-tauri
+        run: touch src-tauri/extension_webkit/libextension.so
+
       - name: Install patch-crate
         run: cargo install patch-crate
         continue-on-error: true
