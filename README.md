@@ -128,8 +128,7 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 
 * [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client, as well as other web-based alternatives
 * Theme support
-* [Shelter](https://github.com/uwu/Shelter) included out of the box
-* Support for other client mods and plugins, like [Vencord](https://github.com/vendicated/vencord)
+* [Shelter](https://github.com/uwu/Shelter) and (optionally) [Vencord](https://github.com/vendicated/vencord)/[Equicord](https://github.com/equicord/equicord) included out of the box
 * Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
   * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
 * Feature flags for picking and choosing features (when building from source) 
@@ -207,7 +206,14 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm build:updater
     ```
 
-7. Build!
+7. (Linux-only) Build the WebKitGTK extension
+    ```sh
+    cd src-tauri/extension_webkit
+    cmake .
+    cmake --build .
+    ```
+
+8. Build!
 
     ```sh
     # Build Dorion...
