@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, ubuntu-20.04, macos-latest]
+        platform: [windows-latest, ubuntu-latest, macos-latest]
     
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +44,7 @@ jobs:
 
       # also check updater
       - name: Rustfmt check updater
+        if: matrix.platform != 'ubuntu-latest'
         run: cargo fmt --manifest-path ./updater/Cargo.toml --all -- --check
 
   clippy:
@@ -106,4 +107,5 @@ jobs:
 
       # Also clippy check updater
       - name: Clippy check updater
+        if: matrix.platform != 'ubuntu-latest'
         run: cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings
