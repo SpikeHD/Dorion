@@ -54,7 +54,7 @@ window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "ma
 mundy = { version = "0.1.1", features = ["accent-color", "callback"] }
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
-webkit2gtk = "2.0"
+webkit2gtk = { version = "2.0", features = ["v2_4"] }
 wgpu = { version = "22", default-features = false }
 
 [target.'cfg(target_os = "macos")'.dependencies]

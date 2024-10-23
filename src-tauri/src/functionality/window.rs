@@ -84,12 +84,41 @@ pub fn after_build(window: &tauri::WebviewWindow) {
     config.blur.unwrap_or("none".to_string()).as_str(),
   );
 
-  // Set user-agent through WebkitGTK config
+  // Set WebkitGTK config
   #[cfg(target_os = "linux")]
   {
+    use std::path::PathBuf;
+
+    use tauri::path::BaseDirectory;
+    use webkit2gtk::WebContextExt;
+    use webkit2gtk::WebViewExt;
+
     use crate::gpu::disable_hardware_accel_linux;
+
     disable_hardware_accel_linux(window);
     enable_webrtc(window);
+
+    let handle = app.clone();
+
+    // Extension patch
+    window
+      .with_webview(move |webview| {
+        let webview = webview.inner();
+        let context = webview.context();
+        let path = handle
+          .path()
+          .resolve(PathBuf::from("extension_webkit"), BaseDirectory::Resource)
+          .unwrap_or_default();
+
+        if let Some(context) = context {
+          let path_str = path.as_os_str().to_str();
+
+          if let Some(path_str) = path_str {
+            context.set_web_extensions_directory(path_str);
+          }
+        }
+      })
+      .unwrap_or_else(|e| log!("Failed to set web extensions directory: {:?}", e));
   }
 
   match super::tray::create_tray(app) {
