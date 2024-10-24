@@ -214,6 +214,11 @@ fn main() {
       tauri::WindowEvent::CloseRequested { api, .. } => {
         // Just hide the window if the config calls for it
         if get_config().sys_tray.unwrap_or(false) {
+          // https://github.com/tauri-apps/tauri/issues/3084#issuecomment-1477675840
+          #[cfg(target_os = "macos")]
+          tauri::AppHandle::hide(window.app_handle()).unwrap_or_default();
+
+          #[cfg(not(target_os = "macos"))]
           window.hide().unwrap_or_default();
           api.prevent_close();
         }
