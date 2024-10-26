@@ -124,20 +124,20 @@ fn main() {
   #[allow(unused_mut)]
   let mut builder = tauri::Builder::default()
     .plugin(tauri_plugin_http::init())
-    .plugin(tauri_plugin_shell::init());
+    .plugin(tauri_plugin_shell::init())
+    .plugin(tauri_plugin_autostart::init(
+      tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+      Some(vec!["--startup"]),
+    ))
+    .plugin(tauri_plugin_process::init())
+    .plugin(tauri_plugin_window_state::Builder::new().build());
 
   #[cfg(not(target_os = "windows"))]
   {
     builder = builder.plugin(tauri_plugin_notification::init());
   }
 
-  builder.plugin(tauri_plugin_autostart::init(
-      tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-      Some(vec!["--startup"]),
-    ))
-    .plugin(tauri_plugin_process::init())
-    .plugin(tauri_plugin_window_state::Builder::new().build())
-    .invoke_handler(tauri::generate_handler![
+  builder.invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       git_hash,
       functionality::window::minimize,
