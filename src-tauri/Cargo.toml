@@ -52,6 +52,9 @@ rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.16.4", optiona
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 mundy = { version = "0.1.2", features = ["accent-color", "callback"] }
 
+[target.'cfg(not(windows))'.dependencies]
+tauri-plugin-notification = "2.0"
+
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = { version = "2.0", features = ["v2_4"] }
 wgpu = { version = "22", default-features = false }

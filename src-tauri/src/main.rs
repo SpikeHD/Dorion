@@ -121,10 +121,17 @@ fn main() {
   let client_mods = load_mods_js();
 
   #[allow(clippy::single_match)]
-  tauri::Builder::default()
+  #[allow(unused_mut)]
+  let mut builder = tauri::Builder::default()
     .plugin(tauri_plugin_http::init())
-    .plugin(tauri_plugin_shell::init())
-    .plugin(tauri_plugin_autostart::init(
+    .plugin(tauri_plugin_shell::init());
+
+  #[cfg(not(target_os = "windows"))]
+  {
+    builder = builder.plugin(tauri_plugin_notification::init());
+  }
+
+  builder.plugin(tauri_plugin_autostart::init(
       tauri_plugin_autostart::MacosLauncher::LaunchAgent,
       Some(vec!["--startup"]),
     ))
