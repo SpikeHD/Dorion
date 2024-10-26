@@ -16,7 +16,6 @@ use injection::{
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  color::start_os_accent_subscriber,
   helpers,
   logger::log,
   notifications,
@@ -177,6 +176,7 @@ fn main() {
       #[cfg(feature = "hotkeys")]
       #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::set_keybind,
+      functionality::tray::set_tray_icon,
       injection_runner::get_injection_js,
       config::get_config,
       config::set_config,
@@ -200,7 +200,7 @@ fn main() {
       window_helpers::remove_top_bar,
       window_helpers::set_clear_cache,
       window_helpers::window_zoom_level,
-      functionality::tray::set_tray_icon,
+      util::color::get_os_accent,
     ])
     .on_window_event(|window, event| match event {
       tauri::WindowEvent::Resized { .. } => {
@@ -309,8 +309,6 @@ fn main() {
           functionality::rpc::start_rpc_server(win_cln);
         });
       }
-
-      start_os_accent_subscriber(&win);
 
       after_build(&win);
 

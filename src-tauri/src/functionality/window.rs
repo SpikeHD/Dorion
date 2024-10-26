@@ -4,6 +4,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use crate::config::get_config;
 use crate::log;
+use crate::util::color::start_os_accent_subscriber;
 use crate::util::window_helpers::window_zoom_level;
 
 #[cfg(feature = "blur")]
@@ -53,6 +54,9 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   let startup = std::env::args().any(|arg| arg == "--startup");
   let app = window.app_handle();
   let config = get_config();
+
+  // If the subscription is dropped, Mundy's internal thread will exit and no events will ever be recieved
+  Box::leak(Box::new(start_os_accent_subscriber(window)));
 
   if config.streamer_mode_detection.unwrap_or(false) {
     log!("Starting streamer mode watcher...");
