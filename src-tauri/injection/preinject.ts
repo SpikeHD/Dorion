@@ -1,4 +1,4 @@
-import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen } from './shared/recreate'
+import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
@@ -41,6 +41,7 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
   proxyFetch()
   proxyXHR()
   proxyAddEventListener()
+  proxyNotification()
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')

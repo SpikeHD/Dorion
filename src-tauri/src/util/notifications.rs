@@ -5,7 +5,6 @@ use crate::{
   log,
 };
 use tauri::Manager;
-use tauri_plugin_notification::NotificationExt;
 
 #[tauri::command]
 pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
@@ -14,7 +13,8 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   let client = reqwest::blocking::Client::new();
   let mut res = match client.get(icon).send() {
     Ok(res) => res,
-    Err(_) => {
+    Err(e) => {
+      log!("Failed to fetch notification icon: {:?}", e);
       send_notification_internal(app, title, body, String::new());
       return;
     }
@@ -27,6 +27,7 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   let file = match std::fs::File::create(&tmp_file) {
     Ok(file) => file,
     Err(_) => {
+      log!("Failed to create temp file for notification icon");
       send_notification_internal(app, title, body, String::new());
       return;
     }
@@ -41,10 +42,10 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
     }
   }
 
-  // Create file:// uri
   #[cfg(target_os = "windows")]
-  let mut icon_path = String::from("file:///");
+  let mut icon_path = String::new();
 
+  // Create file:// uri
   #[cfg(not(target_os = "windows"))]
   let mut icon_path = String::from("file://");
 
@@ -53,7 +54,10 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   send_notification_internal(app, title, body, icon_path);
 }
 
+#[cfg(not(target_os = "windows"))]
 fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+  use tauri_plugin_notification::NotificationExt;
+
   app
     .notification()
     .builder()
@@ -62,6 +66,20 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
     .icon(icon)
     .show()
     .unwrap_or_default();
+}
+
+#[cfg(target_os = "windows")]
+fn send_notification_internal(_app: &tauri::AppHandle, title: String, body: String, icon: String) {
+  use std::path::Path;
+  use tauri_winrt_notification::{IconCrop, Toast};
+
+  Toast::new(Toast::POWERSHELL_APP_ID)
+    .icon(Path::new(&icon), IconCrop::Circular, "")
+    .title(title.as_str())
+    .text2(body.as_str())
+    .sound(None)
+    .show()
+    .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
 }
 
 #[tauri::command]
