@@ -69,11 +69,11 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
 }
 
 #[cfg(target_os = "windows")]
-fn send_notification_internal(_app: &tauri::AppHandle, title: String, body: String, icon: String) {
+fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
 
-  Toast::new(Toast::POWERSHELL_APP_ID)
+  Toast::new(&app.config().identifier)
     .icon(Path::new(&icon), IconCrop::Circular, "")
     .title(title.as_str())
     .text2(body.as_str())
