@@ -214,6 +214,7 @@ fn main() {
         std::thread::sleep(Duration::from_millis(1));
       }
       tauri::WindowEvent::Destroyed { .. } => {
+        log!("Destroyed window");
         functionality::cache::maybe_clear_cache();
       }
       tauri::WindowEvent::CloseRequested { api, .. } => {
@@ -227,6 +228,8 @@ fn main() {
           window.hide().unwrap_or_default();
           api.prevent_close();
         }
+
+        log!("Closing window");
 
         window
           .app_handle()
@@ -323,4 +326,6 @@ fn main() {
     })
     .run(context)
     .expect("error while running tauri application");
+
+  log!("App exited");
 }
