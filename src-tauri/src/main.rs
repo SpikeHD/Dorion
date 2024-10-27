@@ -137,7 +137,8 @@ fn main() {
     builder = builder.plugin(tauri_plugin_notification::init());
   }
 
-  builder.invoke_handler(tauri::generate_handler![
+  builder
+    .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       git_hash,
       functionality::window::minimize,
