@@ -38,9 +38,11 @@ mod release;
 mod util;
 mod window;
 
+const HASH: Option<&'static str> = env_opt!("GIT_HASH");
+
 #[tauri::command]
 fn git_hash() -> String {
-  option_env!("GIT_HASH").unwrap_or("Unknown").to_string()
+  HASH.unwrap_or("Unknown").to_string()
 }
 
 #[tauri::command]
