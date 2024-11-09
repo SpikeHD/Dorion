@@ -149,6 +149,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
 }
 
 /// Stupid name but this just ensures the window is visible regardless of being unfocused/minimized/hidden
+#[tauri::command]
 pub fn ultrashow(win: &tauri::WebviewWindow) {
   win.unminimize().unwrap_or_default();
   win.show().unwrap_or_default();
