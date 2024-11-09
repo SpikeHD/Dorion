@@ -145,7 +145,7 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       }
       "open" => {
         if let Some(win) = app.get_webview_window("main") {
-          ultrashow(&win);
+          ultrashow(win);
         }
       }
       "restart" => {
@@ -172,7 +172,7 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       {
         let app = tray.app_handle();
         if let Some(win) = app.get_webview_window("main") {
-          ultrashow(&win);
+          ultrashow(win);
         }
       }
     })

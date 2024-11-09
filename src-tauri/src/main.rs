@@ -294,7 +294,7 @@ fn main() {
                 }
               };
 
-              ultrashow(&win);
+              ultrashow(win);
             },
           ))
           .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
