@@ -143,6 +143,7 @@ fn main() {
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       git_hash,
+      functionality::extension::extension_injected,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
       #[cfg(not(target_os = "macos"))]

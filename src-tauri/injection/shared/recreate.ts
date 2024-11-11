@@ -1,7 +1,11 @@
 import { isJson } from './util'
 
-export function proxyFetch() {
+export async function proxyFetch() {
   window.nativeFetch = window.fetch
+
+  const extensionInjected = await window.__TAURI__.core.invoke('extension_injected')
+
+  console.log('[Proxy Fetch] Extension injected: ', extensionInjected)
 
   window.fetch = async (url, options) => {
     const { http } = window.__TAURI__
@@ -9,7 +13,9 @@ export function proxyFetch() {
     const scienceReg = /\/api\/v.*\/(science|track)/g
 
     // If it matches, just let it go through native OR its a relative URL
-    if (url.toString().match(discordReg) || url.toString().startsWith('ipc://') || url.toString().startsWith('/')) {
+    if (extensionInjected || url.toString().match(discordReg) || url.toString().startsWith('ipc://') || url.toString().startsWith('/')) {
+      console.log('[Proxy Fetch] Using native fetch')
+
       // Block science though!
       if (url.toString().match(scienceReg)) {
         console.log(`[Fetch Proxy] Blocked URL: ${url}`)

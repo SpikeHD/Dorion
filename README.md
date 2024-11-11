@@ -220,9 +220,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm tauri build
 
     # ...or to debug/open in dev mode
-    # (JS needs to be built manually when building in dev mode)
-    pnpm build:js
-    pnpm tauri dev
+    pnpm dev
     ```
 
 All built files will be in `src-tauri/target/(release|debug)/`. Installation files (eg. `.msi`, `.deb`) are located in `bundle/`.

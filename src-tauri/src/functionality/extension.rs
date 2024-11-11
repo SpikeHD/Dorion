@@ -1,6 +1,10 @@
+use std::sync::atomic::AtomicBool;
+
 use tauri::WebviewWindow;
 
 use crate::log;
+
+static EXTENSION_INJECTED: AtomicBool = AtomicBool::new(false);
 
 #[cfg(target_os = "windows")]
 pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
@@ -47,7 +51,16 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
       log!("Attempting to add extension...");
 
       let handler = ProfileAddBrowserExtensionCompletedHandler::create(Box::new(|result, _ext| {
-        log!("Extension added?: {:?}", result);
+        match result {
+          Ok(_) => {
+            log!("Extension added successfully!");
+            EXTENSION_INJECTED.store(true, std::sync::atomic::Ordering::Relaxed);
+          }
+          Err(e) => {
+            log!("Failed to add extension: {:?}", e);
+          }
+        }
+
         Ok(())
       }));
 
@@ -64,6 +77,11 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
         .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
     })
     .unwrap_or_default();
+}
+
+#[tauri::command]
+pub fn extension_injected() -> bool {
+  EXTENSION_INJECTED.load(std::sync::atomic::Ordering::Relaxed)
 }
 
 #[cfg(target_os = "windows")]
