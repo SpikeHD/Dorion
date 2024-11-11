@@ -146,7 +146,7 @@ impl Config {
 
     match serde_json::from_str::<Config>(config_str) {
       Ok(config) => {
-        let config = config.merge(Self::default());
+        let config = Self::default().merge(config);
         Ok(config)
       },
       Err(e) => {
@@ -174,7 +174,7 @@ impl Config {
   pub fn from_str(contents: impl AsRef<str>) -> Result<Self, Box<dyn std::error::Error>> {
     match serde_json::from_str::<Config>(contents.as_ref()) {
       Ok(config) => {
-        let config = config.merge(Self::default());
+        let config = Self::default().merge(config);
         Ok(config)
       },
       Err(e) => {
