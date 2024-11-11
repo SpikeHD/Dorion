@@ -1,4 +1,6 @@
 export async function ensurePlugins() {
+  if (window.Dorion.pluginsLoaded) return
+
   const requiredPlugins = {
     'Dorion Settings':
       'https://spikehd.github.io/shelter-plugins/dorion-settings/',
@@ -21,6 +23,8 @@ export async function ensurePlugins() {
     console.log('[Ensure Plugins] Client plugins are disabled. I hope you know what you are doing!')
     return
   }
+
+  window.Dorion.pluginsLoaded = true
 
   const promises = [
     ...Object.entries(requiredPlugins).map(async ([name, url]) => {

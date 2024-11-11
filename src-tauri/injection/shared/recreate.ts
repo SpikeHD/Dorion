@@ -14,8 +14,6 @@ export async function proxyFetch() {
 
     // If it matches, just let it go through native OR its a relative URL
     if (extensionInjected || url.toString().match(discordReg) || url.toString().startsWith('ipc://') || url.toString().startsWith('/')) {
-      console.log('[Proxy Fetch] Using native fetch')
-
       // Block science though!
       if (url.toString().match(scienceReg)) {
         console.log(`[Fetch Proxy] Blocked URL: ${url}`)
