@@ -144,8 +144,11 @@ impl Config {
     let config_str = fs::read_to_string(path)?;
     let config_str = config_str.as_str();
 
-    match serde_json::from_str(config_str) {
-      Ok(config) => Ok(config),
+    match serde_json::from_str::<Config>(config_str) {
+      Ok(config) => {
+        let config = config.merge(Self::default());
+        Ok(config)
+      },
       Err(e) => {
         log!("Failed to parse config, using default config!");
         log!("Error: {}", e);
