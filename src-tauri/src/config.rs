@@ -95,6 +95,47 @@ impl Config {
     }
   }
 
+  fn merge(self, other: Self) -> Self {
+    Self {
+      theme: other.theme.or(self.theme.clone()),
+      themes: other.themes.or(self.themes.clone()),
+      zoom: other.zoom.or(self.zoom.clone()),
+      client_type: other.client_type.or(self.client_type.clone()),
+      sys_tray: other.sys_tray.or(self.sys_tray.clone()),
+      push_to_talk: other.push_to_talk.or(self.push_to_talk.clone()),
+      push_to_talk_keys: other.push_to_talk_keys.or(self.push_to_talk_keys.clone()),
+      cache_css: other.cache_css.or(self.cache_css.clone()),
+      use_native_titlebar: other.use_native_titlebar.or(self.use_native_titlebar.clone()),
+      start_maximized: other.start_maximized.or(self.start_maximized.clone()),
+      profile: other.profile.or(self.profile.clone()),
+      streamer_mode_detection: other.streamer_mode_detection.or(self.streamer_mode_detection.clone()),
+      rpc_server: other.rpc_server.or(self.rpc_server.clone()),
+      open_on_startup: other.open_on_startup.or(self.open_on_startup.clone()),
+      startup_minimized: other.startup_minimized.or(self.startup_minimized.clone()),
+      autoupdate: other.autoupdate.or(self.autoupdate.clone()),
+      update_notify: other.update_notify.or(self.update_notify.clone()),
+      desktop_notifications: other.desktop_notifications.or(self.desktop_notifications.clone()),
+      auto_clear_cache: other.auto_clear_cache.or(self.auto_clear_cache.clone()),
+      multi_instance: other.multi_instance.or(self.multi_instance.clone()),
+      disable_hardware_accel: other.disable_hardware_accel.or(self.disable_hardware_accel.clone()),
+      blur: other.blur.or(self.blur.clone()),
+      blur_css: other.blur_css.or(self.blur_css.clone()),
+      client_mods: other.client_mods.or(self.client_mods.clone()),
+      unread_badge: other.unread_badge.or(self.unread_badge.clone()),
+      client_plugins: other.client_plugins.or(self.client_plugins.clone()),
+      tray_icon_enabled: other.tray_icon_enabled.or(self.tray_icon_enabled.clone()),
+      proxy_uri: other.proxy_uri.or(self.proxy_uri.clone()),
+
+      keybinds: other.keybinds.or(self.keybinds.clone()),
+      keybinds_enabled: other.keybinds_enabled.or(self.keybinds_enabled.clone()),
+
+      rpc_process_scanner: other.rpc_process_scanner.or(self.rpc_process_scanner.clone()),
+      rpc_ipc_connector: other.rpc_ipc_connector.or(self.rpc_ipc_connector.clone()),
+      rpc_websocket_connector: other.rpc_websocket_connector.or(self.rpc_websocket_connector.clone()),
+      rpc_secondary_events: other.rpc_secondary_events.or(self.rpc_secondary_events.clone()),
+    }
+  }
+
   pub fn init() {
     get_config_file();
   }
@@ -128,8 +169,11 @@ impl Config {
   }
 
   pub fn from_str(contents: impl AsRef<str>) -> Result<Self, Box<dyn std::error::Error>> {
-    match serde_json::from_str(contents.as_ref()) {
-      Ok(config) => Ok(config),
+    match serde_json::from_str::<Config>(contents.as_ref()) {
+      Ok(config) => {
+        let config = config.merge(Self::default());
+        Ok(config)
+      },
       Err(e) => {
         log!("Failed to parse config, using default config!");
         log!("Error: {}", e);
