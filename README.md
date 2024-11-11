@@ -63,6 +63,55 @@
   </tr>
 </table>
 
+<details>
+
+<summary>View bleeding-edge builds</summary>
+
+<h1>Bleeding Edge Builds</h1>
+<p>These builds are based on the latest GitHub Actions artifacts. They may not work properly, and they probably contain bugs. Use at your own risk!</p>
+
+<table align="center">
+  <tr>
+    <th>
+      <img src="docs/image/windows.png" width="30%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/apple.png" width="30%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/debian.png" width="30%" align="center" />
+    </th>
+  </tr>
+
+  <tr>
+    <td width="30%">
+      <div align="center">
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-pc-windows-msvc-msi.zip">x86_64</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-pc-windows-msvc-nsis.zip">ARM</a>
+      </div>
+    </td>
+    <td width="30%">
+      <div align="center">
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-apple-darwin-dmg.zip">x86_64</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-apple-darwin-dmg.zip">ARM</a>
+      </div>
+    </td>
+    <td width="30%">
+      <div align="center">
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-unknown-linux-gnu-deb.zip">x86_64</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-armv7-unknown-linux-gnueabihf-deb.zip">ARM v7</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-unknown-linux-gnu-deb.zip">ARM64</a>
+      </div>
+    </td>
+  </tr>
+</table>
+
+</detail>
+
 > [!TIP]
 > Dorion can also be used portably or installed via [several package managers](#package-repositories). You can find these builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
 
