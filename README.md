@@ -110,7 +110,7 @@
   </tr>
 </table>
 
-</detail>
+</details>
 
 > [!TIP]
 > Dorion can also be used portably or installed via [several package managers](#package-repositories). You can find these builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
