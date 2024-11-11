@@ -42,6 +42,12 @@ pub struct Config {
 
   pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
   pub keybinds_enabled: Option<bool>,
+
+  // RPC-specific options
+  pub rpc_process_scanner: Option<bool>,
+  pub rpc_ipc_connector: Option<bool>,
+  pub rpc_websocket_connector: Option<bool>,
+  pub rpc_secondary_events: Option<bool>,
 }
 
 impl Config {
@@ -80,6 +86,12 @@ impl Config {
 
       keybinds: Option::from(HashMap::new()),
       keybinds_enabled: Option::from(true),
+
+      // RPC-specific options
+      rpc_process_scanner: Option::from(true),
+      rpc_ipc_connector: Option::from(true),
+      rpc_websocket_connector: Option::from(true),
+      rpc_secondary_events: Option::from(true),
     }
   }
 

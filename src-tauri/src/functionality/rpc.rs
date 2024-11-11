@@ -1,13 +1,12 @@
 use rsrpc::{
-  detection::{DetectableActivity, Executable},
-  RPCServer,
+  detection::{DetectableActivity, Executable}, RPCConfig, RPCServer
 };
 use std::sync::{Arc, Mutex};
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::Listener;
 use window_titles::ConnectionTrait;
 
-use crate::util::paths::custom_detectables_path;
+use crate::{config::get_config, util::paths::custom_detectables_path};
 
 #[derive(Clone, serde::Deserialize)]
 struct Payload {
@@ -59,9 +58,15 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     .text()
     .expect("Failed to get text from response");
 
-  // This accepts both a `&str` or a `String`
+  let config = get_config();
+  let rpc_config = RPCConfig {
+    enable_process_scanner: config.rpc_process_scanner.unwrap_or(true),
+    enable_ipc_connector: config.rpc_ipc_connector.unwrap_or(true),
+    enable_websocket_connector: config.rpc_websocket_connector.unwrap_or(true),
+    enable_secondary_events: config.rpc_secondary_events.unwrap_or(true),
+  };
   let server = Arc::new(Mutex::new(
-    RPCServer::from_json_str(detectable).expect("Failed to start RPC server"),
+    RPCServer::from_json_str(detectable, rpc_config).expect("Failed to start RPC server"),
   ));
   let add_server = server.clone();
   let remove_server = server.clone();
