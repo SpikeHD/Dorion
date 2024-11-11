@@ -1,5 +1,6 @@
 use rsrpc::{
-  detection::{DetectableActivity, Executable}, RPCConfig, RPCServer
+  detection::{DetectableActivity, Executable},
+  RPCConfig, RPCServer,
 };
 use std::sync::{Arc, Mutex};
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
