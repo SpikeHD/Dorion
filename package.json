@@ -3,9 +3,8 @@
   "version": "6.2.0",
   "type": "module",
   "scripts": {
-    "build:js": "esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
-    "dev": "pnpm build:js && pnpm build && tauri dev",
-    "build": "pnpm build:js && vite build",
+    "build:js": "vite build && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
+    "dev": "pnpm build:js && tauri dev",
     "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater src-tauri/updater",
     "preview": "vite preview",
     "tauri": "tauri",

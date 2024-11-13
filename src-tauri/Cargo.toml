@@ -19,7 +19,7 @@ lto = true
 crates = ["tauri-plugin-shell"]
 
 [patch.crates-io]
-tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.0.1" }
+tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.0.2" }
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
@@ -32,7 +32,7 @@ serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 
 tauri = { version = "2.1", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
-tauri-plugin-shell = "=2.0.1"
+tauri-plugin-shell = "=2.0.2"
 tauri-plugin-single-instance = "2.0"
 tauri-plugin-process = "2.0"
 tauri-plugin-autostart = "2.0"
@@ -51,6 +51,7 @@ regex = "1.11"
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.19.0", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 mundy = { version = "0.1.2", features = ["accent-color", "callback"] }
+tauri-plugin-devtools = "2.0.0"
 
 [target.'cfg(not(windows))'.dependencies]
 tauri-plugin-notification = "2.0"

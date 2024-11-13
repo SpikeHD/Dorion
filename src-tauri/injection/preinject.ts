@@ -22,9 +22,10 @@ window.Dorion = {
   shouldShowUnreadBadge: false
 }
 
-if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
-
 ;(async () => {
+  if (window.__DORION_INITIALIZED__) return
+  window.__DORION_INITIALIZED__ = true
+
   // if we are in an iframe we don't really need to load anything, else we bork whatever is inside
   if (window.self !== window.top) {
     // fixes activities
@@ -35,26 +36,22 @@ if (!window.__DORION_INITIALIZED__) window.__DORION_INITIALIZED__ = false
     return
   }
 
-  if (window.__DORION_INITIALIZED__) return
-
   createLocalStorage()
-  proxyFetch()
   proxyXHR()
   proxyAddEventListener()
   proxyNotification()
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
-    await new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise(resolve => setTimeout(resolve, 50))
   }
+
+  proxyFetch()
 
   console.log('__TAURI__ defined!')
 
   extraCssChangeWatch()
   proxyOpen()
-
-  // Set the app as initialized
-  window.__DORION_INITIALIZED__ = true
 
   init()
 })()

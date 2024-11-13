@@ -1,8 +1,8 @@
 diff --git a/src/init-iife.js b/src/init-iife.js
-index 3c91c81..0adeb19 100644
+index 3c91c81..db5a5d8 100644
 --- a/src/init-iife.js
 +++ b/src/init-iife.js
-@@ -1 +1,16 @@
+@@ -1 +1,19 @@
 -!function(){"use strict";async function e(e,t={},n){return window.__TAURI_INTERNALS__.invoke(e,t,n)}function t(){document.querySelector("body")?.addEventListener("click",(function(t){let n=t.target;for(;n;){if(n.matches("a")){const r=n;""!==r.href&&["http://","https://","mailto:","tel:"].some((e=>r.href.startsWith(e)))&&"_blank"===r.target&&(e("plugin:shell|open",{path:r.href}),t.preventDefault());break}n=n.parentElement}}))}"function"==typeof SuppressedError&&SuppressedError,"complete"===document.readyState||"interactive"===document.readyState?t():window.addEventListener("DOMContentLoaded",t,!0)}();
 +const discordReg = /https?:\/\/(?:[a-z]+\.)?(?:discord\.com|discordapp\.com)(?:\/.*)?/g
 +
@@ -18,5 +18,8 @@ index 3c91c81..0adeb19 100644
 +
 +  return link.replace(/canary\.|ptb\.|www\./g, '')
 +}
-+
-+!function(){"use strict";async function e(e,t={},n){return window.__TAURI_INTERNALS__.invoke(e,t,n)}function t(){document.querySelector("body")?.addEventListener("click",(function(t){let n=t.target;for(;n;){if(n.matches("a")){const r=n;""!==r.href&&["http://","https://","mailto:","tel:"].some((e=>r.href.startsWith(e)))&&"_blank"===r.target&&!sameOrigin(r.href, window.location.href)&&(e("plugin:shell|open",{path:r.href}),t.preventDefault());break}n=n.parentElement}}),true)}"function"==typeof SuppressedError&&SuppressedError,"complete"===document.readyState||"interactive"===document.readyState?t():window.addEventListener("DOMContentLoaded",t,!0)}();
++// Idk if this is a Dorion issue or a tauri-plugin-shell issue, but it injects twice for some reason
++if (window.top === window.self && !window.__SHELL_OPEN__) {
++  window.__SHELL_OPEN__ = true
++  !function(){"use strict";async function e(e,t={},n){return window.__TAURI_INTERNALS__.invoke(e,t,n)}function t(){document.querySelector("body")?.addEventListener("click",(function(t){console.log('clcik haappened');let n=t.target;for(;n;){if(n.matches("a")){const r=n;""!==r.href&&["http://","https://","mailto:","tel:"].some((e=>r.href.startsWith(e)))&&"_blank"===r.target&&!sameOrigin(r.href, window.location.href)&&(e("plugin:shell|open",{path:r.href}),t.preventDefault());console.log('opening');break}n=n.parentElement}}),true)}"function"==typeof SuppressedError&&SuppressedError,"complete"===document.readyState||"interactive"===document.readyState?t():window.addEventListener("DOMContentLoaded",t,!0)}();
++}
