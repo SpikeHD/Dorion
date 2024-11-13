@@ -139,11 +139,6 @@ fn main() {
     builder = builder.plugin(tauri_plugin_notification::init());
   }
 
-  #[cfg(debug_assertions)]
-  {
-    builder = builder.plugin(tauri_plugin_devtools::init());
-  }
-
   builder
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
