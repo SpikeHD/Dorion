@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "",
-    "beforeBuildCommand": "pnpm build",
+    "beforeBuildCommand": "pnpm build:js",
     "frontendDist": "https://discord.com/app",
     "devUrl": "https://discord.com/app"
   },
