@@ -5,7 +5,7 @@
   "description": "Destroy CSP in Discord request headers",
   "manifest_version": 3,
   "permissions": ["declarativeNetRequest"],
-  "host_permissions": ["*://*.discord.com/*"],
+  "host_permissions": ["*://*.discord.com/*", "*://discord.com/*"],
   "declarative_net_request": {
     "rule_resources": [{
       "id": "csp_disabler",
