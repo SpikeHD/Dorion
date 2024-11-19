@@ -13,6 +13,9 @@ use tauri::{
 
 use crate::{log, util::window_helpers::ultrashow};
 
+#[cfg(target_os = "macos")]
+flate!(static DEFAULT: [u8] from "./icons/tray/macos.png");
+#[cfg(not(target_os = "macos"))]
 flate!(static DEFAULT: [u8] from "./icons/32x32.png");
 flate!(static UNREAD: [u8] from "./icons/tray/unread.png");
 flate!(static CONNECTED: [u8] from "./icons/tray/connected.png");
@@ -85,6 +88,7 @@ impl FromStr for TrayIcon {
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
     match s {
+      #[cfg(not(target_os = "macos"))]
       "unread" => Ok(TrayIcon::Unread),
       "connected" => Ok(TrayIcon::Connected),
       "muted" => Ok(TrayIcon::Muted),
