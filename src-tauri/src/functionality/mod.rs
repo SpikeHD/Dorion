@@ -14,6 +14,5 @@ pub mod menu;
 #[cfg(not(target_os = "macos"))]
 pub mod rpc;
 
-pub mod streamer_mode;
 pub mod tray;
 pub mod window;

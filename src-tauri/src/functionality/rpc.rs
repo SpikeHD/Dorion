@@ -2,12 +2,15 @@ use rsrpc::{
   detection::{DetectableActivity, Executable},
   RPCConfig, RPCServer,
 };
-use std::sync::{Arc, Mutex};
+use std::sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex};
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
-use tauri::Listener;
+use tauri::{Emitter, Listener};
 use window_titles::ConnectionTrait;
 
-use crate::{config::get_config, util::paths::custom_detectables_path};
+use crate::{config::get_config, log, util::paths::custom_detectables_path};
+
+// We keep track of this A) To not spam enable and B) to allow for the user to manually disable without it being re-enabled automatically
+static OBS_OPEN: AtomicBool = AtomicBool::new(false);
 
 #[derive(Clone, serde::Deserialize)]
 struct Payload {
@@ -54,6 +57,9 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
 }
 
 pub fn start_rpc_server(win: tauri::WebviewWindow) {
+  #[cfg(debug_assertions)]
+  std::env::set_var("RSRPC_LOGS_ENABLED", "1");
+
   let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
     .expect("Request for detectable.json failed")
     .text()
@@ -148,6 +154,22 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     )
     .unwrap_or_default();
   });
+
+  if get_config().streamer_mode_detection.unwrap_or(false) {
+    server.lock().unwrap().on_process_scan_complete(move |state| {
+      log!("OBS state: {:?}", state.obs_open);
+
+      if !OBS_OPEN.load(Ordering::Relaxed) && state.obs_open {
+        OBS_OPEN.store(true, Ordering::Relaxed);
+        win.emit("streamer_mode_toggle", true).unwrap_or_default();
+      }
+      
+      if OBS_OPEN.load(Ordering::Relaxed) && !state.obs_open {
+        OBS_OPEN.store(false, Ordering::Relaxed);
+        win.emit("streamer_mode_toggle", false).unwrap_or_default();
+      }
+    });
+  }
 
   server.lock().unwrap().start();
 

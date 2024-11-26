@@ -58,11 +58,6 @@ pub fn after_build(window: &tauri::WebviewWindow) {
   // If the subscription is dropped, Mundy's internal thread will exit and no events will ever be recieved
   Box::leak(Box::new(start_os_accent_subscriber(window)));
 
-  if config.streamer_mode_detection.unwrap_or(false) {
-    log!("Starting streamer mode watcher...");
-    super::streamer_mode::start_streamer_mode_watcher(window.clone());
-  }
-
   #[cfg(feature = "hotkeys")]
   #[cfg(not(target_os = "macos"))]
   if config.keybinds_enabled.unwrap_or(false) {
