@@ -22,10 +22,7 @@ pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
   std::thread::spawn(move || loop {
     std::thread::sleep(std::time::Duration::from_secs(2));
 
-    system.refresh_processes(
-      ProcessesToUpdate::All,
-      true
-    );
+    system.refresh_processes(ProcessesToUpdate::All, true);
 
     let mut obs_running = false;
 
@@ -34,8 +31,16 @@ pub fn start_streamer_mode_watcher(win: tauri::WebviewWindow) {
     for process in system.processes().values() {
       std::thread::sleep(std::time::Duration::from_millis(5));
 
-      if process.name().to_ascii_lowercase().to_string_lossy().contains("obs64")
-        || process.name().to_ascii_lowercase().to_string_lossy().contains("streamlabs")
+      if process
+        .name()
+        .to_ascii_lowercase()
+        .to_string_lossy()
+        .contains("obs64")
+        || process
+          .name()
+          .to_ascii_lowercase()
+          .to_string_lossy()
+          .contains("streamlabs")
       {
         // If OBS is running, we can break out of the loop and emit the event
         obs_running = true;
