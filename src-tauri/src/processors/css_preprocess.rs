@@ -175,21 +175,16 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 
   let reg = Regex::new(r#"@import url\((?:"|'|)(?:|.+?)\/\/(.+?)(?:"|'|)\);"#).unwrap();
 
-  for groups in reg.captures_iter(Box::leak(css.clone().into_boxed_str())) {
+  for groups in reg.captures_iter(css.as_str()) {
     let full_import = groups.get(0).unwrap().as_str();
     let url = groups.get(1).unwrap().as_str().replace(['\'', '\"'], "");
 
-    if url.is_empty() {
+    if url.is_empty() || seen_imports.contains(&url) {
       continue;
     }
 
-    if seen_imports.contains(&url) {
-      // Remove the import statement from the css
-      new_css = new_css.replace(full_import, "");
-      continue;
-    } else {
-      seen_imports.push(url.to_string());
-    }
+    seen_imports.push(url.to_string());
+    new_css = new_css.replace(full_import, "");
   }
 
   // Now add all the @import statements to the top

@@ -23,9 +23,6 @@ window.Dorion = {
 }
 
 ;(async () => {
-  if (window.__DORION_INITIALIZED__) return
-  window.__DORION_INITIALIZED__ = true
-
   // if we are in an iframe we don't really need to load anything, else we bork whatever is inside
   if (window.self !== window.top) {
     // fixes activities

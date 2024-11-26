@@ -195,7 +195,7 @@ pub fn get_windows() -> Vec<Window> {
     .map(|w| {
       let proc = system.process(sysinfo::Pid::from_u32(w.pid));
       let process_name = if let Some(proc) = proc {
-        proc.name().to_string()
+        proc.name().to_string_lossy().to_string()
       } else {
         format!("Unknown ({})", w.pid)
       };

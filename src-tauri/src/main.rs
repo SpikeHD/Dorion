@@ -127,6 +127,7 @@ fn main() {
   let mut builder = tauri::Builder::default()
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
+    .plugin(tauri_plugin_devtools::init())
     .plugin(tauri_plugin_autostart::init(
       tauri_plugin_autostart::MacosLauncher::LaunchAgent,
       Some(vec!["--startup"]),
@@ -255,7 +256,7 @@ fn main() {
       let mut win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
-        .initialization_script(format!("(() => {{ {preinject} }})();{client_mods}").as_str())
+        .initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str())
         .resizable(true)
         .min_inner_size(100.0, 100.0)
         .disable_drag_drop_handler()
