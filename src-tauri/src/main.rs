@@ -127,7 +127,6 @@ fn main() {
   let mut builder = tauri::Builder::default()
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
-    .plugin(tauri_plugin_devtools::init())
     .plugin(tauri_plugin_autostart::init(
       tauri_plugin_autostart::MacosLauncher::LaunchAgent,
       Some(vec!["--startup"]),
