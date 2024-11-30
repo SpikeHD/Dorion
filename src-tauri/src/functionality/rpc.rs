@@ -2,7 +2,10 @@ use rsrpc::{
   detection::{DetectableActivity, Executable},
   RPCConfig, RPCServer,
 };
-use std::sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex};
+use std::sync::{
+  atomic::{AtomicBool, Ordering},
+  Arc, Mutex,
+};
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::{Emitter, Listener};
 use window_titles::ConnectionTrait;
@@ -156,19 +159,22 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
   });
 
   if get_config().streamer_mode_detection.unwrap_or(false) {
-    server.lock().unwrap().on_process_scan_complete(move |state| {
-      log!("OBS state: {:?}", state.obs_open);
+    server
+      .lock()
+      .unwrap()
+      .on_process_scan_complete(move |state| {
+        log!("OBS state: {:?}", state.obs_open);
 
-      if !OBS_OPEN.load(Ordering::Relaxed) && state.obs_open {
-        OBS_OPEN.store(true, Ordering::Relaxed);
-        win.emit("streamer_mode_toggle", true).unwrap_or_default();
-      }
-      
-      if OBS_OPEN.load(Ordering::Relaxed) && !state.obs_open {
-        OBS_OPEN.store(false, Ordering::Relaxed);
-        win.emit("streamer_mode_toggle", false).unwrap_or_default();
-      }
-    });
+        if !OBS_OPEN.load(Ordering::Relaxed) && state.obs_open {
+          OBS_OPEN.store(true, Ordering::Relaxed);
+          win.emit("streamer_mode_toggle", true).unwrap_or_default();
+        }
+
+        if OBS_OPEN.load(Ordering::Relaxed) && !state.obs_open {
+          OBS_OPEN.store(false, Ordering::Relaxed);
+          win.emit("streamer_mode_toggle", false).unwrap_or_default();
+        }
+      });
   }
 
   server.lock().unwrap().start();

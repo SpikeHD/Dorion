@@ -90,7 +90,7 @@ embed_plist = "1.2.2"
 tauri-plugin-window-state = "2.0"
 
 [target.'cfg(windows)'.dependencies]
-tauri-winrt-notification = "0.6"
+tauri-winrt-notification = "0.7"
 webview2-com = "0.33.0"
 windows-core = "0.58.0"
 windows-implement = "0.58.0"

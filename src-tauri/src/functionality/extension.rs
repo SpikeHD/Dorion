@@ -8,6 +8,8 @@ static EXTENSION_INJECTED: AtomicBool = AtomicBool::new(false);
 
 #[cfg(target_os = "windows")]
 pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
+  use std::path::PathBuf;
+  use tauri::webview::PlatformWebview;
   use webview2_com::{
     Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13},
     ProfileAddBrowserExtensionCompletedHandler,
@@ -16,65 +18,49 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
 
   win
     .with_webview(move |webview| unsafe {
-      let core = match webview.controller().CoreWebView2() {
-        Ok(profile) => profile,
-        Err(e) => {
-          log!("Failed to get CoreWebView2: {:?}", e);
-          return;
-        }
-      };
+      pub unsafe fn add(
+        webview: PlatformWebview,
+        path: PathBuf,
+      ) -> Result<(), Box<dyn std::error::Error>> {
+        let profile = webview
+          .controller()
+          .CoreWebView2()?
+          .cast::<ICoreWebView2_13>()?
+          .Profile()?
+          .cast::<ICoreWebView2Profile7>()?;
 
-      let casted = match core.cast::<ICoreWebView2_13>() {
-        Ok(profile) => profile,
-        Err(e) => {
-          log!("Failed to cast webview: {:?}", e);
-          return;
-        }
-      };
+        log!("Attempting to add extension {:?}", path);
 
-      let profile = match casted.Profile() {
-        Ok(profile) => profile,
-        Err(e) => {
-          log!("Failed to get Profile: {:?}", e);
-          return;
-        }
-      };
+        let handler =
+          ProfileAddBrowserExtensionCompletedHandler::create(Box::new(|result, _ext| {
+            match result {
+              Ok(_) => {
+                log!("Extension added successfully!");
+                EXTENSION_INJECTED.store(true, std::sync::atomic::Ordering::Relaxed);
+              }
+              Err(e) => {
+                log!("Failed to add extension: {:?}", e);
+              }
+            }
 
-      let profile = match profile.cast::<ICoreWebView2Profile7>() {
-        Ok(profile) => profile,
-        Err(e) => {
-          log!("Failed to cast profile: {:?}", e);
-          return;
-        }
-      };
+            Ok(())
+          }));
 
-      log!("Attempting to add extension...");
-
-      let handler = ProfileAddBrowserExtensionCompletedHandler::create(Box::new(|result, _ext| {
-        match result {
-          Ok(_) => {
-            log!("Extension added successfully!");
-            EXTENSION_INJECTED.store(true, std::sync::atomic::Ordering::Relaxed);
-          }
-          Err(e) => {
-            log!("Failed to add extension: {:?}", e);
-          }
+        if !path.exists() {
+          return Err("Extension folder does not exist!".into());
         }
+
+        let path_str = path.to_str().unwrap_or_default();
+        let ext = HSTRING::from(path_str);
+
+        profile
+          .AddBrowserExtension(&ext, &handler)
+          .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
 
         Ok(())
-      }));
-
-      if !path.exists() {
-        log!("Extension folder does not exist!");
-        return;
       }
 
-      let path_str = path.to_str().unwrap_or_default();
-      let ext = HSTRING::from(path_str);
-
-      profile
-        .AddBrowserExtension(&ext, &handler)
-        .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
+      add(webview, path).unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
     })
     .unwrap_or_default();
 }
