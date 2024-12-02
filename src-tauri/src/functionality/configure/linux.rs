@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use tauri::path::BaseDirectory;
 use tauri::Manager;
-use webkit2gtk::{PermissionRequestExt, SettingsExt, WebViewExt, WebContextExt};
+use webkit2gtk::{PermissionRequestExt, SettingsExt, WebContextExt, WebViewExt};
 
 use crate::gpu::disable_hardware_accel_linux;
 use crate::log;

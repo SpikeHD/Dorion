@@ -10,7 +10,16 @@ mod linux;
 use tauri::Manager;
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
-use crate::{config::get_config, injection::plugin::load_plugins, log, util::{color::start_os_accent_subscriber, window_helpers::{set_user_agent, ultrashow, window_zoom_level}}, window::blur::apply_effect};
+use crate::{
+  config::get_config,
+  injection::plugin::load_plugins,
+  log,
+  util::{
+    color::start_os_accent_subscriber,
+    window_helpers::{set_user_agent, ultrashow, window_zoom_level},
+  },
+  window::blur::apply_effect,
+};
 
 use super::{extension::load_extensions, rpc::start_rpc_server, tray::create_tray};
 
@@ -27,14 +36,15 @@ pub fn configure(window: &tauri::WebviewWindow) {
   if !config.multi_instance.unwrap_or(false) {
     log!("Multi-instance disabled, registering single instance plugin...");
 
-    handle.plugin(tauri_plugin_single_instance::init(
-      move |app, _argv, _cwd| {
-        if let Some(win) = app.get_webview_window("main") {
-          ultrashow(win);
-        }
-      },
-    ))
-    .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
+    handle
+      .plugin(tauri_plugin_single_instance::init(
+        move |app, _argv, _cwd| {
+          if let Some(win) = app.get_webview_window("main") {
+            ultrashow(win);
+          }
+        },
+      ))
+      .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
   }
 
   // If safemode is enabled, stop here

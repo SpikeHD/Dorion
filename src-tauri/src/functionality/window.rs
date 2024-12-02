@@ -5,8 +5,6 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use crate::config::get_config;
 use crate::log;
 
-
-
 // Minimize
 #[tauri::command]
 pub fn minimize(win: tauri::WebviewWindow) {
@@ -59,4 +57,3 @@ pub fn setup_autostart(app: &mut tauri::App) {
     autostart_manager.is_enabled().unwrap_or_default()
   );
 }
-

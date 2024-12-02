@@ -24,10 +24,7 @@ use util::{
 };
 
 use crate::{
-  functionality::{
-    window::setup_autostart,
-    configure::configure
-  },
+  functionality::{configure::configure, window::setup_autostart},
   util::logger,
 };
 
