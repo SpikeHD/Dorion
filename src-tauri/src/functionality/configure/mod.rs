@@ -23,10 +23,10 @@ use crate::{
 #[cfg(feature = "blur")]
 use crate::window::blur::apply_effect;
 
-use super::{extension::load_extensions, tray::create_tray};
 #[cfg(feature = "rpc")]
 #[cfg(not(target_os = "macos"))]
 use super::rpc::start_rpc_server;
+use super::{extension::load_extensions, tray::create_tray};
 
 pub fn configure(window: &tauri::WebviewWindow) {
   let safemode = std::env::args().any(|arg| arg == "--safemode");
