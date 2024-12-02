@@ -132,6 +132,7 @@
   * [Steps](#steps)
 * [Known Issues](#known-issues)
 * [Troubleshooting](#troubleshooting)
+  * [General](#general)
   * [Windows](#windows)
   * [Linux](#linux)
 * [TODO](#todo)
@@ -281,29 +282,36 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 # Troubleshooting
 
-* **"Oops! Something went wrong." (or a similar client crash)**
-  * Disable non-vital client mods/plugins/extensions and try again.
-  * If you cannot get to the settings menu, you can delete the following items:
-    * Windows: `%appdata%\dorion\webdata` & `%appdata%\dorion\config.json`
-    * Linux: `~/.config/dorion/webdata` & `~/.config/dorion/config.json`
-    * MacOS: `~/Library/Application Support/dorion/webdata` & `~/Library/Application Support/dorion/config.json`
+## General
+
+### I can't see Dorion Settings!
+* Check if `"https://raw.githubusercontent.com/` URLs are being blocked by any system-wide adblockers/firewalls
+* Check the devtools console (`Ctrl +Shift +i`, then click "Console") to see if there are any relevant errors
+
+### "Oops! Something went wrong."
+(or a similar client crash)
+* Disable non-vital client mods/plugins/extensions and try again.
+* If you cannot get to the settings menu, you can delete the following items:
+  * Windows: `%appdata%\dorion\webdata` & `%appdata%\dorion\config.json`
+  * Linux: `~/.config/dorion/webdata` & `~/.config/dorion/config.json`
+  * MacOS: `~/Library/Application Support/dorion/webdata` & `~/Library/Application Support/dorion/config.json`
 
 ## Windows
-* **Dorion not opening**
-  * Try installing via MSI instead of the `.zip` file
-  * Try using the `.zip` file instead of the MSI
-  * (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion and it's contents into it's own folder.
-  * [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-    * Fully uninstall and reinstall.
-    * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
+### Dorion not opening
+* Try installing via MSI instead of the `.zip` file
+* Try using the `.zip` file instead of the MSI
+* (If using the `.zip` file) make sure all files were extracted properly. Ensure you are extracting Dorion and it's contents into it's own folder.
+* [Reinstall WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+  * Fully uninstall and reinstall.
+  * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
 
 ## Linux
-* **White/blank/frozen screen**
-  * Run Dorion with either, or both, of the following environment variables:
-    ```sh
-    WEBKIT_DISABLE_COMPOSITING_MODE=1
-    WEBKIT_DISABLE_DMABUF_RENDERER=1
-    ```
+### White/blank/frozen screen
+* Run Dorion with either, or both, of the following environment variables:
+  ```sh
+  WEBKIT_DISABLE_COMPOSITING_MODE=1
+  WEBKIT_DISABLE_DMABUF_RENDERER=1
+  ```
 
 # TODO
 
