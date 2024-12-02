@@ -5,7 +5,7 @@
 
 use std::{env, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
-use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use config::{get_config, set_config, Config};
 use injection::{
@@ -20,11 +20,14 @@ use util::{
   logger::log,
   notifications,
   paths::get_webdata_dir,
-  window_helpers::{self, clear_cache_check, set_user_agent, ultrashow},
+  window_helpers::{self, clear_cache_check},
 };
 
 use crate::{
-  functionality::window::{after_build, setup_autostart},
+  functionality::{
+    window::setup_autostart,
+    configure::configure
+  },
   util::logger,
 };
 
@@ -115,11 +118,6 @@ fn main() {
 
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
-
-  // Safemode check
-  let safemode = std::env::args().any(|arg| arg == "--safemode");
-  log!("Safemode enabled: {}", safemode);
-
   let client_mods = load_mods_js();
 
   #[allow(clippy::single_match)]
@@ -257,7 +255,6 @@ fn main() {
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
         .initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str())
         .resizable(true)
-        .min_inner_size(100.0, 100.0)
         .disable_drag_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
@@ -276,55 +273,7 @@ fn main() {
 
       let win = win.build()?;
 
-      // Set the user agent to one that enables all normal Discord features
-      set_user_agent(&win);
-
-      // Multi-instance check
-      if !config.multi_instance.unwrap_or(false) {
-        log!("Multi-instance disabled, registering single instance plugin...");
-
-        app
-          .handle()
-          .plugin(tauri_plugin_single_instance::init(
-            move |app, _argv, _cwd| {
-              let win = match app.get_webview_window("main") {
-                Some(win) => win,
-                None => {
-                  log!("No windows open with name \"main\"(???)");
-                  return;
-                }
-              };
-
-              ultrashow(win);
-            },
-          ))
-          .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
-      }
-
-      // If safemode is enabled, stop here
-      if safemode {
-        win.show().unwrap_or_default();
-        return Ok(());
-      }
-
-      // restore state BEFORE after_build, since that may change the window
-      win.restore_state(StateFlags::all()).unwrap_or_default();
-
-      functionality::extension::load_extensions(&win);
-      plugin::load_plugins(win.clone(), Some(true));
-
-      // begin the RPC server if needed
-      #[cfg(feature = "rpc")]
-      #[cfg(not(target_os = "macos"))]
-      if get_config().rpc_server.unwrap_or(false) {
-        let win_cln = win.clone();
-        std::thread::spawn(|| {
-          functionality::rpc::start_rpc_server(win_cln);
-        });
-      }
-
-      after_build(&win);
-
+      configure(&win);
       setup_autostart(app);
 
       Ok(())

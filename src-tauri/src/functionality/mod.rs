@@ -1,4 +1,5 @@
 pub mod cache;
+pub mod configure;
 pub mod extension;
 
 #[cfg(feature = "hotkeys")]
