@@ -8,7 +8,7 @@ use crate::gpu::disable_hardware_accel_linux;
 use crate::log;
 
 pub fn configure(window: &tauri::WebviewWindow) {
-  let handle = window.app_handle();
+  let handle = window.clone().app_handle();
 
   disable_hardware_accel_linux(window);
   enable_webrtc(window);
