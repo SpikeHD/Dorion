@@ -59,7 +59,7 @@ pub fn configure(window: &tauri::WebviewWindow) {
   }
 
   // Restore state now in case we do window modification (ie maximize) later
-  window.restore_state(StateFlags::all()).unwrap_or_default();
+  window.restore_state(StateFlags::all()).unwrap_or_else(|e| log!("Failed to restore window state: {}", e));
 
   load_extensions(window);
   load_plugins(window.clone(), Some(true));
