@@ -39,7 +39,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -55,7 +55,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -101,7 +101,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -144,7 +144,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -189,7 +189,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -205,7 +205,7 @@
               stroke-linecap: butt;
               stroke-linejoin: miter;
               stroke-miterlimit: 10;
-              fill: rgb(255, 255, 255);
+              fill: currentColor;
               fill-rule: nonzero;
               opacity: 1;
             "
@@ -271,10 +271,8 @@
     align-items: center;
     justify-content: center;
 
-    height: 100%;
-    width: 32px;
-
-    padding: 0 6px;
+    height: 24px;
+    width: 44px;
 
     transition: all 0.1s ease-in-out;
   }
@@ -291,6 +289,13 @@
     display: none;
   }
 
+  #topclose svg,
+  #topmin svg,
+  #topmax svg {
+    height: 10px !important;
+    width: 10px !important;
+  }
+
   #topmax:not(.maximized) #svgmax,
   #topmax.maximized #svgunmax {
     display: initial;
@@ -298,10 +303,6 @@
 
   #topclose:hover {
     background: var(--status-danger);
-  }
-
-  #topright svg {
-    height: 45%;
-    width: 60%;
+    color: var(--white);
   }
 </style>

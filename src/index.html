@@ -32,30 +32,33 @@
 
   #container {
     position: relative;
-
-    background: #2f3136;
     user-select: none;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-
     height: 100%;
     width: 100%;
+    background: #2f3136;
+  }
+
+  #title,
+  #midtitle,
+  #subtitle,
+  #safemode,
+  #logContainer {
+    color: #f2f3f5;
   }
 
   #title {
     font-size: 5rem;
-    color: #fff;
     font-family: 'Courier New', monospace;
     font-weight: bold;
   }
 
   #midtitle {
     font-size: 2rem;
-    color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
     margin: 20px;
@@ -64,7 +67,6 @@
 
   #subtitle {
     font-size: 1rem;
-    color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
     margin: 20px;
@@ -72,29 +74,49 @@
 
   #safemode {
     opacity: 0;
-
     margin: 20px;
-    color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
-
     transition: all 1s ease;
   }
 
   #logContainer {
     font-size: 1rem;
     width: 70%;
-
     height: 20px;
-
     overflow: none;
-
     text-align: center;
-
-    color: #fff;
   }
 
   .show {
     opacity: 1 !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #container {
+      background: #2f3136;
+    }
+
+    #title,
+    #midtitle,
+    #subtitle,
+    #safemode,
+    #logContainer {
+      color: #f2f3f5;
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    #container {
+      background: #f2f3f5;
+    }
+
+    #title,
+    #midtitle,
+    #subtitle,
+    #safemode,
+    #logContainer {
+      color: #2f3136;
+    }
   }
 </style>
