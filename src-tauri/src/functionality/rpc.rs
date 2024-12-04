@@ -214,7 +214,7 @@ fn blank_activity() -> DetectableActivity {
 pub fn get_windows() -> Vec<Window> {
   let conn = window_titles::Connection::new().expect("Failed to connect to window titles");
   let system =
-    System::new_with_specifics(RefreshKind::new().with_processes(ProcessRefreshKind::everything()));
+    System::new_with_specifics(RefreshKind::nothing().with_processes(ProcessRefreshKind::everything()));
 
   let windows: Vec<Window> = conn
     .window_titles()
