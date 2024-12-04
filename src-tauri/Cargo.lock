@@ -3992,8 +3992,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.21.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.21.0#303bbf4bb9f099ee596c52f10b9f98ebeb3b89f4"
+version = "0.21.1"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.21.1#b8852e7da95f759dd3ae0568d98cea509d33dac3"
 dependencies = [
  "chrono",
  "interprocess",
@@ -4620,9 +4620,9 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.32.1"
+version = "0.33.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c33cd241af0f2e9e3b5c32163b873b29956890b5342e6745b917ce9d490f4af"
+checksum = "948512566b1895f93b1592c7574baeb2de842f224f2aab158799ecadb8ebbb46"
 dependencies = [
  "core-foundation-sys",
  "libc",
