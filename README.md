@@ -315,7 +315,6 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 # TODO
 
-* [x] Pre-process fonts like images/CSS imports are already done
 * [x] Multi-thread CSS processing
 * [x] Use resource files from within the binary itself instead of the filesystem
 * [x] Desktop notifications
@@ -330,8 +329,8 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 * [x] Localization timeout
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
-* [x] Logging system (like [reMITM](https://github.com/SpikeHD/reMITM))
-* [ ] Move from `device_query` to `rdev` (supports more keys. May also just attempt to contribute to `device_query`)
+* [x] Logging system
+* [ ] Move from `device_query` to `rdev` or `inputbot` (supports more keys. May also just attempt to contribute to `device_query`)
 * [x] API abstractions
 
 # Using Plugins, Extensions, and Themes
