@@ -113,7 +113,8 @@
 </details>
 
 > [!TIP]
-> Dorion can also be used portably or installed via [several package managers](#package-repositories). You can find these builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
+> Dorion can also be used portably or installed via [several package managers](#package-repositories).
+> You can find portable builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
 
 > [!NOTE]
 > ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`. Alternatively, you can open the **Privacy & Security** settings pane and scroll down to the **Security** section to remove the quarantine.
@@ -178,19 +179,26 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 
 * [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client, as well as other web-based alternatives
 * Theme support
+* Global push-to-talk and custom keybinds
 * [Shelter](https://github.com/uwu/Shelter) and (optionally) [Vencord](https://github.com/vendicated/vencord)/[Equicord](https://github.com/equicord/equicord) included out of the box
 * Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
   * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
-* Feature flags for picking and choosing features (when building from source) 
 * (Hopefully) better low-end system performance.
 * ARM support for ALL platforms
+* Feature flags for picking and choosing features (when building from source)
 
 ## Plugins
 
-Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also enable client mods like [Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page. If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
+Dorion comes with [shelter](https://github.com/uwu/shelter), so that should cover at least some plugin-related needs. You can also enable client mods like [Vencord](https://github.com/vendicated/vencord) inside the Dorion settings page.
+If you want to install plugins not available within the Dorion settings page, ensure you are downloading a browser-compatible version.
 
 > [!NOTE]
 > Want official support for another client mod? As long as it works on the web, feel free to submit a [feature request](https://github.com/SpikeHD/Dorion/issues/new/choose)!
+
+> [!TIP]
+> Unsure what shelter plugins exist out there? There's more than you think, so try searching `shelter plugins` on GitHub, or use the Plugin Browser plugin:
+> 
+> `https://spikehd.github.io/shelter-plugins/plugin-browser/`
 
 ## Themes
 
