@@ -72,12 +72,22 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
 fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
+  use crate::util::window_helpers::ultrashow;
+
+  let win = app.get_webview_window("main");
 
   Toast::new(&app.config().identifier)
     .icon(Path::new(&icon), IconCrop::Circular, "")
     .title(title.as_str())
     .text2(body.as_str())
     .sound(None)
+    .on_activated(move |_s| {
+      if let Some(win) = &win {
+        ultrashow(win.clone());
+      }
+
+      Ok(())
+    })
     .show()
     .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
 }
