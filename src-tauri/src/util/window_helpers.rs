@@ -137,7 +137,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
       let webview = webview.inner();
       let settings = webview.settings().unwrap();
 
-      settings.set_user_agent(Some(useragent()));
+      settings.set_user_agent(Some(&useragent()));
     })
     .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 }
