@@ -150,7 +150,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   win
     .with_webview(|webview| unsafe {
       let webview: &WKWebView = &*webview.inner().cast();
-      let useragent = NSString::from_str(useragent());
+      let useragent = NSString::from_str(&useragent());
 
       webview.setCustomUserAgent(Some(&useragent));
     })
