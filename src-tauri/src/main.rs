@@ -16,11 +16,7 @@ use injection::{
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  helpers,
-  logger::log,
-  notifications,
-  paths::get_webdata_dir,
-  window_helpers::{self, clear_cache_check},
+  args::is_safemode, helpers, logger::log, notifications, paths::get_webdata_dir, window_helpers::{self, clear_cache_check}
 };
 
 use crate::{
@@ -249,8 +245,6 @@ fn main() {
       let title = format!("Dorion - v{}", app.package_info().version);
       let mut win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
-        // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
-        .initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str())
         .resizable(true)
         .disable_drag_drop_handler()
         .data_directory(get_webdata_dir())
@@ -263,6 +257,11 @@ fn main() {
         )
         .zoom_hotkeys_enabled(true)
         .browser_extensions_enabled(true);
+
+      if !is_safemode() {
+        // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
+        win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
+      }
 
       if let Ok(proxy_uri) = proxy_uri {
         win = win.proxy_url(proxy_uri);

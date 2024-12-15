@@ -15,8 +15,7 @@ use crate::{
   injection::plugin::load_plugins,
   log,
   util::{
-    color::start_os_accent_subscriber,
-    window_helpers::{set_user_agent, ultrashow, window_zoom_level},
+    args::{is_safemode, is_startup}, color::start_os_accent_subscriber, window_helpers::{set_user_agent, ultrashow, window_zoom_level}
   },
 };
 
@@ -29,8 +28,6 @@ use super::rpc::start_rpc_server;
 use super::{extension::load_extensions, tray::create_tray};
 
 pub fn configure(window: &tauri::WebviewWindow) {
-  let safemode = std::env::args().any(|arg| arg == "--safemode");
-  let startup = std::env::args().any(|arg| arg == "--startup");
   let config = get_config();
   let handle = window.app_handle();
 
@@ -53,7 +50,7 @@ pub fn configure(window: &tauri::WebviewWindow) {
   }
 
   // If safemode is enabled, stop here
-  if safemode {
+  if is_safemode() {
     window.show().unwrap_or_default();
     return;
   }
@@ -85,7 +82,7 @@ pub fn configure(window: &tauri::WebviewWindow) {
   }
 
   // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
-  if !startup || !config.startup_minimized.unwrap_or(false) {
+  if !is_startup() || !config.startup_minimized.unwrap_or(false) {
     // Now that we are ready, and shouldn't start minimized, show the window
     window.show().unwrap_or_default();
   } else {
