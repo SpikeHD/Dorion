@@ -49,9 +49,7 @@ pub fn disable_hardware_accel_linux(window: &tauri::WebviewWindow) {
     let config = get_config();
     let wv = webview.inner();
     let settings = WebViewExt::settings(&wv).unwrap_or_default();
-
-    settings.set_user_agent(Some("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"));
-
+    
     if config.disable_hardware_accel.unwrap_or(false) {
       settings.set_hardware_acceleration_policy(HardwareAccelerationPolicy::Never);
     }

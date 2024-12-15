@@ -3,7 +3,16 @@ use crate::log;
 
 use super::paths::get_webdata_dir;
 
-static USERAGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
+#[cfg(target_os = "windows")]
+static OS: &str = "(Windows NT 10.0; Win64; x64)";
+#[cfg(target_os = "macos")]
+static OS: &str = "(Macintosh; Intel Mac OS X 10_15_7)";
+#[cfg(target_os = "linux")]
+static OS: &str = "(X11; Linux x86_64)";
+
+fn useragent() -> String {
+  format!("Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+}
 
 pub fn clear_cache_check() {
   let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
@@ -111,7 +120,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
         .expect("Failed to cast settings!");
 
       settings
-        .SetUserAgent(&HSTRING::from(USERAGENT))
+        .SetUserAgent(&HSTRING::from(useragent()))
         .unwrap_or_default();
     })
     .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
@@ -128,7 +137,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
       let webview = webview.inner();
       let settings = webview.settings().unwrap();
 
-      settings.set_user_agent(Some(USERAGENT));
+      settings.set_user_agent(Some(useragent()));
     })
     .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 }
@@ -141,7 +150,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   win
     .with_webview(|webview| unsafe {
       let webview: &WKWebView = &*webview.inner().cast();
-      let useragent = NSString::from_str(USERAGENT);
+      let useragent = NSString::from_str(useragent());
 
       webview.setCustomUserAgent(Some(&useragent));
     })
