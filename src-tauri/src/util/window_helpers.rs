@@ -13,7 +13,9 @@ static OS: &str = "(X11; Linux x86_64)";
 fn useragent(chrome_version: Option<String>) -> String {
   let chrome_version = chrome_version.unwrap_or("131.0.0.0".to_string());
 
-  format!("Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36")
+  format!(
+    "Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36"
+  )
 }
 
 pub fn clear_cache_check() {
@@ -110,7 +112,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use tauri::webview::PlatformWebview;
   use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Settings2, ICoreWebView2_2};
   use windows::core::{Interface, HSTRING};
-use windows_core::PWSTR;
+  use windows_core::PWSTR;
 
   win
     .with_webview(|webview| unsafe {
@@ -125,7 +127,11 @@ use windows_core::PWSTR;
 
         env.BrowserVersionString(&mut browser_version)?;
 
-        let browser_version = browser_version.to_string()?.chars().take_while(|&c| c != '.').collect::<String>();
+        let browser_version = browser_version
+          .to_string()?
+          .chars()
+          .take_while(|&c| c != '.')
+          .collect::<String>();
 
         log!("Webview2 Chromium version: {browser_version}.0.0.0");
 
@@ -135,8 +141,7 @@ use windows_core::PWSTR;
           Some(format!("{browser_version}.0.0.0"))
         };
 
-        settings
-          .SetUserAgent(&HSTRING::from(useragent(browser_version)))?;
+        settings.SetUserAgent(&HSTRING::from(useragent(browser_version)))?;
 
         Ok(())
       }

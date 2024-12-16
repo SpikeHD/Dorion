@@ -70,9 +70,9 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
 
 #[cfg(target_os = "windows")]
 fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+  use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
-  use crate::util::window_helpers::ultrashow;
 
   let win = app.get_webview_window("main");
 

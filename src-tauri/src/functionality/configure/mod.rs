@@ -15,7 +15,9 @@ use crate::{
   injection::plugin::load_plugins,
   log,
   util::{
-    args::{is_safemode, is_startup}, color::start_os_accent_subscriber, window_helpers::{set_user_agent, ultrashow, window_zoom_level}
+    args::{is_safemode, is_startup},
+    color::start_os_accent_subscriber,
+    window_helpers::{set_user_agent, ultrashow, window_zoom_level},
   },
 };
 
@@ -56,7 +58,9 @@ pub fn configure(window: &tauri::WebviewWindow) {
   }
 
   // Restore state now in case we do window modification (ie maximize) later
-  window.restore_state(StateFlags::all()).unwrap_or_else(|e| log!("Failed to restore window state: {}", e));
+  window
+    .restore_state(StateFlags::all())
+    .unwrap_or_else(|e| log!("Failed to restore window state: {}", e));
 
   load_extensions(window);
   load_plugins(window.clone(), Some(true));

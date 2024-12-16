@@ -16,7 +16,12 @@ use injection::{
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  args::is_safemode, helpers, logger::log, notifications, paths::get_webdata_dir, window_helpers::{self, clear_cache_check}
+  args::is_safemode,
+  helpers,
+  logger::log,
+  notifications,
+  paths::get_webdata_dir,
+  window_helpers::{self, clear_cache_check},
 };
 
 use crate::{

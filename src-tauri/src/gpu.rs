@@ -45,13 +45,15 @@ pub fn disable_hardware_accel_linux(window: &tauri::WebviewWindow) {
   use crate::log;
   use webkit2gtk::{HardwareAccelerationPolicy, SettingsExt, WebViewExt};
 
-  window.with_webview(move |webview| {
-    let config = get_config();
-    let wv = webview.inner();
-    let settings = WebViewExt::settings(&wv).unwrap_or_default();
-    
-    if config.disable_hardware_accel.unwrap_or(false) {
-      settings.set_hardware_acceleration_policy(HardwareAccelerationPolicy::Never);
-    }
-  }).unwrap_or_else(|_| log!("Failed to set user-agent"));
+  window
+    .with_webview(move |webview| {
+      let config = get_config();
+      let wv = webview.inner();
+      let settings = WebViewExt::settings(&wv).unwrap_or_default();
+
+      if config.disable_hardware_accel.unwrap_or(false) {
+        settings.set_hardware_acceleration_policy(HardwareAccelerationPolicy::Never);
+      }
+    })
+    .unwrap_or_else(|_| log!("Failed to set user-agent"));
 }
