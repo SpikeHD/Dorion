@@ -10,8 +10,10 @@ static OS: &str = "(Macintosh; Intel Mac OS X 10_15_7)";
 #[cfg(target_os = "linux")]
 static OS: &str = "(X11; Linux x86_64)";
 
-fn useragent() -> String {
-  format!("Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36")
+fn useragent(chrome_version: Option<String>) -> String {
+  let chrome_version = chrome_version.unwrap_or("131.0.0.0".to_string());
+
+  format!("Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36")
 }
 
 pub fn clear_cache_check() {
@@ -105,23 +107,41 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 
 #[cfg(target_os = "windows")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-  use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+  use tauri::webview::PlatformWebview;
+  use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Settings2, ICoreWebView2_2};
   use windows::core::{Interface, HSTRING};
+use windows_core::PWSTR;
 
   win
     .with_webview(|webview| unsafe {
-      let settings = webview
-        .controller()
-        .CoreWebView2()
-        .expect("Failed to get CoreWebView2!")
-        .Settings()
-        .expect("Failed to get Settings!")
-        .cast::<ICoreWebView2Settings2>()
-        .expect("Failed to cast settings!");
+      unsafe fn inner(webview: PlatformWebview) -> Result<(), Box<dyn std::error::Error>> {
+        let wv = webview
+          .controller()
+          .CoreWebView2()?
+          .cast::<ICoreWebView2_2>()?;
+        let settings = wv.Settings()?.cast::<ICoreWebView2Settings2>()?;
+        let env = wv.Environment()?;
+        let mut browser_version = PWSTR::null();
 
-      settings
-        .SetUserAgent(&HSTRING::from(useragent()))
-        .unwrap_or_default();
+        env.BrowserVersionString(&mut browser_version)?;
+
+        let browser_version = browser_version.to_string()?.chars().take_while(|&c| c != '.').collect::<String>();
+
+        log!("Webview2 Chromium version: {browser_version}.0.0.0");
+
+        let browser_version = if browser_version.is_empty() {
+          None
+        } else {
+          Some(format!("{browser_version}.0.0.0"))
+        };
+
+        settings
+          .SetUserAgent(&HSTRING::from(useragent(browser_version)))?;
+
+        Ok(())
+      }
+
+      inner(webview).unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
     })
     .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 
@@ -137,7 +157,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
       let webview = webview.inner();
       let settings = webview.settings().unwrap();
 
-      settings.set_user_agent(Some(&useragent()));
+      settings.set_user_agent(Some(&useragent(None)));
     })
     .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
 }
@@ -150,7 +170,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   win
     .with_webview(|webview| unsafe {
       let webview: &WKWebView = &*webview.inner().cast();
-      let useragent = NSString::from_str(&useragent());
+      let useragent = NSString::from_str(&useragent(None));
 
       webview.setCustomUserAgent(Some(&useragent));
     })
