@@ -293,8 +293,8 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 ## General
 
 ### I can't see Dorion Settings!
-* Check if `"https://raw.githubusercontent.com/` URLs are being blocked by any system-wide adblockers/firewalls
-* Check the devtools console (`Ctrl +Shift +i`, then click "Console") to see if there are any relevant errors
+* Check if `https://raw.githubusercontent.com/` URLs are being blocked by any system-wide adblockers/firewalls
+* Check the devtools console (`Ctrl+Shift+i`, then click "Console") to see if there are any relevant errors
 
 ### "Oops! Something went wrong."
 (or a similar client crash)
