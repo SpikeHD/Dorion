@@ -80,3 +80,17 @@ pub fn get_platform() -> &'static str {
   #[cfg(target_os = "linux")]
   "linux"
 }
+
+#[cfg(target_os = "windows")]
+pub fn is_windows_7() -> bool {
+  use windows::{Wdk::System::SystemServices::RtlGetVersion, Win32::System::SystemInformation::OSVERSIONINFOW};
+
+  let mut osvi = OSVERSIONINFOW::default();
+  osvi.dwOSVersionInfoSize = std::mem::size_of::<OSVERSIONINFOW>() as u32;
+
+  unsafe {
+    let _ = RtlGetVersion(&mut osvi);
+  }
+
+  osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1
+}

@@ -6,6 +6,8 @@ use crate::{
 };
 use tauri::Manager;
 
+use super::helpers::is_windows_7;
+
 #[tauri::command]
 pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
   // Write the result of the icon
@@ -51,11 +53,18 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
 
   icon_path.push_str(&tmp_file.to_str().unwrap_or_default().replace('\\', "/"));
 
-  send_notification_internal(app, title, body, icon_path);
+  send_notification_internal(app, title, body, icon_path.clone());
 }
 
-#[cfg(not(target_os = "windows"))]
-fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon_path: String) {
+  if cfg!(target_os = "windows") && !is_windows_7() {
+    send_notification_internal_windows(app, title, body, icon_path)
+  } else {
+    send_notification_internal_other(app, title, body, icon_path)
+  }
+}
+
+fn send_notification_internal_other(app: &tauri::AppHandle, title: String, body: String, icon: String) {
   use tauri_plugin_notification::NotificationExt;
 
   app
@@ -68,8 +77,7 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
     .unwrap_or_default();
 }
 
-#[cfg(target_os = "windows")]
-fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+fn send_notification_internal_windows(app: &tauri::AppHandle, title: String, body: String, icon: String) {
   use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};

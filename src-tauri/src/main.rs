@@ -62,6 +62,8 @@ fn main() {
     log!("Panic occurred: {:?}", info);
   }));
 
+  log!("Are we on Windows 7: {}", helpers::is_windows_7());
+
   let mut config = get_config();
 
   // Check if the deprecated theme option is being used
