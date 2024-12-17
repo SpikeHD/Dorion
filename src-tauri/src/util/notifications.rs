@@ -93,6 +93,7 @@ fn send_notification_internal_other(
     .unwrap_or_default();
 }
 
+#[cfg(target_os = "windows")]
 fn send_notification_internal_windows(
   app: &tauri::AppHandle,
   title: String,
