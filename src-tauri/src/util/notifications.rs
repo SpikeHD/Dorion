@@ -57,11 +57,17 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
 }
 
 fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon_path: String) {
-  if cfg!(target_os = "windows") && !is_windows_7() {
-    send_notification_internal_windows(app, title, body, icon_path)
-  } else {
-    send_notification_internal_other(app, title, body, icon_path)
+  #[cfg(target_os = "windows")]
+  {
+    if !is_windows_7() {
+      send_notification_internal_windows(app, title, body, icon_path)
+    } else {
+      send_notification_internal_other(app, title, body, icon_path)
+    }
   }
+
+  #[cfg(not(target_os = "windows"))]
+  send_notification_internal_other(app, title, body, icon_path)
 }
 
 fn send_notification_internal_other(app: &tauri::AppHandle, title: String, body: String, icon: String) {
