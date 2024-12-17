@@ -56,7 +56,12 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   send_notification_internal(app, title, body, icon_path.clone());
 }
 
-fn send_notification_internal(app: &tauri::AppHandle, title: String, body: String, icon_path: String) {
+fn send_notification_internal(
+  app: &tauri::AppHandle,
+  title: String,
+  body: String,
+  icon_path: String,
+) {
   #[cfg(target_os = "windows")]
   {
     if !is_windows_7() {
@@ -70,7 +75,12 @@ fn send_notification_internal(app: &tauri::AppHandle, title: String, body: Strin
   send_notification_internal_other(app, title, body, icon_path)
 }
 
-fn send_notification_internal_other(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+fn send_notification_internal_other(
+  app: &tauri::AppHandle,
+  title: String,
+  body: String,
+  icon: String,
+) {
   use tauri_plugin_notification::NotificationExt;
 
   app
@@ -83,7 +93,12 @@ fn send_notification_internal_other(app: &tauri::AppHandle, title: String, body:
     .unwrap_or_default();
 }
 
-fn send_notification_internal_windows(app: &tauri::AppHandle, title: String, body: String, icon: String) {
+fn send_notification_internal_windows(
+  app: &tauri::AppHandle,
+  title: String,
+  body: String,
+  icon: String,
+) {
   use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};

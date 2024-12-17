@@ -83,7 +83,9 @@ pub fn get_platform() -> &'static str {
 
 #[cfg(target_os = "windows")]
 pub fn is_windows_7() -> bool {
-  use windows::{Wdk::System::SystemServices::RtlGetVersion, Win32::System::SystemInformation::OSVERSIONINFOW};
+  use windows::{
+    Wdk::System::SystemServices::RtlGetVersion, Win32::System::SystemInformation::OSVERSIONINFOW,
+  };
 
   let mut osvi = OSVERSIONINFOW::default();
   osvi.dwOSVersionInfoSize = std::mem::size_of::<OSVERSIONINFOW>() as u32;
