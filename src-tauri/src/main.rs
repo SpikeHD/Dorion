@@ -62,6 +62,7 @@ fn main() {
     log!("Panic occurred: {:?}", info);
   }));
 
+  #[cfg(target_os = "windows")]
   log!("Are we on Windows 7: {}", helpers::is_windows_7());
 
   let mut config = get_config();

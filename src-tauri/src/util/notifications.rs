@@ -6,6 +6,7 @@ use crate::{
 };
 use tauri::Manager;
 
+#[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
 
 #[tauri::command]
