@@ -81,8 +81,6 @@ pub fn get_plugin_dir() -> std::path::PathBuf {
     return local_plugin_dir;
   }
 
-  log!("No local plugin dir found. Using default.");
-
   #[cfg(target_os = "windows")]
   let plugin_dir = dirs::home_dir()
     .unwrap_or_default()
@@ -111,8 +109,6 @@ pub fn get_theme_dir() -> std::path::PathBuf {
 
     return local_theme_dir;
   }
-
-  log!("No local theme dir found. Using default.");
 
   #[cfg(target_os = "windows")]
   let theme_dir = dirs::home_dir()

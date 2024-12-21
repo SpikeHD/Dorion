@@ -99,6 +99,8 @@ fn main() {
   #[cfg(target_os = "linux")]
   gpu::disable_dma();
 
+  log!("Are we portable? {}", paths::is_portable());
+
   let context = tauri::generate_context!("tauri.conf.json");
   let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
