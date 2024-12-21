@@ -1,6 +1,4 @@
-import { ensurePlugins } from './shared/plugins'
 import { applyExtraCSS, createTopBar } from './shared/ui'
-import { waitForApp } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
 let loaded = false
@@ -61,10 +59,6 @@ function onClientLoad() {
 
   // Load up our extra css
   applyExtraCSS()
-
-  // Ensure Dorion-related plugins are installed
-  // It's kinda stupid to have to wait but we have to make sure Shelter loaded fully
-  waitForApp().then(() => ensurePlugins())
 }
 
 function notifGetter() {

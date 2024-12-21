@@ -22,6 +22,24 @@ window.Dorion = {
   shouldShowUnreadBadge: false
 }
 
+const INJECTED_PLUGIN_OPTIONS = {
+  isVisible: true,
+  allowedActions: {},
+  loaderName: 'Dorion'
+}
+
+window.SHELTER_INJECTOR_PLUGINS = {
+  'Dorion Settings': ['https://spikehd.github.io/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
+  'Always Trust': ['https://spikehd.github.io/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Notifications': ['https://spikehd.github.io/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Streamer Mode': ['https://spikehd.github.io/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Updater': ['https://spikehd.github.io/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion PTT': ['https://spikehd.github.io/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Tray': ['https://spikehd.github.io/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Fullscreen': ['https://spikehd.github.io/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Custom Keybinds': ['https://spikehd.github.io/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
+}
+
 ;(async () => {
   // if we are in an iframe we don't really need to load anything, else we bork whatever is inside
   if (window.self !== window.top) {

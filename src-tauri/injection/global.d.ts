@@ -3,6 +3,7 @@ export {}
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
+    SHELTER_INJECTOR_PLUGINS: Record<string, [string, Record<string, unknown>]> 
     __TAURI__: {
       core: {
         invoke: (cmd: string, args?: Record<string, any>) => Promise<any>
