@@ -87,8 +87,10 @@ pub fn is_windows_7() -> bool {
     Wdk::System::SystemServices::RtlGetVersion, Win32::System::SystemInformation::OSVERSIONINFOW,
   };
 
-  let mut osvi = OSVERSIONINFOW::default();
-  osvi.dwOSVersionInfoSize = std::mem::size_of::<OSVERSIONINFOW>() as u32;
+  let mut osvi = OSVERSIONINFOW {
+    dwOSVersionInfoSize: std::mem::size_of::<OSVERSIONINFOW>() as u32,
+    ..Default::default()
+  };
 
   unsafe {
     let _ = RtlGetVersion(&mut osvi);
