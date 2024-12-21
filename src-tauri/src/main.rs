@@ -22,7 +22,7 @@ use util::{
   helpers,
   logger::log,
   notifications,
-  paths::{is_portable, get_webdata_dir},
+  paths::{get_webdata_dir, is_portable},
   window_helpers::{self, clear_cache_check},
 };
 
