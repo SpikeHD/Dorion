@@ -22,7 +22,7 @@ use util::{
   helpers,
   logger::log,
   notifications,
-  paths::get_webdata_dir,
+  paths::{is_portable, get_webdata_dir},
   window_helpers::{self, clear_cache_check},
 };
 
@@ -99,7 +99,7 @@ fn main() {
   #[cfg(target_os = "linux")]
   gpu::disable_dma();
 
-  log!("Are we portable? {}", paths::is_portable());
+  log!("Are we portable? {}", is_portable());
 
   let context = tauri::generate_context!("tauri.conf.json");
   let client_type = config.client_type.unwrap_or("default".to_string());
