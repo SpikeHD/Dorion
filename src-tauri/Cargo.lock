@@ -4001,8 +4001,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.23.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.23.0#972e05a561b4994ab4bb3014ae5a9d70a34436a7"
+version = "0.23.1"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.23.1#625fdcca5083b0d4303adfb96abe1157839830f1"
 dependencies = [
  "chrono",
  "interprocess",
