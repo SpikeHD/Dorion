@@ -77,21 +77,23 @@ fn send_notification_internal(
 }
 
 fn send_notification_internal_other(
-  app: &tauri::AppHandle,
+  _app: &tauri::AppHandle,
   title: String,
   body: String,
-  icon: String,
+  _icon: String,
 ) {
-  use tauri_plugin_notification::NotificationExt;
+  use notify_rust::{Notification, Timeout};
 
-  app
-    .notification()
-    .builder()
-    .title(title)
-    .body(body)
-    .icon(icon)
+  match Notification::new()
+    .summary(&title)
+    .body(&body)
+    .icon("dorion")
+    .timeout(Timeout::Milliseconds(5000))
     .show()
-    .unwrap_or_default();
+  {
+    Ok(_) => {}
+    Err(e) => log!("Failed to send notification: {:?}", e),
+  };
 }
 
 #[cfg(target_os = "windows")]

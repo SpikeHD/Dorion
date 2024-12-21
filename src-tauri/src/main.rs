@@ -3,6 +3,8 @@
   windows_subsystem = "windows"
 )]
 
+#[cfg(target_os = "macos")]
+use notify_rust::set_application;
 use std::{env, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -101,6 +103,10 @@ fn main() {
   let client_type = config.client_type.unwrap_or("default".to_string());
   let mut url = String::new();
 
+  #[cfg(target_os = "macos")]
+  set_application(&context.config().identifier)
+    .unwrap_or_else(|e| log!("Failed to set application: {:?}", e));
+
   log!(
     "Starting Dorion version v{}",
     context
@@ -132,11 +138,6 @@ fn main() {
     ))
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_window_state::Builder::new().build());
-
-  #[cfg(not(target_os = "windows"))]
-  {
-    builder = builder.plugin(tauri_plugin_notification::init());
-  }
 
   builder
     .invoke_handler(tauri::generate_handler![
