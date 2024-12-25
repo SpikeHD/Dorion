@@ -75,9 +75,14 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     enable_websocket_connector: config.rpc_websocket_connector.unwrap_or(true),
     enable_secondary_events: config.rpc_secondary_events.unwrap_or(true),
   };
-  let server = Arc::new(Mutex::new(
-    RPCServer::from_json_str(detectable, rpc_config).expect("Failed to start RPC server"),
-  ));
+  let server = match RPCServer::from_json_str(detectable, rpc_config) {
+    Ok(server) => Arc::new(Mutex::new(server)),
+    Err(e) => {
+      log!("Failed to start RPC server: {:?}", e);
+      log!("If you use an external RPC server, you should disable the integrated one!");
+      return;
+    }
+  };
   let add_server = server.clone();
   let remove_server = server.clone();
 
