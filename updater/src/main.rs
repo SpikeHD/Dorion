@@ -291,7 +291,13 @@ pub fn update_main() {
   let mut cmd = std::process::Command::new("open");
   cmd.arg(release_path);
 
-  cmd.spawn().unwrap();
+  match cmd.spawn() {
+    Ok(_) => {}
+    Err(e) => {
+      println!("Failed to open DMG: {:?}", e);
+      return;
+    }
+  }
 
   println!("Attempting to kill Dorion process...");
 
@@ -299,8 +305,16 @@ pub fn update_main() {
   let mut cmd = std::process::Command::new("pkill");
   cmd.arg("-9");
   cmd.arg("Dorion");
-
-  cmd.spawn().unwrap();
+  
+  match cmd.spawn() {
+    Ok(_) => {}
+    Err(e) => {
+      println!("Failed to kill Dorion: {:?}", e);
+      
+    }
+  }
+  
+  std::process::exit(0);
 }
 
 /**
