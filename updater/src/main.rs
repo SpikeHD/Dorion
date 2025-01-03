@@ -305,15 +305,14 @@ pub fn update_main() {
   let mut cmd = std::process::Command::new("pkill");
   cmd.arg("-9");
   cmd.arg("Dorion");
-  
+
   match cmd.spawn() {
     Ok(_) => {}
     Err(e) => {
       println!("Failed to kill Dorion: {:?}", e);
-      
     }
   }
-  
+
   std::process::exit(0);
 }
 
