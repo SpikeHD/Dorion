@@ -32,14 +32,14 @@ export function applyNotificationCount() {
   const notifs = title.innerHTML.startsWith('•') ? -1 : title.innerHTML?.match(/\((.*)\)/)?.[1]
 
   if (!notifs) {
-    invoke('notif_count', {
+    invoke('notification_count', {
       amount: 0,
     })
 
     return
   }
 
-  invoke('notif_count', {
+  invoke('notification_count', {
     amount: Number(notifs),
   })
 }

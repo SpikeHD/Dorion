@@ -157,7 +157,7 @@ fn main() {
       local_html::get_index,
       local_html::get_top_bar,
       local_html::get_extra_css,
-      notifications::notif_count,
+      notifications::notification_count,
       notifications::send_notification,
       plugin::load_plugins,
       plugin::get_plugin_list,
