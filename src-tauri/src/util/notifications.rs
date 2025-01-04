@@ -126,11 +126,11 @@ fn send_notification_internal_windows(
 }
 
 #[tauri::command]
-pub fn notification_count(window: tauri::WebviewWindow, amount: i32) {
+pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
   log!("Setting notification count: {}", amount);
 
   #[cfg(not(target_os = "windows"))]
-  window.set_badge_count(amount).unwrap_or_default();
+  window.set_badge_count(Some(amount)).unwrap_or_default();
 
   #[cfg(target_os = "windows")]
   {
