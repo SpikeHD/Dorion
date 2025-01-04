@@ -4,7 +4,7 @@ use crate::{
   functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
   log,
 };
-use tauri::{Manager, image::Image};
+use tauri::{image::Image, Manager};
 
 #[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
@@ -150,7 +150,7 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i32) {
       flate!(static ICO_7: [u8] from "./icons/notifications/7_48.png");
       flate!(static ICO_8: [u8] from "./icons/notifications/8_48.png");
       flate!(static ICO_9: [u8] from "./icons/notifications/9_48.png");
-      
+
       let ico = match amount {
         -1 => ICO_SOME.as_ref(),
         1 => ICO_1.as_ref(),
