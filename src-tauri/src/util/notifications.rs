@@ -4,7 +4,7 @@ use crate::{
   functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
   log,
 };
-use tauri::{image::Image, Manager};
+use tauri::Manager;
 
 #[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
@@ -138,6 +138,7 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
       window.set_overlay_icon(None).unwrap_or_default();
     } else {
       use include_flate::flate;
+      use tauri::image::Image;
 
       // Include icons
       flate!(static ICO_SOME: [u8] from "./icons/notifications/some_48.png");
