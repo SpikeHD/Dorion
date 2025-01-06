@@ -1,14 +1,12 @@
 [package]
 name = "Dorion"
-version = "6.3.0"
+version = "6.4.0"
 description = "Tiny alternative Discord client with a smaller footprint, themes and plugins, multi-profile, and more!"
 authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
 rust-version = "1.81"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [profile.release]
 strip = "debuginfo"
@@ -26,7 +24,7 @@ tauri-build = { version = "2.0.0", features = [] }
 
 [dependencies]
 base64 = "0.22"
-dirs = "5.0.1"
+dirs = "5.0"
 include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
@@ -41,17 +39,17 @@ tauri-plugin-http = "2.2"
 window-vibrancy = { version = "0.5.0", optional = true }
 
 reqwest = { version = "0.12", features = ["blocking"] }
-phf = "0.11.2"
+phf = "0.11"
 sysinfo = "0.33"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
-device_query = { version = "2.1.0", optional = true }
+device_query = { version = "2.1", optional = true }
 regex = "1.11"
 
 # rpc server
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.23.1", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 mundy = { version = "0.1", features = ["accent-color", "callback"] }
-notify-rust = "4.11.3"
+notify-rust = "4.11"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = { version = "2.0", features = ["v2_4"] }
@@ -89,7 +87,7 @@ tauri-plugin-window-state = "2.0"
 
 [target.'cfg(windows)'.dependencies]
 tauri-winrt-notification = "0.7"
-webview2-com = "0.33.0"
+webview2-com = "0.34.0"
 windows-core = "0.58.0"
 windows-implement = "0.58.0"
 
