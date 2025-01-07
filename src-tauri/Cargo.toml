@@ -88,8 +88,8 @@ tauri-plugin-window-state = "2.0"
 [target.'cfg(windows)'.dependencies]
 tauri-winrt-notification = "0.7"
 webview2-com = "0.34.0"
-windows-core = "0.58.0"
-windows-implement = "0.58.0"
+win7-notifications = "0.4.5"
+windows-implement = "0.59.0"
 
 [target.'cfg(windows)'.dependencies.windows]
 version = "0.58.0"

@@ -43,6 +43,8 @@ pub struct Config {
   pub keybinds: Option<HashMap<String, Vec<KeyStruct>>>,
   pub keybinds_enabled: Option<bool>,
 
+  pub win7_style_notifications: Option<bool>,
+
   // RPC-specific options
   pub rpc_process_scanner: Option<bool>,
   pub rpc_ipc_connector: Option<bool>,
@@ -87,6 +89,8 @@ impl Config {
       keybinds: Option::from(HashMap::new()),
       keybinds_enabled: Option::from(true),
 
+      win7_style_notifications: Option::from(false),
+
       // RPC-specific options
       rpc_process_scanner: Option::from(true),
       rpc_ipc_connector: Option::from(true),
@@ -130,6 +134,10 @@ impl Config {
 
       keybinds: other.keybinds.or(self.keybinds.clone()),
       keybinds_enabled: other.keybinds_enabled.or(self.keybinds_enabled),
+
+      win7_style_notifications: other
+        .win7_style_notifications
+        .or(self.win7_style_notifications),
 
       rpc_process_scanner: other.rpc_process_scanner.or(self.rpc_process_scanner),
       rpc_ipc_connector: other.rpc_ipc_connector.or(self.rpc_ipc_connector),

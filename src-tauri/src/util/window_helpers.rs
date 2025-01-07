@@ -111,8 +111,7 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use tauri::webview::PlatformWebview;
   use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Settings2, ICoreWebView2_2};
-  use windows::core::{Interface, HSTRING};
-  use windows_core::PWSTR;
+  use windows::core::{Interface, HSTRING, PWSTR};
 
   win
     .with_webview(|webview| unsafe {

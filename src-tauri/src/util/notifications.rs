@@ -65,10 +65,12 @@ fn send_notification_internal(
 ) {
   #[cfg(target_os = "windows")]
   {
-    if !is_windows_7() {
+    use crate::config::get_config;
+
+    if !is_windows_7() && !get_config().win7_style_notifications.unwrap_or(false) {
       send_notification_internal_windows(app, title, body, icon_path)
     } else {
-      send_notification_internal_other(app, title, body, icon_path)
+      send_notification_internal_windows7(app, title, body, icon_path)
     }
   }
 
@@ -76,6 +78,7 @@ fn send_notification_internal(
   send_notification_internal_other(app, title, body, icon_path)
 }
 
+#[cfg(not(target_os = "windows"))]
 fn send_notification_internal_other(
   _app: &tauri::AppHandle,
   title: String,
@@ -121,6 +124,33 @@ fn send_notification_internal_windows(
 
       Ok(())
     })
+    .show()
+    .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
+}
+
+#[cfg(target_os = "windows")]
+fn send_notification_internal_windows7(
+  app: &tauri::AppHandle,
+  title: String,
+  body: String,
+  icon: String,
+) {
+  use std::path::Path;
+  use win7_notifications::Notification;
+
+  let icon = tauri::image::Image::from_path(Path::new(&icon));
+  let mut notification = Notification::new();
+
+  notification
+    .appname(&app.package_info().name)
+    .summary(&title)
+    .body(&body);
+
+  if let Ok(icon) = icon {
+    notification.icon(icon.rgba().to_vec(), icon.width(), icon.height());
+  }
+
+  notification
     .show()
     .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
 }
