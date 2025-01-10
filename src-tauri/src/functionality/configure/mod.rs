@@ -11,11 +11,11 @@ use tauri::Manager;
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use crate::{
+  args::{is_safemode, is_startup},
   config::get_config,
   injection::plugin::load_plugins,
   log,
   util::{
-    args::{is_safemode, is_startup},
     color::start_os_accent_subscriber,
     window_helpers::{set_user_agent, ultrashow, window_zoom_level},
   },

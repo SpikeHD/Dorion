@@ -18,7 +18,6 @@ use injection::{
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
 use util::{
-  args::is_safemode,
   helpers,
   logger::log,
   notifications,
@@ -31,6 +30,7 @@ use crate::{
   util::logger,
 };
 
+mod args;
 mod config;
 mod functionality;
 mod gpu;
@@ -43,6 +43,20 @@ mod window;
 
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
 
+#[cfg(target_os = "windows")]
+pub fn additional_args() {
+  // We set some of these internally, so make sure they stick around if we are about to add more
+  let browser_args = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
+  let new_args = args::get_webview_args();
+
+  std::env::set_var(
+    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+    format!("{browser_args} {new_args}"),
+  );
+
+  log!("Running with the following WebView2 arguments: {browser_args} {new_args}");
+}
+
 #[tauri::command]
 fn git_hash() -> String {
   HASH.unwrap_or("Unknown").to_string()
@@ -50,7 +64,7 @@ fn git_hash() -> String {
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
-  std::env::args().any(|arg| arg == "--disable-plugins")
+  args::should_disable_plugins()
 }
 
 fn main() {
@@ -128,6 +142,9 @@ fn main() {
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
   let client_mods = load_mods_js();
+
+  #[cfg(target_os = "windows")]
+  additional_args();
 
   #[allow(clippy::single_match)]
   #[allow(unused_mut)]
@@ -269,7 +286,7 @@ fn main() {
         .zoom_hotkeys_enabled(true)
         .browser_extensions_enabled(true);
 
-      if !is_safemode() {
+      if !args::is_safemode() {
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
         win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
       }
