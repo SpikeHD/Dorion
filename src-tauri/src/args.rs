@@ -2,7 +2,6 @@ use gumdrop::Options;
 
 #[derive(Debug, Options)]
 pub struct Args {
-
   #[options(help = "enable safemode, which disable all additional client mods and features")]
   pub safemode: bool,
 
