@@ -54,9 +54,9 @@ jobs:
 
     steps:
       - uses: actions-rust-lang/setup-rust-toolchain@v1.8
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
-          version: latest
+          version: 10.0.0
 
       - name: Checkout
         uses: actions/checkout@v4

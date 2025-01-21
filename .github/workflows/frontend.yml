@@ -32,9 +32,9 @@ jobs:
           node-version: latest
 
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
-          version: latest
+          version: 10.0.0
 
       - name: Install modules
         run: pnpm install
