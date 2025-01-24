@@ -4,15 +4,16 @@ pub fn disable_dma() {
   // see: https://github.com/SpikeHD/Dorion/issues/237 and https://github.com/tauri-apps/tauri/issues/9304
   use crate::log;
   use wgpu::{
-    Backends, DeviceType, Dx12Compiler, Gles3MinorVersion, Instance, InstanceDescriptor,
-    InstanceFlags,
+    BackendOptions, Backends, DeviceType, GlBackendOptions, Instance, InstanceDescriptor, InstanceFlags
   };
 
-  let instance = Instance::new(InstanceDescriptor {
+  let instance = Instance::new(&InstanceDescriptor {
     flags: InstanceFlags::empty(),
     backends: Backends::GL | Backends::VULKAN,
-    gles_minor_version: Gles3MinorVersion::Automatic,
-    dx12_shader_compiler: Dx12Compiler::default(),
+    backend_options: BackendOptions {
+      gl: GlBackendOptions::default(),
+      dx12: Default::default(),
+    },
   });
 
   for adapter in instance.enumerate_adapters(Backends::all()) {
