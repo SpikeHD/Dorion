@@ -34,7 +34,7 @@ tauri-plugin-shell = "=2.0.2"
 tauri-plugin-single-instance = "2.2"
 tauri-plugin-process = "2.2"
 tauri-plugin-autostart = "2.2"
-tauri-plugin-http = "2.2"
+tauri-plugin-http = "2.3"
 # window blur
 window-vibrancy = { version = "0.5.0", optional = true }
 
