@@ -117,7 +117,11 @@ fn main() {
 
   let context = tauri::generate_context!("tauri.conf.json");
   let client_type = config.client_type.unwrap_or("default".to_string());
-  let mut url = String::new();
+  let url = if client_type == "default" {
+    "https://discord.com/app"
+  } else {
+    &format!("https://{client_type}.discord.com/app")
+  };
 
   #[cfg(target_os = "macos")]
   set_application(&context.config().identifier)
@@ -132,12 +136,6 @@ fn main() {
       .unwrap_or(&String::from("0.0.0"))
   );
   log!("Opening Discord {}", client_type);
-
-  if client_type == "default" {
-    url += "https://discord.com/app";
-  } else {
-    url = format!("https://{client_type}.discord.com/app");
-  }
 
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
