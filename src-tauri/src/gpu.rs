@@ -4,7 +4,8 @@ pub fn disable_dma() {
   // see: https://github.com/SpikeHD/Dorion/issues/237 and https://github.com/tauri-apps/tauri/issues/9304
   use crate::log;
   use wgpu::{
-    BackendOptions, Backends, DeviceType, GlBackendOptions, Instance, InstanceDescriptor, InstanceFlags
+    BackendOptions, Backends, DeviceType, GlBackendOptions, Instance, InstanceDescriptor,
+    InstanceFlags,
   };
 
   let instance = Instance::new(&InstanceDescriptor {
