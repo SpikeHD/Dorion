@@ -137,7 +137,7 @@ fn main() {
   );
   log!("Opening Discord {}", client_type);
 
-  let parsed = reqwest::Url::parse(&url).unwrap();
+  let parsed = reqwest::Url::parse(url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
   let client_mods = load_mods_js();
 
