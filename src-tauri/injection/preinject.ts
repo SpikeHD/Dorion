@@ -61,6 +61,8 @@ window.SHELTER_INJECTOR_PLUGINS = {
     await new Promise(resolve => setTimeout(resolve, 50))
   }
 
+  window.__TAURI__.event.emit('js_context_loaded', null)
+
   proxyFetch()
 
   console.log('__TAURI__ defined!')

@@ -20,7 +20,7 @@ declare global {
         open: (path: string) => void
       }
       app: {
-        getVersion: () => Promise<string>
+        getVersion: () => Promise<string>,
       }
       http: any
       webviewWindow: any
