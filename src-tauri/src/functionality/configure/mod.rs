@@ -97,11 +97,11 @@ pub fn configure(window: &tauri::WebviewWindow) {
     } else {
       window.hide().unwrap_or_default();
     }
-  });
 
-  if config.start_maximized.unwrap_or(false) {
-    window.maximize().unwrap_or_default();
-  }
+    if config.start_maximized.unwrap_or(false) {
+      window.maximize().unwrap_or_default();
+    }
+  });
 
   #[cfg(feature = "blur")]
   apply_effect(
