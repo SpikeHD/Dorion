@@ -7,7 +7,7 @@ mod macos;
 #[cfg(target_os = "linux")]
 mod linux;
 
-use tauri::{utils::config, Listener, Manager};
+use tauri::{Listener, Manager};
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use crate::{
@@ -89,7 +89,7 @@ pub fn configure(window: &tauri::WebviewWindow) {
   window.listen("js_context_loaded", move |_| {
     let window = &event_window;
     let config = get_config();
-    
+
     // If we are opening on startup (which we know from the --startup arg), check to keep the window minimized
     if !is_startup() || !config.startup_minimized.unwrap_or(false) {
       // Now that we are ready, and shouldn't start minimized, show the window
