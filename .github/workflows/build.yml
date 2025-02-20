@@ -191,13 +191,13 @@ jobs:
 
       - name: (Linux) (x86_64) Build
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm,appimage -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings
 
       - name: (Linux) (ARMv7) Build
         if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.armv7-unknown-linux-gnueabihf.linker=\'arm-linux-gnueabihf-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.armv7-unknown-linux-gnueabihf.linker=\'arm-linux-gnueabihf-gcc\'
         env:
           RUSTFLAGS: -Awarnings -L/usr/lib/arm-linux-gnueabihf
           CC: arm-linux-gnueabihf-gcc
@@ -206,7 +206,7 @@ jobs:
   
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu
           CC: aarch64-linux-gnu-gcc
@@ -289,6 +289,13 @@ jobs:
         with:
           name: dorion-${{ matrix.config.target }}-deb
           path: src-tauri/target/${{ matrix.config.target }}/release/bundle/deb/*.deb
+
+      - name: (Linux) Upload .rpm
+        if: matrix.config.platform == 'ubuntu-22.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dorion-${{ matrix.config.target }}-rpm
+          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/rpm/*.rpm
 
       - name: (Linux) Upload .appimage
         if: matrix.config.platform == 'ubuntu-22.04'
