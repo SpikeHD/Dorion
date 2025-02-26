@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "Dorion"
-version = "6.4.1"
+version = "6.5.0"
 dependencies = [
  "base64 0.22.1",
  "block2 0.5.1",
