@@ -1,6 +1,5 @@
 use std::{
-  str::FromStr,
-  sync::atomic::{AtomicUsize, Ordering},
+  process::Command, str::FromStr, sync::atomic::{AtomicUsize, Ordering}
 };
 
 use include_flate::flate;
@@ -11,7 +10,7 @@ use tauri::{
   AppHandle, Emitter, Manager,
 };
 
-use crate::{log, util::window_helpers::ultrashow};
+use crate::{config, log, util::window_helpers::ultrashow};
 
 #[cfg(target_os = "macos")]
 flate!(static DEFAULT: [u8] from "./icons/tray/macos.png");
@@ -131,11 +130,17 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
   let reload_item = MenuItemBuilder::with_id("reload", "Reload").build(app)?;
   let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
   let quit_item = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
+  let new_window_item = MenuItemBuilder::with_id("new_window", "Open new Window").build(app)?;
 
-  let menu = MenuBuilder::new(app)
-    .items(&[&open_item, &reload_item, &restart_item, &quit_item])
-    .id("main")
-    .build()?;
+  let mut menu = MenuBuilder::new(app);
+
+  if config::get_config().multi_instance.unwrap_or(false) {
+    menu = menu.items(&[&open_item, &reload_item, &restart_item, &quit_item, &new_window_item]);
+  } else {
+    menu = menu.items(&[&open_item, &reload_item, &restart_item, &quit_item]);
+  }
+  
+  let menu = menu.id("main").build()?;
 
   TrayIconBuilder::with_id("main")
     .icon(Image::from_bytes(&DEFAULT)?)
@@ -164,6 +169,17 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
           None => return,
         };
         window.eval("window.location.reload();").unwrap_or_default();
+      }
+      "new_window" => {
+        // Literally just launch another instance of the app
+        match Command::new(std::env::current_exe().unwrap())
+          .spawn() {
+            Ok(c) => c,
+            Err(e) => {
+              log!("Error spawning new window: {:?}", e);
+              return;
+            }
+          };
       }
       _ => {}
     })
