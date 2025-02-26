@@ -151,6 +151,9 @@ jobs:
         env:
           RUSTFLAGS: -Awarnings
 
+      - name: Setup binstall
+        uses: cargo-bins/cargo-binstall@main
+
       - name: (Linux x86_64) Build Webkit extension
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
         run: cd src-tauri/extension_webkit && cmake . && cmake --build .
@@ -175,7 +178,7 @@ jobs:
         run: pnpm install && pnpm shupdate
 
       - name: Install patch-crate
-        run: cargo install patch-crate
+        run: cargo binstall patch-crate
         continue-on-error: true
 
       - name: Apply patches
