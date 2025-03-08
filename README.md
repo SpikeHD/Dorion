@@ -133,6 +133,7 @@
   * [Steps](#steps)
 * [Known Issues](#known-issues)
 * [Troubleshooting](#troubleshooting)
+  * [Things you Might be Asked to Provide](#things-you-might-be-asked-to-provide)
   * [General](#general)
   * [Windows](#windows)
   * [Linux](#linux)
@@ -290,11 +291,21 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 # Troubleshooting
 
+## Things you Might be Asked to Provide
+
+If you submit an issue or ask a question in the Discord, it's likely you will be asked for the following, so please provide them if you can:
+
+* Devtools console output (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> <kbd>i</kbd>, then click "Console")
+* `latest.log` output
+  * Windows: `%appdata%\dorion\logs`
+  * Linux: `~/.config/dorion/logs`
+  * MacOS: `~/Library/Application Support/dorion/logs`
+
 ## General
 
 ### I can't see Dorion Settings!
 * Check if `https://raw.githubusercontent.com/` URLs are being blocked by any system-wide adblockers/firewalls
-* Check the devtools console (`Ctrl+Shift+i`, then click "Console") to see if there are any relevant errors
+* Check the devtools console to see if there are any relevant errors
 
 ### "Oops! Something went wrong."
 (or a similar client crash)
