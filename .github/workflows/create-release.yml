@@ -1,0 +1,107 @@
+name: Draft release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number'
+        required: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Rename artifacts
+        run: |
+          mkdir -p renamed_artifacts
+
+          for artifact_dir in artifacts/*/; do
+            base_name=$(basename "$artifact_dir")
+            
+            # Determine the new filename based on the artifact name
+            case "$base_name" in
+              "dorion-aarch64-apple-darwin-dmg")
+                new_name="Dorion_${{ inputs.version }}_aarch64.dmg"
+                ;;
+              "dorion-aarch64-pc-windows-msvc-msis")
+                new_name="Dorion_${{ inputs.version }}.arm64-setup.exe"
+                ;;
+              "dorion-aarch64-pc-windows-msvc-portable")
+                new_name="Dorion_${{ inputs.version }}_win_arm64_portable.zip"
+                ;;
+              "dorion-aarch64-unknown-linux-gnu-deb")
+                new_name="Dorion_${{ inputs.version }}_arm64.deb"
+                ;;
+              "dorion-aarch64-unknown-linux-gnu-portable")
+                new_name="Dorion_${{ inputs.version }}_arm64_portable.tar.gz"
+                ;;
+              "dorion-aarch64-unknown-linux-gnu-rpm")
+                new_name="Dorion_${{ inputs.version }}-1.aarch64.rpm"
+                ;;
+              "dorion-armv7-unknown-linux-gnueabihf-deb")
+                new_name="Dorion_${{ inputs.version }}_armhf.deb"
+                ;;
+              "dorion-armv7-unknown-linux-gnueabihf-portable")
+                new_name="Dorion_${{ inputs.version }}_armv7_portable.tar.gz"
+                ;;
+              "dorion-armv7-unknown-linux-gnueabihf-rpm")
+                new_name="Dorion_${{ inputs.version }}-1.armhfp.rpm"
+                ;;
+              "dorion-x86_64-apple-darwin-dmg")
+                new_name="Dorion_${{ inputs.version }}_x64.dmg"
+                ;;
+              "dorion-x86_64-pc-windows-msvc-msi")
+                new_name="Dorion_${{ inputs.version }}_x64-setup.exe"
+                ;;
+              "dorion-x86_64-pc-windows-msvc-msis")
+                new_name="Dorion_${{ inputs.version }}_x64_en-US.msi"
+                ;;
+              "dorion-x86_64-pc-windows-msvc-portable")
+                new_name="Dorion_${{ inputs.version }}_win64_portable.zip"
+                ;;
+              "dorion-x86_64-unknown-linux-gnu-appimage")
+                new_name="Dorion_${{ inputs.version }}_amd64.AppImage"
+                ;;
+              "dorion-x86_64-unknown-linux-gnu-deb")
+                new_name="Dorion_${{ inputs.version }}_amd64.deb"
+                ;;
+              "dorion-x86_64-unknown-linux-gnu-portable")
+                new_name="Dorion_${{ inputs.version }}_amd64_portable.tar.gz"
+                ;;
+              "dorion-x86_64-unknown-linux-gnu-rpm")
+                new_name="Dorion_${{ inputs.version }}-1.x86_64.rpm"
+                ;;
+              *)
+                # Skip unknown artifacts
+                continue
+                ;;
+            esac
+
+            # Find the actual artifact file in the directory (assuming there's only one file)
+            artifact_file=$(find "$artifact_dir" -type f -print -quit)
+            
+            if [ -n "$artifact_file" ]; then
+              # Get the file extension from the original file
+              extension="${artifact_file##*.}"
+              
+              # Copy and rename the file
+              cp "$artifact_file" "renamed_artifacts/$new_name"
+            fi
+          done
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ inputs.version }}
+          name: Release ${{ inputs.version }}
+          body: "Release ${{ inputs.version }}"
+          files: renamed_artifacts/*
+          draft: true
