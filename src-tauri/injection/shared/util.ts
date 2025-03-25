@@ -44,11 +44,11 @@ export async function waitForApp() {
 }
 
 export async function waitForElm(selector: string) {
-  const elm = document.querySelector(selector)
+  let elm = document.querySelector(selector)
 
-  if (!elm) {
+  while (!elm) {
+    elm = document.querySelector(selector)
     await timeout(100)
-    return
   }
 
   return elm

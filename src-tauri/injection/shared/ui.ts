@@ -1,4 +1,4 @@
-import { timeout, waitForApp } from './util'
+import { timeout, waitForApp, waitForElm } from './util'
 import { close, minimize, setMaximizeIcon, toggleMaximize } from './window'
 
 export function safemodeTimer(elm: HTMLDivElement) {
@@ -98,10 +98,18 @@ export async function createTopBar() {
   topbar.id = 'dorion_topbar'
 
   const appMount = await waitForApp()
+  // Actual mount is further up the tree on the new UI
+  const innerMountBase = document.querySelector('div[class*=appAsidePanelWrapper_]')
 
   if (!appMount || document.querySelector('#dorion_topbar')) return
 
-  appMount.prepend(topbar)
+  if (innerMountBase) {
+    // This should be defined if the base was
+    const innerMount = await waitForElm('div[class*=notAppAsidePanel_] div[class*=app__]') as Element
+    innerMount.prepend(topbar)
+  } else {
+    appMount.prepend(topbar)
+  }
 
   window.__TAURI__.event.listen(
     window.__TAURI__.event.TauriEvent.WINDOW_RESIZED,
