@@ -37,7 +37,7 @@ jobs:
               "dorion-aarch64-apple-darwin-dmg")
                 new_name="Dorion_${{ inputs.version }}_aarch64.dmg"
                 ;;
-              "dorion-aarch64-pc-windows-msvc-msis")
+              "dorion-aarch64-pc-windows-msvc-nsis")
                 new_name="Dorion_${{ inputs.version }}.arm64-setup.exe"
                 ;;
               "dorion-aarch64-pc-windows-msvc-portable")
@@ -64,10 +64,10 @@ jobs:
               "dorion-x86_64-apple-darwin-dmg")
                 new_name="Dorion_${{ inputs.version }}_x64.dmg"
                 ;;
-              "dorion-x86_64-pc-windows-msvc-msi")
+              "dorion-x86_64-pc-windows-msvc-nsis")
                 new_name="Dorion_${{ inputs.version }}_x64-setup.exe"
                 ;;
-              "dorion-x86_64-pc-windows-msvc-msis")
+              "dorion-x86_64-pc-windows-msvc-msi")
                 new_name="Dorion_${{ inputs.version }}_x64_en-US.msi"
                 ;;
               "dorion-x86_64-pc-windows-msvc-portable")
