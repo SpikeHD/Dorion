@@ -107,7 +107,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ inputs.version }}
-          name: Release ${{ inputs.version }}
-          body: "Release ${{ inputs.version }}"
+          name: ${{ inputs.version }}
+          body: "If you can see this, I forgot to change the release description."
           files: renamed_artifacts/*
           draft: true
