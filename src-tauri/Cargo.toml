@@ -6,7 +6,7 @@ authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.81"
+rust-version = "1.84.1"
 
 [profile.release]
 strip = "debuginfo"
@@ -49,7 +49,8 @@ regex = "1.11"
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.23.3", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 mundy = { version = "0.1", features = ["accent-color", "callback"] }
-notify-rust = "4.11"
+# TODO remove when merged
+notify-rust = { git = "https://github.com/An1MuS1111/notify-rust/", branch = "main" }
 gumdrop = "0.8.1"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
