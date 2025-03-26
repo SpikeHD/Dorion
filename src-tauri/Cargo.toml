@@ -49,8 +49,7 @@ regex = "1.11"
 rsrpc = { git = "https://www.github.com/SpikeHD/rsRPC", tag = "v0.23.3", optional = true }
 window_titles = { git = "https://github.com/SpikeHD/window_titles", branch = "master" }
 mundy = { version = "0.1", features = ["accent-color", "callback"] }
-# TODO remove when merged
-notify-rust = { git = "https://github.com/An1MuS1111/notify-rust/", branch = "main" }
+notify-rust = "4.5"
 gumdrop = "0.8.1"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
