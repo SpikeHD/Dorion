@@ -14,10 +14,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download all workflow artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
+      # https://github.com/actions/upload-artifact/issues/21#issuecomment-2393490651
+      - name: Download latest successful build artifacts
+        run: |
+          gh_last_success_run_id=$(gh run list -w $WORKFLOW --json conclusion,headBranch,databaseId --jq 'first(.[] | select(.conclusion | contains("success"))) | .databaseId')
+          [ -z "$gh_last_success_run_id" ] && echo "No successful run found" && exit 1 || true
+          gh run download $gh_last_success_run_id -D $OUTPUT_DIR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW: .github/workflows/build.yml
+          OUTPUT_DIR: artifacts
 
       - name: Rename artifacts
         run: |
