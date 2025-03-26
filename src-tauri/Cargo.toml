@@ -1,6 +1,6 @@
 [package]
 name = "Dorion"
-version = "6.5.0"
+version = "6.5.1"
 description = "Tiny alternative Discord client with a smaller footprint, themes and plugins, multi-profile, and more!"
 authors = ["SpikeHD"]
 license = ""
@@ -36,7 +36,7 @@ tauri-plugin-process = "2.2"
 tauri-plugin-autostart = "2.2"
 tauri-plugin-http = "2.3"
 # window blur
-window-vibrancy = { version = "0.5.0", optional = true }
+window-vibrancy = { version = "0.6.0", optional = true }
 
 reqwest = { version = "0.12", features = ["blocking"] }
 phf = "0.11"
