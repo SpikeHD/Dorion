@@ -95,9 +95,7 @@ jobs:
             artifact_file=$(find "$artifact_dir" -type f -print -quit)
             
             if [ -n "$artifact_file" ]; then
-              # Get the file extension from the original file
-              extension="${artifact_file##*.}"
-              
+              echo "Renaming $artifact_file to $new_name"
               # Copy and rename the file
               cp "$artifact_file" "renamed_artifacts/$new_name"
             fi
@@ -107,7 +105,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ inputs.version }}
-          name: ${{ inputs.version }}
+          name: v${{ inputs.version }}
           body: "If you can see this, I forgot to change the release description."
           files: renamed_artifacts/*
           draft: true
