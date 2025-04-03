@@ -1,7 +1,7 @@
 export const TOP_HTML = `
 <!-- These SVGS where taken from https://www.iconpacks.net/ -->
 <style>
-  #topright {
+  .topright {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -53,7 +53,7 @@ export const TOP_HTML = `
   }
 </style>
 
-<div id="topright dorion_topbar">
+<div id="dorion_topbar" class="topright">
   <div id="topmin">
     <svg
       xmlns="http://www.w3.org/2000/svg"
