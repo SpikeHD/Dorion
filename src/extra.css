@@ -1,4 +1,4 @@
-ul[class^='tree'] div[class^='scroller'] > div[class^='listItem_']:nth-last-child(2) {
+ul[data-list-id='guildsnav'] div[class*='itemsContainer_'] > div > div[class*='listItem_']:nth-last-child(2) {
   display: none !important;
 }
 
