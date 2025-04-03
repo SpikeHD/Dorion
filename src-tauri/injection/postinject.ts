@@ -40,7 +40,7 @@ observer.observe(document, {
 function handleTopBar() {
   // This needs to render after discord is loaded
   if (
-    // !window.__DORION_CONFIG__.use_native_titlebar &&
+    !window.__DORION_CONFIG__.use_native_titlebar &&
     !document.querySelector('#dorion_topbar')
   ) {
     window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
