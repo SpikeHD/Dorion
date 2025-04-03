@@ -43,12 +43,18 @@ export async function waitForApp() {
   return appMount
 }
 
-export async function waitForElm(selector: string) {
+export async function waitForElm(selector: string, max: number | undefined = undefined) {
+  let totalTime = 0
   let elm = document.querySelector(selector)
 
   while (!elm) {
     elm = document.querySelector(selector)
     await timeout(100)
+    totalTime += 100
+
+    if (max && totalTime >= max) {
+      return null
+    }
   }
 
   return elm

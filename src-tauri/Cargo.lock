@@ -5048,8 +5048,6 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shell"
 version = "2.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69d5eb3368b959937ad2aeaf6ef9a8f5d11e01ffe03629d3530707bbcb27ff5d"
 dependencies = [
  "encoding_rs",
  "log",
@@ -7122,7 +7120,3 @@ dependencies = [
  "syn 2.0.98",
  "winnow 0.7.3",
 ]
-
-[[patch.unused]]
-name = "tauri-plugin-shell"
-version = "2.0.2"

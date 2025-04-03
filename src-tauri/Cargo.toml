@@ -17,7 +17,7 @@ lto = false
 crates = ["tauri-plugin-shell"]
 
 [patch.crates-io]
-tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.0.2" }
+tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.2.1" }
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }

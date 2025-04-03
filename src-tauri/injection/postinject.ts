@@ -14,22 +14,14 @@ const observer = new MutationObserver(() => {
 
   if (loading && !loaded) {
     console.log('Discord is loaded!')
-
+    
     loaded = true
 
     // Ensure top bar exists if we want it
     if (window.__DORION_CONFIG__.use_native_titlebar)
       window.__TAURI__.core.invoke('set_decorations', { enable: true }).catch(_e => {}) // This is allowed to fail
 
-    // This needs to render after discord is loaded
-    if (
-      !window.__DORION_CONFIG__.use_native_titlebar &&
-      !document.querySelector('#dorion_topbar')
-    ) {
-      window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
-      createTopBar()
-    }
-
+    handleTopBar()
     onClientLoad()
 
     // The comments ahead are read by tauri and used to insert plugin/theme injection code
@@ -44,6 +36,17 @@ observer.observe(document, {
   childList: true,
   subtree: true,
 })
+
+function handleTopBar() {
+  // This needs to render after discord is loaded
+  if (
+    // !window.__DORION_CONFIG__.use_native_titlebar &&
+    !document.querySelector('#dorion_topbar')
+  ) {
+    window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
+    createTopBar()
+  }
+}
 
 /**
  * Run when the client is "loaded"
