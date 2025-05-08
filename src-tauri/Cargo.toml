@@ -6,7 +6,7 @@ authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.84.1"
+rust-version = "1.86"
 
 [profile.release]
 strip = "debuginfo"
@@ -20,7 +20,7 @@ crates = ["tauri-plugin-shell"]
 tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.2.1" }
 
 [build-dependencies]
-tauri-build = { version = "2.0.0", features = [] }
+tauri-build = { version = "2.2", features = [] }
 
 [dependencies]
 base64 = "0.22"
@@ -29,20 +29,20 @@ include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 
-tauri = { version = "2.3", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
+tauri = { version = "2.5.1", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
 tauri-plugin-shell = "=2.2.1"
-tauri-plugin-single-instance = "2.2.2"
-tauri-plugin-process = "2.2"
-tauri-plugin-autostart = "2.2"
-tauri-plugin-http = "2.3"
+tauri-plugin-single-instance = "2.2.3"
+tauri-plugin-process = "2.2.0"
+tauri-plugin-autostart = "2.3"
+tauri-plugin-http = "2.4.3"
 # window blur
 window-vibrancy = { version = "0.6.0", optional = true }
 
 reqwest = { version = "0.12", features = ["blocking"] }
 phf = "0.11"
-sysinfo = "0.33"
-chrono = { version = "0.4", default-features = false, features = ["clock"] }
-device_query = { version = "3.0", optional = true }
+sysinfo = { git = "https://github.com/sakgoyal/sysinfo", branch = "patch-1" }
+chrono = { version = "~0.4", default-features = false, features = ["clock"] }
+device_query = { version = "~3.0", optional = true }
 regex = "1.11"
 
 # rpc server
@@ -84,16 +84,16 @@ block2 = "0.5.1"
 embed_plist = "1.2.2"
 
 [target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
-tauri-plugin-window-state = "2.0"
+tauri-plugin-window-state = "2.2.2"
 
 [target.'cfg(windows)'.dependencies]
-tauri-winrt-notification = "0.7"
-webview2-com = "0.36.0"
+tauri-winrt-notification = "0.7.2"
+webview2-com = "0.37"
 win7-notifications = "0.4.5"
-windows-implement = "0.59.0"
+windows-implement = "0.60"
 
 [target.'cfg(windows)'.dependencies.windows]
-version = "0.60.0"
+version = "0.61.1"
 features = [
     "Data_Xml_Dom",
     "Win32_Foundation",
