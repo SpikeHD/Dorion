@@ -213,15 +213,15 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 | Feature                                        | Windows 10/11 | Windows 7<sup>[1]</sup> | Linux            | MacOS           |
 |------------------------------------------------|---------------|---------------|------------------|-----------------|
-| Basics (logging in, navigation, text/DMs etc.) | ✓             | ✓             | ~<sup>[2]</sup>  | ✓               |
-| Voice                                          | ✓             | ✓             | ✗<sup>[3]</sup> | ✓               |
-| Themes                                         | ✓             | ✓             | ✓               | ✓               |
-| Shelter                                        | ✓             | ✓             | ✓               | ✓               |
-| Dorion Plugins                                 | ✓             | ✓             | ✓               | ✓               |
+| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ~<sup>[2]</sup>  | ✓               |
+| Voice                                          | ✓             | ~             | ✗<sup>[3]</sup> | ✓               |
+| Themes                                         | ✓             | ~             | ✓               | ✓               |
+| Shelter                                        | ✓             | ~             | ✓               | ✓               |
+| Dorion Plugins                                 | ✓             | ~             | ✓               | ✓               |
 
 </div>
 
-<sup>1</sup> While I am told it works fine, Windows 7 support is speculative and not guaranteed. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
+<sup>1</sup> Windows 7 support is now only possible via API extensions. It could break further at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
 
 <sup>2</sup> Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is a bug in WebkitGTK.
 
