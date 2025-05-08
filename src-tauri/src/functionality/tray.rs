@@ -181,7 +181,7 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       "new_window" => {
         // Literally just launch another instance of the app
         match Command::new(std::env::current_exe().unwrap()).spawn() {
-          Ok(_) => {},
+          Ok(_) => {}
           Err(e) => {
             log!("Error spawning new window: {:?}", e);
           }
