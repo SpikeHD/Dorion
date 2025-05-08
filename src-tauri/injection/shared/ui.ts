@@ -86,6 +86,20 @@ async function initTopBarEvents() {
   topmax.onclick = toggleMaximize
 }
 
+export function handleTopBar() {
+  // This needs to render after discord is loaded
+  if (
+    !window.__DORION_CONFIG__.use_native_titlebar
+  ) {
+    window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
+    // Remove the old one, if it is loaded
+    const topBar = document.querySelector('#dorion_topbar')
+
+    if (topBar) topBar.remove()
+    createTopBar()
+  }
+}
+
 export async function createTopBar() {
   const isLogin = window.location.href.includes('login')
 
