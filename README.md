@@ -211,21 +211,21 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 <div width="100%" align="center">
 
-| Feature                                        | Windows 10/11 | Windows 7<sup>[1]</sup> | Linux            | MacOS           |
+| Feature                                        | Windows 10/11 | Windows 7[^1] | Linux            | MacOS           |
 |------------------------------------------------|---------------|---------------|------------------|-----------------|
-| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ~<sup>[2]</sup>  | ✓               |
-| Voice                                          | ✓             | ~             | ✗<sup>[3]</sup> | ✓               |
-| Themes                                         | ✓             | ~             | ✓               | ✓               |
-| Shelter                                        | ✓             | ~             | ✓               | ✓               |
-| Dorion Plugins                                 | ✓             | ~             | ✓               | ✓               |
+| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ~[^2]            | ✓               |
+| Voice                                          | ✓             | ~             | ✗[^3]            | ✓               |
+| Themes                                         | ✓             | ~             | ✓                | ✓               |
+| Shelter                                        | ✓             | ~             | ✓                | ✓               |
+| Dorion Plugins                                 | ✓             | ~             | ✓                | ✓               |
 
 </div>
 
-<sup>1</sup> Windows 7 support is possible by installing API extensions, such as VxKex. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
+[^1]: Windows 7 support is possible by installing API extensions, such as VxKex. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
 
-<sup>2</sup> Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is a bug in WebkitGTK.
+[^2]: Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is, as far as I can tell, a bug in WebkitGTK.
 
-<sup>3</sup> Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
+[^3]: Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
 
 # Building
 
