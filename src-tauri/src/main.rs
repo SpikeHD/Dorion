@@ -235,7 +235,7 @@ fn main() {
         // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495
         std::thread::sleep(Duration::from_millis(1));
       }
-      tauri::WindowEvent::Destroyed { .. } => {
+      tauri::WindowEvent::Destroyed => {
         log!("Destroyed window");
         functionality::cache::maybe_clear_cache();
       }

@@ -51,7 +51,7 @@ pub fn get_theme_names() -> Result<Vec<String>, String> {
           })
       })
     })
-    .map(|folder_name| format!("{:?}", folder_name))
+    .map(|folder_name| format!("{folder_name:?}"))
     .collect();
 
   Ok(names)
@@ -65,7 +65,7 @@ pub fn get_enabled_themes() -> Result<Vec<String>, String> {
 
 #[tauri::command]
 pub fn theme_from_link(link: String) -> String {
-  let theme_name = link.split('/').last().unwrap().to_string();
+  let theme_name = link.split('/').next_back().unwrap().to_string();
   let mut file_name = theme_name.clone();
   let theme_name = theme_name.split('.').next().unwrap().to_string();
 

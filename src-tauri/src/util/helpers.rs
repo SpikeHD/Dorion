@@ -1,7 +1,6 @@
 use super::paths::*;
 use base64::{engine::general_purpose, Engine as _};
 use std::path::*;
-use std::process::Command;
 
 #[tauri::command]
 pub async fn fetch_image(url: String) -> Option<String> {

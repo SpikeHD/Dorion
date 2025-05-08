@@ -2,7 +2,9 @@ use std::path::PathBuf;
 
 use tauri::path::BaseDirectory;
 use tauri::Manager;
-use webkit2gtk::{PermissionRequestExt, SecurityManagerExt, SettingsExt, WebContextExt, WebViewExt};
+use webkit2gtk::{
+  PermissionRequestExt, SecurityManagerExt, SettingsExt, WebContextExt, WebViewExt,
+};
 
 use crate::gpu::disable_hardware_accel_linux;
 use crate::log;
@@ -32,7 +34,7 @@ pub fn configure(window: &tauri::WebviewWindow) {
 
         // Register `ws` as secure so we can connect to RPC
         if let Some(manager) = context.security_manager() {
-          manager.register_uri_scheme_as_secure("ws".into());
+          manager.register_uri_scheme_as_secure("ws");
         }
       }
     })

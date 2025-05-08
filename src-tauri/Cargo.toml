@@ -28,7 +28,6 @@ dirs = "6.0"
 include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
-
 tauri = { version = "2.3", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
 tauri-plugin-shell = "=2.2.1"
 tauri-plugin-single-instance = "2.2.2"
