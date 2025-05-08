@@ -57,15 +57,7 @@ pub fn open_extensions() {
 }
 
 fn open_folder(path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
-  #[cfg(target_os = "windows")]
-  Command::new("explorer").arg(path).spawn()?;
-
-  #[cfg(target_os = "macos")]
-  Command::new("open").arg(path).spawn()?;
-
-  #[cfg(target_os = "linux")]
-  Command::new("xdg-open").arg(path).spawn()?;
-
+  open::that(path)?;
   Ok(())
 }
 
