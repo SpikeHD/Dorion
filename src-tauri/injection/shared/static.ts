@@ -26,7 +26,6 @@ export const TOP_HTML = `
   #topclose:hover,
   #topmin:hover,
   #topmax:hover {
-    cursor: pointer;
     filter: brightness(0.8);
     background: var(--background-secondary);
   }
