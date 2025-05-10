@@ -91,12 +91,13 @@ export function handleTopBar() {
   if (
     !window.__DORION_CONFIG__.use_native_titlebar
   ) {
-    window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
     // Remove the old one, if it is loaded
-    const topBar = document.querySelector('#dorion_topbar')
+    const topBar = document.querySelectorAll('#dorion_topbar')
 
-    if (topBar) topBar.remove()
+    if (topBar.length > 0) topBar.forEach(e => e.remove())
     createTopBar()
+  
+    window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
   }
 }
 
