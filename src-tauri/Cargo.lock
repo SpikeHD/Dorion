@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "Dorion"
-version = "6.5.3"
+version = "6.6.0"
 dependencies = [
  "base64 0.22.1",
  "block2 0.5.1",
@@ -20,6 +20,7 @@ dependencies = [
  "objc2-app-kit 0.2.2",
  "objc2-foundation 0.2.2",
  "objc2-web-kit 0.2.2",
+ "open",
  "phf 0.11.3",
  "regex",
  "reqwest",

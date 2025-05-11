@@ -1,5 +1,7 @@
 use std::{
-  process::Command, str::FromStr, sync::atomic::{AtomicUsize, Ordering}
+  process::Command,
+  str::FromStr,
+  sync::atomic::{AtomicUsize, Ordering},
 };
 
 use include_flate::flate;
@@ -135,11 +137,17 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
   let mut menu = MenuBuilder::new(app);
 
   if config::get_config().multi_instance.unwrap_or(false) {
-    menu = menu.items(&[&open_item, &reload_item, &restart_item, &quit_item, &new_window_item]);
+    menu = menu.items(&[
+      &open_item,
+      &reload_item,
+      &restart_item,
+      &quit_item,
+      &new_window_item,
+    ]);
   } else {
     menu = menu.items(&[&open_item, &reload_item, &restart_item, &quit_item]);
   }
-  
+
   let menu = menu.id("main").build()?;
 
   TrayIconBuilder::with_id("main")
@@ -172,14 +180,12 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
       }
       "new_window" => {
         // Literally just launch another instance of the app
-        match Command::new(std::env::current_exe().unwrap())
-          .spawn() {
-            Ok(c) => c,
-            Err(e) => {
-              log!("Error spawning new window: {:?}", e);
-              return;
-            }
-          };
+        match Command::new(std::env::current_exe().unwrap()).spawn() {
+          Ok(_) => {}
+          Err(e) => {
+            log!("Error spawning new window: {:?}", e);
+          }
+        }
       }
       _ => {}
     })

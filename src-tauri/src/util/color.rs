@@ -31,7 +31,7 @@ pub fn start_os_accent_subscriber(win: &tauri::WebviewWindow) -> Subscription {
       win
         .emit(
           "os_accent_update",
-          format!("rgba({:.0}, {:.0}, {:.0}, {:.0})", r, g, b, a),
+          format!("rgba({r:.0}, {g:.0}, {b:.0}, {a:.0})"),
         )
         .unwrap_or_else(|e| {
           log!("Error emitting os_accent_update event: {}", e);

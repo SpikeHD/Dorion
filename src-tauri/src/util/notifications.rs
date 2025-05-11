@@ -171,7 +171,7 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
 #[cfg(target_os = "linux")]
 fn notification_count_inner(window: &tauri::WebviewWindow, amount: i64) {
   window
-    .set_badge_count(if amount < 0 { None } else { Some(amount) })
+    .set_badge_count(if amount <= 0 { None } else { Some(amount) })
     .unwrap_or_default();
 }
 

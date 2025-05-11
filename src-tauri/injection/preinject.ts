@@ -1,5 +1,6 @@
+import { navObserver, observeForElement, titleKeepArounder } from './shared/observer'
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
-import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
+import { createTopBar, extraCssChangeWatch, handleTopBar, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
@@ -69,6 +70,18 @@ window.SHELTER_INJECTOR_PLUGINS = {
 
   extraCssChangeWatch()
   proxyOpen()
+
+  document.addEventListener('DOMContentLoaded', () => {
+    navObserver.observe(document.head, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+    })
+
+    observeForElement('#dorion_topbar').then(_ => {
+      titleKeepArounder()
+    })
+  })
 
   init()
 })()

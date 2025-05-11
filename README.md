@@ -39,25 +39,25 @@
   <tr>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_x64_en-US.msi ">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_x64_en-US.msi ">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_arm64-setup.exe">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_arm64-setup.exe">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_x64.dmg">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_x64.dmg">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_aarch64.dmg">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_aarch64.dmg">ARM</a>
       </div>
     </td>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_amd64.deb">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_amd64.deb">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_armhf.deb">ARM v7</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_armhf.deb">ARM v7</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.5.3/Dorion_6.5.3_arm64.deb">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.6.0/Dorion_6.6.0_arm64.deb">ARM64</a>
       </div>
     </td>
   </tr>
@@ -211,21 +211,21 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 <div width="100%" align="center">
 
-| Feature                                        | Windows 10/11 | Windows 7<sup>[1]</sup> | Linux            | MacOS           |
+| Feature                                        | Windows 10/11 | Windows 7[^1] | Linux            | MacOS           |
 |------------------------------------------------|---------------|---------------|------------------|-----------------|
-| Basics (logging in, navigation, text/DMs etc.) | ✓             | ✓             | ~<sup>[2]</sup>  | ✓               |
-| Voice                                          | ✓             | ✓             | ✗<sup>[3]</sup> | ✓               |
-| Themes                                         | ✓             | ✓             | ✓               | ✓               |
-| Shelter                                        | ✓             | ✓             | ✓               | ✓               |
-| Dorion Plugins                                 | ✓             | ✓             | ✓               | ✓               |
+| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ~[^2]            | ✓               |
+| Voice                                          | ✓             | ~             | ✗[^3]            | ✓               |
+| Themes                                         | ✓             | ~             | ✓                | ✓               |
+| Shelter                                        | ✓             | ~             | ✓                | ✓               |
+| Dorion Plugins                                 | ✓             | ~             | ✓                | ✓               |
 
 </div>
 
-<sup>1</sup> While I am told it works fine, Windows 7 support is speculative and not guaranteed. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
+[^1]: Windows 7 support is possible by installing API extensions, such as VxKex. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
 
-<sup>2</sup> Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is a bug in WebkitGTK.
+[^2]: Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is, as far as I can tell, a bug in WebkitGTK.
 
-<sup>3</sup> Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
+[^3]: Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
 
 # Building
 

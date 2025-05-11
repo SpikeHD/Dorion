@@ -1,4 +1,4 @@
-import { applyExtraCSS, createTopBar } from './shared/ui'
+import { applyExtraCSS, createTopBar, handleTopBar } from './shared/ui'
 import { applyNotificationCount } from './shared/window'
 
 let loaded = false
@@ -21,10 +21,11 @@ const observer = new MutationObserver(() => {
     if (window.__DORION_CONFIG__.use_native_titlebar)
       window.__TAURI__.core.invoke('set_decorations', { enable: true }).catch(_e => {}) // This is allowed to fail
 
-    handleTopBar()
+    // This is stupid
+    setTimeout(handleTopBar, 1000)
     onClientLoad()
 
-    // The comments ahead are read by tauri and used to insert plugin/theme injection code
+    // The comment ahead is read by tauri and used to insert theme injection code
 
     /*! __THEMES__ */
   } else {
@@ -36,17 +37,6 @@ observer.observe(document, {
   childList: true,
   subtree: true,
 })
-
-function handleTopBar() {
-  // This needs to render after discord is loaded
-  if (
-    !window.__DORION_CONFIG__.use_native_titlebar &&
-    !document.querySelector('#dorion_topbar')
-  ) {
-    window.__TAURI__.core.invoke('set_decorations', { enable: false }).catch(_e => {})
-    createTopBar()
-  }
-}
 
 /**
  * Run when the client is "loaded"
