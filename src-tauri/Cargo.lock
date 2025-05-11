@@ -26,7 +26,7 @@ dependencies = [
  "rsrpc",
  "serde",
  "serde_json",
- "sysinfo 0.35.0",
+ "sysinfo 0.35.1",
  "tauri",
  "tauri-build",
  "tauri-plugin-autostart",
@@ -4797,8 +4797,9 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.35.0"
-source = "git+https://github.com/sakgoyal/sysinfo?branch=patch-1#24ea116f09549918e32fb47ed8b9a1b91a9d726f"
+version = "0.35.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79251336d17c72d9762b8b54be4befe38d2db56fbbc0241396d70f173c39d47a"
 dependencies = [
  "libc",
  "memchr",

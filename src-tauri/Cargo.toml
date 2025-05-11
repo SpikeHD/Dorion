@@ -40,8 +40,8 @@ window-vibrancy = { version = "0.6.0", optional = true }
 
 reqwest = { version = "0.12", features = ["blocking"] }
 phf = "0.11"
-sysinfo = { git = "https://github.com/sakgoyal/sysinfo", branch = "patch-1" }
-chrono = { version = "~0.4", default-features = false, features = ["clock"] }
+sysinfo = "0.35.1"
+chrono = { version = "0.4.30", default-features = false, features = ["clock"] }
 device_query = { version = "~3.0", optional = true }
 regex = "1.11"
 
