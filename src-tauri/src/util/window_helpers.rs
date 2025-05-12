@@ -110,24 +110,20 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 #[cfg(target_os = "windows")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use tauri::webview::PlatformWebview;
-  use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Settings2, ICoreWebView2_2};
-  use windows::core::{Interface, HSTRING, PWSTR};
+  use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_2, ICoreWebView2Settings2};
+  use windows::core::{HSTRING, Interface, PWSTR};
 
   win
     .with_webview(|webview| unsafe {
       unsafe fn inner(webview: PlatformWebview) -> Result<(), Box<dyn std::error::Error>> {
-        let wv = webview
-          .controller()
-          .CoreWebView2()?
-          .cast::<ICoreWebView2_2>()?;
-        let settings = wv.Settings()?.cast::<ICoreWebView2Settings2>()?;
-        let env = wv.Environment()?;
+        let wv = unsafe { webview.controller().CoreWebView2() }?.cast::<ICoreWebView2_2>()?;
+        let settings = unsafe { wv.Settings() }?.cast::<ICoreWebView2Settings2>()?;
+        let env = unsafe { wv.Environment() }?;
         let mut browser_version = PWSTR::null();
 
-        env.BrowserVersionString(&mut browser_version)?;
+        unsafe { env.BrowserVersionString(&mut browser_version) }?;
 
-        let browser_version = browser_version
-          .to_string()?
+        let browser_version = unsafe { browser_version.to_string() }?
           .chars()
           .take_while(|&c| c != '.')
           .collect::<String>();
@@ -140,7 +136,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
           Some(format!("{browser_version}.0.0.0"))
         };
 
-        settings.SetUserAgent(&HSTRING::from(useragent(browser_version)))?;
+        unsafe { settings.SetUserAgent(&HSTRING::from(useragent(browser_version))) }?;
 
         Ok(())
       }

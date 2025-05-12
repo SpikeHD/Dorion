@@ -1,7 +1,7 @@
 use std::sync::atomic::Ordering;
 
 use crate::{
-  functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
+  functionality::tray::{TRAY_STATE, TrayIcon, set_tray_icon},
   log,
 };
 use tauri::Manager;

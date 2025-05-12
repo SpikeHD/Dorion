@@ -1,4 +1,4 @@
-use device_query::{keymap::Keycode, DeviceState};
+use device_query::{DeviceState, keymap::Keycode};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::atomic::AtomicBool};
 use tauri::{Emitter, Listener};
@@ -77,73 +77,75 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 
   let win_thrd = win.clone();
 
-  std::thread::spawn(move || loop {
-    let keybinds = get_keybinds();
-    let mut registered_combos = keybinds
-      .iter()
-      .map(|(action, keys)| {
-        let keycodes = keys
-          .iter()
-          .map(|key| {
-            js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
-              log!("Error converting key: {:?}", key);
-              Keycode::Key0
-            })
-          })
-          .collect::<Vec<Keycode>>();
-
-        (
-          action.clone(),
-          KeyComboState {
-            keys: keycodes,
-            pressed: false,
-          },
-        )
-      })
-      .collect::<HashMap<String, KeyComboState>>();
-
+  std::thread::spawn(move || {
     loop {
-      std::thread::sleep(std::time::Duration::from_millis(100));
+      let keybinds = get_keybinds();
+      let mut registered_combos = keybinds
+        .iter()
+        .map(|(action, keys)| {
+          let keycodes = keys
+            .iter()
+            .map(|key| {
+              js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
+                log!("Error converting key: {:?}", key);
+                Keycode::Key0
+              })
+            })
+            .collect::<Vec<Keycode>>();
 
-      if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
-        KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
+          (
+            action.clone(),
+            KeyComboState {
+              keys: keycodes,
+              pressed: false,
+            },
+          )
+        })
+        .collect::<HashMap<String, KeyComboState>>();
 
-        log!("Keybinds changed, restarting keybind watcher...");
-        break;
-      }
+      loop {
+        std::thread::sleep(std::time::Duration::from_millis(100));
 
-      // emit keybind_pressed event when pressed, and keybind_released when released
-      // TODO maybe consider using event listeners
-      for (action, combo) in registered_combos.iter_mut() {
-        let mut all_pressed = true;
-        let key_state = DeviceState::new().query_keymap();
+        if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
+          KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
 
-        for key in &combo.keys {
-          if !key_state.contains(key) {
-            all_pressed = false;
-            break;
+          log!("Keybinds changed, restarting keybind watcher...");
+          break;
+        }
+
+        // emit keybind_pressed event when pressed, and keybind_released when released
+        // TODO maybe consider using event listeners
+        for (action, combo) in registered_combos.iter_mut() {
+          let mut all_pressed = true;
+          let key_state = DeviceState::new().query_keymap();
+
+          for key in &combo.keys {
+            if !key_state.contains(key) {
+              all_pressed = false;
+              break;
+            }
           }
-        }
 
-        // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
-        // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
-        if action == "PUSH_TO_TALK"
-          && all_pressed
-          && !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed)
-        {
-          all_pressed = false;
-        }
+          // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
+          // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
+          if action == "PUSH_TO_TALK"
+            && all_pressed
+            && !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed)
+          {
+            all_pressed = false;
+          }
 
-        if all_pressed && !combo.pressed {
-          win_thrd
-            .emit("keybind_pressed", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = true;
-        } else if !all_pressed && combo.pressed {
-          win_thrd
-            .emit("keybind_released", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = false;
+          if all_pressed && !combo.pressed {
+            win_thrd
+              .emit("keybind_pressed", Some(action.clone()))
+              .unwrap_or_default();
+            combo.pressed = true;
+          } else if !all_pressed && combo.pressed {
+            win_thrd
+              .emit("keybind_released", Some(action.clone()))
+              .unwrap_or_default();
+            combo.pressed = false;
+          }
         }
       }
     }

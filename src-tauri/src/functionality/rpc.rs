@@ -1,10 +1,10 @@
 use rsrpc::{
-  detection::{DetectableActivity, Executable},
   RPCConfig, RPCServer,
+  detection::{DetectableActivity, Executable},
 };
 use std::sync::{
-  atomic::{AtomicBool, Ordering},
   Arc, Mutex,
+  atomic::{AtomicBool, Ordering},
 };
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::{Emitter, Listener};
@@ -60,8 +60,10 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
 }
 
 pub fn start_rpc_server(win: tauri::WebviewWindow) {
-  #[cfg(debug_assertions)]
-  std::env::set_var("RSRPC_LOGS_ENABLED", "1");
+  unsafe {
+    #[cfg(debug_assertions)]
+    std::env::set_var("RSRPC_LOGS_ENABLED", "1")
+  };
 
   let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
     .expect("Request for detectable.json failed")

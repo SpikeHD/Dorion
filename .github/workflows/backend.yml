@@ -32,10 +32,10 @@ jobs:
       fail-fast: false
       matrix:
         platform: [windows-latest, ubuntu-latest, macos-latest]
-    
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1.8
+      - uses: actions-rust-lang/setup-rust-toolchain@v1.12
         with:
           components: rustfmt
 
@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1.8
+      - uses: actions-rust-lang/setup-rust-toolchain@v1.12
         with:
           components: clippy
       - uses: pnpm/action-setup@v3

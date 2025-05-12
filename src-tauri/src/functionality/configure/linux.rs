@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-use tauri::path::BaseDirectory;
 use tauri::Manager;
+use tauri::path::BaseDirectory;
 use webkit2gtk::{
   PermissionRequestExt, SecurityManagerExt, SettingsExt, WebContextExt, WebViewExt,
 };
