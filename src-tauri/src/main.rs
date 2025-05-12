@@ -9,7 +9,7 @@ use std::{env, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
-use config::{get_config, set_config, Config};
+use config::{Config, get_config, set_config};
 use injection::{
   client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
@@ -49,10 +49,12 @@ pub fn additional_args() {
   let browser_args = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
   let new_args = args::get_webview_args();
 
-  std::env::set_var(
-    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-    format!("{browser_args} {new_args}"),
-  );
+  unsafe {
+    std::env::set_var(
+      "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+      format!("{browser_args} {new_args}"),
+    )
+  };
 
   log!("Running with the following WebView2 arguments: {browser_args} {new_args}");
 }

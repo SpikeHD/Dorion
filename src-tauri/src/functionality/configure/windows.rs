@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
-use tauri::path::BaseDirectory;
 use tauri::Manager;
+use tauri::path::BaseDirectory;
 
 use crate::functionality::extension::add_extension;
 use crate::util::paths::get_main_extension_path;

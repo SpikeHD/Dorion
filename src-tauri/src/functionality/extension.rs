@@ -11,10 +11,10 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
   use std::path::PathBuf;
   use tauri::webview::PlatformWebview;
   use webview2_com::{
-    Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13},
+    Microsoft::Web::WebView2::Win32::{ICoreWebView2_13, ICoreWebView2Profile7},
     ProfileAddBrowserExtensionCompletedHandler,
   };
-  use windows::core::{Interface, HSTRING};
+  use windows::core::{HSTRING, Interface};
 
   win
     .with_webview(move |webview| unsafe {
@@ -22,12 +22,14 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
         webview: PlatformWebview,
         path: PathBuf,
       ) -> Result<(), Box<dyn std::error::Error>> {
-        let profile = webview
-          .controller()
-          .CoreWebView2()?
-          .cast::<ICoreWebView2_13>()?
-          .Profile()?
-          .cast::<ICoreWebView2Profile7>()?;
+        let profile = unsafe {
+          webview
+            .controller()
+            .CoreWebView2()?
+            .cast::<ICoreWebView2_13>()?
+            .Profile()
+        }?
+        .cast::<ICoreWebView2Profile7>()?;
 
         log!("Attempting to add extension {:?}", path);
 
@@ -53,9 +55,11 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
         let path_str = path.to_str().unwrap_or_default();
         let ext = HSTRING::from(path_str);
 
-        profile
-          .AddBrowserExtension(&ext, &handler)
-          .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
+        unsafe {
+          profile
+            .AddBrowserExtension(&ext, &handler)
+            .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e))
+        };
 
         Ok(())
       }

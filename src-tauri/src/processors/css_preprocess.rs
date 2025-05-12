@@ -198,7 +198,7 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 
 #[cfg(not(target_os = "windows"))]
 pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
-  use base64::{engine::general_purpose, Engine as _};
+  use base64::{Engine as _, engine::general_purpose};
   use tauri::Emitter;
 
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
