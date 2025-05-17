@@ -6,6 +6,7 @@ export const TOP_HTML = `
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
+    margin-left: calc(-1 * var(--space-12));
   }
 
   #topclose,

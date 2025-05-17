@@ -13,3 +13,8 @@ div[class*='inlineMediaEmbed_'] div[class*='imageContainer_'] {
    */
   max-height: 450px;
 }
+
+div[class*='bar_'] {
+  z-index: 9999;
+  background-color: var(--background-tertiary);
+}
