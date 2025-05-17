@@ -72,15 +72,17 @@ window.SHELTER_INJECTOR_PLUGINS = {
   proxyOpen()
 
   document.addEventListener('DOMContentLoaded', () => {
-    navObserver.observe(document.head, {
-      subtree: true,
-      childList: true,
-      characterData: true,
-    })
+    if (!window.__DORION_CONFIG__.use_native_titlebar) {
+      navObserver.observe(document.head, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+      })
 
-    observeForElement('#dorion_topbar').then(_ => {
-      titleKeepArounder()
-    })
+      observeForElement('#dorion_topbar').then(_ => {
+        titleKeepArounder()
+      })
+    }
   })
 
   init()

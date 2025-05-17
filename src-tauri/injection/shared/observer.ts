@@ -38,11 +38,15 @@ const observeForElement = (selector: string) => {
 }
 
 const titleKeepArounder = () => {
+  window.__DORION_TITLEBAR_KEEPER__ = true
+
+  if (window.__DORION_TITLEBAR_KEEPER__) return
+  
   // This sucks but mutation-observing the entire app is definitely worse
   setInterval(() => {
     const top = document.querySelector('#dorion_topbar')
     if (!top) handleTopBar()
-  }, 1000)
+  }, 2000)
 }
 
 export {

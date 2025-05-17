@@ -31,6 +31,7 @@ declare global {
     __DORION_CONFIG__: Record<string, any>
     __DORION_INIT__: boolean
     __DORION_REAL_INIT__: boolean
+    __DORION_TITLEBAR_KEEPER__: boolean
     Dorion: any
     shelter: any
     nativeOpen: Window['open']
