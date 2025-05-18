@@ -89,7 +89,7 @@ async function initTopBarEvents() {
 export function handleTopBar() {
   // This needs to render after discord is loaded
   if (
-    !window.__DORION_CONFIG__.use_native_titlebar
+    !window.__DORION_CONFIG__.use_native_titlebar && document.documentElement.getAttribute('data-dorion-platform') != 'macos'
   ) {
     // Remove the old one, if it is loaded
     const topBar = document.querySelectorAll('#dorion_topbar')
