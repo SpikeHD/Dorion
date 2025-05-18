@@ -71,8 +71,11 @@ window.SHELTER_INJECTOR_PLUGINS = {
   extraCssChangeWatch()
   proxyOpen()
 
+  const platform = await window.__TAURI__.core.invoke('get_platform')
+  document.documentElement.setAttribute('data-dorion-platform', platform)
+
   document.addEventListener('DOMContentLoaded', () => {
-    if (!window.__DORION_CONFIG__.use_native_titlebar) {
+    if (!window.__DORION_CONFIG__.use_native_titlebar && platform !== 'macos') {
       navObserver.observe(document.head, {
         subtree: true,
         childList: true,
