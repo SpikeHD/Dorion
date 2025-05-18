@@ -31,7 +31,7 @@ serde = { version = "1", features = ["derive"] }
 tauri = { version = "2.3", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
 tauri-plugin-shell = "=2.2.1"
 tauri-plugin-single-instance = "2.2.2"
-tauri-plugin-process = "2.2"
+tauri-plugin-process = "=2.2.0"
 tauri-plugin-autostart = "2.2"
 tauri-plugin-http = "2.3"
 window-vibrancy = { version = "0.6.0", optional = true }
