@@ -1,0 +1,22 @@
+name: Publish to WinGet Package Repository
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Extract version
+        id: extract-ver
+        run: |
+          $VER="${{ github.event.release.tag_name }}"
+          $SEMVER=$VER.Substring(1)
+          echo "SEMVER=$SEMVER" >> $env:GITHUB_OUTPUT
+
+      - uses: vedantmgoyal9/winget-releaser@3e78d7ff0f525445bca5d6a989d31cdca383372e
+        with:
+          identifier: SpikeHD.Dorion
+          version: ${{ steps.extract-ver.outputs.SEMVER }}
+          token: ${{ secrets.WINGET_TOKEN }}
