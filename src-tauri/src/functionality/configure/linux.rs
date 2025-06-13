@@ -20,10 +20,13 @@ pub fn configure(window: &tauri::WebviewWindow) {
     .with_webview(move |webview| {
       let webview = webview.inner();
       let context = webview.context();
+      let settings = WebViewExt::settings(&webview).unwrap_or_default();
       let path = handle
         .path()
         .resolve(PathBuf::from("extension_webkit"), BaseDirectory::Resource)
         .unwrap_or_default();
+
+      settings.set_javascript_can_access_clipboard(true);
 
       if let Some(context) = context {
         let path_str = path.as_os_str().to_str();
