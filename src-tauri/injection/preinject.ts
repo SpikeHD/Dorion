@@ -1,6 +1,6 @@
-import { navObserver, observeForElement, titleKeepArounder } from './shared/observer'
+import { observeForElement } from './shared/observer'
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
-import { createTopBar, extraCssChangeWatch, handleTopBar, safemodeTimer, typingAnim } from './shared/ui'
+import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
 import { applyNotificationCount } from './shared/window'
 
@@ -30,6 +30,7 @@ const INJECTED_PLUGIN_OPTIONS = {
 }
 
 window.SHELTER_INJECTOR_PLUGINS = {
+  'Dorion Titlebar': ['https://spikehd.github.io/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Settings': ['https://spikehd.github.io/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
   'Always Trust': ['https://spikehd.github.io/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Notifications': ['https://spikehd.github.io/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
@@ -73,20 +74,6 @@ window.SHELTER_INJECTOR_PLUGINS = {
 
   const platform = await window.__TAURI__.core.invoke('get_platform')
   document.documentElement.setAttribute('data-dorion-platform', platform)
-
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!window.__DORION_CONFIG__.use_native_titlebar && platform !== 'macos') {
-      navObserver.observe(document.head, {
-        subtree: true,
-        childList: true,
-        characterData: true,
-      })
-
-      observeForElement('#dorion_topbar').then(_ => {
-        titleKeepArounder()
-      })
-    }
-  })
 
   init()
 })()

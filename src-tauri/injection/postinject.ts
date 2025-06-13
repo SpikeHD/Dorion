@@ -1,4 +1,4 @@
-import { applyExtraCSS, createTopBar, handleTopBar } from './shared/ui'
+import { applyExtraCSS } from './shared/ui'
 import { applyNotificationCount } from './shared/window'
 
 let loaded = false
@@ -21,8 +21,6 @@ const observer = new MutationObserver(() => {
     if (window.__DORION_CONFIG__.use_native_titlebar)
       window.__TAURI__.core.invoke('set_decorations', { enable: true }).catch(_e => {}) // This is allowed to fail
 
-    // This is stupid
-    setTimeout(handleTopBar, 1000)
     onClientLoad()
 
     // The comment ahead is read by tauri and used to insert theme injection code

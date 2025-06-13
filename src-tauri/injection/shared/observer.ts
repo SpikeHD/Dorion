@@ -1,21 +1,3 @@
-import { handleTopBar } from './ui'
-
-let isLogin = false
-
-const navObserver = new MutationObserver((_m) => {
-  // If we were on login, and now we are not
-  if (isLogin && !window.location.href.includes('login')) {
-    isLogin = false
-    handleTopBar()
-  }
-
-  // If we were not on login, and now we are
-  if (!isLogin && window.location.href.includes('login')) {
-    isLogin = true
-    handleTopBar()
-  }
-})
-
 const observeForElement = (selector: string) => {
   return new Promise(r => {
     const el = document.querySelector(selector)
@@ -37,20 +19,6 @@ const observeForElement = (selector: string) => {
   })
 }
 
-const titleKeepArounder = () => {
-  window.__DORION_TITLEBAR_KEEPER__ = true
-
-  if (window.__DORION_TITLEBAR_KEEPER__) return
-  
-  // This sucks but mutation-observing the entire app is definitely worse
-  setInterval(() => {
-    const top = document.querySelector('#dorion_topbar')
-    if (!top) handleTopBar()
-  }, 2000)
-}
-
 export {
-  navObserver,
   observeForElement,
-  titleKeepArounder
 }
