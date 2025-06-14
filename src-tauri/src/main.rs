@@ -154,6 +154,11 @@ fn main() {
       Some(vec!["--startup"]),
     ))
     .plugin(tauri_plugin_process::init())
+    .plugin(
+      tauri_plugin_prevent_default::Builder::new()
+        .with_flags(tauri_plugin_prevent_default::Flags::FIND)
+        .build()
+    )
     .plugin(tauri_plugin_window_state::Builder::new().build());
 
   builder
