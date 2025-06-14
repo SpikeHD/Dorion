@@ -1,6 +1,6 @@
 {
   "name": "dorion",
-  "version": "6.7.1",
+  "version": "6.8.0",
   "type": "module",
   "scripts": {
     "build:js": "vite build && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=es6 --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
