@@ -5132,6 +5132,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-shell"
 version = "2.2.1"
+source = "git+https://github.com/SpikeHD/plugins-workspace.git?branch=v2#a0c1b1320d5e177cfb0385879a61c5d8b982a997"
 dependencies = [
  "encoding_rs",
  "log",

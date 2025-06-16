@@ -235,7 +235,6 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 * [PNPM](https://pnpm.io/)
 * [Rust and Cargo](https://www.rust-lang.org/tools/install)
 * [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)
-* [`cargo patch-crate`](https://github.com/mokeyish/cargo-patch-crate)
 
 ## Steps
 
@@ -252,27 +251,21 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     ```sh
     pnpm shupdate
     ```
-5. Apply the patches
 
-    ```sh
-    cd src-tauri
-    cargo patch-crate
-    ```
-
-6. Build the updater
+5. Build the updater
 
     ```sh
     pnpm build:updater
     ```
 
-7. (Linux-only) Build the WebKitGTK extension
+6. (Linux-only) Build the WebKitGTK extension
     ```sh
     cd src-tauri/extension_webkit
     cmake .
     cmake --build .
     ```
 
-8. Build!
+7. Build!
 
     ```sh
     # Build Dorion...

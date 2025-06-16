@@ -10,14 +10,7 @@ rust-version = "1.84.1"
 
 [profile.release]
 strip = "debuginfo"
-lto = false
-
-# Patches
-[package.metadata.patch]
-crates = ["tauri-plugin-shell"]
-
-[patch.crates-io]
-tauri-plugin-shell = { path="./target/patch/tauri-plugin-shell-2.2.1" }
+lto = true
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
@@ -29,7 +22,7 @@ include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 tauri = { version = "2.3", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
-tauri-plugin-shell = "=2.2.1"
+tauri-plugin-shell = { git = "https://github.com/SpikeHD/plugins-workspace.git", branch = "v2"}
 tauri-plugin-single-instance = "2.2.2"
 tauri-plugin-process = "=2.2.0"
 tauri-plugin-autostart = "2.2"
