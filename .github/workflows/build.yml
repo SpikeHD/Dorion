@@ -181,13 +181,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
-
-      - name: Install patch-crate
-        run: cargo install patch-crate
-        continue-on-error: true
-
-      - name: Apply patches
-        run: cd src-tauri && cargo patch-crate
           
       - name: Build
         if: matrix.config.platform != 'ubuntu-22.04'
