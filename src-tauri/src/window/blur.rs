@@ -2,18 +2,18 @@
 pub fn available_blurs() -> Vec<&'static str> {
   #[cfg(target_os = "windows")]
   {
-    vec!["none", "blur", "acrylic", "mica"]
+    vec!["none", "blur", "acrylic", "mica", "transparent"]
   }
 
   #[cfg(target_os = "macos")]
   {
-    vec!["none", "vibrancy"]
+    vec!["none", "vibrancy", "transparent"]
   }
 
   #[cfg(target_os = "linux")]
   {
     // Sorry linux :/
-    vec!["none"]
+    vec!["none", "transparent"]
   }
 }
 
@@ -45,6 +45,7 @@ pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
 }
 
 // Sorry linux :/
+// Linux can at least be transparent, but it's not really a blur
 #[cfg(target_os = "linux")]
 #[tauri::command]
 pub fn apply_effect(_win: tauri::WebviewWindow, _effect: &str) {}
