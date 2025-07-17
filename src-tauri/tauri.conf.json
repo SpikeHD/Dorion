@@ -47,7 +47,15 @@
   "productName": "Dorion",
   "version": "6.8.0",
   "identifier": "com.spikehd.dorion",
-  "plugins": {},
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": [
+          "discord"
+        ]
+      }
+    }
+  },
   "app": {
     "macOSPrivateApi": true,
     "withGlobalTauri": true,

@@ -36,21 +36,6 @@ pub fn configure(window: &tauri::WebviewWindow) {
   // Set the user agent to one that enables all normal Discord features
   set_user_agent(window);
 
-  // Multi-instance check
-  if !config.multi_instance.unwrap_or(false) {
-    log!("Multi-instance disabled, registering single instance plugin...");
-
-    handle
-      .plugin(tauri_plugin_single_instance::init(
-        move |app, _argv, _cwd| {
-          if let Some(win) = app.get_webview_window("main") {
-            ultrashow(win);
-          }
-        },
-      ))
-      .unwrap_or_else(|_| log!("Failed to register single instance plugin"));
-  }
-
   // If safemode is enabled, stop here
   if is_safemode() {
     window.show().unwrap_or_default();

@@ -5,9 +5,11 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
+use tauri_plugin_prevent_default::debug;
 use std::{env, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
+use tauri_plugin_deep_link::DeepLinkExt;
 
 use config::{get_config, set_config, Config};
 use injection::{
@@ -27,7 +29,7 @@ use util::{
 
 use crate::{
   functionality::{configure::configure, window::setup_autostart},
-  util::logger,
+  util::{logger, url::{get_client_app_url, get_client_url}, window_helpers::ultrashow},
 };
 
 mod args;
@@ -116,12 +118,7 @@ fn main() {
   log!("Are we portable? {}", is_portable());
 
   let context = tauri::generate_context!("tauri.conf.json");
-  let client_type = config.client_type.unwrap_or("default".to_string());
-  let url = if client_type == "default" {
-    "https://discord.com/app"
-  } else {
-    &format!("https://{client_type}.discord.com/app")
-  };
+  let url = get_client_app_url();
 
   #[cfg(target_os = "macos")]
   set_application(&context.config().identifier)
@@ -135,9 +132,9 @@ fn main() {
       .as_ref()
       .unwrap_or(&String::from("0.0.0"))
   );
-  log!("Opening Discord {}", client_type);
+  log!("Opening Discord {}", config.client_type.unwrap_or("default".to_string()));
 
-  let parsed = reqwest::Url::parse(url).unwrap();
+  let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
   let client_mods = load_mods_js();
 
@@ -146,7 +143,20 @@ fn main() {
 
   #[allow(clippy::single_match)]
   #[allow(unused_mut)]
-  let mut builder = tauri::Builder::default()
+  let mut builder = tauri::Builder::default();
+
+  if config.multi_instance.unwrap_or(false) {
+    builder = builder.plugin(tauri_plugin_single_instance::init(
+        move |app, _argv, _cwd| {
+          if let Some(win) = app.get_webview_window("main") {
+            ultrashow(win);
+          }
+        },
+      ));
+  }
+
+  builder
+    .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_autostart::init(
@@ -157,11 +167,9 @@ fn main() {
     .plugin(
       tauri_plugin_prevent_default::Builder::new()
         .with_flags(tauri_plugin_prevent_default::Flags::FIND)
-        .build()
+        .build(),
     )
-    .plugin(tauri_plugin_window_state::Builder::new().build());
-
-  builder
+    .plugin(tauri_plugin_window_state::Builder::new().build())
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       git_hash,
@@ -298,6 +306,26 @@ fn main() {
       }
 
       let win = win.build()?;
+
+      app.deep_link().on_open_url({
+        let handle = app.handle().clone();
+
+        move |event| {
+          if let Some(url) = event.urls().first() {
+            let path = url.path();
+            log!("Deep link event: {path}");
+            
+            if let Some(win) = handle.get_webview_window("main") {
+              let full_url = get_client_url();
+              let url = Url::parse(format!("{full_url}{path}").as_str());
+              
+              if let Ok(url) = url {
+                win.navigate(url).unwrap_or_default();
+              }
+            }
+          }
+        }
+      });
 
       configure(&win);
       setup_autostart(app);

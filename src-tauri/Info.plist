@@ -20,6 +20,8 @@
       <array>
         <!-- register the dorion:// scheme -->
         <string>dorion</string>
+        <!-- register the discord:// scheme -->
+        <string>discord</string>
       </array>
     </dict>
   </array>
