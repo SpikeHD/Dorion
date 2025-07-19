@@ -43,4 +43,4 @@ jobs:
         run: pnpm build:js
 
       - name: Run ESLint
-        run: pnpm eslint ./src
+        run: pnpm eslint ./src-tauri/injection/**/*.ts
