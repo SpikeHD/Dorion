@@ -1,5 +1,7 @@
 pub fn get_client_url() -> String {
-  let client_type = crate::config::get_config().client_type.unwrap_or("default".to_string());
+  let client_type = crate::config::get_config()
+    .client_type
+    .unwrap_or("default".to_string());
   let url = if client_type == "default" {
     "https://discord.com"
   } else {

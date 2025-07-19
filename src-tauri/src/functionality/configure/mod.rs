@@ -17,7 +17,7 @@ use crate::{
   log,
   util::{
     color::start_os_accent_subscriber,
-    window_helpers::{set_user_agent, ultrashow, window_zoom_level},
+    window_helpers::{set_user_agent, window_zoom_level},
   },
 };
 

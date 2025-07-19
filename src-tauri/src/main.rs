@@ -5,11 +5,10 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
-use tauri_plugin_prevent_default::debug;
 use std::{env, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
-use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use tauri_plugin_deep_link::DeepLinkExt;
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 use config::{get_config, set_config, Config};
 use injection::{
@@ -29,7 +28,11 @@ use util::{
 
 use crate::{
   functionality::{configure::configure, window::setup_autostart},
-  util::{logger, url::{get_client_app_url, get_client_url}, window_helpers::ultrashow},
+  util::{
+    logger,
+    url::{get_client_app_url, get_client_url},
+    window_helpers::ultrashow,
+  },
 };
 
 mod args;
@@ -132,7 +135,10 @@ fn main() {
       .as_ref()
       .unwrap_or(&String::from("0.0.0"))
   );
-  log!("Opening Discord {}", config.client_type.unwrap_or("default".to_string()));
+  log!(
+    "Opening Discord {}",
+    config.client_type.unwrap_or("default".to_string())
+  );
 
   let parsed = reqwest::Url::parse(&url).unwrap();
   let url_ext = tauri::WebviewUrl::External(parsed);
@@ -147,12 +153,12 @@ fn main() {
 
   if config.multi_instance.unwrap_or(false) {
     builder = builder.plugin(tauri_plugin_single_instance::init(
-        move |app, _argv, _cwd| {
-          if let Some(win) = app.get_webview_window("main") {
-            ultrashow(win);
-          }
-        },
-      ));
+      move |app, _argv, _cwd| {
+        if let Some(win) = app.get_webview_window("main") {
+          ultrashow(win);
+        }
+      },
+    ));
   }
 
   builder
@@ -314,11 +320,11 @@ fn main() {
           if let Some(url) = event.urls().first() {
             let path = url.path();
             log!("Deep link event: {path}");
-            
+
             if let Some(win) = handle.get_webview_window("main") {
               let full_url = get_client_url();
               let url = Url::parse(format!("{full_url}{path}").as_str());
-              
+
               if let Ok(url) = url {
                 win.navigate(url).unwrap_or_default();
               }
