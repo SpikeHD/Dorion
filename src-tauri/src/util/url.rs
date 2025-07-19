@@ -13,5 +13,5 @@ pub fn get_client_url() -> String {
 
 pub fn get_client_app_url() -> String {
   let url = get_client_url();
-  format!("{}/app", url)
+  format!("{url}/app")
 }

@@ -92,7 +92,7 @@ pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
   );
 
   win
-    .eval(&format!("document.body.style.zoom = '{zoom}'"))
+    .eval(format!("document.body.style.zoom = '{zoom}'"))
     .expect("Failed to set zoom level!");
 }
 
