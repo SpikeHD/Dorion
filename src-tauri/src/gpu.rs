@@ -11,9 +11,11 @@ pub fn disable_dma() {
   let instance = Instance::new(&InstanceDescriptor {
     flags: InstanceFlags::empty(),
     backends: Backends::GL | Backends::VULKAN,
+    memory_budget_thresholds: Default::default(),
     backend_options: BackendOptions {
       gl: GlBackendOptions::default(),
       dx12: Default::default(),
+      noop: Default::default(),
     },
   });
 
