@@ -62,5 +62,6 @@ Since my [shelter-plugins](https://github.com/SpikeHD/shelter-plugins) are an en
    ```
 3. Setup Dorion debug to [think it's portable](#set-up-Dorion-to-think-the-debug-version-is-portable) (if desired)
 4. Start Dorion like [above](#testing-changes-in-dorion)
-5. Copy the contents of whichever plugin you're testing via `./dist/plugins/plugin.js` into the Shelter "Add Plugin" menu. Remember to disable the default version
+5. Disable Dorion plugin in "Performance & Extras"
+6. Copy the contents of whichever plugin you're testing via `./dist/plugins/plugin.js` into the Shelter "Add Plugin" menu. Remember to disable the default version
 of whichever you are testing, if needed.
