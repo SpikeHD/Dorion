@@ -22,6 +22,7 @@ include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 tauri = { version = "2.3", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
+tauri-plugin-deep-link = "2.4"
 tauri-plugin-shell = { git = "https://github.com/SpikeHD/plugins-workspace.git", branch = "v2"}
 tauri-plugin-single-instance = { version = "2.3.0", features = ["deep-link"] }
 tauri-plugin-process = "=2.3.0"
@@ -41,7 +42,6 @@ mundy = { version = "0.1", features = ["accent-color", "callback"] }
 notify-rust = { git = "https://github.com/An1MuS1111/notify-rust/", branch = "main" }
 gumdrop = "0.8.1"
 open = "5.3.2"
-tauri-plugin-deep-link = "2.4.0"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = { version = "2.0", features = ["v2_4"] }
