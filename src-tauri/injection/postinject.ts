@@ -7,12 +7,9 @@ let loaded = false
  * Observer that lets us know when Discord is loaded
  */
 const observer = new MutationObserver(() => {
-  const innerApp = document
-    ?.querySelector('div[class*="app"]')
-    ?.querySelector('div[class*="app"]')
-  const loading = Array.from(innerApp?.children || []).length === 2
+  const content = document.querySelector('div[class*="content_"]')
 
-  if (loading && !loaded) {
+  if (content && !loaded) {
     console.log('Discord is loaded!')
     
     loaded = true

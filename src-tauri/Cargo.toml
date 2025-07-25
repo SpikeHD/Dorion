@@ -45,7 +45,7 @@ tauri-plugin-deep-link = "2.4.0"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = { version = "2.0", features = ["v2_4"] }
-wgpu = { version = "26.0", default-features = false }
+wgpu = { version = "26.0", default-features = true }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5.2"
