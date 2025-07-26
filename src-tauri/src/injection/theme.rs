@@ -64,17 +64,20 @@ pub fn get_enabled_themes() -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
-pub fn theme_from_link(link: String) -> String {
-  let theme_name = link.split('/').next_back().unwrap().to_string();
-  let mut file_name = theme_name.clone();
-  let theme_name = theme_name.split('.').next().unwrap().to_string();
+pub fn theme_from_link(link: String, filename: Option<String>) -> String {
+  let theme_name = filename.unwrap_or({
+    let theme_name = link.split('/').next_back().unwrap().to_string();
+    theme_name
+  }).split('.').next().unwrap_or("unnamed").to_string();
+
+  let mut filename = theme_name.clone();
 
   if theme_name.is_empty() {
     return String::new();
   }
 
-  if !file_name.ends_with(".css") {
-    file_name.push_str(".css");
+  if !filename.ends_with(".css") {
+    filename.push_str(".css");
   }
 
   let resp = reqwest::blocking::get(&link);
@@ -85,11 +88,11 @@ pub fn theme_from_link(link: String) -> String {
 
   let theme = resp.unwrap().text().unwrap_or_default();
 
-  let path = get_theme_dir().join(&file_name);
+  let path = get_theme_dir().join(&filename);
 
   if fs::write(path, theme).is_err() {
     return String::new();
   }
 
-  file_name
+  filename
 }
