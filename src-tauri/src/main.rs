@@ -151,7 +151,7 @@ fn main() {
   #[allow(unused_mut)]
   let mut builder = tauri::Builder::default();
 
-  if config.multi_instance.unwrap_or(false) {
+  if !config.multi_instance.unwrap_or(false) {
     builder = builder.plugin(tauri_plugin_single_instance::init(
       move |app, _argv, _cwd| {
         if let Some(win) = app.get_webview_window("main") {
