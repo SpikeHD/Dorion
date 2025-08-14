@@ -5,7 +5,7 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
-use std::{env, time::Duration};
+use std::{env, str::FromStr, time::Duration};
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -69,7 +69,7 @@ fn git_hash() -> String {
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
-  args::should_disable_plugins()
+  args::is_safemode()
 }
 
 fn main() {
@@ -311,8 +311,18 @@ fn main() {
         win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
       }
 
-      if let Ok(proxy_uri) = proxy_uri {
-        win = win.proxy_url(proxy_uri);
+      if proxy_uri.is_ok() || args::get_proxy().is_some() {
+        // Prefer proxy from args if available
+        let proxy = args::get_proxy().unwrap_or_else(|| proxy_uri.unwrap().to_string());
+        log!("Using proxy: {proxy}");
+
+        if let Ok(url) = Url::from_str(&proxy) {
+          win = win.proxy_url(url);
+        } else {
+          log!("Invalid proxy URL: {proxy}");
+          // We should exit, people using proxies probably don't want to use Dorion without it
+          std::process::exit(1);
+        }
       }
 
       let win = win.build()?;
