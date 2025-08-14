@@ -287,8 +287,6 @@ fn main() {
       plugin::get_new_plugins();
 
       let config = get_config();
-      let proxy_uri = config.proxy_uri.unwrap_or("".to_string());
-      let proxy_uri = Url::parse(&proxy_uri);
       let preinject = PREINJECT.clone();
       let title = format!("Dorion - v{}", app.package_info().version);
       let mut win = WebviewWindowBuilder::new(app, "main", url_ext)
@@ -311,9 +309,9 @@ fn main() {
         win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
       }
 
-      if proxy_uri.is_ok() || args::get_proxy().is_some() {
+      if config.proxy_uri.is_some() || args::get_proxy().is_some() {
         // Prefer proxy from args if available
-        let proxy = args::get_proxy().unwrap_or_else(|| proxy_uri.unwrap().to_string());
+        let proxy = args::get_proxy().unwrap_or_else(|| config.proxy_uri.unwrap_or(String::new()).to_string());
         log!("Using proxy: {proxy}");
 
         if let Ok(url) = Url::from_str(&proxy) {
