@@ -2,10 +2,13 @@ use gumdrop::Options;
 
 #[derive(Debug, Options)]
 pub struct Args {
-  #[options(help = "enable safemode, which disable all additional client mods and features")]
+  #[options(help = "print usage information")]
+  pub help: bool,
+
+  #[options(help = "enable safemode, which disables most additional client mods and features")]
   pub safemode: bool,
 
-  #[options(help = "start the app in startup mode. this isn't really for users to use")]
+  #[options(help = "start dorion and tell it that we have opened on startup. this isn't really for users to use")]
   pub startup: bool,
 
   #[cfg(target_os = "windows")]
@@ -17,6 +20,11 @@ impl Args {
   pub fn parse() -> Self {
     Args::parse_args_default_or_exit()
   }
+}
+
+pub fn is_help() -> bool {
+  // Parsing will automatically print help information
+  Args::parse().help
 }
 
 pub fn is_safemode() -> bool {

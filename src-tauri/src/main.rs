@@ -73,6 +73,10 @@ fn should_disable_plugins() -> bool {
 }
 
 fn main() {
+  if args::is_help() {
+    return;
+  }
+
   // Ensure config is created
   Config::init();
 
