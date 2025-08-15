@@ -312,9 +312,9 @@ fn main() {
       if config.proxy_uri.is_some() || args::get_proxy().is_some() {
         // Prefer proxy from args if available
         let proxy = args::get_proxy().unwrap_or_else(|| config.proxy_uri.unwrap_or(String::new()).to_string());
-        log!("Using proxy: {proxy}");
 
         if !proxy.is_empty() {
+          log!("Using proxy: {proxy}");
           if let Ok(url) = Url::from_str(&proxy) {
             win = win.proxy_url(url);
           } else {
