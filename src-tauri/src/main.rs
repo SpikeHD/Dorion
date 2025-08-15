@@ -27,7 +27,7 @@ use util::{
 };
 
 use crate::{
-  functionality::{configure::configure, window::setup_autostart},
+  functionality::{configure::configure, extension::load_extensions, window::setup_autostart},
   util::{
     logger,
     url::{get_client_app_url, get_client_url},
@@ -326,6 +326,11 @@ fn main() {
       }
 
       let win = win.build()?;
+
+      // Prevent race condition by loading as early as possible
+      if !args::is_safemode() {
+        load_extensions(&win);
+      }
 
       app.deep_link().on_open_url({
         let handle = app.handle().clone();

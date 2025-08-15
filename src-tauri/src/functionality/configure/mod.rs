@@ -27,7 +27,7 @@ use crate::window::blur::apply_effect;
 #[cfg(feature = "rpc")]
 #[cfg(not(target_os = "macos"))]
 use super::rpc::start_rpc_server;
-use super::{extension::load_extensions, tray::create_tray};
+use super::tray::create_tray;
 
 pub fn configure(window: &tauri::WebviewWindow) {
   let config = get_config();
@@ -47,7 +47,6 @@ pub fn configure(window: &tauri::WebviewWindow) {
     .restore_state(StateFlags::all())
     .unwrap_or_else(|e| log!("Failed to restore window state: {}", e));
 
-  load_extensions(window);
   load_plugins(window.clone(), Some(true));
 
   // begin the RPC server if needed
