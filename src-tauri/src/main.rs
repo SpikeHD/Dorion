@@ -314,12 +314,14 @@ fn main() {
         let proxy = args::get_proxy().unwrap_or_else(|| config.proxy_uri.unwrap_or(String::new()).to_string());
         log!("Using proxy: {proxy}");
 
-        if let Ok(url) = Url::from_str(&proxy) {
-          win = win.proxy_url(url);
-        } else {
-          log!("Invalid proxy URL: {proxy}");
-          // We should exit, people using proxies probably don't want to use Dorion without it
-          std::process::exit(1);
+        if !proxy.is_empty() {
+          if let Ok(url) = Url::from_str(&proxy) {
+            win = win.proxy_url(url);
+          } else {
+            log!("Invalid proxy URL: {proxy}");
+            // We should exit, people using proxies probably don't want to use Dorion without it
+            std::process::exit(1);
+          }
         }
       }
 
