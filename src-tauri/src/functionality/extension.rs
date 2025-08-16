@@ -68,9 +68,14 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
 #[tauri::command]
 pub fn extension_injected() -> bool {
   #[cfg(target_os = "windows")]
-  if args::is_legacy_fetch() {
-    return false;
+  {
+    use crate::args;
+    
+    if args::is_legacy_fetch() {
+      return false;
+    }
   }
+
 
   EXTENSION_INJECTED.load(std::sync::atomic::Ordering::Relaxed)
 }
