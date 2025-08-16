@@ -191,6 +191,7 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     .append_detectables(get_local_detectables());
 
   loop {
+    std::thread::park();
     std::thread::sleep(std::time::Duration::from_secs(1));
   }
 }
