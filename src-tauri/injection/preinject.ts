@@ -29,16 +29,16 @@ const INJECTED_PLUGIN_OPTIONS = {
 }
 
 window.SHELTER_INJECTOR_PLUGINS = {
-  'Dorion Titlebar': ['https://spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Settings': ['https://spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
-  'Always Trust': ['https://spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Notifications': ['https://spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Streamer Mode': ['https://spikehd.dev/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Updater': ['https://spikehd.dev/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion PTT': ['https://spikehd.dev/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Tray': ['https://spikehd.dev/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Fullscreen': ['https://spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Custom Keybinds': ['https://spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Titlebar': ['https://www.spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Settings': ['https://www.spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
+  'Always Trust': ['https://www.spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Notifications': ['https://www.spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Streamer Mode': ['https://www.spikehd.dev/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Updater': ['https://www.spikehd.dev/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion PTT': ['https://www.spikehd.dev/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Tray': ['https://www.spikehd.dev/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Fullscreen': ['https://www.spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Custom Keybinds': ['https://www.spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
 }
 
 ;(async () => {
@@ -281,4 +281,5 @@ async function displayLoadingTop() {
 
   document.body.appendChild(loadingContainer)
 }
+
 
