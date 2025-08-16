@@ -15,7 +15,11 @@ pub struct Args {
   pub proxy: Option<String>,
 
   #[cfg(target_os = "windows")]
-  #[options(help = "additional arguments to pass to the webview process")]
+  #[options(help = "(windows only) set Dorion to fallback to it's old style of fetching external resources")]
+  pub legacy_fetch: bool,
+
+  #[cfg(target_os = "windows")]
+  #[options(help = "(windows only) additional arguments to pass to the webview process")]
   pub webview_args: String,
 }
 
@@ -40,6 +44,11 @@ pub fn is_startup() -> bool {
 
 pub fn get_proxy() -> Option<String> {
   Args::parse().proxy
+}
+
+#[cfg(target_os = "windows")]
+pub fn is_legacy_fetch() -> bool {
+  Args::parse().legacy_fetch
 }
 
 #[cfg(target_os = "windows")]
