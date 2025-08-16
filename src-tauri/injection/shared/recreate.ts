@@ -149,26 +149,16 @@ export function proxyNotification() {
   window.nativeNotification = window.Notification
 
   // @ts-expect-error shut up
-  window.Notification = function(title, options) {
-    const { invoke } = window.__TAURI__.core
-    const body = options?.body || ''
-    let icon = options?.icon || ''
-
-    // If the icon is a relative path, convert to full path using URI
-    if (icon.startsWith('/')) {
-      icon = window.location.origin + icon
-    } 
-
-    invoke('send_notification', {
-      title,
-      body,
-      icon,
-    })
-
-    // return new window.nativeNotification(title, options)
+  window.Notification = function(...args) {
+    // Stub this
   }
 
   window.Notification.requestPermission = async () => 'granted'
+  // For checking if we have stubbed
+  Object.defineProperty(window.Notification, '__IS_STUBBED__', {
+    enumerable: true,
+    value: true
+  })
   
   Object.defineProperty(window.Notification, 'permission', {
     enumerable: true,
