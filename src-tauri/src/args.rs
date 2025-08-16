@@ -8,14 +8,18 @@ pub struct Args {
   #[options(help = "enable safemode, which disables most additional client mods and features")]
   pub safemode: bool,
 
-  #[options(help = "start Dorion and tell it that we have opened on startup. this isn't really for users to use")]
+  #[options(
+    help = "start Dorion and tell it that we have opened on startup. this isn't really for users to use"
+  )]
   pub startup: bool,
 
   #[options(help = "set a proxy that Dorion will use", meta = "URL")]
   pub proxy: Option<String>,
 
   #[cfg(target_os = "windows")]
-  #[options(help = "(windows only) set Dorion to fallback to it's old style of fetching external resources")]
+  #[options(
+    help = "(windows only) set Dorion to fallback to it's old style of fetching external resources"
+  )]
   pub legacy_fetch: bool,
 
   #[cfg(target_os = "windows")]

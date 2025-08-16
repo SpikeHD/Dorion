@@ -70,12 +70,11 @@ pub fn extension_injected() -> bool {
   #[cfg(target_os = "windows")]
   {
     use crate::args;
-    
+
     if args::is_legacy_fetch() {
       return false;
     }
   }
-
 
   EXTENSION_INJECTED.load(std::sync::atomic::Ordering::Relaxed)
 }
