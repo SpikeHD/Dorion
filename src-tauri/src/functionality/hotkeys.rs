@@ -42,7 +42,7 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
-  let hook = match Hook::with_consume_preference(ConsumePreference::MustConsume) {
+  let hook = match Hook::with_consume_preference(ConsumePreference::PreferNoConsume) {
     Ok(hook) => hook,
     Err(e) => {
       log!("Failed to create keybind hook: {}", e);
