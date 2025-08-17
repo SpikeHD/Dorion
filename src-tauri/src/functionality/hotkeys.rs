@@ -49,9 +49,14 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
       return;
     }
   };
-  let hook = Mutex::new(Arc::new(hook));
-
-  register_all_keybinds(&*hook.lock().unwrap(), &get_keybinds());
+  let hook = match new_hook() {
+    Ok(hook) => hook,
+    Err(e) => {
+      log!("Failed to create new keybind hook: {}", e);
+      return;
+    }
+  };
+  let hook = Mutex::new(hook);
 
   win.listen("keybinds_changed", move |evt| {
     let payload = evt.payload();
@@ -67,6 +72,15 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     }
 
     set_keybinds(keybinds_map);
+
+    // Drop and recreate the hook to apply new keybinds
+    *hook.lock().unwrap() = match new_hook() {
+      Ok(new_hook) => new_hook,
+      Err(e) => {
+        log!("Failed to recreate keybind hook: {}", e);
+        return;
+      }
+    };
 
     KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
   });
@@ -90,6 +104,13 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
   });
 }
 
+fn new_hook() -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
+  let hook = Arc::new(Hook::with_consume_preference(ConsumePreference::PreferNoConsume)?);
+  // Register keybinds
+  register_all_keybinds(&hook, &get_keybinds());
+  Ok(hook)
+}
+
 fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStruct>>) {
   for (action, keys) in keybinds {
     let hotkey = match keystructs_to_hotkey(&keys) {
@@ -101,15 +122,35 @@ fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStr
     };
 
     let action_clone = action.clone();
-    let callback = move |pressed| {
-      log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
-      // TODO handle
-    };
 
-    if let Err(e) = hook.register_specific(hotkey, callback) {
-      log!("Failed to register keybind for {}: {}", action, e);
+    if action == "PUSH_TO_TALK" {
+      let callback = move |pressed| {
+        log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
+        // TODO handle
+      };
+
+      match hook.register_specific(hotkey, callback) {
+        Ok(_) => {
+          log!("Registered PTT keybind: {:?}", hotkey);
+        },
+        Err(e) => {
+          log!("Failed to register PTT keybind: {}: {}", hotkey, e);
+        }
+      }
     } else {
-      log!("Registered keybind for {}: {:?}", action, hotkey);
+      let callback = move || {
+        log!("Keybind triggered: {}", action_clone);
+        // TODO handle
+      };
+
+      match hook.register(hotkey, callback) {
+        Ok(_) => {
+          log!("Registered keybind: {:?}", hotkey);
+        },
+        Err(e) => {
+          log!("Failed to register keybind: {}: {}", hotkey, e);
+        }
+      };
     }
   }
 }
