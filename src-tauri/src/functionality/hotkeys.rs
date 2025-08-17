@@ -1,11 +1,14 @@
-use device_query::{keymap::Keycode, DeviceState};
+use livesplit_hotkey::{ConsumePreference, Hook, Hotkey, KeyCode};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, sync::atomic::AtomicBool};
+use std::{
+  collections::HashMap,
+  sync::{atomic::AtomicBool, Arc, Mutex},
+};
 use tauri::{Emitter, Listener};
 
 use crate::{
   config::{get_config, set_config},
-  functionality::keyboard::js_keycode_to_key,
+  functionality::keyboard::{js_keycode_to_key, keystructs_to_hotkey},
   log,
 };
 
@@ -39,7 +42,18 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
-  win.listen("keybinds_changed", |evt| {
+  let hook = match Hook::with_consume_preference(ConsumePreference::MustConsume) {
+    Ok(hook) => hook,
+    Err(e) => {
+      log!("Failed to create keybind hook: {}", e);
+      return;
+    }
+  };
+  let hook = Mutex::new(Arc::new(hook));
+
+  register_all_keybinds(&*hook.lock().unwrap(), &get_keybinds());
+
+  win.listen("keybinds_changed", move |evt| {
     let payload = evt.payload();
     if payload.is_empty() {
       return;
@@ -74,78 +88,28 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
     PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
   });
+}
 
-  let win_thrd = win.clone();
-
-  std::thread::spawn(move || loop {
-    let keybinds = get_keybinds();
-    let mut registered_combos = keybinds
-      .iter()
-      .map(|(action, keys)| {
-        let keycodes = keys
-          .iter()
-          .map(|key| {
-            js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
-              log!("Error converting key: {:?}", key);
-              Keycode::Key0
-            })
-          })
-          .collect::<Vec<Keycode>>();
-
-        (
-          action.clone(),
-          KeyComboState {
-            keys: keycodes,
-            pressed: false,
-          },
-        )
-      })
-      .collect::<HashMap<String, KeyComboState>>();
-
-    loop {
-      std::thread::sleep(std::time::Duration::from_millis(100));
-
-      if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
-        KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
-
-        log!("Keybinds changed, restarting keybind watcher...");
-        break;
+fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStruct>>) {
+  for (action, keys) in keybinds {
+    let hotkey = match keystructs_to_hotkey(&keys) {
+      Some(hotkey) => hotkey,
+      None => {
+        log!("Invalid keybind for action {}: {:?}", action, keys);
+        continue;
       }
+    };
 
-      // emit keybind_pressed event when pressed, and keybind_released when released
-      // TODO maybe consider using event listeners
-      for (action, combo) in registered_combos.iter_mut() {
-        let mut all_pressed = true;
-        let key_state = DeviceState::new().query_keymap();
+    let action_clone = action.clone();
+    let callback = move |pressed| {
+      log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
+      // TODO handle
+    };
 
-        for key in &combo.keys {
-          if !key_state.contains(key) {
-            all_pressed = false;
-            break;
-          }
-        }
-
-        // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
-        // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
-        if action == "PUSH_TO_TALK"
-          && all_pressed
-          && !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed)
-        {
-          all_pressed = false;
-        }
-
-        if all_pressed && !combo.pressed {
-          win_thrd
-            .emit("keybind_pressed", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = true;
-        } else if !all_pressed && combo.pressed {
-          win_thrd
-            .emit("keybind_released", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = false;
-        }
-      }
+    if let Err(e) = hook.register_specific(hotkey, callback) {
+      log!("Failed to register keybind for {}: {}", action, e);
+    } else {
+      log!("Registered keybind for {}: {:?}", action, hotkey);
     }
-  });
+  }
 }
