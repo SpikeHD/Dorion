@@ -118,10 +118,10 @@ fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds:
 
     let action_clone = action.clone();
 
-    if action == "PUSH_TO_TALK" {
+    if action.starts_with("PUSH") {
       let callback = move |pressed| {
         log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
-        if !PTT_ENABLED.load(Ordering::Relaxed) {
+        if !PTT_ENABLED.load(Ordering::Relaxed) && action_clone == "PUSH_TO_TALK" {
           return;
         }
 
