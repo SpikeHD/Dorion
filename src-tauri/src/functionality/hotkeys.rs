@@ -1,18 +1,21 @@
-use livesplit_hotkey::{ConsumePreference, Hook, Hotkey, KeyCode};
+use livesplit_hotkey::{ConsumePreference, Hook};
 use serde::{Deserialize, Serialize};
 use std::{
   collections::HashMap,
-  sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex},
+  sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+  },
 };
 use tauri::{Emitter, Listener};
 
 use crate::{
   config::{get_config, set_config},
-  functionality::keyboard::{js_keycode_to_key, keystructs_to_hotkey},
+  functionality::keyboard::keystructs_to_hotkey,
   log,
 };
 
-use super::keyboard::{KeyComboState, KeyStruct, KeybindChangedEvent};
+use super::keyboard::{KeyStruct, KeybindChangedEvent};
 
 pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
 pub static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
@@ -99,16 +102,22 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 }
 
 fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
-  let hook = Arc::new(Hook::with_consume_preference(ConsumePreference::PreferNoConsume)?);
+  let hook = Arc::new(Hook::with_consume_preference(
+    ConsumePreference::PreferNoConsume,
+  )?);
   // Register keybinds
   register_all_keybinds(&win, &hook, &get_keybinds());
   Ok(hook)
 }
 
-fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStruct>>) {
+fn register_all_keybinds(
+  win: &tauri::WebviewWindow,
+  hook: &Arc<Hook>,
+  keybinds: &HashMap<String, Vec<KeyStruct>>,
+) {
   for (action, keys) in keybinds {
     let win = win.clone();
-    let hotkey = match keystructs_to_hotkey(&keys) {
+    let hotkey = match keystructs_to_hotkey(keys) {
       Some(hotkey) => hotkey,
       None => {
         log!("Invalid keybind for action {}: {:?}", action, keys);
@@ -126,10 +135,12 @@ fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds:
         }
 
         if pressed {
-          win.emit("keybind_pressed", action_clone.clone())
+          win
+            .emit("keybind_pressed", action_clone.clone())
             .expect("Failed to emit keybind_pressed event");
         } else {
-          win.emit("keybind_released", action_clone.clone())
+          win
+            .emit("keybind_released", action_clone.clone())
             .expect("Failed to emit keybind_released event");
         }
       };
@@ -137,7 +148,7 @@ fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds:
       match hook.register_specific(hotkey, callback) {
         Ok(_) => {
           log!("Registered PTT keybind: {:?}", hotkey);
-        },
+        }
         Err(e) => {
           log!("Failed to register PTT keybind: {}: {}", hotkey, e);
         }
@@ -145,15 +156,16 @@ fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds:
     } else {
       let callback = move || {
         log!("Keybind triggered: {}", action_clone);
-        
-        win.emit("keybind_pressed", action_clone.clone())
+
+        win
+          .emit("keybind_pressed", action_clone.clone())
           .expect("Failed to emit keybind_pressed event");
       };
 
       match hook.register(hotkey, callback) {
         Ok(_) => {
           log!("Registered keybind: {:?}", hotkey);
-        },
+        }
         Err(e) => {
           log!("Failed to register keybind: {}: {}", hotkey, e);
         }
