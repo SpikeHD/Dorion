@@ -6,14 +6,6 @@ use livesplit_hotkey::Hotkey;
 use livesplit_hotkey::KeyCode;
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "hotkeys")]
-#[cfg(not(target_os = "macos"))]
-#[derive(Debug)]
-pub struct KeyComboState {
-  pub keys: Vec<KeyCode>,
-  pub pressed: bool,
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeybindChangedEvent {
   pub keys: Vec<KeyStruct>,
@@ -45,7 +37,7 @@ pub fn js_keycode_to_key(keycode: String) -> Option<KeyCode> {
 
 #[cfg(feature = "hotkeys")]
 #[cfg(not(target_os = "macos"))]
-pub fn keystructs_to_hotkey(keys: &Vec<KeyStruct>) -> Option<Hotkey> {
+pub fn keystructs_to_hotkey(keys: &[KeyStruct]) -> Option<Hotkey> {
   use livesplit_hotkey::Modifiers;
 
   let key = keys.last().and_then(|k| js_keycode_to_key(k.code.clone()));
