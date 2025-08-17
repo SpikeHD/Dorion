@@ -2,7 +2,7 @@ use livesplit_hotkey::{ConsumePreference, Hook, Hotkey, KeyCode};
 use serde::{Deserialize, Serialize};
 use std::{
   collections::HashMap,
-  sync::{atomic::AtomicBool, Arc, Mutex},
+  sync::{atomic::{AtomicBool, Ordering}, Arc, Mutex},
 };
 use tauri::{Emitter, Listener};
 
@@ -42,14 +42,8 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
-  let hook = match Hook::with_consume_preference(ConsumePreference::PreferNoConsume) {
-    Ok(hook) => hook,
-    Err(e) => {
-      log!("Failed to create keybind hook: {}", e);
-      return;
-    }
-  };
-  let hook = match new_hook() {
+  let win_hook = win.clone();
+  let hook = match new_hook(win_hook.clone()) {
     Ok(hook) => hook,
     Err(e) => {
       log!("Failed to create new keybind hook: {}", e);
@@ -74,7 +68,7 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     set_keybinds(keybinds_map);
 
     // Drop and recreate the hook to apply new keybinds
-    *hook.lock().unwrap() = match new_hook() {
+    *hook.lock().unwrap() = match new_hook(win_hook.clone()) {
       Ok(new_hook) => new_hook,
       Err(e) => {
         log!("Failed to recreate keybind hook: {}", e);
@@ -104,15 +98,16 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
   });
 }
 
-fn new_hook() -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
+fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
   let hook = Arc::new(Hook::with_consume_preference(ConsumePreference::PreferNoConsume)?);
   // Register keybinds
-  register_all_keybinds(&hook, &get_keybinds());
+  register_all_keybinds(&win, &hook, &get_keybinds());
   Ok(hook)
 }
 
-fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStruct>>) {
+fn register_all_keybinds(win: &tauri::WebviewWindow, hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStruct>>) {
   for (action, keys) in keybinds {
+    let win = win.clone();
     let hotkey = match keystructs_to_hotkey(&keys) {
       Some(hotkey) => hotkey,
       None => {
@@ -126,7 +121,17 @@ fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStr
     if action == "PUSH_TO_TALK" {
       let callback = move |pressed| {
         log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
-        // TODO handle
+        if !PTT_ENABLED.load(Ordering::Relaxed) {
+          return;
+        }
+
+        if pressed {
+          win.emit("keybind_pressed", action_clone.clone())
+            .expect("Failed to emit keybind_pressed event");
+        } else {
+          win.emit("keybind_released", action_clone.clone())
+            .expect("Failed to emit keybind_released event");
+        }
       };
 
       match hook.register_specific(hotkey, callback) {
@@ -140,7 +145,9 @@ fn register_all_keybinds(hook: &Arc<Hook>, keybinds: &HashMap<String, Vec<KeyStr
     } else {
       let callback = move || {
         log!("Keybind triggered: {}", action_clone);
-        // TODO handle
+        
+        win.emit("keybind_pressed", action_clone.clone())
+          .expect("Failed to emit keybind_pressed event");
       };
 
       match hook.register(hotkey, callback) {
