@@ -45,6 +45,10 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
+  PTT_ENABLED.store(
+    get_config().push_to_talk.unwrap_or(false),
+    std::sync::atomic::Ordering::Relaxed,
+  );
   let win_hook = win.clone();
   let hook = match new_hook(win_hook.clone()) {
     Ok(hook) => hook,
