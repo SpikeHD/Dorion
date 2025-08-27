@@ -39,9 +39,9 @@
   <tr>
     <td width="30%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_x64_en-US.msi ">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_x64_en-US.msi">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_arm64-setup.exe">ARM</a>
+        <a href="https://github.com/SpikeHD/Dorion/releases/download/v6.10.0/Dorion_6.10.0.arm64-setup.exe">ARM</a>
       </div>
     </td>
     <td width="30%">
@@ -406,3 +406,4 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
