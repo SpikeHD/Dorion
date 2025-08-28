@@ -26,38 +26,50 @@
 <table align="center">
   <tr>
     <th>
-      <img src="docs/image/windows.png" width="30%" align="center" />
+      <img src="docs/image/windows.png" width="23%" align="center" />
     </th>
     <th>
-      <img src="docs/image/apple.png" width="30%" align="center" />
+      <img src="docs/image/apple.png" width="23%" align="center" />
     </th>
     <th>
-      <img src="docs/image/debian.png" width="30%" align="center" />
+      <img src="docs/image/debian.png" width="23%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/fedora.png" width="23%" align="center" />
     </th>
   </tr>
 
   <tr>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_x64_en-US.msi">x86_64</a>
         <span>|</span>
         <a href="https://github.com/SpikeHD/Dorion/releases/download/v6.10.0/Dorion_6.10.0.arm64-setup.exe">ARM</a>
       </div>
     </td>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_x64.dmg">x86_64</a>
         <span>|</span>
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_aarch64.dmg">ARM</a>
       </div>
     </td>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_amd64.deb">x86_64</a>
         <span>|</span>
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_armhf.deb">ARM v7</a>
         <span>|</span>
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0_arm64.deb">ARM64</a>
+      </div>
+    </td>
+    <td width="23%">
+      <div align="center">
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0-1.x86_64.rpm">x86_64</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0-1.armhfp.rpm">ARM v7</a>
+        <span>|</span>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.10.0/Dorion_6.10.0-1.aarch64.rpm">ARM64</a>
       </div>
     </td>
   </tr>
@@ -73,38 +85,50 @@
 <table align="center">
   <tr>
     <th>
-      <img src="docs/image/windows.png" width="30%" align="center" />
+      <img src="docs/image/windows.png" width="23%" align="center" />
     </th>
     <th>
-      <img src="docs/image/apple.png" width="30%" align="center" />
+      <img src="docs/image/apple.png" width="23%" align="center" />
     </th>
     <th>
-      <img src="docs/image/debian.png" width="30%" align="center" />
+      <img src="docs/image/debian.png" width="23%" align="center" />
+    </th>
+    <th>
+      <img src="docs/image/fedora.png" width="23%" align="center" />
     </th>
   </tr>
 
   <tr>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-pc-windows-msvc-msi.zip">x86_64</a>
         <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-pc-windows-msvc-nsis.zip">ARM</a>
       </div>
     </td>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-apple-darwin-dmg.zip">x86_64</a>
         <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-apple-darwin-dmg.zip">ARM</a>
       </div>
     </td>
-    <td width="30%">
+    <td width="23%">
       <div align="center">
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-unknown-linux-gnu-deb.zip">x86_64</a>
         <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-armv7-unknown-linux-gnueabihf-deb.zip">ARM v7</a>
         <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-unknown-linux-gnu-deb.zip">ARM64</a>
+      </div>
+    </td>
+    <td width="23%">
+      <div align="center">
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-unknown-linux-gnu-rpm.zip">x86_64</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-armv7-unknown-linux-gnueabihf-rpm.zip">ARM v7</a>
+        <span>|</span>
+        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-unknown-linux-gnu-rpm.zip">ARM64</a>
       </div>
     </td>
   </tr>
@@ -148,7 +172,7 @@
 I do **not** maintain any instances of Dorion in any package repositories myself, however some very kind people maintain some in their own spare time:
 
 * Windows:
-  * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)): 
+  * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)):
     ```sh
     scoop bucket add turbo 'https://github.com/Small-Ku/turbo-bucket.git'
     scoop install turbo/dorion
@@ -198,7 +222,7 @@ If you want to install plugins not available within the Dorion settings page, en
 
 > [!TIP]
 > Unsure what shelter plugins exist out there? There's more than you think, so try searching `shelter plugins` on GitHub, or use the Plugin Browser plugin:
-> 
+>
 > `https://spikehd.github.io/shelter-plugins/plugin-browser/`
 
 ## Themes
@@ -406,4 +430,3 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
-
