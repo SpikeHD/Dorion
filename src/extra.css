@@ -14,7 +14,7 @@ div[class*='inlineMediaEmbed_'] div[class*='imageContainer_'] {
   max-height: 450px;
 }
 
-html:not([data-dorion-platform='macos']) div[class^='bar_'] {
+html:not([data-dorion-platform='macos']) div[class^='base'] div[class^='bar_'] {
   z-index: 9999;
-  background-color: var(--background-tertiary);
+  background-color: var(--background-base-lowest);
 }
