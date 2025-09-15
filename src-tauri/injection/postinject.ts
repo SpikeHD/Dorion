@@ -1,5 +1,4 @@
 import { applyExtraCSS } from './shared/ui'
-import { applyNotificationCount } from './shared/window'
 
 let loaded = false
 
@@ -11,7 +10,7 @@ const observer = new MutationObserver(() => {
 
   if (content && !loaded) {
     console.log('Discord is loaded!')
-    
+
     loaded = true
 
     // Ensure top bar exists if we want it
@@ -39,23 +38,6 @@ observer.observe(document, {
 function onClientLoad() {
   observer.disconnect()
 
-  // Notification watcher
-  notifGetter()
-
-  // Assign notification count
-  applyNotificationCount()
-
   // Load up our extra css
   applyExtraCSS()
-}
-
-function notifGetter() {
-  const notifObserver = new MutationObserver(applyNotificationCount)
-
-  notifObserver.observe(document.querySelector('title') as HTMLTitleElement, {
-    subtree: true,
-    childList: true,
-    attributes: false,
-    characterData: false,
-  })
 }

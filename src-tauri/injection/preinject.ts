@@ -1,7 +1,6 @@
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
-import { applyNotificationCount } from './shared/window'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
@@ -11,13 +10,9 @@ window.Dorion = {
     fetchImage,
     waitForApp,
     waitForElm,
-    applyNotificationCount,
   },
   recreate: {
     createLocalStorage,
-  },
-  window: {
-    applyNotificationCount
   },
   shouldShowUnreadBadge: false
 }
@@ -39,6 +34,7 @@ window.SHELTER_INJECTOR_PLUGINS = {
   'Dorion Tray': ['https://spikehd.dev/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Fullscreen': ['https://spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Custom Keybinds': ['https://spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Helpers': ['https://spikehd.dev/shelter-plugins/dorion-helpers/', INJECTED_PLUGIN_OPTIONS],
 }
 
 ;(async () => {
@@ -102,7 +98,7 @@ async function init() {
   const version = await app.getVersion()
 
   await displayLoadingTop()
-  
+
   // Start the safemode timer
   safemodeTimer(
     document.querySelector('#safemode') as HTMLDivElement
@@ -281,4 +277,3 @@ async function displayLoadingTop() {
 
   document.body.appendChild(loadingContainer)
 }
-
