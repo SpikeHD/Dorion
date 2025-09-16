@@ -35,6 +35,12 @@ window.SHELTER_INJECTOR_PLUGINS = {
   'Dorion Fullscreen': ['https://spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Custom Keybinds': ['https://spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Helpers': ['https://spikehd.dev/shelter-plugins/dorion-helpers/', INJECTED_PLUGIN_OPTIONS],
+  'Web Keybinds': ['https://spikehd.dev/shelter-plugins/web-keybinds/', {
+    ...INJECTED_PLUGIN_OPTIONS,
+    allowedActions: {
+      toggle: true,
+    }
+  }],
 }
 
 ;(async () => {
