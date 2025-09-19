@@ -1,15 +1,10 @@
+#[cfg(not(target_os = "macos"))]
+#[cfg(feature = "hotkeys")]
+use livesplit_hotkey::Hotkey;
 #[cfg(feature = "hotkeys")]
 #[cfg(not(target_os = "macos"))]
-use device_query::keymap::Keycode;
+use livesplit_hotkey::KeyCode;
 use serde::{Deserialize, Serialize};
-
-#[cfg(feature = "hotkeys")]
-#[cfg(not(target_os = "macos"))]
-#[derive(Debug)]
-pub struct KeyComboState {
-  pub keys: Vec<Keycode>,
-  pub pressed: bool,
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeybindChangedEvent {
@@ -23,130 +18,54 @@ pub struct KeyStruct {
   pub code: String,
 }
 
-// this sucks
 #[cfg(feature = "hotkeys")]
 #[cfg(not(target_os = "macos"))]
-pub fn js_keycode_to_key(keycode: String) -> Option<Keycode> {
-  // Might have to make a PR not gonna lie
+pub fn js_keycode_to_key(keycode: String) -> Option<KeyCode> {
   match keycode.as_str() {
-    "KeyA" => Some(Keycode::A),
-    "KeyB" => Some(Keycode::B),
-    "KeyC" => Some(Keycode::C),
-    "KeyD" => Some(Keycode::D),
-    "KeyE" => Some(Keycode::E),
-    "KeyF" => Some(Keycode::F),
-    "KeyG" => Some(Keycode::G),
-    "KeyH" => Some(Keycode::H),
-    "KeyI" => Some(Keycode::I),
-    "KeyJ" => Some(Keycode::J),
-    "KeyK" => Some(Keycode::K),
-    "KeyL" => Some(Keycode::L),
-    "KeyM" => Some(Keycode::M),
-    "KeyN" => Some(Keycode::N),
-    "KeyO" => Some(Keycode::O),
-    "KeyP" => Some(Keycode::P),
-    "KeyQ" => Some(Keycode::Q),
-    "KeyR" => Some(Keycode::R),
-    "KeyS" => Some(Keycode::S),
-    "KeyT" => Some(Keycode::T),
-    "KeyU" => Some(Keycode::U),
-    "KeyV" => Some(Keycode::V),
-    "KeyW" => Some(Keycode::W),
-    "KeyX" => Some(Keycode::X),
-    "KeyY" => Some(Keycode::Y),
-    "KeyZ" => Some(Keycode::Z),
-
-    "Digit0" => Some(Keycode::Key0),
-    "Digit1" => Some(Keycode::Key1),
-    "Digit2" => Some(Keycode::Key2),
-    "Digit3" => Some(Keycode::Key3),
-    "Digit4" => Some(Keycode::Key4),
-    "Digit5" => Some(Keycode::Key5),
-    "Digit6" => Some(Keycode::Key6),
-    "Digit7" => Some(Keycode::Key7),
-    "Digit8" => Some(Keycode::Key8),
-    "Digit9" => Some(Keycode::Key9),
-
-    "F1" => Some(Keycode::F1),
-    "F2" => Some(Keycode::F2),
-    "F3" => Some(Keycode::F3),
-    "F4" => Some(Keycode::F4),
-    "F5" => Some(Keycode::F5),
-    "F6" => Some(Keycode::F6),
-    "F7" => Some(Keycode::F7),
-    "F8" => Some(Keycode::F8),
-    "F9" => Some(Keycode::F9),
-    "F10" => Some(Keycode::F10),
-    "F11" => Some(Keycode::F11),
-    "F12" => Some(Keycode::F12),
-
-    "Backquote" => Some(Keycode::Grave),
-    "Minus" => Some(Keycode::Minus),
-    "Equal" => Some(Keycode::Equal),
-    "Backspace" => Some(Keycode::Backspace),
-    "Tab" => Some(Keycode::Tab),
-    "BracketLeft" => Some(Keycode::LeftBracket),
-    "BracketRight" => Some(Keycode::RightBracket),
-    "Enter" => Some(Keycode::Enter),
-    "Semicolon" => Some(Keycode::Semicolon),
-    "Quote" => Some(Keycode::Apostrophe),
-    "Backslash" => Some(Keycode::BackSlash),
-    "Comma" => Some(Keycode::Comma),
-    "Period" => Some(Keycode::Dot),
-    "Slash" => Some(Keycode::Slash),
-
-    "Space" => Some(Keycode::Space),
-    "CapsLock" => Some(Keycode::CapsLock),
-    "Escape" => Some(Keycode::Escape),
-    //"PrintScreen" => Some(Keycode::PrintScreen),
-    //"ScrollLock" => Some(Keycode::ScrollLock),
-    //"Pause" => Some(Keycode::Pause),
-    "Insert" => Some(Keycode::Insert),
-    "Home" => Some(Keycode::Home),
-    "PageUp" => Some(Keycode::PageUp),
-    "Delete" => Some(Keycode::Delete),
-    "End" => Some(Keycode::End),
-    "PageDown" => Some(Keycode::PageDown),
-
-    "ArrowUp" => Some(Keycode::Up),
-    "ArrowDown" => Some(Keycode::Down),
-    "ArrowLeft" => Some(Keycode::Left),
-    "ArrowRight" => Some(Keycode::Right),
-
-    // "NumLock" => Some(Keycode::NumLock),
-    "NumpadDivide" => Some(Keycode::NumpadDivide),
-    "NumpadMultiply" => Some(Keycode::NumpadMultiply),
-    "NumpadSubtract" => Some(Keycode::NumpadSubtract),
-    "NumpadAdd" => Some(Keycode::NumpadAdd),
-    "NumpadEnter" => Some(Keycode::NumpadEnter),
-    "Numpad1" => Some(Keycode::Numpad1),
-    "Numpad2" => Some(Keycode::Numpad2),
-    "Numpad3" => Some(Keycode::Numpad3),
-    "Numpad4" => Some(Keycode::Numpad4),
-    "Numpad5" => Some(Keycode::Numpad5),
-    "Numpad6" => Some(Keycode::Numpad6),
-    "Numpad7" => Some(Keycode::Numpad7),
-    "Numpad8" => Some(Keycode::Numpad8),
-    "Numpad9" => Some(Keycode::Numpad9),
-    "Numpad0" => Some(Keycode::Numpad0),
-    "NumpadDecimal" => Some(Keycode::NumpadDecimal),
-
-    "ShiftLeft" => Some(Keycode::LShift),
-    "ShiftRight" => Some(Keycode::RShift),
-    "ControlLeft" => Some(Keycode::LControl),
-    "ControlRight" => Some(Keycode::RControl),
-    "AltLeft" => Some(Keycode::LAlt),
-    "AltRight" => Some(Keycode::RAlt),
-
-    // "ContextMenu" => Some(Keycode::Application),
-    "MetaLeft" => Some(Keycode::LMeta),
-    "MetaRight" => Some(Keycode::RMeta),
-
     // TODO fix for PTT since it uses a slightly different system that doesn't differentiate
-    "Control" => Some(Keycode::LControl),
-    "Shift" => Some(Keycode::LShift),
-    "Alt" => Some(Keycode::LAlt),
-    "Meta" => Some(Keycode::LMeta),
-    _ => None,
+    "Control" => Some(KeyCode::ControlLeft),
+    "Shift" => Some(KeyCode::ShiftLeft),
+    "Alt" => Some(KeyCode::AltLeft),
+    "Meta" => Some(KeyCode::MetaLeft),
+    _ => {
+      use std::str::FromStr;
+
+      KeyCode::from_str(&keycode).ok()
+    }
   }
+}
+
+#[cfg(feature = "hotkeys")]
+#[cfg(not(target_os = "macos"))]
+pub fn keystructs_to_hotkey(keys: &[KeyStruct]) -> Option<Hotkey> {
+  use livesplit_hotkey::Modifiers;
+
+  let key = keys.last().and_then(|k| js_keycode_to_key(k.code.clone()));
+  let mut modifiers = Modifiers::empty();
+
+  if let Some(key_code) = key {
+    // Everything from before the last key should be a modifier
+    for k in keys.iter().take(keys.len() - 1) {
+      if let Some(modifier) = js_keycode_to_key(k.code.clone()) {
+        match modifier {
+          KeyCode::ControlLeft => modifiers.insert(Modifiers::CONTROL),
+          KeyCode::ControlRight => modifiers.insert(Modifiers::CONTROL),
+          KeyCode::ShiftLeft => modifiers.insert(Modifiers::SHIFT),
+          KeyCode::ShiftRight => modifiers.insert(Modifiers::SHIFT),
+          KeyCode::AltLeft => modifiers.insert(Modifiers::ALT),
+          KeyCode::AltRight => modifiers.insert(Modifiers::ALT),
+          KeyCode::MetaLeft => modifiers.insert(Modifiers::META),
+          KeyCode::MetaRight => modifiers.insert(Modifiers::META),
+          _ => continue,
+        }
+      }
+    }
+
+    return Some(Hotkey {
+      key_code,
+      modifiers,
+    });
+  }
+
+  None
 }
