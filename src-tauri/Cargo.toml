@@ -42,6 +42,7 @@ mundy = { version = "0.1", features = ["accent-color", "callback"] }
 notify-rust = { git = "https://github.com/An1MuS1111/notify-rust/", branch = "main" }
 gumdrop = "0.8.1"
 open = "5.3.2"
+gtk = "0.18.2"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 webkit2gtk = { version = "2.0", features = ["v2_4"] }

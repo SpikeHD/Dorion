@@ -55,7 +55,7 @@ export async function proxyFetch() {
 
 export function proxyXHR() {
   const open = XMLHttpRequest.prototype.open
-  
+
   XMLHttpRequest.prototype.open = function(...args: unknown[]) {
     const [_method, url] = args
     const rgx = /\/api\/v.*\/(science|track)/g
@@ -103,13 +103,17 @@ export function proxyOpen() {
   window.nativeOpen = window.open
   window.open = (url: string | undefined | URL, target?: string, features?: string) => {
     // If this needs to open externally, do so
-    if (target === '_blank' || !target) {
+    if (url !== 'about:blank' && (target === '_blank' || !target)) {
       window.__TAURI__.shell.open(url as string)
       return null
     }
 
+    console.log('[Proxy Open] Opening with native open function')
+    
+    const win = window.nativeOpen(url as string, target, features)
+
     // Otherwise, use the native open
-    return window.nativeOpen(url as string, target, features)
+    return win
   }
 }
 
@@ -159,7 +163,7 @@ export function proxyNotification() {
     enumerable: true,
     value: true
   })
-  
+
   Object.defineProperty(window.Notification, 'permission', {
     enumerable: true,
     get: () => permVal,

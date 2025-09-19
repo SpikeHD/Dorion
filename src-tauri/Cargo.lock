@@ -12,6 +12,7 @@ dependencies = [
  "device_query",
  "dirs 6.0.0",
  "embed_plist",
+ "gtk",
  "gumdrop",
  "include-flate",
  "mundy",
