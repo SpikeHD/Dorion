@@ -139,6 +139,8 @@ jobs:
             libapparmor1:armhf \
             libwebkit2gtk-4.1-dev:armhf \
             libssl-dev:armhf \
+            libzstd-dev:armhf \
+            zstd:armhf \
             gcc-arm-linux-gnueabihf \
             g++-arm-linux-gnueabihf
 
@@ -151,6 +153,8 @@ jobs:
             libapparmor1:arm64 \
             libwebkit2gtk-4.1-dev:arm64 \
             libssl-dev:arm64 \
+            libzstd-dev:arm64 \
+            zstd:arm64 \
             gcc-aarch64-linux-gnu \
             g++-aarch64-linux-gnu
 
