@@ -127,7 +127,7 @@ jobs:
             libgtk-3-dev \
             libayatana-appindicator3-dev \
             libzstd-dev \
-            zstd
+            zstd \
             librsvg2-dev
 
       - name: (Linux) (ARMv7) Install dependencies
