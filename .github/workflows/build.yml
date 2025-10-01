@@ -26,9 +26,6 @@ concurrency:
 env:
   CARGO_INCREMENTAL: 0
   GIT_HASH: ${{ github.sha }}
-  # For linux cross-compilation
-  ZSTD_SYS_USE_PKG_CONFIG: 1
-  ZSTD_SYS_NO_VENDOR: 1
 
 jobs:
   build:
@@ -196,9 +193,6 @@ jobs:
         run: pnpm tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
         env:
           RUSTFLAGS: -Awarnings
-          # Since we aren't cross-compiling on Linux, we can just disable the vendored zstd
-          ZSTD_SYS_USE_PKG_CONFIG: 0
-          ZSTD_SYS_NO_VENDOR: 0
 
       - name: (Linux) (x86_64) Build
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
@@ -214,6 +208,8 @@ jobs:
           CC: arm-linux-gnueabihf-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
 
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -223,6 +219,8 @@ jobs:
           CC: aarch64-linux-gnu-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
 
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
