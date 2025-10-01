@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions-rust-lang/setup-rust-toolchain@v1.12
         with:
-          toolchain: 1.85
+          toolchain: 1.88
 
       - uses: pnpm/action-setup@v4
         with:
@@ -93,7 +93,7 @@ jobs:
         run: |
           # Add [arch=amd64] to the initial entries of the sources.list
           sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
-  
+
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
@@ -104,7 +104,7 @@ jobs:
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
           echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
-  
+
       # ARM-linux related sources and dpkg config and such
       - name: (Linux) ARM setup
         if: matrix.config.target == 'aarch64-unknown-linux-gnu' || matrix.config.target == 'armv7-unknown-linux-gnueabihf'
@@ -126,6 +126,8 @@ jobs:
             libssl-dev \
             libgtk-3-dev \
             libayatana-appindicator3-dev \
+            libzstd-dev \
+            zstd \
             librsvg2-dev
 
       - name: (Linux) (ARMv7) Install dependencies
@@ -137,9 +139,11 @@ jobs:
             libapparmor1:armhf \
             libwebkit2gtk-4.1-dev:armhf \
             libssl-dev:armhf \
+            libzstd-dev:armhf \
+            zstd:armhf \
             gcc-arm-linux-gnueabihf \
             g++-arm-linux-gnueabihf
-    
+
       - name: (Linux) (ARM64) Install dependencies
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
@@ -149,6 +153,8 @@ jobs:
             libapparmor1:arm64 \
             libwebkit2gtk-4.1-dev:arm64 \
             libssl-dev:arm64 \
+            libzstd-dev:arm64 \
+            zstd:arm64 \
             gcc-aarch64-linux-gnu \
             g++-aarch64-linux-gnu
 
@@ -172,7 +178,7 @@ jobs:
           CC: arm-linux-gnueabihf-gcc
           CXX: arm-linux-gnueabihf-g++
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-          
+
       - name: (Linux ARM64) Build Webkit extension
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-arm64.cmake . && cmake --build .
@@ -183,7 +189,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
-          
+
       - name: Build
         if: matrix.config.platform != 'ubuntu-22.04'
         # If we are compiling for Windows ARM, we can only support NSIS
@@ -206,7 +212,9 @@ jobs:
           CC: arm-linux-gnueabihf-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
           PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-  
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
+
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
@@ -215,7 +223,9 @@ jobs:
           CC: aarch64-linux-gnu-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
-      
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
+
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
         if: matrix.config.platform == 'windows-latest'
@@ -229,7 +239,7 @@ jobs:
 
       - name: Create .portable file for portable builds
         run: cd src-tauri/target/${{ matrix.config.target }}/release && touch .portable
-        
+
       # paths:
       # Windows:
       # - src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe|plugins|themes|injection|icons
@@ -239,7 +249,7 @@ jobs:
       # - src-tauri/target/${{ matrix.config.target }}/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
         if: matrix.config.platform == 'windows-latest'
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && 7z a -tzip -mx9 Dorion.zip 
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && 7z a -tzip -mx9 Dorion.zip
           Dorion.exe
           updater.exe
           .portable
