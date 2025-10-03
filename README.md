@@ -348,6 +348,12 @@ If you submit an issue or ask a question in the Discord, it's likely you will be
   WEBKIT_DISABLE_COMPOSITING_MODE=1
   WEBKIT_DISABLE_DMABUF_RENDERER=1
   ```
+## MacOS
+### ""Dorion.app" is damaged and can't be opened"
+* To solve this issue run this command and then enter your password:
+  ```sh
+  sudo xattr -r -d com.apple.quarantine /Applications/Dorion.app
+  ```
 
 # TODO
 
@@ -430,3 +436,4 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
