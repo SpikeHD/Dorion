@@ -54,10 +54,12 @@ pub fn additional_args() {
   let browser_args = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
   let new_args = args::get_webview_args();
 
-  std::env::set_var(
-    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-    format!("{browser_args} {new_args}"),
-  );
+  unsafe {
+    std::env::set_var(
+      "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+      format!("{browser_args} {new_args}"),
+    );
+  };
 
   log!("Running with the following WebView2 arguments: {browser_args} {new_args}");
 }
@@ -94,17 +96,18 @@ fn main() {
 
   // Check if the deprecated theme option is being used
   if let Some(theme) = config.theme
-    && config.themes.is_none() {
-      // If this is "none" then it's fine to leave the vec empty
-      if theme != "none" {
-        log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
+    && config.themes.is_none()
+  {
+    // If this is "none" then it's fine to leave the vec empty
+    if theme != "none" {
+      log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
 
-        config.themes = Option::from(vec![theme]);
-        config.theme = Option::from("none".to_string());
+      config.themes = Option::from(vec![theme]);
+      config.theme = Option::from("none".to_string());
 
-        set_config(config.clone());
-      }
+      set_config(config.clone());
     }
+  }
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
