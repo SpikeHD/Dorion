@@ -10,7 +10,7 @@ use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
-use config::{get_config, set_config, Config};
+use config::{Config, get_config, set_config};
 use injection::{
   client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
@@ -93,8 +93,8 @@ fn main() {
   let mut config = get_config();
 
   // Check if the deprecated theme option is being used
-  if let Some(theme) = config.theme {
-    if config.themes.is_none() {
+  if let Some(theme) = config.theme
+    && config.themes.is_none() {
       // If this is "none" then it's fine to leave the vec empty
       if theme != "none" {
         log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
@@ -105,7 +105,6 @@ fn main() {
         set_config(config.clone());
       }
     }
-  }
 
   // before anything else, check if the clear_cache file exists
   clear_cache_check();
@@ -224,6 +223,9 @@ fn main() {
       #[cfg(feature = "hotkeys")]
       #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::set_keybind,
+      #[cfg(feature = "hotkeys")]
+      #[cfg(all(not(target_os = "macos"), not(target_os = "linux")))]
+      functionality::hotkeys::trigger_keys_pressed,
       functionality::tray::set_tray_icon,
       injection_runner::get_injection_js,
       config::get_config,

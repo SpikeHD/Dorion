@@ -67,8 +67,8 @@ pub fn get_enabled_themes() -> Result<Vec<String>, String> {
 pub fn theme_from_link(link: String, filename: Option<String>) -> String {
   let theme_name = filename
     .unwrap_or({
-      let theme_name = link.split('/').next_back().unwrap_or("unnamed").to_string();
-      theme_name
+      
+      link.split('/').next_back().unwrap_or("unnamed").to_string()
     })
     .split('.')
     .next()

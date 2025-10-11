@@ -1,5 +1,5 @@
 use super::paths::*;
-use base64::{engine::general_purpose, Engine as _};
+use base64::{Engine as _, engine::general_purpose};
 use std::path::*;
 
 #[tauri::command]

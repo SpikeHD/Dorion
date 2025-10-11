@@ -1,10 +1,12 @@
+#[cfg(target_os = "windows")]
+use livesplit_hotkey::Hotkey;
 use livesplit_hotkey::{ConsumePreference, Hook};
 use serde::{Deserialize, Serialize};
 use std::{
   collections::HashMap,
   sync::{
-    atomic::{AtomicBool, Ordering},
     Arc, Mutex,
+    atomic::{AtomicBool, Ordering},
   },
 };
 use tauri::{Emitter, Listener};
@@ -42,6 +44,44 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
   keybinds.insert(action, keys);
 
   set_keybinds(keybinds);
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pressed: bool) {
+  let keybinds = get_keybinds();
+
+  // Convert the input keys to a hotkey for comparison
+  let input_hotkey = match keystructs_to_hotkey(&keys) {
+    Some(hotkey) => hotkey,
+    None => {
+      log!("Invalid key combination: {:?}", keys);
+      return;
+    }
+  };
+
+  // Find matching action(s) for these keys
+  for (action, action_keys) in &keybinds {
+    if let Some(action_hotkey) = keystructs_to_hotkey(action_keys) {
+      if hotkeys_match(&input_hotkey, &action_hotkey) {
+        log!("Key combination matched action: {}", action);
+
+        if action.starts_with("PUSH") {
+          handle_push_action(&win, action, pressed);
+        } else {
+          // For regular actions, only trigger on key press
+          if pressed {
+            handle_regular_action(&win, action);
+          }
+        }
+
+        // Only trigger the first matching action to avoid conflicts
+        return;
+      }
+    }
+  }
+
+  log!("No action found for key combination: {:?}", keys);
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
@@ -137,20 +177,7 @@ fn register_all_keybinds(
 
     if action.starts_with("PUSH") {
       let callback = move |pressed| {
-        log!("Keybind triggered: {} | Pressed: {}", action_clone, pressed);
-        if !PTT_ENABLED.load(Ordering::Relaxed) && action_clone == "PUSH_TO_TALK" {
-          return;
-        }
-
-        if pressed {
-          win
-            .emit("keybind_pressed", action_clone.clone())
-            .expect("Failed to emit keybind_pressed event");
-        } else {
-          win
-            .emit("keybind_released", action_clone.clone())
-            .expect("Failed to emit keybind_released event");
-        }
+        handle_push_action(&win, &action_clone, pressed);
       };
 
       match hook.register_specific(hotkey, callback) {
@@ -163,11 +190,7 @@ fn register_all_keybinds(
       }
     } else {
       let callback = move || {
-        log!("Keybind triggered: {}", action_clone);
-
-        win
-          .emit("keybind_pressed", action_clone.clone())
-          .expect("Failed to emit keybind_pressed event");
+        handle_regular_action(&win, &action_clone);
       };
 
       match hook.register(hotkey, callback) {
@@ -180,4 +203,35 @@ fn register_all_keybinds(
       };
     }
   }
+}
+
+fn handle_push_action(win: &tauri::WebviewWindow, action: &str, pressed: bool) {
+  log!("Push action triggered: {} | Pressed: {}", action, pressed);
+
+  if !PTT_ENABLED.load(Ordering::Relaxed) && action == "PUSH_TO_TALK" {
+    return;
+  }
+
+  if pressed {
+    win
+      .emit("keybind_pressed", action)
+      .expect("Failed to emit keybind_pressed event");
+  } else {
+    win
+      .emit("keybind_released", action)
+      .expect("Failed to emit keybind_released event");
+  }
+}
+
+fn handle_regular_action(win: &tauri::WebviewWindow, action: &str) {
+  log!("Regular action triggered: {}", action);
+
+  win
+    .emit("keybind_pressed", action)
+    .expect("Failed to emit keybind_pressed event");
+}
+
+#[cfg(target_os = "windows")]
+fn hotkeys_match(hotkey1: &Hotkey, hotkey2: &Hotkey) -> bool {
+  hotkey1.key_code == hotkey2.key_code && hotkey1.modifiers == hotkey2.modifiers
 }
