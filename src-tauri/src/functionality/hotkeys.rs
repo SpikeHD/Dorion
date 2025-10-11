@@ -1,15 +1,23 @@
-use device_query::{keymap::Keycode, DeviceState};
+#[cfg(target_os = "windows")]
+use livesplit_hotkey::Hotkey;
+use livesplit_hotkey::{ConsumePreference, Hook};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, sync::atomic::AtomicBool};
+use std::{
+  collections::HashMap,
+  sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+  },
+};
 use tauri::{Emitter, Listener};
 
 use crate::{
   config::{get_config, set_config},
-  functionality::keyboard::js_keycode_to_key,
+  functionality::keyboard::keystructs_to_hotkey,
   log,
 };
 
-use super::keyboard::{KeyComboState, KeyStruct, KeybindChangedEvent};
+use super::keyboard::{KeyStruct, KeybindChangedEvent};
 
 pub static KEYBINDS_CHANGED: AtomicBool = AtomicBool::new(false);
 pub static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
@@ -38,8 +46,60 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
   set_keybinds(keybinds);
 }
 
+#[tauri::command]
+#[cfg(target_os = "windows")]
+pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pressed: bool) {
+  let keybinds = get_keybinds();
+
+  // Convert the input keys to a hotkey for comparison
+  let input_hotkey = match keystructs_to_hotkey(&keys) {
+    Some(hotkey) => hotkey,
+    None => {
+      log!("Invalid key combination: {:?}", keys);
+      return;
+    }
+  };
+
+  // Find matching action(s) for these keys
+  for (action, action_keys) in &keybinds {
+    if let Some(action_hotkey) = keystructs_to_hotkey(action_keys) {
+      if hotkeys_match(&input_hotkey, &action_hotkey) {
+        log!("Key combination matched action: {}", action);
+
+        if action.starts_with("PUSH") {
+          handle_push_action(&win, action, pressed);
+        } else {
+          // For regular actions, only trigger on key press
+          if pressed {
+            handle_regular_action(&win, action);
+          }
+        }
+
+        // Only trigger the first matching action to avoid conflicts
+        return;
+      }
+    }
+  }
+
+  log!("No action found for key combination: {:?}", keys);
+}
+
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
-  win.listen("keybinds_changed", |evt| {
+  PTT_ENABLED.store(
+    get_config().push_to_talk.unwrap_or(false),
+    std::sync::atomic::Ordering::Relaxed,
+  );
+  let win_hook = win.clone();
+  let hook = match new_hook(win_hook.clone()) {
+    Ok(hook) => hook,
+    Err(e) => {
+      log!("Failed to create new keybind hook: {}", e);
+      return;
+    }
+  };
+  let hook = Mutex::new(hook);
+
+  win.listen("keybinds_changed", move |evt| {
     let payload = evt.payload();
     if payload.is_empty() {
       return;
@@ -53,6 +113,15 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     }
 
     set_keybinds(keybinds_map);
+
+    // Drop and recreate the hook to apply new keybinds
+    *hook.lock().unwrap() = match new_hook(win_hook.clone()) {
+      Ok(new_hook) => new_hook,
+      Err(e) => {
+        log!("Failed to recreate keybind hook: {}", e);
+        return;
+      }
+    };
 
     KEYBINDS_CHANGED.store(true, std::sync::atomic::Ordering::Relaxed);
   });
@@ -73,79 +142,96 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 
     let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
     PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
+
+    let mut config = get_config();
+    config.push_to_talk = Some(state.state);
+    set_config(config);
   });
+}
 
-  let win_thrd = win.clone();
+fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
+  let hook = Arc::new(Hook::with_consume_preference(
+    ConsumePreference::PreferNoConsume,
+  )?);
+  // Register keybinds
+  register_all_keybinds(&win, &hook, &get_keybinds());
+  Ok(hook)
+}
 
-  std::thread::spawn(move || loop {
-    let keybinds = get_keybinds();
-    let mut registered_combos = keybinds
-      .iter()
-      .map(|(action, keys)| {
-        let keycodes = keys
-          .iter()
-          .map(|key| {
-            js_keycode_to_key(key.code.clone()).unwrap_or_else(|| {
-              log!("Error converting key: {:?}", key);
-              Keycode::Key0
-            })
-          })
-          .collect::<Vec<Keycode>>();
-
-        (
-          action.clone(),
-          KeyComboState {
-            keys: keycodes,
-            pressed: false,
-          },
-        )
-      })
-      .collect::<HashMap<String, KeyComboState>>();
-
-    loop {
-      std::thread::sleep(std::time::Duration::from_millis(100));
-
-      if KEYBINDS_CHANGED.load(std::sync::atomic::Ordering::Relaxed) {
-        KEYBINDS_CHANGED.store(false, std::sync::atomic::Ordering::Relaxed);
-
-        log!("Keybinds changed, restarting keybind watcher...");
-        break;
+fn register_all_keybinds(
+  win: &tauri::WebviewWindow,
+  hook: &Arc<Hook>,
+  keybinds: &HashMap<String, Vec<KeyStruct>>,
+) {
+  for (action, keys) in keybinds {
+    let win = win.clone();
+    let hotkey = match keystructs_to_hotkey(keys) {
+      Some(hotkey) => hotkey,
+      None => {
+        log!("Invalid keybind for action {}: {:?}", action, keys);
+        continue;
       }
+    };
 
-      // emit keybind_pressed event when pressed, and keybind_released when released
-      // TODO maybe consider using event listeners
-      for (action, combo) in registered_combos.iter_mut() {
-        let mut all_pressed = true;
-        let key_state = DeviceState::new().query_keymap();
+    let action_clone = action.clone();
 
-        for key in &combo.keys {
-          if !key_state.contains(key) {
-            all_pressed = false;
-            break;
-          }
+    if action.starts_with("PUSH") {
+      let callback = move |pressed| {
+        handle_push_action(&win, &action_clone, pressed);
+      };
+
+      match hook.register_specific(hotkey, callback) {
+        Ok(_) => {
+          log!("Registered PTT keybind: {:?}", hotkey);
         }
-
-        // Special consideration for PUSH_TO_TALK, where we should ask if PTT is enabled first
-        // also check for all_pressed so we aren't spam-checking this when not all keys for it are pressed
-        if action == "PUSH_TO_TALK"
-          && all_pressed
-          && !PTT_ENABLED.load(std::sync::atomic::Ordering::Relaxed)
-        {
-          all_pressed = false;
-        }
-
-        if all_pressed && !combo.pressed {
-          win_thrd
-            .emit("keybind_pressed", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = true;
-        } else if !all_pressed && combo.pressed {
-          win_thrd
-            .emit("keybind_released", Some(action.clone()))
-            .unwrap_or_default();
-          combo.pressed = false;
+        Err(e) => {
+          log!("Failed to register PTT keybind: {}: {}", hotkey, e);
         }
       }
+    } else {
+      let callback = move || {
+        handle_regular_action(&win, &action_clone);
+      };
+
+      match hook.register(hotkey, callback) {
+        Ok(_) => {
+          log!("Registered keybind: {:?}", hotkey);
+        }
+        Err(e) => {
+          log!("Failed to register keybind: {}: {}", hotkey, e);
+        }
+      };
     }
-  });
+  }
+}
+
+fn handle_push_action(win: &tauri::WebviewWindow, action: &str, pressed: bool) {
+  log!("Push action triggered: {} | Pressed: {}", action, pressed);
+
+  if !PTT_ENABLED.load(Ordering::Relaxed) && action == "PUSH_TO_TALK" {
+    return;
+  }
+
+  if pressed {
+    win
+      .emit("keybind_pressed", action)
+      .expect("Failed to emit keybind_pressed event");
+  } else {
+    win
+      .emit("keybind_released", action)
+      .expect("Failed to emit keybind_released event");
+  }
+}
+
+fn handle_regular_action(win: &tauri::WebviewWindow, action: &str) {
+  log!("Regular action triggered: {}", action);
+
+  win
+    .emit("keybind_pressed", action)
+    .expect("Failed to emit keybind_pressed event");
+}
+
+#[cfg(target_os = "windows")]
+fn hotkeys_match(hotkey1: &Hotkey, hotkey2: &Hotkey) -> bool {
+  hotkey1.key_code == hotkey2.key_code && hotkey1.modifiers == hotkey2.modifiers
 }

@@ -1,4 +1,5 @@
 import { applyExtraCSS } from './shared/ui'
+import { initWindowsKeybinds } from './shared/windows_keybinds'
 
 let loaded = false
 
@@ -40,4 +41,5 @@ function onClientLoad() {
 
   // Load up our extra css
   applyExtraCSS()
+  initWindowsKeybinds()
 }

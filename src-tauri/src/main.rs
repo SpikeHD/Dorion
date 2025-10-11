@@ -54,10 +54,12 @@ pub fn additional_args() {
   let browser_args = std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
   let new_args = args::get_webview_args();
 
-  std::env::set_var(
-    "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-    format!("{browser_args} {new_args}"),
-  );
+  unsafe {
+    std::env::set_var(
+      "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+      format!("{browser_args} {new_args}"),
+    );
+  };
 
   log!("Running with the following WebView2 arguments: {browser_args} {new_args}");
 }
@@ -93,8 +95,8 @@ fn main() {
   let mut config = get_config();
 
   // Check if the deprecated theme option is being used
-  if let Some(theme) = config.theme {
-    if config.themes.is_none() {
+  if config.themes.is_none() {
+    if let Some(theme) = config.theme {
       // If this is "none" then it's fine to leave the vec empty
       if theme != "none" {
         log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
@@ -224,6 +226,9 @@ fn main() {
       #[cfg(feature = "hotkeys")]
       #[cfg(not(target_os = "macos"))]
       functionality::hotkeys::set_keybind,
+      #[cfg(feature = "hotkeys")]
+      #[cfg(all(not(target_os = "macos"), not(target_os = "linux")))]
+      functionality::hotkeys::trigger_keys_pressed,
       functionality::tray::set_tray_icon,
       injection_runner::get_injection_js,
       config::get_config,
