@@ -1,7 +1,7 @@
 use std::{fs, path::PathBuf};
 
-use tauri::Manager;
 use tauri::path::BaseDirectory;
+use tauri::Manager;
 
 use crate::config::{default_config, get_config};
 use crate::log;

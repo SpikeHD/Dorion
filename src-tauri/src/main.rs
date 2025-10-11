@@ -10,7 +10,7 @@ use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
-use config::{Config, get_config, set_config};
+use config::{get_config, set_config, Config};
 use injection::{
   client_mod::{self, load_mods_js},
   injection_runner::{self, PREINJECT},
@@ -95,17 +95,17 @@ fn main() {
   let mut config = get_config();
 
   // Check if the deprecated theme option is being used
-  if let Some(theme) = config.theme
-    && config.themes.is_none()
-  {
-    // If this is "none" then it's fine to leave the vec empty
-    if theme != "none" {
-      log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
+  if config.themes.is_none() {
+    if let Some(theme) = config.theme {
+      // If this is "none" then it's fine to leave the vec empty
+      if theme != "none" {
+        log!("Deprecated theme option detected, using \"none\" and setting `themes` instead...");
 
-      config.themes = Option::from(vec![theme]);
-      config.theme = Option::from("none".to_string());
+        config.themes = Option::from(vec![theme]);
+        config.theme = Option::from("none".to_string());
 
-      set_config(config.clone());
+        set_config(config.clone());
+      }
     }
   }
 

@@ -55,7 +55,11 @@ jobs:
     steps:
       - uses: actions-rust-lang/setup-rust-toolchain@v1.12
         with:
+<<<<<<< HEAD
           toolchain: 1.90
+=======
+          toolchain: 1.85
+>>>>>>> main
 
       - uses: pnpm/action-setup@v4
         with:

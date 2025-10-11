@@ -32,12 +32,12 @@ pub fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>
 
   // Eval plugin scripts
   for (name, script) in &plugins {
-    // Ignore preload plguins
-    if let Some(plugin) = plugin_list.get(name)
-      && plugin.preload
-    {
-      log!("Skipping plugin {} (is preload)", name);
-      continue;
+    // Ignore preload plugins
+    if let Some(plugin) = plugin_list.get(name) {
+      if plugin.preload {
+        log!("Skipping plugin {} (is preload)", name);
+        continue;
+      }
     }
 
     // Execute the plugin in a try/catch, so we can capture whatever error occurs

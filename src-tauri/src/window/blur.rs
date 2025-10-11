@@ -33,7 +33,7 @@ pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
 #[cfg(target_os = "macos")]
 #[tauri::command]
 pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
-  use window_vibrancy::{NSVisualEffectMaterial, apply_vibrancy};
+  use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
   #[allow(clippy::single_match)]
   match effect {

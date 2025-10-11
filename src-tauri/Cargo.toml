@@ -5,8 +5,8 @@ description = "Tiny alternative Discord client with a smaller footprint, themes 
 authors = ["SpikeHD"]
 license = ""
 repository = ""
-edition = "2024"
-rust-version = "1.90"
+edition = "2021"
+rust-version = "1.84.1"
 
 [profile.release]
 strip = "debuginfo"

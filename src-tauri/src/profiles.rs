@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::{
-  config::{Config, get_config},
+  config::{get_config, Config},
   log,
   util::paths::profiles_dir,
 };

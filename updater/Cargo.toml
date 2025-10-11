@@ -17,4 +17,3 @@ sudo = "0.6.0"
 
 #[cfg(target_os = "windows")]
 is_elevated = "0.1.2"
-
