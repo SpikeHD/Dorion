@@ -6,7 +6,7 @@ authors = ["SpikeHD"]
 license = ""
 repository = ""
 edition = "2021"
-rust-version = "1.88"
+rust-version = "1.84.1"
 
 [profile.release]
 strip = "debuginfo"
