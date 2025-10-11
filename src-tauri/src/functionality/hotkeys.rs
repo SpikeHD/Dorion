@@ -102,7 +102,7 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 
     let state = serde_json::from_str::<PTTPayload>(payload).unwrap();
     PTT_ENABLED.store(state.state, std::sync::atomic::Ordering::Relaxed);
-    
+
     let mut config = get_config();
     config.push_to_talk = Some(state.state);
     set_config(config);

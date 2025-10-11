@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 use webkit2gtk::{
-  PermissionRequestExt, SecurityManagerExt, SettingsExt, WebContextExt, WebView, WebViewExt
+  PermissionRequestExt, SecurityManagerExt, SettingsExt, WebContextExt, WebView, WebViewExt,
 };
 
 use crate::gpu::disable_hardware_accel_linux;
