@@ -4437,12 +4437,12 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.24.3"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.24.3#1cb3d3d334edb4ad710ecd35501979b76df933bb"
+version = "0.25.0"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.25.0#ddd3946138decf9cd5e1b2440e26711ac1f7c666"
 dependencies = [
+ "aho-corasick",
  "chrono",
  "interprocess",
- "rayon",
  "serde",
  "serde_json",
  "serde_with",
