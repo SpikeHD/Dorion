@@ -182,7 +182,7 @@ I do **not** maintain any instances of Dorion in any package repositories myself
     winget install --id SpikeHD.Dorion
     ```
 * Linux:
-  * Arch AUR (Maintained by [Refined7075](https://github.com/DarkCoder28))
+  * Arch AUR (Maintained by [YouKnow-sys](https://github.com/YouKnow-sys))
     ```sh
     yay -S dorion-bin
     ```
@@ -430,3 +430,4 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
