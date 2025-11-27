@@ -94,13 +94,6 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     Ok(hook) => hook,
     Err(e) => {
       log!("Failed to create new keybind hook: {}", e);
-      // Show an actual alert
-      dialog::MessageDialogBuilder::new(
-        "Error",
-        "Failed to initialize keybinds hook. Global Keybinds will not work.",
-      )
-      .icon(dialog::MessageDialogIcon::Error)
-      .show(|_| {});
       return;
     }
   };
