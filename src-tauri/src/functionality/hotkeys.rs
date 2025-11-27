@@ -94,6 +94,13 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
     Ok(hook) => hook,
     Err(e) => {
       log!("Failed to create new keybind hook: {}", e);
+      // Show an actual alert
+      dialog::MessageDialogBuilder::new(
+        "Error",
+        "Failed to initialize keybinds hook. Global Keybinds will not work.",
+      )
+      .icon(dialog::MessageDialogIcon::Error)
+      .show(|_| {});
       return;
     }
   };
@@ -150,9 +157,19 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
 }
 
 fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
-  let hook = Arc::new(Hook::with_consume_preference(
-    ConsumePreference::PreferNoConsume,
-  )?);
+  let hook = Arc::new(
+    match Hook::with_consume_preference(ConsumePreference::MustNotConsume) {
+      Ok(hook) => Ok(hook),
+      Err(e) => {
+        log!(
+          "Failed to create Hook with MustNotConsume preference: {}. Global keybinds will still work, but may now eat your inputs.",
+          e
+        );
+        // PreferNoConsume if we can't force no consumption
+        Hook::with_consume_preference(ConsumePreference::PreferNoConsume)
+      }
+    }?,
+  );
   // Register keybinds
   register_all_keybinds(&win, &hook, &get_keybinds());
   Ok(hook)
