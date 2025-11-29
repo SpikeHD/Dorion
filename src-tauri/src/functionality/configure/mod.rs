@@ -11,14 +11,10 @@ use tauri::{Listener, Manager};
 use tauri_plugin_window_state::{StateFlags, WindowExt};
 
 use crate::{
-  args::{is_safemode, is_startup},
-  config::get_config,
-  injection::plugin::load_plugins,
-  log,
-  util::{
+  args::{is_safemode, is_startup}, config::get_config, functionality::idle::start_idle_watcher, injection::plugin::load_plugins, log, util::{
     color::start_os_accent_subscriber,
     window_helpers::{set_user_agent, window_zoom_level},
-  },
+  }
 };
 
 #[cfg(feature = "blur")]
@@ -58,6 +54,9 @@ pub fn configure(window: &tauri::WebviewWindow) {
       start_rpc_server(win);
     });
   }
+
+  // Listen for idle change
+  start_idle_watcher(window);
 
   // If the subscription is dropped, Mundy's internal thread will exit and no events will ever be recieved
   Box::leak(Box::new(start_os_accent_subscriber(window)));

@@ -1,6 +1,7 @@
 pub mod cache;
 pub mod configure;
 pub mod extension;
+pub mod idle;
 
 #[cfg(feature = "hotkeys")]
 #[cfg(not(target_os = "macos"))]

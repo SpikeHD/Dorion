@@ -42,6 +42,7 @@ notify-rust = "4.11"
 gumdrop = "0.8.1"
 open = "5.3.2"
 livesplit-hotkey = { git = "https://github.com/SpikeHD/livesplit-core.git", branch = "feat/press-and-release", features = ["press_and_release"] }
+system-idle-time = "1.0.0"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 gtk = "0.18"
