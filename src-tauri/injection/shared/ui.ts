@@ -1,4 +1,4 @@
-import { timeout } from './util'
+import { timeout, waitForDom } from './util'
 
 export function safemodeTimer(elm: HTMLDivElement) {
   setTimeout(() => {
@@ -75,7 +75,9 @@ export async function applyExtraCSS() {
 }
 
 export async function extraCssChangeWatch() {
-  const { event, core } = window.__TAURI__
+  await waitForDom()
+  const { event, core } = window.__TAURI__  
+
   const style = document.createElement('style')
   style.id = 'dorion-os-accent'
 
