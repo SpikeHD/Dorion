@@ -25,6 +25,15 @@ export function isJson(s: string) {
   return true
 }
 
+export function waitForDom() {
+  return new Promise<void>((resolve) => {
+    if (document.body) return resolve()
+    document.addEventListener("DOMContentLoaded", () => {
+      resolve()
+    });
+  })
+}
+
 /**
  * Sorta yoinked from https://github.com/uwu/shelter/blob/main/packages/shelter/src/index.ts
  */
