@@ -140,29 +140,28 @@ fn send_notification_internal_windows(
 
         // Navigate to the guild/channel/message if provided
         if let Some(data) = &additional_data {
-          if let Some(guild_id) = &data.guild_id {
-            let channel_id = data.channel_id.as_deref().unwrap_or_default();
-            let message_id = data.message_id.as_deref().unwrap_or_default();
+          let guild_id = data.guild_id.as_deref().unwrap_or_default();
+          let channel_id = data.channel_id.as_deref().unwrap_or_default();
+          let message_id = data.message_id.as_deref().unwrap_or_default();
 
-            let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
-              get_url_for_message(
-                guild_id.clone(),
-                channel_id.to_string(),
-                message_id.to_string(),
-              )
-            } else if !guild_id.is_empty() && !channel_id.is_empty() {
-              get_url_for_channel(guild_id.clone(), channel_id.to_string())
-            } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
-              get_url_for_channel(channel_id.clone(), message_id.clone())
-            } else if !guild_id.is_empty() {
-              get_url_for_guild(guild_id.clone())
-            } else {
-              String::new()
-            };
+          let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
+            get_url_for_message(
+              guild_id.to_string(),
+              channel_id.to_string(),
+              message_id.to_string(),
+            )
+          } else if !guild_id.is_empty() && !channel_id.is_empty() {
+            get_url_for_channel(guild_id.to_string(), channel_id.to_string())
+          } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
+            get_url_for_channel(channel_id.to_string(), message_id.to_string())
+          } else if !guild_id.is_empty() {
+            get_url_for_guild(guild_id.to_string())
+          } else {
+            String::new()
+          };
 
-            if !url.is_empty() {
-              win.navigate(&url).unwrap_or_default();
-            }
+          if let Ok(_url) = reqwest::Url::parse(&url) {
+            // TODO Using win.navigate triggers a full refresh, nobody wants that
           }
         }
       }
