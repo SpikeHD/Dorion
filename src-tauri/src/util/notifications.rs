@@ -9,8 +9,21 @@ use tauri::Manager;
 #[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
 
+#[derive(serde::Deserialize)]
+pub struct AdditionalData {
+  guild_id: Option<String>,
+  channel_id: Option<String>,
+  message_id: Option<String>,
+}
+
 #[tauri::command]
-pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
+pub fn send_notification(
+  win: tauri::WebviewWindow,
+  title: String,
+  body: String,
+  icon: String,
+  additional_data: Option<AdditionalData>,
+) {
   // Write the result of the icon
   let app = win.app_handle();
   let client = reqwest::blocking::Client::new();
@@ -18,7 +31,7 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
     Ok(res) => res,
     Err(e) => {
       log!("Failed to fetch notification icon: {:?}", e);
-      send_notification_internal(app, title, body, String::new());
+      send_notification_internal(app, title, body, String::new(), additional_data);
       return;
     }
   };
@@ -31,7 +44,7 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
     Ok(file) => file,
     Err(_) => {
       log!("Failed to create temp file for notification icon");
-      send_notification_internal(app, title, body, String::new());
+      send_notification_internal(app, title, body, String::new(), additional_data);
       return;
     }
   };
@@ -40,7 +53,7 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
   match std::io::copy(&mut res, &mut std::io::BufWriter::new(file)) {
     Ok(_) => {}
     Err(_) => {
-      send_notification_internal(app, title, body, String::new());
+      send_notification_internal(app, title, body, String::new(), additional_data);
       return;
     }
   }
@@ -54,7 +67,7 @@ pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String,
 
   icon_path.push_str(&tmp_file.to_str().unwrap_or_default().replace('\\', "/"));
 
-  send_notification_internal(app, title, body, icon_path.clone());
+  send_notification_internal(app, title, body, icon_path.clone(), additional_data);
 }
 
 fn send_notification_internal(
@@ -62,13 +75,14 @@ fn send_notification_internal(
   title: String,
   body: String,
   icon_path: String,
+  additional_data: Option<AdditionalData>,
 ) {
   #[cfg(target_os = "windows")]
   {
     use crate::config::get_config;
 
     if !is_windows_7() && !get_config().win7_style_notifications.unwrap_or(false) {
-      send_notification_internal_windows(app, title, body, icon_path)
+      send_notification_internal_windows(app, title, body, icon_path, additional_data)
     } else {
       send_notification_internal_windows7(app, title, body, icon_path)
     }
@@ -105,7 +119,9 @@ fn send_notification_internal_windows(
   title: String,
   body: String,
   icon: String,
+  additional_data: Option<AdditionalData>,
 ) {
+  use crate::util::url::{get_url_for_channel, get_url_for_guild, get_url_for_message};
   use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
@@ -120,6 +136,32 @@ fn send_notification_internal_windows(
     .on_activated(move |_s| {
       if let Some(win) = &win {
         ultrashow(win.clone());
+
+        // Navigate to the guild/channel/message if provided
+        if let Some(data) = &additional_data {
+          if let Some(guild_id) = &data.guild_id {
+            let channel_id = data.channel_id.as_deref().unwrap_or_default();
+            let message_id = data.message_id.as_deref().unwrap_or_default();
+
+            let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
+              get_url_for_message(
+                guild_id.clone(),
+                channel_id.to_string(),
+                message_id.to_string(),
+              )
+            } else if !guild_id.is_empty() && !channel_id.is_empty() {
+              get_url_for_channel(guild_id.clone(), channel_id.to_string())
+            } else if !guild_id.is_empty() {
+              get_url_for_guild(guild_id.clone())
+            } else {
+              String::new()
+            };
+
+            if !url.is_empty() {
+              win.navigate(&url).unwrap_or_default();
+            }
+          }
+        }
       }
 
       Ok(())

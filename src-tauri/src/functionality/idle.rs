@@ -12,9 +12,13 @@ pub fn start_idle_watcher(win: &tauri::WebviewWindow) {
 
       // Emitting these events like this should be fine, as they do not override forced idle.
       if idle_time >= std::time::Duration::from_secs(600) {
-        win.eval("shelter.flux.dispatcher.dispatch({ type: 'IDLE', idle: true })").unwrap_or_default();
+        win
+          .eval("shelter.flux.dispatcher.dispatch({ type: 'IDLE', idle: true })")
+          .unwrap_or_default();
       } else {
-        win.eval("shelter.flux.dispatcher.dispatch({ type: 'IDLE', idle: false })").unwrap_or_default();
+        win
+          .eval("shelter.flux.dispatcher.dispatch({ type: 'IDLE', idle: false })")
+          .unwrap_or_default();
       }
       std::thread::sleep(std::time::Duration::from_secs(10));
     }
