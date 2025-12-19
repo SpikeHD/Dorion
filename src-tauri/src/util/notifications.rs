@@ -122,7 +122,6 @@ fn send_notification_internal_windows(
   icon: String,
   additional_data: Option<AdditionalData>,
 ) {
-  use crate::util::url::{get_url_for_channel, get_url_for_guild, get_url_for_message};
   use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
@@ -145,23 +144,22 @@ fn send_notification_internal_windows(
           let message_id = data.message_id.as_deref().unwrap_or_default();
 
           let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
-            get_url_for_message(
-              guild_id.to_string(),
-              channel_id.to_string(),
-              message_id.to_string(),
-            )
+            format!("/channels/{}/{}/{}", guild_id, channel_id, message_id)
           } else if !guild_id.is_empty() && !channel_id.is_empty() {
-            get_url_for_channel(guild_id.to_string(), channel_id.to_string())
+            format!("/channels/{}/{}", guild_id, channel_id)
           } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
-            get_url_for_channel(channel_id.to_string(), message_id.to_string())
+            format!("/channels/@me/{}/{}", channel_id, message_id)
           } else if !guild_id.is_empty() {
-            get_url_for_guild(guild_id.to_string())
+            format!("/channels/{}", guild_id)
           } else {
             String::new()
           };
 
-          if let Ok(_url) = reqwest::Url::parse(&url) {
-            // TODO Using win.navigate triggers a full refresh, nobody wants that
+          if !url.is_empty() {
+            win.eval(format!(r#"
+            history.pushState(null, "", "{url}");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+            "#)).unwrap_or_default();
           }
         }
       }
