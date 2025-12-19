@@ -1,5 +1,5 @@
 import { applyExtraCSS } from './shared/ui'
-import { waitForDom, waitForElmEx } from './shared/util';
+import { waitForElmEx } from './shared/wait_elm';
 import { initWindowsKeybinds } from './shared/windows_keybinds'
 
 (async () => {

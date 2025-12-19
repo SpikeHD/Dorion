@@ -1,6 +1,7 @@
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
-import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, waitForElmEx, saferEval, timeout } from './shared/util'
+import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
+import { waitForElmEx } from './shared/wait_elm'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
