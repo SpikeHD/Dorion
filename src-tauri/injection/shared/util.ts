@@ -1,3 +1,5 @@
+import { waitForElmEx } from "./wait_elm"
+
 export function cssSanitize(css: string) {
   const style = document.createElement('style')
   style.innerHTML = css
@@ -35,38 +37,15 @@ export function waitForDom() {
 }
 
 /**
+ * Ensure appMount exists
  * Sorta yoinked from https://github.com/uwu/shelter/blob/main/packages/shelter/src/index.ts
  */
 export async function waitForApp() {
-  // Ensure appMount exists
-  const appMount = document.querySelector('#app-mount')
-
-  if (!appMount) {
-    setTimeout(waitForApp, 100)
-    return
-  }
-
-  while (appMount.childElementCount === 0)
-    await new Promise((r) => setTimeout(r, 100))
-
-  return appMount
+  return await waitForElmEx(['>div#app-mount', '>*'])
 }
 
 export async function waitForElm(selector: string, max: number | undefined = undefined) {
-  let totalTime = 0
-  let elm = document.querySelector(selector)
-
-  while (!elm) {
-    elm = document.querySelector(selector)
-    await timeout(100)
-    totalTime += 100
-
-    if (max && totalTime >= max) {
-      return null
-    }
-  }
-
-  return elm
+  return await waitForElmEx(selector, {timeout: max})
 }
 
 export async function fetchImage(url: string) {

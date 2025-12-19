@@ -1,6 +1,7 @@
 import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
-import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval } from './shared/util'
+import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
+import { waitForElmEx } from './shared/wait_elm'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
@@ -10,6 +11,7 @@ window.Dorion = {
     fetchImage,
     waitForApp,
     waitForElm,
+    waitForElmEx,
   },
   recreate: {
     createLocalStorage,
@@ -61,7 +63,7 @@ window.SHELTER_INJECTOR_PLUGINS = {
 
   while (!window.__TAURI__) {
     console.log('Waiting for definition...')
-    await new Promise(resolve => setTimeout(resolve, 50))
+    await timeout(50)
   }
 
   window.__TAURI__.event.emit('js_context_loaded', null)
@@ -160,7 +162,7 @@ async function init() {
   loadingContainer.style.opacity = '0'
 
   setTimeout(() => {
-    document.querySelector('#loadingContainer')?.remove()
+    loadingContainer?.remove()
   }, 200)
 
   // Unlisten from the log event
