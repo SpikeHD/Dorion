@@ -9,7 +9,7 @@ use tauri::Manager;
 #[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 pub struct AdditionalData {
   guild_id: Option<String>,
   channel_id: Option<String>,
@@ -84,12 +84,12 @@ fn send_notification_internal(
     if !is_windows_7() && !get_config().win7_style_notifications.unwrap_or(false) {
       send_notification_internal_windows(app, title, body, icon_path, additional_data)
     } else {
-      send_notification_internal_windows7(app, title, body, icon_path)
+      send_notification_internal_windows7(app, title, body, icon_path, additional_data)
     }
   }
 
   #[cfg(not(target_os = "windows"))]
-  send_notification_internal_other(app, title, body, icon_path)
+  send_notification_internal_other(app, title, body, icon_path, additional_data)
 }
 
 #[cfg(not(target_os = "windows"))]
@@ -98,6 +98,7 @@ fn send_notification_internal_other(
   title: String,
   body: String,
   _icon: String,
+  _additional_data: Option<AdditionalData>,
 ) {
   use notify_rust::{Notification, Timeout};
 
@@ -151,6 +152,8 @@ fn send_notification_internal_windows(
               )
             } else if !guild_id.is_empty() && !channel_id.is_empty() {
               get_url_for_channel(guild_id.clone(), channel_id.to_string())
+            } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
+              get_url_for_channel(channel_id.clone(), message_id.clone())
             } else if !guild_id.is_empty() {
               get_url_for_guild(guild_id.clone())
             } else {
@@ -176,6 +179,7 @@ fn send_notification_internal_windows7(
   title: String,
   body: String,
   icon: String,
+  _additional_data: Option<AdditionalData>,
 ) {
   use std::path::Path;
   use win7_notifications::Notification;
