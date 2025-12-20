@@ -360,13 +360,11 @@ If you submit an issue or ask a question in the Discord, it's likely you will be
 * [x] Rich presence(?)
   * [x] FULL rich presence
 * [x] Custom keybinds
-* [ ] Helper API methods and events for plugins
 * [x] Backup localized themes
 * [x] Localization timeout
 * [x] Safemode key (disable themes and plugins)
 * [x] New release notifications
 * [x] Logging system
-* [ ] Move from `device_query` to `rdev` or `inputbot` (supports more keys. May also just attempt to contribute to `device_query`)
 * [x] API abstractions
 
 # Using Plugins, Extensions, and Themes
@@ -430,4 +428,5 @@ Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
 
