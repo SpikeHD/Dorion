@@ -155,7 +155,7 @@ fn send_notification_internal_windows(
 
       move |_s| {
         if let (Some(win), Some(data)) = (&win, &additional_data) {
-          open_notification_data(win, data.clone());
+          open_notification_data(win, Some(data.clone()));
         }
         Ok(())
       }
