@@ -202,15 +202,15 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 
 # Features
 
-* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client, as well as other web-based alternatives
+* [Significantly smaller](https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a) than the original Discord client and other web-based alternatives
 * Theme support
 * Global push-to-talk and custom keybinds
 * [Shelter](https://github.com/uwu/Shelter) and (optionally) [Vencord](https://github.com/vendicated/vencord)/[Equicord](https://github.com/equicord/equicord) included out of the box
-* Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box. Enable it in "Performance & Extras"!
+* Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box.
   * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
-* (Hopefully) better low-end system performance.
-* ARM support for ALL platforms
-* Feature flags for picking and choosing features (when building from source)
+* (Hopefully) better low-end system performance. YMMV.
+* ARM support for all platforms
+* Feature flags for those who build from source.
 
 ## Plugins
 
@@ -221,7 +221,7 @@ If you want to install plugins not available within the Dorion settings page, en
 > Want official support for another client mod? As long as it works on the web, feel free to submit a [feature request](https://github.com/SpikeHD/Dorion/issues/new/choose)!
 
 > [!TIP]
-> Unsure what shelter plugins exist out there? There's more than you think, so try searching `shelter plugins` on GitHub, or use the Plugin Browser plugin:
+> Unsure what shelter plugins exist out there? There's more than you think! Try searching `shelter plugins` on GitHub, or use the Plugin Browser plugin:
 >
 > `https://spikehd.github.io/shelter-plugins/plugin-browser/`
 
@@ -249,7 +249,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 [^2]: Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is, as far as I can tell, a bug in WebkitGTK.
 
-[^3]: Support for WebRTC is hidden behind a build-time flag that is not used in almost every distro. This will be available when WebkitGTK ships with WebRTC support, or if you compile your own WebkitGTK.
+[^3]: Support for WebRTC is hidden behind a build-time flag that is unused in most distros, and if it were, the implementation is still incomplete. This will be available when WebkitGTK ships with WebRTC support.
 
 # Building
 
@@ -305,6 +305,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 * (non-Windows) External images (UserBG, Decor, UserPFP, etc.) will not load
 * (non-Windows) Fonts/font-faces will not load
+* Everything else in [the issues [page](https://github.com/SpikeHD/Dorion/issues)
 
 # Troubleshooting
 
@@ -349,28 +350,7 @@ If you submit an issue or ask a question in the Discord, it's likely you will be
   WEBKIT_DISABLE_DMABUF_RENDERER=1
   ```
 
-# TODO
-
-* [x] Multi-thread CSS processing
-* [x] Use resource files from within the binary itself instead of the filesystem
-* [x] Desktop notifications
-  * [x] AND displaying the number of notifs in the desktop icon
-* [x] Webpack stuff
-* [x] Global push-to-talk
-* [x] Rich presence(?)
-  * [x] FULL rich presence
-* [x] Custom keybinds
-* [x] Backup localized themes
-* [x] Localization timeout
-* [x] Safemode key (disable themes and plugins)
-* [x] New release notifications
-* [x] Logging system
-* [x] API abstractions
-
 # Using Plugins, Extensions, and Themes
-
-> [!TIP]
-> See the `examples` directory for examples of plugins, including how to include external code and themes.
 
 Plugins, extensions, and themes are relatively simple to use, the file structure looks like so on Windows:
 
@@ -411,22 +391,17 @@ Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md
 
 # Screenshots
 
-## Installer Size Comparison (Windows)
-<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/55ce8a69-1732-4e17-90f6-5582bcc21d0c" />
-
 ## Full Installed Size Comparison (Windows)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/eb603f1f-f633-4913-a25e-1316b495a08a" />
 
-## Loading screen
-<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/5c9041da-038c-465c-b048-a7c4034a45e0" />
+## Some Performance Settings
+<img width="100%" src="https://github.com/user-attachments/assets/a3364e03-7de2-4293-8cd7-cf655e99546f" />
 
-## Settings Menu
-<img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/b34577eb-a583-4c9d-abf9-fde791e0f0aa" />
-
-Theme: [Catpuccin - Frappe](https://github.com/catppuccin/discord)
+Theme: [OldCord](https://betterdiscord.app/theme/OldCord)
 
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
+
 
 
