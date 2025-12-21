@@ -160,7 +160,7 @@ fn send_notification_internal_windows(
 
         Ok(())
       }
-    })
+    });
   }
 
   toast
