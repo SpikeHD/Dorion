@@ -1,8 +1,8 @@
 use std::sync::atomic::Ordering;
 
 use crate::{
-  functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
-  log,
+  functionality::tray::{TRAY_STATE, TrayIcon, set_tray_icon},
+  log, util::window_helpers::ultrashow,
 };
 use tauri::Manager;
 
@@ -94,22 +94,35 @@ fn send_notification_internal(
 
 #[cfg(not(target_os = "windows"))]
 fn send_notification_internal_other(
-  _app: &tauri::AppHandle,
+  app: &tauri::AppHandle,
   title: String,
   body: String,
   _icon: String,
-  _additional_data: Option<AdditionalData>,
+  additional_data: Option<AdditionalData>,
 ) {
   use notify_rust::{Notification, Timeout};
+
+  let win = app.get_webview_window("main");
 
   match Notification::new()
     .summary(&title)
     .body(&body)
     .icon("dorion")
     .timeout(Timeout::Milliseconds(5000))
+    .action("default", "default")
     .show()
   {
-    Ok(_) => {}
+    Ok(n) => {
+      #[cfg(target_os = "linux")]
+      n.wait_for_action(|action| match action {
+        "default" => {
+          if let Some(win) = &win {
+            open_notification_data(win, additional_data);
+          }
+        }
+        _ => {}
+      })
+    }
     Err(e) => log!("Failed to send notification: {:?}", e),
   };
 }
@@ -122,7 +135,6 @@ fn send_notification_internal_windows(
   icon: String,
   additional_data: Option<AdditionalData>,
 ) {
-  use crate::util::window_helpers::ultrashow;
   use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
 
@@ -135,33 +147,7 @@ fn send_notification_internal_windows(
     .sound(None)
     .on_activated(move |_s| {
       if let Some(win) = &win {
-        ultrashow(win.clone());
-
-        // Navigate to the guild/channel/message if provided
-        if let Some(data) = &additional_data {
-          let guild_id = data.guild_id.as_deref().unwrap_or_default();
-          let channel_id = data.channel_id.as_deref().unwrap_or_default();
-          let message_id = data.message_id.as_deref().unwrap_or_default();
-
-          let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
-            format!("/channels/{}/{}/{}", guild_id, channel_id, message_id)
-          } else if !guild_id.is_empty() && !channel_id.is_empty() {
-            format!("/channels/{}/{}", guild_id, channel_id)
-          } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
-            format!("/channels/@me/{}/{}", channel_id, message_id)
-          } else if !guild_id.is_empty() {
-            format!("/channels/{}", guild_id)
-          } else {
-            String::new()
-          };
-
-          if !url.is_empty() {
-            win.eval(format!(r#"
-            history.pushState(null, "", "{url}");
-            window.dispatchEvent(new PopStateEvent("popstate"));
-            "#)).unwrap_or_default();
-          }
-        }
+        open_notification_data(win, additional_data);
       }
 
       Ok(())
@@ -286,5 +272,35 @@ fn notification_count_inner(_window: &tauri::WebviewWindow, amount: i64) {
     }
   } else {
     log!("Failed to mark main thread!");
+  }
+}
+
+pub fn open_notification_data(win: &tauri::WebviewWindow, additional_data: Option<AdditionalData>) {
+  ultrashow(win.clone());
+
+  // Navigate to the guild/channel/message if provided
+  if let Some(data) = &additional_data {
+    let guild_id = data.guild_id.as_deref().unwrap_or_default();
+    let channel_id = data.channel_id.as_deref().unwrap_or_default();
+    let message_id = data.message_id.as_deref().unwrap_or_default();
+
+    let url = if !guild_id.is_empty() && !channel_id.is_empty() && !message_id.is_empty() {
+      format!("/channels/{}/{}/{}", guild_id, channel_id, message_id)
+    } else if !guild_id.is_empty() && !channel_id.is_empty() {
+      format!("/channels/{}/{}", guild_id, channel_id)
+    } else if !channel_id.is_empty() && !message_id.is_empty() && guild_id.is_empty() {
+      format!("/channels/@me/{}/{}", channel_id, message_id)
+    } else if !guild_id.is_empty() {
+      format!("/channels/{}", guild_id)
+    } else {
+      String::new()
+    };
+
+    if !url.is_empty() {
+      win.eval(format!(r#"
+      history.pushState(null, "", "{url}");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+      "#)).unwrap_or_default();
+    }
   }
 }
