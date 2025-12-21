@@ -207,10 +207,10 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 * Global push-to-talk and custom keybinds
 * [Shelter](https://github.com/uwu/Shelter) and (optionally) [Vencord](https://github.com/vendicated/vencord)/[Equicord](https://github.com/equicord/equicord) included out of the box
 * Full [RPC/game presence](https://github.com/SpikeHD/rsRPC) support included out of the box.
-  * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins enabled.
-* (Hopefully) better low-end system performance. YMMV.
+  * This also requires either the [shelteRPC](https://github.com/SpikeHD/shelter-plugins?tab=readme-ov-file#shelterpc) or [arRPC](https://vencord.dev/plugins/WebRichPresence%20(arRPC)) plugins to be enabled
+* (Hopefully) better low-end system performance, YMMV
 * ARM support for all platforms
-* Feature flags for those who build from source.
+* Feature flags for those who build from source
 
 ## Plugins
 
