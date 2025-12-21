@@ -150,14 +150,13 @@ fn send_notification_internal_windows(
     .sound(None);
 
   if let Some(data) = &additional_data {
-    toast.on_activated({
+    toast = toast.on_activated({
       let additional_data = additional_data.clone();
 
       move |_s| {
-        if let Some(win) = &win {
-          open_notification_data(win, additional_data);
+        if let (Some(win), Some(data)) = (&win, &additional_data) {
+          open_notification_data(win, data.clone());
         }
-
         Ok(())
       }
     });
