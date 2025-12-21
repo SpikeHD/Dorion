@@ -1,8 +1,9 @@
 use std::sync::atomic::Ordering;
 
 use crate::{
-  functionality::tray::{TRAY_STATE, TrayIcon, set_tray_icon},
-  log, util::window_helpers::ultrashow,
+  functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
+  log,
+  util::window_helpers::ultrashow,
 };
 use tauri::Manager;
 
@@ -147,12 +148,16 @@ fn send_notification_internal_windows(
     .title(title.as_str())
     .text2(body.as_str())
     .sound(None)
-    .on_activated(move |_s| {
-      if let Some(win) = &win {
-        open_notification_data(win, additional_data);
-      }
+    .on_activated({
+      let additional_data = additional_data.clone();
 
-      Ok(())
+      move |_s| {
+        if let Some(win) = &win {
+          open_notification_data(win, additional_data);
+        }
+
+        Ok(())
+      }
     })
     .show()
     .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
@@ -299,10 +304,14 @@ pub fn open_notification_data(win: &tauri::WebviewWindow, additional_data: Optio
     };
 
     if !url.is_empty() {
-      win.eval(format!(r#"
+      win
+        .eval(format!(
+          r#"
       history.pushState(null, "", "{url}");
       window.dispatchEvent(new PopStateEvent("popstate"));
-      "#)).unwrap_or_default();
+      "#
+        ))
+        .unwrap_or_default();
     }
   }
 }
