@@ -29,7 +29,7 @@ window.SHELTER_INJECTOR_PLUGINS = {
   'Dorion Titlebar': ['https://spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Settings': ['https://spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
   'Always Trust': ['https://spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
-//  'Dorion Notifications': ['https://spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
+  'Dorion Notifications': ['https://spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Streamer Mode': ['https://spikehd.dev/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Updater': ['https://spikehd.dev/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
   'Dorion PTT': ['https://spikehd.dev/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
