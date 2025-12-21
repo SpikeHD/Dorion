@@ -10,7 +10,7 @@ use tauri::Manager;
 #[cfg(target_os = "windows")]
 use super::helpers::is_windows_7;
 
-#[derive(serde::Deserialize, Debug)]
+#[derive(serde::Deserialize, Debug, Clone)]
 pub struct AdditionalData {
   guild_id: Option<String>,
   channel_id: Option<String>,
