@@ -26,6 +26,12 @@ const INJECTED_PLUGIN_OPTIONS = {
 }
 
 window.SHELTER_INJECTOR_PLUGINS = {
+  'Antitrack': ['https://yellowsink.github.io/shelter-plugins/antitrack/',  {
+    ...INJECTED_PLUGIN_OPTIONS,
+    allowedActions: {
+      toggle: true,
+    }
+  }],
   'Dorion Titlebar': ['https://spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
   'Dorion Settings': ['https://spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
   'Always Trust': ['https://spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
