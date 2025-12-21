@@ -143,12 +143,14 @@ fn send_notification_internal_windows(
 
   let win = app.get_webview_window("main");
 
-  Toast::new(&app.config().identifier)
+  let mut toast = Toast::new(&app.config().identifier)
     .icon(Path::new(&icon), IconCrop::Circular, "")
     .title(title.as_str())
     .text2(body.as_str())
-    .sound(None)
-    .on_activated({
+    .sound(None);
+
+  if let Some(data) = &additional_data {
+    toast.on_activated({
       let additional_data = additional_data.clone();
 
       move |_s| {
@@ -159,6 +161,9 @@ fn send_notification_internal_windows(
         Ok(())
       }
     })
+  }
+
+  toast
     .show()
     .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
 }
