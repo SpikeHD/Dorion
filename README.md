@@ -305,7 +305,7 @@ All built files will be in `src-tauri/target/(release|debug)/`. Installation fil
 
 * (non-Windows) External images (UserBG, Decor, UserPFP, etc.) will not load
 * (non-Windows) Fonts/font-faces will not load
-* Everything else in [the issues [page](https://github.com/SpikeHD/Dorion/issues)
+* Everything else in [the issues page](https://github.com/SpikeHD/Dorion/issues)
 
 # Troubleshooting
 
@@ -402,6 +402,3 @@ Theme: [OldCord](https://betterdiscord.app/theme/OldCord)
 <img width="100%" src="https://github.com/SpikeHD/Dorion/assets/25207995/c73a2333-31fb-404a-9489-5e1b1f8cfa54" />
 
 Theme: [Fluent](https://betterdiscord.app/theme/Fluent)
-
-
-
