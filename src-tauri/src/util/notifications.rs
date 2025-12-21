@@ -114,14 +114,16 @@ fn send_notification_internal_other(
   {
     Ok(n) => {
       #[cfg(target_os = "linux")]
-      n.wait_for_action(|action| match action {
-        "default" => {
-          if let Some(win) = &win {
-            open_notification_data(win, additional_data);
+      std::thread::spawn(move || {
+        n.wait_for_action(|action| match action {
+          "default" => {
+            if let Some(win) = &win {
+              open_notification_data(win, additional_data);
+            }
           }
-        }
-        _ => {}
-      })
+          _ => {}
+        })
+      });
     }
     Err(e) => log!("Failed to send notification: {:?}", e),
   };
