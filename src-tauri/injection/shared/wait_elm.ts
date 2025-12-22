@@ -50,10 +50,10 @@ export async function waitForElmEx(queries: Array<query> | query, cfg: Partial<w
     const q = queries.shift()
     if (!q) break
     query = isString(q) ? [q] : q
-    const subtree = query.every(q => q[0] === '>')
-    if (subtree) query = query.map(q => q.slice(1))
+    const directChild = query.every(q => q[0] === '>')
+    if (directChild) query = query.map(q => q.slice(1))
     // no observe if this elm already exist
-    const elm = subtree ? subtreeFind(root, query) : queryFind(root, query)
+    const elm = directChild ? subtreeFind(root, query) : queryFind(root, query)
     if (elm) { root = elm; if (callbackFn) callbackFn(root); continue loop }
     // start observer
     root = await observeDom(root, (node, res) => {
@@ -61,7 +61,7 @@ export async function waitForElmEx(queries: Array<query> | query, cfg: Partial<w
       if (node.nodeType !== Node.ELEMENT_NODE) return true
       const e = node as Element
       for (let q of query) {
-        if (!subtree) {
+        if (!directChild) {
           const s = q[0] === '>'
           if (s) q = q.slice(1)
         }
@@ -75,7 +75,7 @@ export async function waitForElmEx(queries: Array<query> | query, cfg: Partial<w
         }
       }
       return true
-    }, subtree) as Element
+    }, !directChild) as Element
     // callback after found
     if (callbackFn) callbackFn(root)
   }
