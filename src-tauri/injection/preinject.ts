@@ -17,41 +17,9 @@ window.Dorion = {
     createLocalStorage,
   },
   shouldShowUnreadBadge: false
-}
+};
 
-const INJECTED_PLUGIN_OPTIONS = {
-  isVisible: true,
-  allowedActions: {},
-  loaderName: 'Dorion'
-}
-
-window.SHELTER_INJECTOR_PLUGINS = {
-  'Antitrack': ['https://yellowsink.github.io/shelter-plugins/antitrack/',  {
-    ...INJECTED_PLUGIN_OPTIONS,
-    allowedActions: {
-      toggle: true,
-    }
-  }],
-  'Dorion Titlebar': ['https://spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Settings': ['https://spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
-  'Always Trust': ['https://spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Notifications': ['https://spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Streamer Mode': ['https://spikehd.dev/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Updater': ['https://spikehd.dev/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion PTT': ['https://spikehd.dev/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Tray': ['https://spikehd.dev/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Fullscreen': ['https://spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Custom Keybinds': ['https://spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
-  'Dorion Helpers': ['https://spikehd.dev/shelter-plugins/dorion-helpers/', INJECTED_PLUGIN_OPTIONS],
-  'Web Keybinds': ['https://spikehd.dev/shelter-plugins/web-keybinds/', {
-    ...INJECTED_PLUGIN_OPTIONS,
-    allowedActions: {
-      toggle: true,
-    }
-  }],
-}
-
-;(async () => {
+(async () => {
   // if we are in an iframe we don't really need to load anything, else we bork whatever is inside
   if (window.self !== window.top) {
     // fixes activities
@@ -83,6 +51,56 @@ window.SHELTER_INJECTOR_PLUGINS = {
 
   const platform = await window.__TAURI__.core.invoke('get_platform')
   document.documentElement.setAttribute('data-dorion-platform', platform)
+
+  const { invoke } = window.__TAURI__.core
+  const config = await invoke('read_config_file')
+
+  window.__DORION_CONFIG__ = isJson(config) ? JSON.parse(config) : {}
+
+  // Recreate config if there is an issue
+  if (!Object.keys(config).length || !config) {
+    const defaultConf = await invoke('default_config')
+    // Write
+    await invoke('write_config_file', {
+      config: defaultConf
+    })
+
+    window.__DORION_CONFIG__ = JSON.parse(defaultConf)
+  }
+
+  const debug = !window.__DORION_CONFIG__.client_plugins
+  console.log(window.__DORION_CONFIG__)
+  const INJECTED_PLUGIN_OPTIONS = {
+    isVisible: true,
+    allowedActions: { toggle: debug },
+    loaderName: 'Dorion'
+  }
+
+  window.SHELTER_INJECTOR_PLUGINS = {
+    'Antitrack': ['https://yellowsink.github.io/shelter-plugins/antitrack/', {
+      ...INJECTED_PLUGIN_OPTIONS,
+      allowedActions: {
+        toggle: true,
+      }
+    }],
+    'Dorion Titlebar': ['https://spikehd.dev/shelter-plugins/dorion-titlebar/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Settings': ['https://spikehd.dev/shelter-plugins/dorion-settings/', INJECTED_PLUGIN_OPTIONS],
+    'Always Trust': ['https://spikehd.dev/shelter-plugins/always-trust/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Notifications': ['https://spikehd.dev/shelter-plugins/dorion-notifications/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Streamer Mode': ['https://spikehd.dev/shelter-plugins/dorion-streamer-mode/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Updater': ['https://spikehd.dev/shelter-plugins/dorion-updater/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion PTT': ['https://spikehd.dev/shelter-plugins/dorion-ptt/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Tray': ['https://spikehd.dev/shelter-plugins/dorion-tray/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Fullscreen': ['https://spikehd.dev/shelter-plugins/dorion-fullscreen/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Custom Keybinds': ['https://spikehd.dev/shelter-plugins/dorion-custom-keybinds/', INJECTED_PLUGIN_OPTIONS],
+    'Dorion Helpers': ['https://spikehd.dev/shelter-plugins/dorion-helpers/', INJECTED_PLUGIN_OPTIONS],
+    'Web Keybinds': ['https://spikehd.dev/shelter-plugins/web-keybinds/', {
+      ...INJECTED_PLUGIN_OPTIONS,
+      allowedActions: {
+        toggle: true,
+      }
+    }],
+  }
 
   init()
 })()
@@ -231,10 +249,10 @@ async function handleThemeInjection() {
     const ts = document.querySelector('#dorion-theme')
     ts.textContent = \`
       ${cleanContents?.replace(/`/g, '\\`')
-  // To this day I do not know why I need to do this
-    .replace(/\\8/g, '')
-    .replace(/\\9/g, '')
-}
+      // To this day I do not know why I need to do this
+      .replace(/\\8/g, '')
+      .replace(/\\9/g, '')
+    }
     \`
 
     console.log('[Theme Loader] Appending Styles')
@@ -262,10 +280,10 @@ async function handleClientModThemeInjection() {
     const ts = document.querySelector('#dorion-client-mods-themes')
     ts.textContent = \`
       ${cleanContents?.replace(/`/g, '\\`')
-  // To this day I do not know why I need to do this
-    .replace(/\\8/g, '')
-    .replace(/\\9/g, '')
-}
+      // To this day I do not know why I need to do this
+      .replace(/\\8/g, '')
+      .replace(/\\9/g, '')
+    }
     \`
 
     console.log('[Theme Loader] Appending Client Mod Styles')
