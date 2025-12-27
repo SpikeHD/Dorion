@@ -27,6 +27,9 @@ pub struct Args {
   #[cfg(target_os = "windows")]
   #[options(help = "(windows only) additional arguments to pass to the webview process")]
   pub webview_args: String,
+
+  #[options(help = "set the profile to load. overrides the profile set in config", meta = "PROFILE")]
+  pub profile: Option<String>,
 }
 
 impl Args {
@@ -63,4 +66,8 @@ pub fn is_legacy_fetch() -> bool {
 #[cfg(target_os = "windows")]
 pub fn get_webview_args() -> String {
   PARSED_ARGS.webview_args.clone()
+}
+
+pub fn get_profile() -> Option<String> {
+  PARSED_ARGS.profile.clone()
 }

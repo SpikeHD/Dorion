@@ -4,7 +4,7 @@ use tauri::path::BaseDirectory;
 use tauri::Manager;
 
 use crate::config::{default_config, get_config};
-use crate::log;
+use crate::{args, log};
 
 fn create_if_not_exists(path: &PathBuf) {
   if fs::metadata(path).is_err() {
@@ -207,10 +207,21 @@ pub fn profiles_dir() -> PathBuf {
 }
 
 pub fn get_webdata_dir() -> PathBuf {
-  let profile = get_config().profile.unwrap_or("default".to_string());
+  // Grab from args first, it should take precedence
+  let profile = match args::get_profile() {
+    Some(p) => p,
+    None => {
+      let cfg = get_config();
+      cfg.profile.unwrap_or("default".to_string())
+    }
+  };
   let profiles = profiles_dir();
+  let dir = profiles.join(profile).join("webdata");
 
-  profiles.join(profile).join("webdata")
+  // as a precaution, ensure the directory exists
+  create_if_not_exists(&dir);
+
+  dir
 }
 
 pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
