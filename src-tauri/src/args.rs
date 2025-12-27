@@ -1,6 +1,8 @@
+use std::sync::LazyLock;
+
 use gumdrop::Options;
 
-#[derive(Debug, Options)]
+#[derive(Debug, Options, Clone)]
 pub struct Args {
   #[options(help = "print usage information")]
   pub help: bool,
@@ -33,29 +35,32 @@ impl Args {
   }
 }
 
+// Lazy static to hold parsed args
+static PARSED_ARGS: LazyLock<Args> = LazyLock::new(|| Args::parse());
+
 pub fn is_help() -> bool {
   // Parsing will automatically print help information
-  Args::parse().help
+  PARSED_ARGS.help
 }
 
 pub fn is_safemode() -> bool {
-  Args::parse().safemode
+  PARSED_ARGS.safemode
 }
 
 pub fn is_startup() -> bool {
-  Args::parse().startup
+  PARSED_ARGS.startup
 }
 
 pub fn get_proxy() -> Option<String> {
-  Args::parse().proxy
+  PARSED_ARGS.proxy.clone()
 }
 
 #[cfg(target_os = "windows")]
 pub fn is_legacy_fetch() -> bool {
-  Args::parse().legacy_fetch
+  PARSED_ARGS.legacy_fetch
 }
 
 #[cfg(target_os = "windows")]
 pub fn get_webview_args() -> String {
-  Args::parse().webview_args
+  PARSED_ARGS.webview_args.clone()
 }
