@@ -207,7 +207,7 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
   } else {
     let _ = window.request_user_attention(None);
   }
-  
+
   // If the tray state is unread or default,
   if TrayIcon::from_usize(TRAY_STATE.load(Ordering::Relaxed)).is_overwrite() {
     let state = if amount == 0 { "default" } else { "unread" };
