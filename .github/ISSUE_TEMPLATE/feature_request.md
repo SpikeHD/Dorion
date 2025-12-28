@@ -7,14 +7,15 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
+### Issue Checklist
+- [ ] I have searched for my issue already
+- [ ] I have read the [Troubleshooting](https://github.com/SpikeHD/Dorion?tab=readme-ov-file#troubleshooting) section of the README
+
+### Why should this be included?
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**Describe the solution you'd like**
+### What (if any) solution do you have in mind?
 A clear and concise description of what you want to happen.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
+### Additional context
 Add any other context or screenshots about the feature request here.
