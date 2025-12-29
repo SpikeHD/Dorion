@@ -55,7 +55,6 @@ pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pre
   let input_hotkey = match keystructs_to_hotkey(&keys) {
     Some(hotkey) => hotkey,
     None => {
-      log!("Invalid key combination: {:?}", keys);
       return;
     }
   };
@@ -216,8 +215,6 @@ fn register_all_keybinds(
 }
 
 fn handle_push_action(win: &tauri::WebviewWindow, action: &str, pressed: bool) {
-  log!("Push action triggered: {} | Pressed: {}", action, pressed);
-
   if !PTT_ENABLED.load(Ordering::Relaxed) && action == "PUSH_TO_TALK" {
     return;
   }

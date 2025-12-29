@@ -35,6 +35,7 @@ const queryFind = (p: Element, query: Array<string>) => {
   }
   return
 }
+
 export async function waitForElmEx(queries: Array<query> | query, cfg: Partial<waitCfg> = {}): Promise<Element> {
   const callbackFn = cfg.callbackFn
   let root = typeof cfg.root !== 'undefined' ? cfg.root : document.body
