@@ -1,4 +1,4 @@
-import { waitForElmEx } from "./wait_elm"
+import { waitForElmEx } from './wait_elm'
 
 export function cssSanitize(css: string) {
   const style = document.createElement('style')
@@ -30,9 +30,9 @@ export function isJson(s: string) {
 export function waitForDom() {
   return new Promise<void>((resolve) => {
     if (document.body) return resolve()
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener('DOMContentLoaded', () => {
       resolve()
-    });
+    })
   })
 }
 

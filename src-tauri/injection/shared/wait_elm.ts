@@ -36,12 +36,12 @@ const queryFind = (p: Element, query: Array<string>) => {
   return
 }
 export async function waitForElmEx(queries: Array<query> | query, cfg: Partial<waitCfg> = {}): Promise<Element> {
-  const callbackFn = cfg.callbackFn;
-  let root = typeof cfg.root !== 'undefined' ? cfg.root : document.body;
-  const timeout = cfg.timeout;
+  const callbackFn = cfg.callbackFn
+  let root = typeof cfg.root !== 'undefined' ? cfg.root : document.body
+  const timeout = cfg.timeout
 
   let query: string[]
-  let stop = false;
+  let stop = false
   if (timeout) setTimeout(() => { stop = true }, timeout)
 
   if (isString(queries)) queries = [queries]
