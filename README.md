@@ -164,6 +164,7 @@
 * [TODO](#todo)
 * [Using Plugins, Extensions, and Themes](#using-plugins-extensions-and-themes)
 * [Contributing](#contributing)
+  * [Translating](#translating)
   * [Contributors](#contributors)
 * [Screenshots](#screenshots)
 
@@ -382,6 +383,10 @@ so if you download a plugin, extension, or theme, just pop it into the `plugins`
 # Contributing
 
 Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md](https://github.com/SpikeHD/Dorion/blob/main/CONTRIBUTING.md)
+
+## Translating
+
+See [TRANSLATING.md](./TRANSLATING.md)
 
 ## Contributors
 
