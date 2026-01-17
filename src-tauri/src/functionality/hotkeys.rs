@@ -79,8 +79,6 @@ pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pre
       }
     }
   }
-
-  log!("No action found for key combination: {:?}", keys);
 }
 
 pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
