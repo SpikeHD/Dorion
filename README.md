@@ -42,34 +42,34 @@
   <tr>
     <td width="23%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_x64_en-US.msi">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_x64_en-US.msi">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/Dorion/releases/download/v6.11.0/Dorion_6.11.0.arm64-setup.exe">ARM</a>
+        <a href="https://github.com/SpikeHD/Dorion/releases/download/v6.12.0/Dorion_6.12.0.arm64-setup.exe">ARM</a>
       </div>
     </td>
     <td width="23%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_x64.dmg">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_x64.dmg">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_aarch64.dmg">ARM</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_aarch64.dmg">ARM</a>
       </div>
     </td>
     <td width="23%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_amd64.deb">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_amd64.deb">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_armhf.deb">ARM v7</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_armhf.deb">ARM v7</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0_arm64.deb">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0_arm64.deb">ARM64</a>
       </div>
     </td>
     <td width="23%">
       <div align="center">
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0-1.x86_64.rpm">x86_64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0-1.x86_64.rpm">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0-1.armhfp.rpm">ARM v7</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0-1.armhfp.rpm">ARM v7</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.11.0/Dorion_6.11.0-1.aarch64.rpm">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.12.0/Dorion_6.12.0-1.aarch64.rpm">ARM64</a>
       </div>
     </td>
   </tr>
@@ -141,7 +141,7 @@
 > You can find portable builds in the [releases](https://github.com/SpikeHD/dorion/releases/latest/) page. You can also [build](#building) Dorion yourself!
 
 > [!NOTE]
-> ***MacOS Users***: If opening Dorion gives you "Dorion.app is damaged and cannot be opened", MacOS is lying to you and you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`. Alternatively, you can open the **Privacy & Security** settings pane and scroll down to the **Security** section to remove the quarantine.
+> ***MacOS Users***: If opening Dorion gives you "Dorion.app cannot be opened because it is from an unidentified developer", you may just need to run `sudo xattr -rd com.apple.quarantine /Applications/Dorion.app`. Alternatively, you can open the **Privacy & Security** settings pane and scroll down to the **Security** section to remove the quarantine.
 >
 > ***Windows Users***: Defender may think Dorion is a virus. This just happens sometimes, and if SmartScreen blocks it from running, click "More Info" and "Run Anyways". Feel free to scan Dorion with [Virustotal](https://www.virustotal.com/gui/home/upload)!
 
@@ -164,6 +164,7 @@
 * [TODO](#todo)
 * [Using Plugins, Extensions, and Themes](#using-plugins-extensions-and-themes)
 * [Contributing](#contributing)
+  * [Translating](#translating)
   * [Contributors](#contributors)
 * [Screenshots](#screenshots)
 
@@ -382,6 +383,10 @@ so if you download a plugin, extension, or theme, just pop it into the `plugins`
 # Contributing
 
 Issues, PRs, etc. are all welcome! For guidelines and tips, see [CONTRIBUTING.md](https://github.com/SpikeHD/Dorion/blob/main/CONTRIBUTING.md)
+
+## Translating
+
+See [TRANSLATING.md](./TRANSLATING.md)
 
 ## Contributors
 
