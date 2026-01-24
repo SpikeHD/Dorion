@@ -308,6 +308,11 @@ fn main() {
         )
         .zoom_hotkeys_enabled(true)
         .browser_extensions_enabled(true);
+        #[cfg(target_os = "macos")]
+        {
+          win = win.title_bar_style(tauri::TitleBarStyle::Overlay);
+          win = win.hidden_title(true);
+        }
 
       if !args::is_safemode() {
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
