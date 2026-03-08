@@ -98,19 +98,47 @@ export function proxyAddEventListener() {
   }
 }
 
+const INTERNAL_DOMAINS = [
+  'discord.com',
+  'discordapp.com',
+  'cdn.discordapp.com'
+]
+
+function isExternal(url: string) {
+  try {
+    if (url.startsWith('/')) return false
+
+    const parsed = new URL(url)
+
+    return !INTERNAL_DOMAINS.some(domain =>
+      parsed.hostname.endsWith(domain)
+    )
+  } catch {
+    return false
+  }
+}
+
 export function proxyOpen() {
   // Make window.open become window.__TAURI__.shell.open
   window.nativeOpen = window.open
   window.open = (url: string | undefined | URL, target?: string, features?: string) => {
+
+    if (!url) {
+      return window.nativeOpen(url, target, features)
+    }
+
+    const urlStr = url.toString()
     // If this needs to open externally, do so
-    if (url !== 'about:blank' && (target === '_blank' || !target)) {
-      window.__TAURI__.shell.open(url as string)
+    if (urlStr !== 'about:blank' && (target === '_blank' || !target) && isExternal(urlStr)) {
+      console.log('[Proxy Open] External URL:', urlStr)
+
+      window.__TAURI__.shell.open(urlStr)
       return null
     }
 
-    console.log('[Proxy Open] Opening with native open function')
+    console.log('[Proxy Open] Internal URL:', urlStr)
     
-    const win = window.nativeOpen(url as string, target, features)
+    const win = window.nativeOpen(urlStr, target, features)
 
     // Otherwise, use the native open
     return win
