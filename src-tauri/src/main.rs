@@ -5,6 +5,7 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
+#[cfg(target_os = "windows")]
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::{env, str::FromStr, time::Duration};
 #[cfg(target_os = "windows")]
@@ -50,6 +51,7 @@ mod util;
 mod window;
 
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
+#[cfg(target_os = "windows")]
 static POPOUT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(target_os = "windows")]
