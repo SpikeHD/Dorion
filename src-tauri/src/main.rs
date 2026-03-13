@@ -5,7 +5,11 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
+#[cfg(target_os = "windows")]
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::{env, str::FromStr, time::Duration};
+#[cfg(target_os = "windows")]
+use tauri::webview::NewWindowResponse;
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_deep_link::DeepLinkExt;
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -47,6 +51,8 @@ mod util;
 mod window;
 
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
+#[cfg(target_os = "windows")]
+static POPOUT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(target_os = "windows")]
 pub fn additional_args() {
@@ -312,6 +318,30 @@ fn main() {
       if !args::is_safemode() {
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
         win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
+      }
+
+      #[cfg(target_os = "windows")]
+      {
+        let app_handle = app.handle().clone();
+        win = win.on_new_window(move |url, features| {
+          let label = format!("popout-{}", POPOUT_COUNTER.fetch_add(1, Ordering::Relaxed));
+
+          let builder = WebviewWindowBuilder::new(
+            &app_handle,
+            label,
+            tauri::WebviewUrl::External(url),
+          )
+          .window_features(features)
+          .title("Popout");
+
+          match builder.build() {
+            Ok(window) => NewWindowResponse::Create { window },
+            Err(e) => {
+              log!("Failed to create popout window: {:?}", e);
+              NewWindowResponse::Deny
+            }
+          }
+        });
       }
 
       if config.proxy_uri.is_some() || args::get_proxy().is_some() {
