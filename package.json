@@ -19,15 +19,15 @@
     "shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.39.1",
-    "@tauri-apps/cli": "^2.9.5",
-    "@typescript-eslint/eslint-plugin": "^8.46.3",
-    "@typescript-eslint/parser": "^8.46.3",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^9.39.4",
+    "@tauri-apps/cli": "^2.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
     "esbuild": "^0.24.2",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.4",
     "globals": "^15.15.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3",
     "vite": "^6.4.1"
   },
