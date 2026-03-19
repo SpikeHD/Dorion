@@ -1,88 +1,152 @@
 import { applyExtraCSS } from './shared/ui'
 import { initWindowsKeybinds } from './shared/windows_keybinds'
 
-const DORION_AUDIO_REFRESH_ATTR = '__DORION_AUDIO_REFRESH_PATCHED__'
-let audioRefreshTimer: number | undefined
-
-function scheduleVoiceMediaRefresh(delay = 150) {
-  window.clearTimeout(audioRefreshTimer)
-  audioRefreshTimer = window.setTimeout(() => {
-    refreshVoiceMediaElements()
-  }, delay)
-}
-
-function refreshVoiceMediaElements() {
-  const mediaElements = Array.from(document.querySelectorAll('audio, video')) as HTMLMediaElement[]
-
-  for (const mediaElement of mediaElements) {
-    if (!mediaElement.isConnected) continue
-    if (!mediaElement.srcObject && !mediaElement.currentSrc && !mediaElement.src) continue
-
-    if (mediaElement instanceof HTMLVideoElement && mediaElement.muted) continue
-
-    const srcObject = mediaElement.srcObject
-    const currentSrc = mediaElement.currentSrc || mediaElement.src
-    const currentTime = Number.isFinite(mediaElement.currentTime) ? mediaElement.currentTime : 0
-    const shouldResumePlayback = !mediaElement.paused || mediaElement.autoplay
-
-    try {
-      if (srcObject) {
-        mediaElement.srcObject = null
-        mediaElement.srcObject = srcObject
-      } else if (currentSrc) {
-        mediaElement.src = ''
-        mediaElement.src = currentSrc
-      }
-
-      if (currentTime > 0) {
-        mediaElement.currentTime = currentTime
-      }
-
-      if (shouldResumePlayback) {
-        mediaElement.play().catch(() => { })
-      }
-    } catch (_error) {
-      // ignored on purpose, this is a best-effort playback recovery
-    }
+declare global {
+  interface Window {
+    __DORION_AUDIO_FIX_INSTALLED__?: boolean
   }
 }
 
-function initWindowsVoiceMediaRecovery() {
-  if (document.documentElement.getAttribute('data-dorion-platform') !== 'windows') return
+type MaybePC = RTCPeerConnection & {
+  __dorionAudioFixTrackListener__?: boolean
+}
 
-  const patchedWindow = window as Window & Record<string, boolean>
-  if (patchedWindow[DORION_AUDIO_REFRESH_ATTR]) return
-  patchedWindow[DORION_AUDIO_REFRESH_ATTR] = true
+const REARM_DELAY_MS = 120
 
-  const peerConnectionPrototype = window.RTCPeerConnection?.prototype
-  const originalSetRemoteDescription = peerConnectionPrototype?.setRemoteDescription
+function isWindowsDorion() {
+  return document.documentElement.getAttribute('data-dorion-platform') === 'windows'
+}
 
-  if (peerConnectionPrototype && originalSetRemoteDescription) {
-    peerConnectionPrototype.setRemoteDescription = async function(...args: Parameters<RTCPeerConnection['setRemoteDescription']>) {
-      const result = await originalSetRemoteDescription.apply(this, args)
-      scheduleVoiceMediaRefresh()
-      return result
+function audioRecoveryEnabled() {
+  return window.__DORION_CONFIG__.audio_recovery_fix !== false
+}
+
+function audioRecoveryDebugEnabled() {
+  return window.__DORION_CONFIG__.audio_recovery_debug === true
+}
+
+function audioRecoveryLog(message: string, ...args: unknown[]) {
+  if (!audioRecoveryDebugEnabled()) return
+  console.debug(`[Dorion Audio Recovery] ${message}`, ...args)
+}
+
+function getRemoteAudioElements(): HTMLMediaElement[] {
+  const els = Array.from(document.querySelectorAll('audio')) as HTMLAudioElement[]
+
+  return els.filter(el => {
+    const stream = el.srcObject
+    if (!(stream instanceof MediaStream)) return false
+
+    const audioTracks = stream.getAudioTracks()
+    if (!audioTracks.length) return false
+
+    return audioTracks.some(track => track.readyState === 'live')
+  })
+}
+
+async function rearmAudioElement(el: HTMLMediaElement) {
+  if (!el.isConnected) return
+
+  const stream = el.srcObject
+  if (!(stream instanceof MediaStream)) return
+
+  const wasPaused = el.paused
+  const currentTime = Number.isFinite(el.currentTime) ? el.currentTime : 0
+
+  try {
+    el.srcObject = null
+    el.srcObject = stream
+
+    if (currentTime > 0) {
+      try {
+        el.currentTime = currentTime
+      } catch {
+        // no-op
+      }
     }
-  }
 
-  const observer = new MutationObserver(mutations => {
-    const shouldRefresh = mutations.some(({ addedNodes, removedNodes }) => {
-      const nodes = [...addedNodes, ...removedNodes]
-      return nodes.some(node => {
-        if (!(node instanceof Element)) return false
-        return node.matches('audio, video') || !!node.querySelector('audio, video')
-      })
+    if (!wasPaused || el.autoplay) {
+      await el.play().catch(() => { })
+    }
+  } catch (error) {
+    audioRecoveryLog('Failed to rearm audio element', error)
+  }
+}
+
+function scheduleAudioRecovery(reason: string) {
+  audioRecoveryLog('Scheduling recovery', reason)
+
+  window.setTimeout(() => {
+    const elements = getRemoteAudioElements()
+    audioRecoveryLog('Recovering elements', elements.length, reason)
+
+    for (const el of elements) {
+      void rearmAudioElement(el)
+    }
+  }, REARM_DELAY_MS)
+}
+
+function attachTrackListeners(pc: MaybePC) {
+  if (pc.__dorionAudioFixTrackListener__) return
+  pc.__dorionAudioFixTrackListener__ = true
+
+  pc.addEventListener('track', ev => {
+    const track = ev.track
+    if (track.kind !== 'audio') return
+
+    audioRecoveryLog('Audio track event attached', track.id)
+
+    track.addEventListener('mute', () => {
+      scheduleAudioRecovery('track-mute')
+    })
+    track.addEventListener('unmute', () => {
+      scheduleAudioRecovery('track-unmute')
+    })
+    track.addEventListener('ended', () => {
+      scheduleAudioRecovery('track-ended')
     })
 
-    if (shouldRefresh) {
-      scheduleVoiceMediaRefresh(250)
-    }
+    scheduleAudioRecovery('track-added')
   })
 
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
+  pc.addEventListener('connectionstatechange', () => {
+    audioRecoveryLog('Connection state changed', pc.connectionState)
+
+    if (pc.connectionState === 'connected') {
+      scheduleAudioRecovery('connection-connected')
+    }
   })
+}
+
+function installPermanentAudioMitigation() {
+  if (!isWindowsDorion()) return
+  if (!audioRecoveryEnabled()) return
+  if (window.__DORION_AUDIO_FIX_INSTALLED__) return
+  if (!window.RTCPeerConnection) return
+
+  window.__DORION_AUDIO_FIX_INSTALLED__ = true
+
+  const OriginalRTCPeerConnection = window.RTCPeerConnection
+
+  window.RTCPeerConnection = class extends OriginalRTCPeerConnection {
+    constructor(configuration?: RTCConfiguration) {
+      super(configuration)
+      attachTrackListeners(this as MaybePC)
+    }
+  } as typeof RTCPeerConnection
+
+  const originalSetRemoteDescription = OriginalRTCPeerConnection.prototype.setRemoteDescription
+
+  OriginalRTCPeerConnection.prototype.setRemoteDescription = async function(
+    ...args: Parameters<RTCPeerConnection['setRemoteDescription']>
+  ) {
+    const result = await originalSetRemoteDescription.apply(this, args)
+    attachTrackListeners(this as MaybePC)
+    scheduleAudioRecovery('set-remote-description')
+    return result
+  }
+
+  audioRecoveryLog('Installed audio recovery mitigation')
 }
 
 (async () => {
@@ -93,7 +157,7 @@ function initWindowsVoiceMediaRecovery() {
     window.__TAURI__.core.invoke('set_decorations', { enable: true }).catch(_e => { }) // This is allowed to fail
 
   initWindowsKeybinds()
-  initWindowsVoiceMediaRecovery()
+  installPermanentAudioMitigation()
   // Load up our extra css
   applyExtraCSS()
 
