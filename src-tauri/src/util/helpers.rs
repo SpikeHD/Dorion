@@ -1,6 +1,8 @@
 use super::paths::*;
 use base64::{engine::general_purpose, Engine as _};
-use std::path::*;
+use std::{path::*, process::Command};
+
+use crate::log;
 
 #[tauri::command]
 pub async fn fetch_image(url: String) -> Option<String> {
@@ -70,6 +72,22 @@ pub fn get_platform() -> &'static str {
 
   #[cfg(target_os = "linux")]
   "linux"
+}
+
+#[tauri::command]
+pub fn restart_in_safemode(app: tauri::AppHandle) {
+  let current_exe = match std::env::current_exe() {
+    Ok(current_exe) => current_exe,
+    Err(e) => {
+      log!("Failed to resolve current executable for safemode restart: {e:?}");
+      return;
+    }
+  };
+
+  match Command::new(current_exe).arg("--safemode").spawn() {
+    Ok(_) => app.exit(0),
+    Err(e) => log!("Failed to restart Dorion in safemode: {e:?}"),
+  }
 }
 
 #[cfg(target_os = "windows")]
