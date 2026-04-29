@@ -5,11 +5,10 @@ use super::paths::get_webdata_dir;
 
 #[cfg(target_os = "windows")]
 static OS: &str = "(Windows NT 10.0; Win64; x64)";
-#[cfg(target_os = "macos")]
-static OS: &str = "(Macintosh; Intel Mac OS X 10_15_7)";
 #[cfg(target_os = "linux")]
 static OS: &str = "(X11; Linux x86_64)";
 
+#[cfg(not(target_os = "macos"))]
 fn useragent(chrome_version: Option<String>) -> String {
   let chrome_version = chrome_version.unwrap_or("131.0.0.0".to_string());
 
@@ -167,19 +166,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
 }
 
 #[cfg(target_os = "macos")]
-pub fn set_user_agent(win: &tauri::WebviewWindow) {
-  use objc2_foundation::NSString;
-  use objc2_web_kit::WKWebView;
-
-  win
-    .with_webview(|webview| unsafe {
-      let webview: &WKWebView = &*webview.inner().cast();
-      let useragent = NSString::from_str(&useragent(None));
-
-      webview.setCustomUserAgent(Some(&useragent));
-    })
-    .unwrap_or_else(|e| log!("Failed to set user-agent: {:?}", e));
-}
+pub fn set_user_agent(_win: &tauri::WebviewWindow) {}
 
 /// Stupid name but this just ensures the window is visible regardless of being unfocused/minimized/hidden
 #[tauri::command]
