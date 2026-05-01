@@ -65,10 +65,19 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     std::env::set_var("RSRPC_LOGS_ENABLED", "1")
   };
 
-  let detectable = reqwest::blocking::get("https://discord.com/api/v9/applications/detectable")
-    .expect("Request for detectable.json failed")
-    .text()
-    .expect("Failed to get text from response");
+  let detectable = match reqwest::blocking::get("https://discord.com/api/v9/applications/detectable") {
+    Ok(resp) => match resp.text() {
+      Ok(text) => text,
+      Err(e) => {
+        log!("Failed to read detectable.json response: {:?}", e);
+        return;
+      }
+    },
+    Err(e) => {
+      log!("Request for detectable.json failed: {:?}", e);
+      return;
+    }
+  };
 
   let config = get_config();
   let rpc_config = RPCConfig {
@@ -184,7 +193,12 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
       });
   }
 
-  server.lock().unwrap().start();
+  if let Err(e) = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+    server.lock().unwrap().start();
+  })) {
+    log!("RPC server start panicked: {:?}", e);
+    return;
+  }
 
   // Add any local custom detectables
   server
@@ -194,7 +208,6 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
 
   loop {
     std::thread::park();
-    std::thread::sleep(std::time::Duration::from_secs(1));
   }
 }
 
