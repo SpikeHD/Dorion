@@ -21,6 +21,11 @@ export function safemodeTimer(elm: HTMLDivElement) {
     if (evt.code === 'KeyF') {
       window.__TAURI__.core.invoke('open_themes')
     }
+
+    // If S, relaunch once in safe mode.
+    if (evt.code === 'KeyS') {
+      window.__TAURI__.core.invoke('restart_in_safemode')
+    }
   }
 
   document.addEventListener('keydown', tmpKeydown)

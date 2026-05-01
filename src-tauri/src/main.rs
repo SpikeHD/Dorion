@@ -242,6 +242,7 @@ fn main() {
       config::read_config_file,
       config::write_config_file,
       config::default_config,
+      helpers::restart_in_safemode,
       theme::get_themes,
       theme::get_theme_names,
       theme::get_enabled_themes,
