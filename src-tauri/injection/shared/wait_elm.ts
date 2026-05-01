@@ -24,7 +24,7 @@ function observeDom<T>(rootElm: Node, callbackFn: (node: Node, resolve: (value: 
 // Ensure at least one element on the chain would callback
 type query = Array<string> | string
 type waitCfg = { callbackFn: null | ((elm: Element) => void), root: Element, timeout: number }
-const isString = (v: any) => typeof v === 'string' || v instanceof String
+const isString = (v: unknown) => typeof v === 'string' || v instanceof String
 const subtreeFind = (p: Element, q: Array<string>) => Array.from(p.children).find(c => q.some(q => c.matches(q)))
 const queryFind = (p: Element, query: Array<string>) => {
   for (let q of query) {

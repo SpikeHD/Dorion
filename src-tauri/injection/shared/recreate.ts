@@ -145,27 +145,6 @@ export function proxyOpen() {
   }
 }
 
-export function createLocalStorage() {
-  const iframe = document.createElement('iframe')
-
-  // Wait for document.head to exist, then append the iframe
-  const interval = setInterval(() => {
-    if (!document.head || window.localStorage) return
-
-    document.head.append(iframe)
-    const pd = Object.getOwnPropertyDescriptor(iframe.contentWindow, 'localStorage')
-    iframe.remove()
-
-    if (!pd) return
-
-    Object.defineProperty(window, 'localStorage', pd)
-
-    console.log('[Create LocalStorage] Done!')
-
-    clearInterval(interval)
-  }, 50)
-}
-
 export function badPostMessagePatch() {
   // this should support all OS
   // @ts-expect-error shut up

@@ -1,4 +1,4 @@
-import { badPostMessagePatch, createLocalStorage, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
+import { badPostMessagePatch, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
 import { waitForElmEx } from './shared/wait_elm'
@@ -12,9 +12,6 @@ window.Dorion = {
     waitForApp,
     waitForElm,
     waitForElmEx,
-  },
-  recreate: {
-    createLocalStorage,
   },
   shouldShowUnreadBadge: false
 };
@@ -30,7 +27,6 @@ window.Dorion = {
     return
   }
 
-  createLocalStorage()
   proxyXHR()
   proxyAddEventListener()
   proxyNotification()
