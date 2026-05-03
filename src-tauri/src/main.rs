@@ -304,6 +304,7 @@ fn main() {
       let mut win = WebviewWindowBuilder::new(app, "main", url_ext)
         .title(title.as_str())
         .resizable(true)
+        .min_inner_size(800.0, 600.0)
         .disable_drag_drop_handler()
         .data_directory(get_webdata_dir())
         // Prevent flickering by starting hidden, and show later
