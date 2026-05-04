@@ -21,15 +21,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",
-    "@tauri-apps/cli": "^2.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
-    "esbuild": "^0.24.2",
+    "@tauri-apps/cli": "^2.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
     "globals": "^15.15.0",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "typescript": "^5.9.3",
-    "vite": "^6.4.1"
+    "vite": "^8.0.10"
   },
   "packageManager": "pnpm@10.0.0"
 }
