@@ -65,19 +65,20 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     std::env::set_var("RSRPC_LOGS_ENABLED", "1")
   };
 
-  let detectable = match reqwest::blocking::get("https://discord.com/api/v9/applications/detectable") {
-    Ok(resp) => match resp.text() {
-      Ok(text) => text,
+  let detectable =
+    match reqwest::blocking::get("https://discord.com/api/v9/applications/detectable") {
+      Ok(resp) => match resp.text() {
+        Ok(text) => text,
+        Err(e) => {
+          log!("Failed to read detectable.json response: {:?}", e);
+          return;
+        }
+      },
       Err(e) => {
-        log!("Failed to read detectable.json response: {:?}", e);
+        log!("Request for detectable.json failed: {:?}", e);
         return;
       }
-    },
-    Err(e) => {
-      log!("Request for detectable.json failed: {:?}", e);
-      return;
-    }
-  };
+    };
 
   let config = get_config();
   let rpc_config = RPCConfig {
