@@ -1,8 +1,9 @@
 use pico_args::Arguments;
 use std::path::PathBuf;
 
+#[cfg(not(target_os = "linux"))]
 use crate::github::{download_release, get_release};
-
+#[cfg(not(target_os = "linux"))]
 mod github;
 
 // If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!

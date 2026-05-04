@@ -1,5 +1,5 @@
-use reqwest::blocking;
 use serde_json::Value;
+use std::io::Read;
 use std::{fmt::Display, fs, path::PathBuf};
 
 #[derive(Debug)]
@@ -15,15 +15,11 @@ pub fn get_release(user: impl AsRef<str>, repo: impl AsRef<str>) -> Result<Relea
     repo.as_ref()
   );
 
-  let client = blocking::Client::new();
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .map_err(|e| format!("Failed to get latest release from GitHub: {e}"))?;
-
-  let text = response
-    .text()
+  let text = ureq::get(&url)
+    .set("User-Agent", "Dorion")
+    .call()
+    .map_err(|e| format!("Failed to get latest release from GitHub: {e}"))?
+    .into_string()
     .map_err(|e| format!("Failed to read response text: {e}"))?;
 
   let release: Value =
@@ -56,13 +52,7 @@ pub fn download_release(
 ) -> PathBuf {
   let url = format!("https://github.com/{user}/{repo}/releases/download/{tag_name}/{release_name}");
 
-  let client = reqwest::blocking::Client::new();
-
-  let response = client
-    .get(url)
-    .header("User-Agent", "Dorion")
-    .send()
-    .unwrap();
+  let response = ureq::get(&url).set("User-Agent", "Dorion").call().unwrap();
 
   let mut file_path = path.clone();
   file_path.push(release_name.as_ref());
@@ -75,11 +65,13 @@ pub fn download_release(
   }
 
   // Write the file
-  fs::write(
-    &file_path,
-    response.bytes().expect("Failed to read response bytes"),
-  )
-  .expect("Failed to write file");
+  let mut bytes = Vec::new();
+  response
+    .into_reader()
+    .read_to_end(&mut bytes)
+    .expect("Failed to read response bytes");
+
+  fs::write(&file_path, bytes).expect("Failed to write file");
 
   // Return the path of the file
   file_path
