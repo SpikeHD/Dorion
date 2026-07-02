@@ -264,6 +264,10 @@ fn main() {
       util::color::get_os_accent,
     ])
     .on_window_event(|window, event| match event {
+      tauri::WindowEvent::Focused(true) => {
+        // Stop flashing the taskbar icon
+        let _ = window.request_user_attention(None);
+      }
       tauri::WindowEvent::Resized { .. } => {
         // Sleep for a millisecond (blocks the thread but it doesn't really matter)
         // https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495

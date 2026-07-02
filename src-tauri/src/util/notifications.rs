@@ -25,6 +25,11 @@ pub fn send_notification(
   icon: String,
   additional_data: Option<AdditionalData>,
 ) {
+  // Flash the taskbar icon
+  if !win.is_focused().unwrap_or(false) {
+    let _ = win.request_user_attention(Some(tauri::UserAttentionType::Informational));
+  }
+
   // Write the result of the icon
   let app = win.app_handle();
   let client = reqwest::blocking::Client::new();
@@ -200,13 +205,6 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
   log!("Setting notification count: {}", amount);
 
   notification_count_inner(&window, amount);
-
-  if amount > 0 && !window.is_focused().unwrap() {
-    use tauri::UserAttentionType;
-    let _ = window.request_user_attention(Some(UserAttentionType::Informational));
-  } else {
-    let _ = window.request_user_attention(None);
-  }
 
   // If the tray state is unread or default,
   if TrayIcon::from_usize(TRAY_STATE.load(Ordering::Relaxed)).is_overwrite() {
