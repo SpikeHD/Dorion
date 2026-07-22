@@ -18,3 +18,7 @@ html:not([data-dorion-platform='macos']) div[class^='base'] div[class^='bar_'] {
   z-index: 9999;
   background-color: var(--background-base-lowest);
 }
+
+html[data-dorion-platform="macos"] {
+  padding-top: 2px;
+}
