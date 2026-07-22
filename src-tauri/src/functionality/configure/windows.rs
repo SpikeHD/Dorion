@@ -1,14 +1,14 @@
 use std::fs;
 use std::path::PathBuf;
+use tauri::Manager;
 use tauri::path::BaseDirectory;
 use tauri::webview::PlatformWebview;
-use tauri::Manager;
 use webview2_com::Microsoft::Web::WebView2::Win32::{
-  ICoreWebView2Profile4, ICoreWebView2_13, COREWEBVIEW2_PERMISSION_KIND_CAMERA,
-  COREWEBVIEW2_PERMISSION_KIND_MICROPHONE, COREWEBVIEW2_PERMISSION_STATE_ALLOW,
+  COREWEBVIEW2_PERMISSION_KIND_CAMERA, COREWEBVIEW2_PERMISSION_KIND_MICROPHONE,
+  COREWEBVIEW2_PERMISSION_STATE_ALLOW, ICoreWebView2_13, ICoreWebView2Profile4,
 };
 use webview2_com::SetPermissionStateCompletedHandler;
-use windows::core::{Interface, HSTRING};
+use windows::core::{HSTRING, Interface};
 
 use crate::functionality::extension::add_extension;
 use crate::log;

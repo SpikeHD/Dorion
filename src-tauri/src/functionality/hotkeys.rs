@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use std::{
   collections::HashMap,
   sync::{
-    atomic::{AtomicBool, Ordering},
     Arc, Mutex,
+    atomic::{AtomicBool, Ordering},
   },
 };
 use tauri::{Emitter, Listener};

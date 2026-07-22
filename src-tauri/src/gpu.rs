@@ -23,11 +23,11 @@ pub fn disable_dma() {
     let info = adapter.get_info();
 
     match info.device_type {
-      DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu => {
-        if info.name.contains("NVIDIA") {
-          log!("NVIDIA GPU detected, disabling DMA");
-          unsafe { std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1") };
-        }
+      DeviceType::DiscreteGpu | DeviceType::IntegratedGpu | DeviceType::VirtualGpu
+        if info.name.contains("NVIDIA") =>
+      {
+        log!("NVIDIA GPU detected, disabling DMA");
+        unsafe { std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1") };
       }
       _ => {}
     }

@@ -42,7 +42,7 @@ impl Args {
 }
 
 // Lazy static to hold parsed args
-static PARSED_ARGS: LazyLock<Args> = LazyLock::new(|| Args::parse());
+static PARSED_ARGS: LazyLock<Args> = LazyLock::new(Args::parse);
 
 pub fn is_help() -> bool {
   // Parsing will automatically print help information

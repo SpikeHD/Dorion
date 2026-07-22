@@ -6,10 +6,10 @@ use std::{
 
 use include_flate::flate;
 use tauri::{
+  AppHandle, Emitter, Manager,
   image::Image,
   menu::{MenuBuilder, MenuItemBuilder},
   tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-  AppHandle, Emitter, Manager,
 };
 
 use crate::{config, log, util::window_helpers::ultrashow};

@@ -1,10 +1,10 @@
 use rsrpc::{
-  detection::{DetectableActivity, Executable},
   RPCConfig, RPCServer,
+  detection::{DetectableActivity, Executable},
 };
 use std::sync::{
-  atomic::{AtomicBool, Ordering},
   Arc, Mutex,
+  atomic::{AtomicBool, Ordering},
 };
 use sysinfo::{ProcessRefreshKind, RefreshKind, System};
 use tauri::{Emitter, Listener};

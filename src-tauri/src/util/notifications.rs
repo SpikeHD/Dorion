@@ -1,7 +1,7 @@
 use std::sync::atomic::Ordering;
 
 use crate::{
-  functionality::tray::{set_tray_icon, TrayIcon, TRAY_STATE},
+  functionality::tray::{TRAY_STATE, TrayIcon, set_tray_icon},
   log,
   util::window_helpers::ultrashow,
 };
@@ -121,13 +121,12 @@ fn send_notification_internal_other(
     Ok(n) => {
       #[cfg(target_os = "linux")]
       std::thread::spawn(move || {
-        n.wait_for_action(|action| match action {
-          "default" => {
-            if let Some(win) = &win {
-              open_notification_data(win, additional_data);
-            }
+        n.wait_for_action(|action| {
+          if action == "default"
+            && let Some(win) = &win
+          {
+            open_notification_data(win, additional_data);
           }
-          _ => {}
         })
       });
     }

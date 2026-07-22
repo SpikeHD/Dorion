@@ -11,10 +11,10 @@ pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
   use std::path::PathBuf;
   use tauri::webview::PlatformWebview;
   use webview2_com::{
-    Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13},
+    Microsoft::Web::WebView2::Win32::{ICoreWebView2_13, ICoreWebView2Profile7},
     ProfileAddBrowserExtensionCompletedHandler,
   };
-  use windows::core::{Interface, HSTRING};
+  use windows::core::{HSTRING, Interface};
 
   win
     .with_webview(move |webview| unsafe {
