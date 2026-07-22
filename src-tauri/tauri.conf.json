@@ -45,7 +45,7 @@
     }
   },
   "productName": "Dorion",
-  "version": "6.12.2",
+  "version": "6.13.0",
   "identifier": "com.spikehd.dorion",
   "plugins": {
     "deep-link": {
