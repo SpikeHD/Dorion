@@ -46,6 +46,7 @@ pub struct Config {
   pub win7_style_notifications: Option<bool>,
 
   // RPC-specific options
+  pub rpc_port: Option<u16>,
   pub rpc_process_scanner: Option<bool>,
   pub rpc_ipc_connector: Option<bool>,
   pub rpc_websocket_connector: Option<bool>,
@@ -92,6 +93,7 @@ impl Config {
       win7_style_notifications: Option::from(false),
 
       // RPC-specific options
+      rpc_port: Option::from(1337),
       rpc_process_scanner: Option::from(true),
       rpc_ipc_connector: Option::from(true),
       rpc_websocket_connector: Option::from(true),
@@ -139,6 +141,7 @@ impl Config {
         .win7_style_notifications
         .or(self.win7_style_notifications),
 
+      rpc_port: other.rpc_port.or(self.rpc_port),
       rpc_process_scanner: other.rpc_process_scanner.or(self.rpc_process_scanner),
       rpc_ipc_connector: other.rpc_ipc_connector.or(self.rpc_ipc_connector),
       rpc_websocket_connector: other

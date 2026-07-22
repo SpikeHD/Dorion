@@ -86,6 +86,7 @@ pub fn start_rpc_server(win: tauri::WebviewWindow) {
     enable_ipc_connector: config.rpc_ipc_connector.unwrap_or(true),
     enable_websocket_connector: config.rpc_websocket_connector.unwrap_or(true),
     enable_secondary_events: config.rpc_secondary_events.unwrap_or(true),
+    port: config.rpc_port.unwrap_or(1337),
   };
   let server = match RPCServer::from_json_str(detectable, rpc_config) {
     Ok(server) => Arc::new(Mutex::new(server)),
