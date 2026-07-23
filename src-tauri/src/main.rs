@@ -133,6 +133,23 @@ fn main() {
   log!("Are we portable? {}", is_portable());
 
   let context = tauri::generate_context!("tauri.conf.json");
+
+  #[cfg(target_os = "windows")]
+  match util::winrt_identity::register(&context.config().identifier) {
+    Ok(shortcut) => {
+      log!(
+        "Registered WinRT notification identity at {}",
+        shortcut.display()
+      );
+    }
+    Err(error) => {
+      log!(
+        "Failed to register WinRT notification identity: {}",
+        error
+      );
+    }
+  }
+
   let url = get_client_app_url();
 
   #[cfg(target_os = "macos")]

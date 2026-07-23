@@ -32,6 +32,14 @@ pub fn send_notification(
 
   // Write the result of the icon
   let app = win.app_handle();
+
+  // An empty string is not a URL. Skip reqwest and let the
+  // platform backend select the bundled fallback icon.
+  if icon.trim().is_empty() {
+    send_notification_internal(app, title, body, String::new(), additional_data);
+    return;
+  }
+
   let client = reqwest::blocking::Client::new();
   let mut res = match client.get(icon).send() {
     Ok(res) => res,
@@ -135,6 +143,25 @@ fn send_notification_internal_other(
 }
 
 #[cfg(target_os = "windows")]
+fn get_winrt_icon(icon: &str) -> Option<std::path::PathBuf> {
+  use std::path::Path;
+
+  if !icon.is_empty() && Path::new(icon).is_file() {
+    return Some(Path::new(icon).to_path_buf());
+  }
+
+  let fallback = std::env::temp_dir().join("dorion_notification_icon.png");
+
+  match std::fs::write(&fallback, include_bytes!("../../icons/icon.png")) {
+    Ok(()) => Some(fallback),
+    Err(error) => {
+      log!("Failed to write fallback notification icon: {:?}", error);
+      None
+    }
+  }
+}
+
+#[cfg(target_os = "windows")]
 fn send_notification_internal_windows(
   app: &tauri::AppHandle,
   title: String,
@@ -142,22 +169,24 @@ fn send_notification_internal_windows(
   icon: String,
   additional_data: Option<AdditionalData>,
 ) {
-  use std::path::Path;
   use tauri_winrt_notification::{IconCrop, Toast};
 
   let win = app.get_webview_window("main");
 
   let mut toast = Toast::new(&app.config().identifier)
-    .icon(Path::new(&icon), IconCrop::Circular, "")
     .title(title.as_str())
     .text2(body.as_str())
     .sound(None);
+
+  if let Some(icon_path) = get_winrt_icon(&icon) {
+    toast = toast.icon(&icon_path, IconCrop::Circular, "");
+  }
 
   if let Some(data) = &additional_data {
     toast = toast.on_activated({
       let additional_data = additional_data.clone();
 
-      move |_s| {
+      move |_arguments| {
         if let (Some(win), Some(data)) = (&win, &additional_data) {
           open_notification_data(win, Some(data.clone()));
         }
@@ -166,9 +195,17 @@ fn send_notification_internal_windows(
     });
   }
 
-  toast
-    .show()
-    .unwrap_or_else(|e| log!("Failed to send notification: {:?}", e));
+  match toast.show() {
+    Ok(()) => {
+      log!(
+        "WinRT notification submitted using AUMID {}",
+        app.config().identifier
+      );
+    }
+    Err(error) => {
+      log!("Failed to send WinRT notification: {:?}", error);
+    }
+  }
 }
 
 #[cfg(target_os = "windows")]
