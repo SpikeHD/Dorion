@@ -135,7 +135,7 @@ fn main() {
   let context = tauri::generate_context!("tauri.conf.json");
 
   #[cfg(target_os = "windows")]
-  let winrt_identity_registration =
+  let mut winrt_identity_registration =
     match util::winrt_identity::register(
       &context.config().identifier,
     ) {
@@ -205,7 +205,7 @@ fn main() {
     ));
   }
 
-  let run_result = builder
+  let app = builder
     .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
@@ -439,16 +439,17 @@ fn main() {
 
       Ok(())
     })
-    .run(context);
+    .build(context)
+    .expect("error while building tauri application");
 
-  // Explicitly release the registration before handling a possible
-  // Tauri run error. This removes only a shortcut created by this
-  // process.
-  #[cfg(target_os = "windows")]
-  drop(winrt_identity_registration);
+  app.run(move |_app_handle, event| {
+    if let tauri::RunEvent::Exit = event {
+      // Release the temporary
+      // shortcut from inside the final event callback.
+      #[cfg(target_os = "windows")]
+      drop(winrt_identity_registration.take());
 
-  run_result
-    .expect("error while running tauri application");
-
-  log!("App exited");
+      log!("App exited");
+    }
+  });
 }
