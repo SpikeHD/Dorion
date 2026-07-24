@@ -44,8 +44,6 @@ fn prop_variant_from_string(value: &[u16]) -> Result<PROPVARIANT, String> {
 
 /// Tracks whether this Dorion process created the Start Menu
 /// shortcut used for WinRT notification identity.
-///
-/// A shortcut which already existed before startup is never removed.
 pub struct WinrtIdentityRegistration {
   shortcut: PathBuf,
   remove_on_drop: bool,
@@ -204,11 +202,6 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
 
 /// Assigns the process AUMID and ensures that the matching per-user
 /// Start Menu shortcut exists.
-///
-/// If the shortcut already exists, it is left untouched.
-///
-/// If this process creates the shortcut, the returned guard removes
-/// it when Dorion exits.
 pub fn register(app_id: &str) -> Result<WinrtIdentityRegistration, String> {
   // This must happen before Dorion creates its window.
   let app_id_w = wide(OsStr::new(app_id));

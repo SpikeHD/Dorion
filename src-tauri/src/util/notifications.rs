@@ -33,8 +33,6 @@ pub fn send_notification(
   // Write the result of the icon
   let app = win.app_handle();
 
-  // Skip reqwest and let platform backend select the bundled
-  // fallback icon.
   if icon.trim().is_empty() {
     send_notification_internal(app, title, body, String::new(), additional_data);
     return;
@@ -185,12 +183,6 @@ fn send_notification_internal_windows(
   let activation_data = additional_data.clone();
 
   toast = toast.on_activated(move |action| {
-    log!(
-      "WinRT notification activated; action: {:?}, data: {:?}",
-      action,
-      activation_data
-    );
-
     if let Some(win) = &win {
       open_notification_data(win, activation_data.clone());
     }
