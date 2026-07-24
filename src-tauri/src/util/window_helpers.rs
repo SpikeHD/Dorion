@@ -21,7 +21,7 @@ fn useragent(chrome_version: Option<String>) -> String {
 
 #[cfg(not(target_os = "windows"))]
 fn useragent(_chrome_version: Option<String>) -> String {
-  "Mozilla/5.0 {OS} AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15".to_string()
+  format!("Mozilla/5.0 {OS} AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15").to_string()
 }
 
 pub fn clear_cache_check() {
