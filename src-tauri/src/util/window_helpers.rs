@@ -10,12 +10,18 @@ static OS: &str = "(Macintosh; Intel Mac OS X 10_15_7)";
 #[cfg(target_os = "linux")]
 static OS: &str = "(X11; Linux x86_64)";
 
+#[cfg(target_os = "windows")]
 fn useragent(chrome_version: Option<String>) -> String {
-  let chrome_version = chrome_version.unwrap_or("131.0.0.0".to_string());
+  let chrome_version = chrome_version.unwrap_or("138.0.0.0".to_string());
 
   format!(
     "Mozilla/5.0 {OS} AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36"
   )
+}
+
+#[cfg(not(target_os = "windows"))]
+fn useragent(_chrome_version: Option<String>) -> String {
+  "Mozilla/5.0 {OS} AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15".to_string()
 }
 
 pub fn clear_cache_check() {
