@@ -153,7 +153,7 @@ fn send_notification_internal_windows(
     .text2(body.as_str())
     .sound(None);
 
-  if let Some(data) = &additional_data {
+  if let Some(_data) = &additional_data {
     toast = toast.on_activated({
       let additional_data = additional_data.clone();
 

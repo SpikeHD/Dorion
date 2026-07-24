@@ -31,6 +31,9 @@ use super::rpc::start_rpc_server;
 use super::tray::create_tray;
 
 pub fn configure(window: &tauri::WebviewWindow) {
+  // `config` is only read behind certain `#[cfg(feature = ...)]` blocks below,
+  // so it can appear unused depending on which features are enabled for this build.
+  #[allow(unused_variables)]
   let config = get_config();
   let handle = window.app_handle();
 

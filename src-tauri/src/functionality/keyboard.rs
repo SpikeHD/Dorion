@@ -6,6 +6,9 @@ use livesplit_hotkey::Hotkey;
 use livesplit_hotkey::KeyCode;
 use serde::{Deserialize, Serialize};
 
+// Only ever produced via `serde_json::from_str` (see functionality::hotkeys),
+// never constructed as a struct literal, which trips the dead_code lint.
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeybindChangedEvent {
   pub keys: Vec<KeyStruct>,
