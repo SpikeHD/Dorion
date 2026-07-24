@@ -182,18 +182,24 @@ fn send_notification_internal_windows(
     toast = toast.icon(&icon_path, IconCrop::Circular, "");
   }
 
-  if let Some(data) = &additional_data {
-    toast = toast.on_activated({
-      let additional_data = additional_data.clone();
+  let activation_data = additional_data.clone();
 
-      move |_arguments| {
-        if let (Some(win), Some(data)) = (&win, &additional_data) {
-          open_notification_data(win, Some(data.clone()));
-        }
-        Ok(())
-      }
-    });
-  }
+  toast = toast.on_activated(move |action| {
+    log!(
+      "WinRT notification activated; action: {:?}, data: {:?}",
+      action,
+      activation_data
+    );
+
+    if let Some(win) = &win {
+      open_notification_data(
+        win,
+        activation_data.clone(),
+      );
+    }
+
+    Ok(())
+  });
 
   match toast.show() {
     Ok(()) => {
