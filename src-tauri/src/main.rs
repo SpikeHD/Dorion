@@ -133,6 +133,33 @@ fn main() {
   log!("Are we portable? {}", is_portable());
 
   let context = tauri::generate_context!("tauri.conf.json");
+
+  #[cfg(target_os = "windows")]
+  let mut winrt_identity_registration =
+    match util::winrt_identity::register(&context.config().identifier) {
+      Ok(registration) => {
+        if registration.created_shortcut() {
+          log!(
+            "Created temporary WinRT notification shortcut: {}",
+            registration.shortcut_path().display()
+          );
+        } else {
+          log!(
+            "Using pre-existing WinRT notification shortcut: {}",
+            registration.shortcut_path().display()
+          );
+        }
+
+        Some(registration)
+      }
+
+      Err(error) => {
+        log!("Failed to register WinRT notification identity: {}", error);
+
+        None
+      }
+    };
+
   let url = get_client_app_url();
 
   #[cfg(target_os = "macos")]
@@ -173,7 +200,7 @@ fn main() {
     ));
   }
 
-  builder
+  let app = builder
     .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
@@ -359,9 +386,18 @@ fn main() {
           if let Ok(url) = Url::from_str(&proxy) {
             win = win.proxy_url(url);
           } else {
-            log!("Invalid proxy URL: {proxy}");
+            let message =
+              format!("Invalid proxy URL: {proxy}");
+            log!("{message}");
             // We should exit, people using proxies probably don't want to use Dorion without it
-            std::process::exit(1);
+
+            return Err(
+              std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                message,
+              )
+              .into(),
+            );
           }
         }
       }
@@ -398,8 +434,17 @@ fn main() {
 
       Ok(())
     })
-    .run(context)
-    .expect("error while running tauri application");
+    .build(context)
+    .expect("error while building tauri application");
 
-  log!("App exited");
+  app.run(move |_app_handle, event| {
+    if let tauri::RunEvent::Exit = event {
+      // Release the temporary
+      // shortcut from inside the final event callback.
+      #[cfg(target_os = "windows")]
+      drop(winrt_identity_registration.take());
+
+      log!("App exited");
+    }
+  });
 }

@@ -169,7 +169,8 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
         if let Some(win) = app.get_webview_window("main") {
           win.emit("beforeunload", ()).unwrap_or_default();
         }
-        app.restart();
+        // Allows RunEvent::Exit cleanup to run.
+        app.request_restart();
       }
       "reload" => {
         let window = match app.get_webview_window("main") {
