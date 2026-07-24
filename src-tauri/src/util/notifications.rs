@@ -33,8 +33,8 @@ pub fn send_notification(
   // Write the result of the icon
   let app = win.app_handle();
 
-  // An empty string is not a URL. Skip reqwest and let the
-  // platform backend select the bundled fallback icon.
+  // Skip reqwest and let platform backend select the bundled 
+  // fallback icon.
   if icon.trim().is_empty() {
     send_notification_internal(app, title, body, String::new(), additional_data);
     return;

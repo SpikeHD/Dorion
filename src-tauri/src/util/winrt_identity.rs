@@ -101,9 +101,10 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
     .cast()
     .map_err(|error| format!("Could not obtain IPropertyStore: {error}"))?;
 
-  // PKEY_AppUserModel_ID:
-  // format ID 9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3,
-  // property ID 5.
+  // PKEY_AppUserModel_ID (System.AppUserModel.ID).
+  // Defined by Microsoft as format ID
+  // 9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3 and property ID 5.
+  // https://learn.microsoft.com/windows/win32/properties/props-system-appusermodel-id
   let app_user_model_id_key = PROPERTYKEY {
     fmtid: GUID::from_u128(0x9f4c2855_9f79_4b39_a8d0_e1d42de1d5f3),
     pid: 5,
@@ -148,9 +149,6 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
 
 /// Assigns the process AUMID and creates/updates the matching
 /// per-user Start Menu shortcut.
-///
-/// The shortcut is rewritten every launch so portable builds remain
-/// valid after Dorion.exe is moved.
 pub fn register(app_id: &str) -> Result<PathBuf, String> {
   // This must happen before Dorion creates its window.
   let app_id_w = wide(OsStr::new(app_id));
