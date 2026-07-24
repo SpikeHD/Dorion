@@ -2,6 +2,8 @@
 
 use std::{
   ffi::OsStr,
+  fs,
+  io::ErrorKind,
   os::windows::ffi::OsStrExt,
   path::{Path, PathBuf},
 };
@@ -38,6 +40,62 @@ fn prop_variant_from_string(value: &[u16]) -> Result<PROPVARIANT, String> {
   }
 
   Ok(prop_variant)
+}
+
+/// Tracks whether this Dorion process created the Start Menu
+/// shortcut used for WinRT notification identity.
+///
+/// A shortcut which already existed before startup is never removed.
+pub struct WinrtIdentityRegistration {
+  shortcut: PathBuf,
+  remove_on_drop: bool,
+}
+
+impl WinrtIdentityRegistration {
+  pub fn shortcut_path(&self) -> &Path {
+    &self.shortcut
+  }
+
+  pub fn created_shortcut(&self) -> bool {
+    self.remove_on_drop
+  }
+
+  fn remove_owned_shortcut(&mut self) {
+    if !self.remove_on_drop {
+      return;
+    }
+
+    match fs::remove_file(&self.shortcut) {
+      Ok(()) => {
+        crate::log!(
+          "Removed temporary WinRT notification shortcut: {}",
+          self.shortcut.display()
+        );
+
+        self.remove_on_drop = false;
+      }
+
+      // The shortcut might have already been removed manually.
+      Err(error) if error.kind() == ErrorKind::NotFound => {
+        self.remove_on_drop = false;
+      }
+
+      Err(error) => {
+        // Drop implementations should never panic.
+        crate::log!(
+          "Failed to remove temporary WinRT notification shortcut {}: {}",
+          self.shortcut.display(),
+          error
+        );
+      }
+    }
+  }
+}
+
+impl Drop for WinrtIdentityRegistration {
+  fn drop(&mut self) {
+    self.remove_owned_shortcut();
+  }
 }
 
 fn wide(value: &OsStr) -> Vec<u16> {
@@ -147,9 +205,16 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
   Ok(())
 }
 
-/// Assigns the process AUMID and creates/updates the matching
-/// per-user Start Menu shortcut.
-pub fn register(app_id: &str) -> Result<PathBuf, String> {
+/// Assigns the process AUMID and ensures that the matching per-user
+/// Start Menu shortcut exists.
+///
+/// If the shortcut already exists, it is left untouched.
+///
+/// If this process creates the shortcut, the returned guard removes
+/// it when Dorion exits.
+pub fn register(
+  app_id: &str,
+) -> Result<WinrtIdentityRegistration, String> {
   // This must happen before Dorion creates its window.
   let app_id_w = wide(OsStr::new(app_id));
 
@@ -177,19 +242,63 @@ pub fn register(app_id: &str) -> Result<PathBuf, String> {
   std::fs::create_dir_all(shortcut_parent)
     .map_err(|error| format!("Could not create Start Menu directory: {error}"))?;
 
+  let shortcut_existed =
+    shortcut.try_exists().map_err(|error| {
+      format!(
+        "Could not check whether {} exists: {error}",
+        shortcut.display()
+      )
+    })?;
+
+  if shortcut_existed {
+    // Do not rewrite, claim ownership of, or later remove an
+    // installer-created or user-created shortcut.
+    return Ok(WinrtIdentityRegistration {
+      shortcut,
+      remove_on_drop: false,
+    });
+  }
+
   // Use a dedicated STA thread so this does not conflict with
   // WebView2/Tauri's COM apartment.
-  let thread_executable = executable.clone();
+  let thread_executable = executable;
   let thread_shortcut = shortcut.clone();
   let thread_app_id = app_id.to_string();
 
-  let result = std::thread::spawn(move || {
+  let creation_result = std::thread::spawn(move || {
     create_aumid_shortcut(&thread_executable, &thread_shortcut, &thread_app_id)
   })
   .join()
   .map_err(|_| "WinRT identity registration thread panicked".to_string())?;
 
-  result?;
+  if let Err(error) = creation_result {
+    // IPersistFile::Save could theoretically have left a partial
+    // shortcut behind before returning an error.
+    match fs::remove_file(&shortcut) {
+      Ok(()) => {
+        crate::log!(
+          "Removed partially created WinRT shortcut: {}",
+          shortcut.display()
+        );
+      }
 
-  Ok(shortcut)
+      Err(remove_error)
+        if remove_error.kind() == ErrorKind::NotFound => {}
+
+      Err(remove_error) => {
+        crate::log!(
+          "Failed to remove partially created WinRT shortcut {}: {}",
+          shortcut.display(),
+          remove_error
+        );
+      }
+    }
+
+    return Err(error);
+  }
+
+  Ok(WinrtIdentityRegistration {
+    shortcut,
+    remove_on_drop: true,
+  })
 }

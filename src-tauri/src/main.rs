@@ -135,20 +135,35 @@ fn main() {
   let context = tauri::generate_context!("tauri.conf.json");
 
   #[cfg(target_os = "windows")]
-  match util::winrt_identity::register(&context.config().identifier) {
-    Ok(shortcut) => {
-      log!(
-        "Registered WinRT notification identity at {}",
-        shortcut.display()
-      );
-    }
-    Err(error) => {
-      log!(
-        "Failed to register WinRT notification identity: {}",
-        error
-      );
-    }
-  }
+  let winrt_identity_registration =
+    match util::winrt_identity::register(
+      &context.config().identifier,
+    ) {
+      Ok(registration) => {
+        if registration.created_shortcut() {
+          log!(
+            "Created temporary WinRT notification shortcut: {}",
+            registration.shortcut_path().display()
+          );
+        } else {
+          log!(
+            "Using pre-existing WinRT notification shortcut: {}",
+            registration.shortcut_path().display()
+          );
+        }
+
+        Some(registration)
+      }
+
+      Err(error) => {
+        log!(
+          "Failed to register WinRT notification identity: {}",
+          error
+        );
+
+        None
+      }
+    };
 
   let url = get_client_app_url();
 
@@ -190,7 +205,7 @@ fn main() {
     ));
   }
 
-  builder
+  let run_result = builder
     .plugin(tauri_plugin_deep_link::init())
     .plugin(tauri_plugin_http::init())
     .plugin(tauri_plugin_shell::init())
@@ -376,9 +391,18 @@ fn main() {
           if let Ok(url) = Url::from_str(&proxy) {
             win = win.proxy_url(url);
           } else {
-            log!("Invalid proxy URL: {proxy}");
+            let message =
+              format!("Invalid proxy URL: {proxy}");
+            log!("{message}");
             // We should exit, people using proxies probably don't want to use Dorion without it
-            std::process::exit(1);
+
+            return Err(
+              std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                message,
+              )
+              .into(),
+            );
           }
         }
       }
@@ -415,7 +439,15 @@ fn main() {
 
       Ok(())
     })
-    .run(context)
+    .run(context);
+
+  // Explicitly release the registration before handling a possible
+  // Tauri run error. This removes only a shortcut created by this
+  // process.
+  #[cfg(target_os = "windows")]
+  drop(winrt_identity_registration);
+
+  run_result
     .expect("error while running tauri application");
 
   log!("App exited");
