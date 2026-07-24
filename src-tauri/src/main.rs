@@ -136,9 +136,7 @@ fn main() {
 
   #[cfg(target_os = "windows")]
   let mut winrt_identity_registration =
-    match util::winrt_identity::register(
-      &context.config().identifier,
-    ) {
+    match util::winrt_identity::register(&context.config().identifier) {
       Ok(registration) => {
         if registration.created_shortcut() {
           log!(
@@ -156,10 +154,7 @@ fn main() {
       }
 
       Err(error) => {
-        log!(
-          "Failed to register WinRT notification identity: {}",
-          error
-        );
+        log!("Failed to register WinRT notification identity: {}", error);
 
         None
       }

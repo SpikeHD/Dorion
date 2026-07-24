@@ -9,20 +9,20 @@ use std::{
 };
 
 use windows::{
-  core::{GUID, Interface, PCWSTR},
   Win32::{
     Foundation::PROPERTYKEY,
     System::Com::{
-      CoCreateInstance, CoInitializeEx, CoUninitialize, IPersistFile,
+      CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED, CoCreateInstance, CoInitializeEx,
+      CoUninitialize, IPersistFile,
       StructuredStorage::{PROPVARIANT, PropVariantClear},
-      CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED,
     },
     System::Variant::VT_LPWSTR,
     UI::Shell::{
-      PropertiesSystem::IPropertyStore, SetCurrentProcessExplicitAppUserModelID, IShellLinkW,
-      SHStrDupW, ShellLink,
+      IShellLinkW, PropertiesSystem::IPropertyStore, SHStrDupW,
+      SetCurrentProcessExplicitAppUserModelID, ShellLink,
     },
   },
+  core::{GUID, Interface, PCWSTR},
 };
 
 fn prop_variant_from_string(value: &[u16]) -> Result<PROPVARIANT, String> {
@@ -132,9 +132,8 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
 
   let working_directory_w = wide(working_directory.as_os_str());
 
-  let shell_link: IShellLinkW =
-    unsafe { CoCreateInstance(&ShellLink, None, CLSCTX_INPROC_SERVER) }
-      .map_err(|error| format!("Could not create IShellLinkW: {error}"))?;
+  let shell_link: IShellLinkW = unsafe { CoCreateInstance(&ShellLink, None, CLSCTX_INPROC_SERVER) }
+    .map_err(|error| format!("Could not create IShellLinkW: {error}"))?;
 
   unsafe {
     shell_link
@@ -170,8 +169,7 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
 
   let mut app_id_value = prop_variant_from_string(&app_id_w)?;
 
-  let set_result =
-    unsafe { property_store.SetValue(&app_user_model_id_key, &app_id_value) };
+  let set_result = unsafe { property_store.SetValue(&app_user_model_id_key, &app_id_value) };
 
   if let Err(error) = set_result {
     unsafe {
@@ -189,8 +187,7 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
     let _ = PropVariantClear(&mut app_id_value);
   }
 
-  commit_result
-    .map_err(|error| format!("Committing shortcut properties failed: {error}"))?;
+  commit_result.map_err(|error| format!("Committing shortcut properties failed: {error}"))?;
 
   let persist_file: IPersistFile = shell_link
     .cast()
@@ -212,21 +209,17 @@ fn create_aumid_shortcut(executable: &Path, shortcut: &Path, app_id: &str) -> Re
 ///
 /// If this process creates the shortcut, the returned guard removes
 /// it when Dorion exits.
-pub fn register(
-  app_id: &str,
-) -> Result<WinrtIdentityRegistration, String> {
+pub fn register(app_id: &str) -> Result<WinrtIdentityRegistration, String> {
   // This must happen before Dorion creates its window.
   let app_id_w = wide(OsStr::new(app_id));
 
-  unsafe { SetCurrentProcessExplicitAppUserModelID(PCWSTR(app_id_w.as_ptr())) }.map_err(|error| {
-    format!("SetCurrentProcessExplicitAppUserModelID failed: {error}")
-  })?;
+  unsafe { SetCurrentProcessExplicitAppUserModelID(PCWSTR(app_id_w.as_ptr())) }
+    .map_err(|error| format!("SetCurrentProcessExplicitAppUserModelID failed: {error}"))?;
 
   let executable = std::env::current_exe()
     .map_err(|error| format!("Could not obtain current executable: {error}"))?;
 
-  let app_data =
-    std::env::var_os("APPDATA").ok_or_else(|| "APPDATA is unavailable".to_string())?;
+  let app_data = std::env::var_os("APPDATA").ok_or_else(|| "APPDATA is unavailable".to_string())?;
 
   let shortcut = PathBuf::from(app_data)
     .join("Microsoft")
@@ -242,13 +235,12 @@ pub fn register(
   std::fs::create_dir_all(shortcut_parent)
     .map_err(|error| format!("Could not create Start Menu directory: {error}"))?;
 
-  let shortcut_existed =
-    shortcut.try_exists().map_err(|error| {
-      format!(
-        "Could not check whether {} exists: {error}",
-        shortcut.display()
-      )
-    })?;
+  let shortcut_existed = shortcut.try_exists().map_err(|error| {
+    format!(
+      "Could not check whether {} exists: {error}",
+      shortcut.display()
+    )
+  })?;
 
   if shortcut_existed {
     // Do not rewrite, claim ownership of, or later remove an
@@ -282,8 +274,7 @@ pub fn register(
         );
       }
 
-      Err(remove_error)
-        if remove_error.kind() == ErrorKind::NotFound => {}
+      Err(remove_error) if remove_error.kind() == ErrorKind::NotFound => {}
 
       Err(remove_error) => {
         crate::log!(

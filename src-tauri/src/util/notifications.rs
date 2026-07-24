@@ -33,7 +33,7 @@ pub fn send_notification(
   // Write the result of the icon
   let app = win.app_handle();
 
-  // Skip reqwest and let platform backend select the bundled 
+  // Skip reqwest and let platform backend select the bundled
   // fallback icon.
   if icon.trim().is_empty() {
     send_notification_internal(app, title, body, String::new(), additional_data);
@@ -192,10 +192,7 @@ fn send_notification_internal_windows(
     );
 
     if let Some(win) = &win {
-      open_notification_data(
-        win,
-        activation_data.clone(),
-      );
+      open_notification_data(win, activation_data.clone());
     }
 
     Ok(())
