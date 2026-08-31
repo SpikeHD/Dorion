@@ -356,13 +356,15 @@ fn main() {
       #[cfg(target_os = "windows")]
       {
         let app_handle = app.handle().clone();
-        win = win.on_new_window(move |url, features| {
+        win = win.on_new_window(move |_url, features| {
           let label = format!("popout-{}", POPOUT_COUNTER.fetch_add(1, Ordering::Relaxed));
+          let about_blank = Url::parse("about:blank").expect("about:blank is a valid URL");
 
+          // WebView2 performs the requested navigation after the un-navigated popup is attached.
           let builder = WebviewWindowBuilder::new(
             &app_handle,
             label,
-            tauri::WebviewUrl::External(url),
+            tauri::WebviewUrl::External(about_blank),
           )
           .window_features(features)
           .title("Popout");
