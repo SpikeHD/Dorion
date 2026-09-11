@@ -50,6 +50,11 @@ mod release;
 mod util;
 mod window;
 
+#[cfg(target_os = "linux")]
+type Runtime = tauri_runtime_cef::CefRuntime<tauri::EventLoopMessage>;
+#[cfg(not(target_os = "linux"))]
+type Runtime = tauri::Wry;
+
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
 #[cfg(target_os = "windows")]
 static POPOUT_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -81,6 +86,31 @@ fn should_disable_plugins() -> bool {
 }
 
 fn main() {
+  // Handle CEF helper args before main arg processing
+  #[cfg(target_os = "linux")]
+  if std::env::args().any(|arg| arg.starts_with("--type=")) {
+    tauri_runtime_cef::run_cef_helper_process();
+    return;
+  }
+
+  #[cfg(target_os = "linux")]
+  if std::env::var_os("DORION_CEF_ARG_REEXEC").is_none() {
+    let argv = std::env::args_os().collect::<Vec<_>>();
+    
+    if !argv.iter().any(|arg| arg == "--no-sandbox") {
+      unsafe {
+        std::env::set_var("DORION_CEF_ARG_REEXEC", "1");
+      }
+      let exe = std::env::current_exe().unwrap_or_else(|_| argv[0].clone().into());
+      let err = std::os::unix::process::CommandExt::exec(
+        std::process::Command::new(&exe).args(&argv[1..]).arg("--no-sandbox"),
+      );
+      
+      eprintln!("[dorion] CEF --no-sandbox re-exec failed: {err}");
+      std::process::exit(1);
+    }
+  }
+
   if args::is_help() {
     return;
   }
@@ -188,7 +218,7 @@ fn main() {
 
   #[allow(clippy::single_match)]
   #[allow(unused_mut)]
-  let mut builder = tauri::Builder::default();
+  let mut builder = tauri::Builder::<Runtime>::new();
 
   if !config.multi_instance.unwrap_or(false) {
     builder = builder.plugin(tauri_plugin_single_instance::init(
@@ -198,6 +228,56 @@ fn main() {
         }
       },
     ));
+  }
+
+  #[cfg(target_os = "linux")]
+  {
+    let mut command_line_args = vec![
+      ("--no-sandbox".into(), None),
+      ("--disable-gpu-sandbox".into(), None),
+      ("enable-logging".into(), Some("stderr".into())),
+      ("v".into(), Some("1".into())),
+    ];
+
+    if config.disable_hardware_accel.unwrap_or(false) {
+      log!("Hardware acceleration disabled");
+      command_line_args.push(("--disable-gpu".into(), None));
+      command_line_args.push(("--disable-gpu-compositing".into(), None));
+    }
+
+    tauri_runtime_cef::configure(tauri_runtime_cef::CefConfig {
+      identifier: context.config().identifier.clone(),
+      command_line_args,
+      ..Default::default()
+    });
+
+    tauri_runtime_cef::set_permission_policy(
+      |request, responder| {
+        use tauri_runtime_cef::{DenyReason, PermissionKind};
+
+        if request.webview_label != "main" {
+          return responder.deny(DenyReason::PolicyDenied);
+        }
+
+        let allowed = request.kinds.iter().all(|kind| {
+          matches!(
+            kind,
+            PermissionKind::Microphone
+              | PermissionKind::Camera
+              | PermissionKind::CameraPanTiltZoom
+              | PermissionKind::ScreenCapture
+              | PermissionKind::CapturedSurfaceControl
+              | PermissionKind::Notifications
+          )
+        });
+
+        if allowed {
+          responder.allow();
+        } else {
+          responder.deny(DenyReason::PolicyDenied);
+        }
+      },
+    );
   }
 
   let app = builder
@@ -309,7 +389,7 @@ fn main() {
         if get_config().sys_tray.unwrap_or(false) {
           // https://github.com/tauri-apps/tauri/issues/3084#issuecomment-1477675840
           #[cfg(target_os = "macos")]
-          tauri::AppHandle::hide(window.app_handle()).unwrap_or_default();
+          tauri::AppHandle::<crate::Runtime>::hide(window.app_handle()).unwrap_or_default();
 
           #[cfg(not(target_os = "macos"))]
           window.hide().unwrap_or_default();
@@ -325,9 +405,22 @@ fn main() {
       }
       _ => {}
     })
-    .setup(move |app: &mut tauri::App| {
+    .setup(move |app: &mut tauri::App<crate::Runtime>| {
       // Init plugin list
       plugin::get_new_plugins();
+
+      #[cfg(target_os = "linux")]
+      {
+        if let Err(err) = gtk::init() {
+          log!("gtk::init failed: {}", err);
+          return Err(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            format!("gtk::init failed: {err}"),
+          )
+          .into());
+        }
+        tauri_runtime_cef::install_x_error_handlers();
+      }
 
       let config = get_config();
       let preinject = PREINJECT.clone();
