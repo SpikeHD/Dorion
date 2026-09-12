@@ -166,12 +166,9 @@ jobs:
 
       - name: (Linux) (x86_64) Build
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm,appimage -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings
-          # linuxdeploy is itself a FUSE2 AppImage, which can't run here
-          APPIMAGE_EXTRACT_AND_RUN: '1'
-          NO_STRIP: 'true'
 
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
