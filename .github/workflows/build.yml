@@ -139,7 +139,9 @@ jobs:
             libzstd-dev:arm64 \
             zstd:arm64 \
             gcc-aarch64-linux-gnu \
-            g++-aarch64-linux-gnu
+            g++-aarch64-linux-gnu \
+            libnss3-dev:arm64 \
+            libasound2-dev:arm64
 
       - name: Add target
         run: rustup target add ${{ matrix.config.target }}
