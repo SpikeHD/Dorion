@@ -359,22 +359,34 @@ fn main() {
         let app_handle = app.handle().clone();
         win = win.on_new_window(move |url, features| {
           let label = format!("popout-{}", POPOUT_COUNTER.fetch_add(1, Ordering::Relaxed));
+          let app_handle = app_handle.clone();
+          let position = features.position();
+          let size = features.size();
 
-          let builder = WebviewWindowBuilder::new(
-            &app_handle,
-            label,
-            tauri::WebviewUrl::External(url),
-          )
-          .window_features(features)
-          .title("Popout");
+          std::thread::spawn(move || {
+            let mut builder = WebviewWindowBuilder::new(
+              &app_handle,
+              label,
+              tauri::WebviewUrl::External(url),
+            )
+            .data_directory(get_webdata_dir())
+            .browser_extensions_enabled(true)
+            .title("Popout");
 
-          match builder.build() {
-            Ok(window) => NewWindowResponse::Create { window },
-            Err(e) => {
-              log!("Failed to create popout window: {:?}", e);
-              NewWindowResponse::Deny
+            if let Some(position) = position {
+              builder = builder.position(position.x, position.y);
             }
-          }
+
+            if let Some(size) = size {
+              builder = builder.inner_size(size.width, size.height);
+            }
+
+            if let Err(e) = builder.build() {
+              log!("Failed to create popout window: {:?}", e);
+            }
+          });
+
+          NewWindowResponse::Deny
         });
       }
 
