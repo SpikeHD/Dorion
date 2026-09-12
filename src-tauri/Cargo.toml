@@ -55,7 +55,7 @@ wgpu = { version = "26.0", default-features = true }
 # tauri-runtime-cef's source is written against the 0.31.0-beta.2
 # drag n drop API, which beta.3 broke apparently
 winit = "=0.31.0-beta.2"
-tauri-runtime-cef = { git = "https://github.com/SableClient/tauri-runtime-cef.git" }
+tauri-runtime-cef = { git = "https://github.com/SableClient/tauri-runtime-cef.git", features = ["devtools"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5.2"
