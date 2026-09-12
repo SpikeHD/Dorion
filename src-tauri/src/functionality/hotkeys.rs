@@ -48,7 +48,11 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 
 #[tauri::command]
 #[cfg(target_os = "windows")]
-pub fn trigger_keys_pressed(win: tauri::WebviewWindow<crate::Runtime>, keys: Vec<KeyStruct>, pressed: bool) {
+pub fn trigger_keys_pressed(
+  win: tauri::WebviewWindow<crate::Runtime>,
+  keys: Vec<KeyStruct>,
+  pressed: bool,
+) {
   let keybinds = get_keybinds();
 
   // Convert the input keys to a hotkey for comparison
@@ -146,7 +150,9 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow<crate::Runtime>) {
   });
 }
 
-fn new_hook(win: tauri::WebviewWindow<crate::Runtime>) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
+fn new_hook(
+  win: tauri::WebviewWindow<crate::Runtime>,
+) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
   let hook = Arc::new(
     match Hook::with_consume_preference(ConsumePreference::MustNotConsume) {
       Ok(hook) => Ok(hook),

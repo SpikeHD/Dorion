@@ -42,7 +42,6 @@ dependencies = [
  "tauri-plugin-window-state",
  "tauri-runtime-cef",
  "tauri-winrt-notification",
- "webkit2gtk",
  "webview2-com",
  "wgpu",
  "win7-notifications",

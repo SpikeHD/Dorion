@@ -323,7 +323,10 @@ fn notification_count_inner(_window: &tauri::WebviewWindow<crate::Runtime>, amou
   }
 }
 
-pub fn open_notification_data(win: &tauri::WebviewWindow<crate::Runtime>, additional_data: Option<AdditionalData>) {
+pub fn open_notification_data(
+  win: &tauri::WebviewWindow<crate::Runtime>,
+  additional_data: Option<AdditionalData>,
+) {
   ultrashow(win.clone());
 
   // Navigate to the guild/channel/message if provided

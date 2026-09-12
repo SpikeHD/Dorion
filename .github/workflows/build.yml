@@ -153,18 +153,6 @@ jobs:
         env:
           RUSTFLAGS: -Awarnings
 
-      - name: (Linux x86_64) Build Webkit extension
-        if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: cd src-tauri/extension_webkit && cmake . && cmake --build .
-
-      - name: (Linux ARM64) Build Webkit extension
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-arm64.cmake . && cmake --build .
-        env:
-          CC: aarch64-linux-gnu-gcc
-          CXX: aarch64-linux-gnu-g++
-          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
-
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
 
@@ -230,7 +218,7 @@ jobs:
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-22.04'
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz Dorion .portable ./plugins ./themes ./injection ./icons ./extension_webkit
+        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz Dorion .portable ./plugins ./themes ./injection ./icons
 
       # Windows portable
       - name: (Windows) Upload portable

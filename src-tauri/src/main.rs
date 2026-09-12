@@ -96,16 +96,18 @@ fn main() {
   #[cfg(target_os = "linux")]
   if std::env::var_os("DORION_CEF_ARG_REEXEC").is_none() {
     let argv = std::env::args_os().collect::<Vec<_>>();
-    
+
     if !argv.iter().any(|arg| arg == "--no-sandbox") {
       unsafe {
         std::env::set_var("DORION_CEF_ARG_REEXEC", "1");
       }
       let exe = std::env::current_exe().unwrap_or_else(|_| argv[0].clone().into());
       let err = std::os::unix::process::CommandExt::exec(
-        std::process::Command::new(&exe).args(&argv[1..]).arg("--no-sandbox"),
+        std::process::Command::new(&exe)
+          .args(&argv[1..])
+          .arg("--no-sandbox"),
       );
-      
+
       eprintln!("[dorion] CEF --no-sandbox re-exec failed: {err}");
       std::process::exit(1);
     }
@@ -251,33 +253,31 @@ fn main() {
       ..Default::default()
     });
 
-    tauri_runtime_cef::set_permission_policy(
-      |request, responder| {
-        use tauri_runtime_cef::{DenyReason, PermissionKind};
+    tauri_runtime_cef::set_permission_policy(|request, responder| {
+      use tauri_runtime_cef::{DenyReason, PermissionKind};
 
-        if request.webview_label != "main" {
-          return responder.deny(DenyReason::PolicyDenied);
-        }
+      if request.webview_label != "main" {
+        return responder.deny(DenyReason::PolicyDenied);
+      }
 
-        let allowed = request.kinds.iter().all(|kind| {
-          matches!(
-            kind,
-            PermissionKind::Microphone
-              | PermissionKind::Camera
-              | PermissionKind::CameraPanTiltZoom
-              | PermissionKind::ScreenCapture
-              | PermissionKind::CapturedSurfaceControl
-              | PermissionKind::Notifications
-          )
-        });
+      let allowed = request.kinds.iter().all(|kind| {
+        matches!(
+          kind,
+          PermissionKind::Microphone
+            | PermissionKind::Camera
+            | PermissionKind::CameraPanTiltZoom
+            | PermissionKind::ScreenCapture
+            | PermissionKind::CapturedSurfaceControl
+            | PermissionKind::Notifications
+        )
+      });
 
-        if allowed {
-          responder.allow();
-        } else {
-          responder.deny(DenyReason::PolicyDenied);
-        }
-      },
-    );
+      if allowed {
+        responder.allow();
+      } else {
+        responder.deny(DenyReason::PolicyDenied);
+      }
+    });
   }
 
   let app = builder
@@ -413,8 +413,7 @@ fn main() {
       {
         if let Err(err) = gtk::init() {
           log!("gtk::init failed: {}", err);
-          return Err(std::io::Error::new(
-            std::io::ErrorKind::Other,
+          return Err(std::io::Error::other(
             format!("gtk::init failed: {err}"),
           )
           .into());

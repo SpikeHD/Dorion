@@ -21,7 +21,11 @@ pub async fn clear_css_cache() {
 
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
-pub fn localize_imports(win: tauri::WebviewWindow<crate::Runtime>, css: String, name: String) -> String {
+pub fn localize_imports(
+  win: tauri::WebviewWindow<crate::Runtime>,
+  css: String,
+  name: String,
+) -> String {
   use tauri::Emitter;
 
   use crate::config::get_config;
@@ -165,7 +169,11 @@ pub fn localize_imports(win: tauri::WebviewWindow<crate::Runtime>, css: String, 
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn localize_imports(_win: tauri::WebviewWindow<crate::Runtime>, css: String, _name: String) -> String {
+pub fn localize_imports(
+  _win: tauri::WebviewWindow<crate::Runtime>,
+  css: String,
+  _name: String,
+) -> String {
   log!(
     "Windows no longer requires CSS imports to be localized, but it does require import shuffling!"
   );

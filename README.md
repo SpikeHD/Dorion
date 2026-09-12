@@ -275,14 +275,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm build:updater
     ```
 
-6. (Linux-only) Build the WebKitGTK extension
-    ```sh
-    cd src-tauri/extension_webkit
-    cmake .
-    cmake --build .
-    ```
-
-7. Build!
+6. Build!
 
     ```sh
     # Build Dorion...
