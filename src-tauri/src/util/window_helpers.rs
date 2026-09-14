@@ -1,4 +1,4 @@
-use crate::config::get_config;
+use crate::config::{get_config, set_config};
 use crate::log;
 
 use super::paths::get_webdata_dir;
@@ -69,19 +69,29 @@ pub fn clear_cache() {
   }
 }
 
+fn persist_zoom(zoom: f64) {
+  let mut config = get_config();
+  config.zoom = Some(zoom.to_string());
+  set_config(config);
+}
+
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
+  let zoom = value.unwrap_or(
+    get_config()
+      .zoom
+      .unwrap_or("1.0".to_string())
+      .parse::<f64>()
+      .unwrap_or(1.0),
+  );
+
+  if value.is_some() {
+    persist_zoom(zoom);
+  }
+
   win
     .with_webview(move |webview| unsafe {
-      let zoom = value.unwrap_or(
-        get_config()
-          .zoom
-          .unwrap_or("1.0".to_string())
-          .parse::<f64>()
-          .unwrap_or(1.0),
-      );
-
       webview.controller().SetZoomFactor(zoom).unwrap_or_default();
     })
     .unwrap_or_default();
@@ -97,6 +107,10 @@ pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
       .parse::<f64>()
       .unwrap_or(1.0),
   );
+
+  if value.is_some() {
+    persist_zoom(zoom);
+  }
 
   win
     .eval(format!("document.body.style.zoom = '{zoom}'"))

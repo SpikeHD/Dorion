@@ -346,7 +346,7 @@ fn main() {
           config.blur.unwrap_or("none".to_string()) != "none"
         )
         .background_color(tauri::window::Color(47, 49, 54, 255))
-        .zoom_hotkeys_enabled(true)
+        .zoom_hotkeys_enabled(false)
         .browser_extensions_enabled(true);
 
       if !args::is_safemode() {
