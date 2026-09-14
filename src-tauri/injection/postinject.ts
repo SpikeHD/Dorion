@@ -1,5 +1,6 @@
 import { applyExtraCSS } from './shared/ui'
 import { initWindowsKeybinds } from './shared/windows_keybinds'
+import { initZoomHotkeys } from './shared/zoom'
 
 (async () => {
   console.log('Discord is loaded!')
@@ -9,6 +10,7 @@ import { initWindowsKeybinds } from './shared/windows_keybinds'
     window.__TAURI__.core.invoke('set_decorations', { enable: true }).catch(_e => { }) // This is allowed to fail
 
   initWindowsKeybinds()
+  initZoomHotkeys()
   // Load up our extra css
   applyExtraCSS()
 

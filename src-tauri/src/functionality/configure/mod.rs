@@ -89,6 +89,8 @@ pub fn configure(window: &tauri::WebviewWindow) {
     if config.start_maximized.unwrap_or(false) {
       window.maximize().unwrap_or_default();
     }
+
+    window_zoom_level(event_window.clone(), None);
   });
 
   #[cfg(feature = "blur")]
