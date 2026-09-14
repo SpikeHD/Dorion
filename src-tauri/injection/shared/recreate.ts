@@ -118,6 +118,8 @@ function isExternal(url: string) {
   }
 }
 
+const recentOpens = new Map<string, number>()
+
 export function proxyOpen() {
   // Make window.open become window.__TAURI__.shell.open
   window.nativeOpen = window.open
@@ -130,6 +132,19 @@ export function proxyOpen() {
     const urlStr = url.toString()
     // If this needs to open externally, do so
     if (urlStr !== 'about:blank' && (target === '_blank' || !target) && isExternal(urlStr)) {
+      const now = Date.now()
+      const last = recentOpens.get(urlStr) ?? 0
+
+      if (recentOpens.size > 100) {
+        recentOpens.clear()
+      }
+
+      recentOpens.set(urlStr, now)
+
+      if (now - last < 1000) {
+        return null
+      }
+
       console.log('[Proxy Open] External URL:', urlStr)
 
       window.__TAURI__.shell.open(urlStr)
