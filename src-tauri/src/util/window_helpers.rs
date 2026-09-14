@@ -159,6 +159,89 @@ pub fn set_user_agent(win: &tauri::WebviewWindow) {
   log!("Set user agent!");
 }
 
+#[cfg(target_os = "windows")]
+#[derive(Default)]
+struct WebviewKeybind {
+  key: u32,
+  shift: bool,
+  ctrl: bool,
+  alt: bool,
+}
+
+#[cfg(target_os = "windows")]
+const ESCAPE_KEY: u32 = 0x1B;
+
+#[cfg(target_os = "windows")]
+const KEYBINDS_TO_DISABLE: &[WebviewKeybind] = &[WebviewKeybind {
+  key: ESCAPE_KEY,
+  shift: true,
+  ctrl: false,
+  alt: false,
+}];
+
+#[cfg(target_os = "windows")]
+pub fn disable_webview_keybinds(win: &tauri::WebviewWindow) {
+  use tauri::webview::PlatformWebview;
+  use webview2_com::{
+    AcceleratorKeyPressedEventHandler,
+    Microsoft::Web::WebView2::Win32::{
+      COREWEBVIEW2_KEY_EVENT_KIND_KEY_DOWN, ICoreWebView2AcceleratorKeyPressedEventArgs2,
+    },
+  };
+  use windows::{
+    Win32::UI::Input::KeyboardAndMouse::{GetKeyState, VK_CONTROL, VK_MENU, VK_SHIFT},
+    core::Interface,
+  };
+
+  win
+    .with_webview(move |webview| {
+      fn subscribe(webview: PlatformWebview) -> Result<(), Box<dyn std::error::Error>> {
+        let controller = webview.controller();
+
+        let handler = AcceleratorKeyPressedEventHandler::create(Box::new(|_sender, args| {
+          if let Some(args) = args {
+            let mut kind = COREWEBVIEW2_KEY_EVENT_KIND_KEY_DOWN;
+            let mut key = 0u32;
+
+            if unsafe { args.KeyEventKind(&mut kind).is_ok() && args.VirtualKey(&mut key).is_ok() }
+              && kind == COREWEBVIEW2_KEY_EVENT_KIND_KEY_DOWN
+            {
+              let shift = unsafe { GetKeyState(VK_SHIFT.0 as i32) < 0 };
+              let ctrl = unsafe { GetKeyState(VK_CONTROL.0 as i32) < 0 };
+              let alt = unsafe { GetKeyState(VK_MENU.0 as i32) < 0 };
+
+              let matched = KEYBINDS_TO_DISABLE.iter().any(|bind| {
+                bind.key == key && bind.shift == shift && bind.ctrl == ctrl && bind.alt == alt
+              });
+
+              if matched
+                && let Ok(ext) = args.cast::<ICoreWebView2AcceleratorKeyPressedEventArgs2>()
+              {
+                unsafe {
+                  ext
+                    .SetIsBrowserAcceleratorKeyEnabled(false)
+                    .unwrap_or_default();
+                }
+              }
+            }
+          }
+
+          Ok(())
+        }));
+
+        let mut token = 0i64;
+        unsafe {
+          controller.add_AcceleratorKeyPressed(&handler, &mut token)?;
+        }
+
+        Ok(())
+      }
+
+      subscribe(webview).unwrap_or_else(|e| log!("Failed to disable webview keybinds: {:?}", e));
+    })
+    .unwrap_or_else(|e| log!("Failed to disable webview keybinds: {:?}", e));
+}
+
 #[cfg(target_os = "linux")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
   use webkit2gtk::{SettingsExt, WebViewExt};
