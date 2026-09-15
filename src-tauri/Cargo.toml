@@ -98,6 +98,7 @@ features = [
     "Win32_System_Com_StructuredStorage",
     "Win32_System_Variant",
     "Win32_UI_Shell_PropertiesSystem",
+    "Win32_UI_Input_KeyboardAndMouse",
     "Win32_Graphics",
     "Win32_Graphics_Dwm",
     "Win32_System_SystemInformation",

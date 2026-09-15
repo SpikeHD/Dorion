@@ -443,6 +443,10 @@ fn main() {
       });
 
       configure(&win);
+
+      #[cfg(target_os = "windows")]
+      window_helpers::disable_webview_keybinds(&win);
+
       setup_autostart(app);
 
       Ok(())
