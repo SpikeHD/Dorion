@@ -10,7 +10,7 @@ pub fn set_accent_color(r: u8, g: u8, b: u8, a: u8) {
   ACCENT_COLOR.lock().unwrap().replace((r, g, b, a));
 }
 
-pub fn start_os_accent_subscriber(win: &tauri::WebviewWindow) -> Subscription {
+pub fn start_os_accent_subscriber(win: &tauri::WebviewWindow<crate::Runtime>) -> Subscription {
   let win = win.clone();
 
   log!("Starting OS accent subscriber...");

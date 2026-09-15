@@ -20,7 +20,7 @@ pub struct AdditionalData {
 
 #[tauri::command]
 pub fn send_notification(
-  win: tauri::WebviewWindow,
+  win: tauri::WebviewWindow<crate::Runtime>,
   title: String,
   body: String,
   icon: String,
@@ -84,7 +84,7 @@ pub fn send_notification(
 }
 
 fn send_notification_internal(
-  app: &tauri::AppHandle,
+  app: &tauri::AppHandle<crate::Runtime>,
   title: String,
   body: String,
   icon_path: String,
@@ -107,7 +107,7 @@ fn send_notification_internal(
 
 #[cfg(not(target_os = "windows"))]
 fn send_notification_internal_other(
-  app: &tauri::AppHandle,
+  app: &tauri::AppHandle<crate::Runtime>,
   title: String,
   body: String,
   _icon: String,
@@ -162,7 +162,7 @@ fn get_winrt_icon(icon: &str) -> Option<std::path::PathBuf> {
 
 #[cfg(target_os = "windows")]
 fn send_notification_internal_windows(
-  app: &tauri::AppHandle,
+  app: &tauri::AppHandle<crate::Runtime>,
   title: String,
   body: String,
   icon: String,
@@ -206,7 +206,7 @@ fn send_notification_internal_windows(
 
 #[cfg(target_os = "windows")]
 fn send_notification_internal_windows7(
-  app: &tauri::AppHandle,
+  app: &tauri::AppHandle<crate::Runtime>,
   title: String,
   body: String,
   icon: String,
@@ -233,7 +233,7 @@ fn send_notification_internal_windows7(
 }
 
 #[tauri::command]
-pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
+pub fn notification_count(window: tauri::WebviewWindow<crate::Runtime>, amount: i64) {
   log!("Setting notification count: {}", amount);
 
   notification_count_inner(&window, amount);
@@ -246,14 +246,14 @@ pub fn notification_count(window: tauri::WebviewWindow, amount: i64) {
 }
 
 #[cfg(target_os = "linux")]
-fn notification_count_inner(window: &tauri::WebviewWindow, amount: i64) {
+fn notification_count_inner(window: &tauri::WebviewWindow<crate::Runtime>, amount: i64) {
   window
     .set_badge_count(if amount <= 0 { None } else { Some(amount) })
     .unwrap_or_default();
 }
 
 #[cfg(target_os = "windows")]
-fn notification_count_inner(window: &tauri::WebviewWindow, amount: i64) {
+fn notification_count_inner(window: &tauri::WebviewWindow<crate::Runtime>, amount: i64) {
   if amount == 0 {
     window.set_overlay_icon(None).unwrap_or_default();
   } else {
@@ -299,7 +299,7 @@ fn notification_count_inner(window: &tauri::WebviewWindow, amount: i64) {
 }
 
 #[cfg(target_os = "macos")]
-fn notification_count_inner(_window: &tauri::WebviewWindow, amount: i64) {
+fn notification_count_inner(_window: &tauri::WebviewWindow<crate::Runtime>, amount: i64) {
   use objc2_app_kit::NSApp;
   use objc2_foundation::{MainThreadMarker, NSString};
 
@@ -323,7 +323,10 @@ fn notification_count_inner(_window: &tauri::WebviewWindow, amount: i64) {
   }
 }
 
-pub fn open_notification_data(win: &tauri::WebviewWindow, additional_data: Option<AdditionalData>) {
+pub fn open_notification_data(
+  win: &tauri::WebviewWindow<crate::Runtime>,
+  additional_data: Option<AdditionalData>,
+) {
   ultrashow(win.clone());
 
   // Navigate to the guild/channel/message if provided
