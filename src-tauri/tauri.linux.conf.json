@@ -1,6 +1,6 @@
 {
   "build": {
-    "beforeBundleCommand": "sh scripts/bundle-cef.sh"
+    "beforeBundleCommand": "bash scripts/bundle-cef.sh"
   },
   "bundle": {
     "resources": [
