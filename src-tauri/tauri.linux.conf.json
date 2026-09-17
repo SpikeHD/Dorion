@@ -1,9 +1,27 @@
 {
+  "build": {
+    "beforeBundleCommand": "bash scripts/bundle-cef.sh"
+  },
   "bundle": {
     "resources": [
       "injection/shelter.js",
-      "icons/icon*.ico",
-      "extension_webkit/libextension.so"
-    ]
+      "icons/icon*.ico"
+    ],
+    "linux": {
+      "deb": {
+        "files": {
+          "usr/lib/dorion": ".cef"
+        }
+      },
+      "rpm": {
+        "files": {
+          "/usr/lib/dorion": ".cef"
+        },
+        "compression": {
+          "type": "zstd",
+          "level": 3
+        }
+      }
+    }
   }
 }

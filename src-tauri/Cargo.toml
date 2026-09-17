@@ -10,7 +10,7 @@ rust-version = "1.96"
 
 [profile.release]
 strip = "debuginfo"
-lto = true
+lto = "thin"
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
@@ -21,7 +21,9 @@ dirs = "6.0"
 include-flate = "0.3"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
-tauri = { version = "2.11", features = ["macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"] }
+tauri = { version = "2.11.5", features = [
+  "macos-private-api", "macos-proxy", "devtools", "tray-icon", "image-png"
+], default-features = false }
 tauri-plugin-deep-link = "2.4"
 tauri-plugin-shell = { git = "https://github.com/SpikeHD/plugins-workspace.git", branch = "v2"}
 tauri-plugin-single-instance = { version = "2.3.0", features = ["deep-link"] }
@@ -46,8 +48,13 @@ system-idle-time = "1.0.0"
 
 [target."cfg(any(target_os = \"linux\", target_os = \"dragonfly\", target_os = \"freebsd\", target_os = \"openbsd\", target_os = \"netbsd\"))".dependencies]
 gtk = "0.18"
-webkit2gtk = { version = "2.0", features = ["v2_4"] }
 wgpu = { version = "26.0", default-features = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# tauri-runtime-cef's source is written against the 0.31.0-beta.2
+# drag n drop API, which beta.3 broke apparently
+winit = "=0.31.0-beta.2"
+tauri-runtime-cef = { git = "https://github.com/SableClient/tauri-runtime-cef.git", features = ["devtools"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.5.2"
@@ -104,9 +111,6 @@ features = [
     "Win32_System_SystemInformation",
     "Wdk_System_SystemServices"
 ]
-
-[target.armv7-unknown-linux-gnueabihf]
-linker = "arm-linux-gnueabihf-gcc"
 
 [target.aarch64-unknown-linux-gnu]
 linker = "aarch64-linux-gnu-gcc"
