@@ -10,7 +10,7 @@ rust-version = "1.96"
 
 [profile.release]
 strip = "debuginfo"
-lto = true
+lto = "thin"
 
 [build-dependencies]
 tauri-build = { version = "2.0.0", features = [] }
