@@ -32,3 +32,4 @@ src-tauri/updater*
 src-tauri/gen
 
 updater/target
+src-tauri/.cef/
