@@ -2,10 +2,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
+use std::sync::RwLock;
 
 use crate::functionality::keyboard::KeyStruct;
 use crate::log;
 use crate::util::paths::get_config_file;
+
+static CONFIG_CACHE: RwLock<Option<Config>> = RwLock::new(None);
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Config {
@@ -213,6 +216,8 @@ pub fn write_config_file(contents: String) {
   config
     .to_file(get_config_file())
     .expect("Error writing config!");
+
+  *CONFIG_CACHE.write().unwrap() = Some(config);
 }
 
 #[tauri::command]
@@ -222,9 +227,17 @@ pub fn default_config() -> Config {
 
 #[tauri::command]
 pub fn get_config() -> Config {
-  let config_str = read_config_file();
+  if let Ok(guard) = CONFIG_CACHE.read()
+    && let Some(config) = guard.as_ref()
+  {
+    return config.clone();
+  }
 
-  Config::from_str(&config_str).expect("Error parsing config!")
+  let config = Config::from_file(get_config_file()).expect("Config does not exist!");
+
+  *CONFIG_CACHE.write().unwrap() = Some(config.clone());
+
+  config
 }
 
 #[tauri::command]
