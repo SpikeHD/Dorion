@@ -34,8 +34,6 @@ pub fn localize_imports(
   let mut seen_urls: Vec<String> = vec![];
   let mut new_css = css.clone();
 
-  let matches = reg.captures_iter(Box::leak(css.into_boxed_str()));
-
   let mut tasks = Vec::new();
 
   // If we need to cache CSS, first check and use cache if it exists
@@ -54,8 +52,8 @@ pub fn localize_imports(
     }
   }
 
-  for groups in matches {
-    let full_import = groups.get(0).unwrap().as_str();
+  for groups in reg.captures_iter(&css) {
+    let full_import = groups.get(0).unwrap().as_str().to_string();
     let url = groups.get(1).unwrap().as_str().replace(['\'', '\"'], "");
 
     if url.is_empty() {
@@ -64,7 +62,7 @@ pub fn localize_imports(
 
     if seen_urls.contains(&url) {
       // Remove the import statement from the css
-      new_css = new_css.replace(full_import, "");
+      new_css = new_css.replace(&full_import, "");
       continue;
     }
 
@@ -212,14 +210,11 @@ pub fn localize_images(win: tauri::WebviewWindow<crate::Runtime>, css: String) -
 
   let img_reg = Regex::new(r#"url\((?:'|"|)(http.+?)(?:'|"|)\)"#).unwrap();
   let mut new_css = css.clone();
-  let matches = img_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
 
   let mut seen_urls: Vec<String> = vec![];
 
   // This could be pretty computationally expensive for just a count, so I should change this sometime
-  let count = img_reg
-    .captures_iter(Box::leak(css.into_boxed_str()))
-    .count();
+  let count = img_reg.captures_iter(&css).count();
 
   let mut tasks = Vec::new();
 
@@ -235,16 +230,14 @@ pub fn localize_images(win: tauri::WebviewWindow<crate::Runtime>, css: String) -
     return new_css;
   }
 
-  for groups in matches {
-    let url = groups.get(1).unwrap().as_str();
-    let filetype = url.split('.').next_back().unwrap();
+  for groups in img_reg.captures_iter(&css) {
+    let url = groups.get(1).unwrap().as_str().to_string();
+    let mut filetype = url.split('.').next_back().unwrap().to_string();
 
     // SVGs require the filetype to be svg+xml because they're special I guess
-    let filetype = if filetype == "svg" {
-      "svg+xml"
-    } else {
-      filetype
-    };
+    if filetype == "svg" {
+      filetype = "svg+xml".to_string();
+    }
 
     // CORS allows discord media
     if url.is_empty()
@@ -259,30 +252,18 @@ pub fn localize_images(win: tauri::WebviewWindow<crate::Runtime>, css: String) -
       continue;
     }
 
-    if seen_urls.contains(&url.to_string()) {
+    if seen_urls.contains(&url) {
       continue;
     }
 
-    seen_urls.push((*url).to_string());
-
-    // If there are more than 50 tasks, it's safe to say that there are probably too many images
-    // to process, so we should just skip it
-    if groups.len() > 50 {
-      win
-        .emit(
-          "loading_log",
-          format!("Too many images to process ({})", groups.len()),
-        )
-        .unwrap_or_default();
-      break;
-    }
+    seen_urls.push(url.clone());
 
     let win_clone = win.clone(); // Clone the Window handle for use in the async block
 
     tasks.push(std::thread::spawn(move || {
       log!("Getting: {}", &url);
 
-      let response = match blocking_client().get(url).send() {
+      let response = match blocking_client().get(url.as_str()).send() {
         Ok(r) => r,
         Err(e) => {
           log!("Request failed: {}", e);
@@ -306,10 +287,7 @@ pub fn localize_images(win: tauri::WebviewWindow<crate::Runtime>, css: String) -
         return None;
       }
 
-      Some((
-        url.to_owned(),
-        format!("data:image/{filetype};base64,{b64}"),
-      ))
+      Some((url, format!("data:image/{filetype};base64,{b64}")))
     }));
   }
 
