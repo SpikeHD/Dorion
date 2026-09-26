@@ -7,13 +7,13 @@ use crate::log;
 
 // Minimize
 #[tauri::command]
-pub fn minimize(win: tauri::WebviewWindow) {
+pub fn minimize(win: tauri::WebviewWindow<crate::Runtime>) {
   win.minimize().unwrap_or_default();
 }
 
 // Toggle maximize
 #[tauri::command]
-pub fn toggle_maximize(win: tauri::WebviewWindow) {
+pub fn toggle_maximize(win: tauri::WebviewWindow<crate::Runtime>) {
   if win.is_maximized().unwrap_or_default() {
     win.unmaximize().unwrap_or_default();
   } else {
@@ -23,13 +23,13 @@ pub fn toggle_maximize(win: tauri::WebviewWindow) {
 
 #[tauri::command]
 #[cfg(not(target_os = "macos"))]
-pub fn set_decorations(win: tauri::WebviewWindow, enable: bool) {
+pub fn set_decorations(win: tauri::WebviewWindow<crate::Runtime>, enable: bool) {
   win.set_decorations(enable).unwrap_or_default();
 }
 
 // Close
 #[tauri::command]
-pub fn close(win: tauri::WebviewWindow) {
+pub fn close(win: tauri::WebviewWindow<crate::Runtime>) {
   // Save window state
   let app = win.app_handle();
   app.save_window_state(StateFlags::all()).unwrap_or_default();
@@ -42,7 +42,7 @@ pub fn close(win: tauri::WebviewWindow) {
   }
 }
 
-pub fn setup_autostart(app: &mut tauri::App) {
+pub fn setup_autostart(app: &mut tauri::App<crate::Runtime>) {
   let autostart_manager = app.autolaunch();
   let should_enable = get_config().open_on_startup.unwrap_or(false);
 

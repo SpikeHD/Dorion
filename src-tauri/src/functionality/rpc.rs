@@ -61,7 +61,7 @@ pub fn append_to_local(detectables: Vec<DetectableActivity>) {
   .unwrap_or_default();
 }
 
-pub fn start_rpc_server(win: tauri::WebviewWindow) {
+pub fn start_rpc_server(win: tauri::WebviewWindow<crate::Runtime>) {
   #[cfg(debug_assertions)]
   unsafe {
     std::env::set_var("RSRPC_LOGS_ENABLED", "1")

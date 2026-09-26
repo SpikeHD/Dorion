@@ -48,7 +48,11 @@ pub fn set_keybind(action: String, keys: Vec<KeyStruct>) {
 
 #[tauri::command]
 #[cfg(target_os = "windows")]
-pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pressed: bool) {
+pub fn trigger_keys_pressed(
+  win: tauri::WebviewWindow<crate::Runtime>,
+  keys: Vec<KeyStruct>,
+  pressed: bool,
+) {
   let keybinds = get_keybinds();
 
   // Convert the input keys to a hotkey for comparison
@@ -81,7 +85,7 @@ pub fn trigger_keys_pressed(win: tauri::WebviewWindow, keys: Vec<KeyStruct>, pre
   }
 }
 
-pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
+pub fn start_keybind_watcher(win: &tauri::WebviewWindow<crate::Runtime>) {
   PTT_ENABLED.store(
     get_config().push_to_talk.unwrap_or(false),
     std::sync::atomic::Ordering::Relaxed,
@@ -146,7 +150,9 @@ pub fn start_keybind_watcher(win: &tauri::WebviewWindow) {
   });
 }
 
-fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
+fn new_hook(
+  win: tauri::WebviewWindow<crate::Runtime>,
+) -> Result<Arc<Hook>, Box<dyn std::error::Error>> {
   let hook = Arc::new(
     match Hook::with_consume_preference(ConsumePreference::MustNotConsume) {
       Ok(hook) => Ok(hook),
@@ -166,7 +172,7 @@ fn new_hook(win: tauri::WebviewWindow) -> Result<Arc<Hook>, Box<dyn std::error::
 }
 
 fn register_all_keybinds(
-  win: &tauri::WebviewWindow,
+  win: &tauri::WebviewWindow<crate::Runtime>,
   hook: &Arc<Hook>,
   keybinds: &HashMap<String, Vec<KeyStruct>>,
 ) {
@@ -212,7 +218,7 @@ fn register_all_keybinds(
   }
 }
 
-fn handle_push_action(win: &tauri::WebviewWindow, action: &str, pressed: bool) {
+fn handle_push_action(win: &tauri::WebviewWindow<crate::Runtime>, action: &str, pressed: bool) {
   if !PTT_ENABLED.load(Ordering::Relaxed) && action == "PUSH_TO_TALK" {
     return;
   }
@@ -228,7 +234,7 @@ fn handle_push_action(win: &tauri::WebviewWindow, action: &str, pressed: bool) {
   }
 }
 
-fn handle_regular_action(win: &tauri::WebviewWindow, action: &str) {
+fn handle_regular_action(win: &tauri::WebviewWindow<crate::Runtime>, action: &str) {
   log!("Regular action triggered: {}", action);
 
   win

@@ -26,10 +26,6 @@ modules:
         url: https://github.com/SpikeHD/Dorion/releases/download/v6.13.2/dorion_6.13.2_arm64.deb
         sha256: 173E922B06105F714DC7804A0F51C368CFF2904BF666D7BA8677DE3C5288DB63
         only-arches: [aarch64]
-      - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.13.2/dorion_6.13.2_armhf.deb
-        sha256: 9B6982DD2F256DAA0D69348A8F370331390D199F7BC9E610895F67D142A49B55
-        only-arches: [arm]
     build-commands:
       - ar -x *.deb
       - tar -xf data.tar.gz
