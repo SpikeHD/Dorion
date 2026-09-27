@@ -18,3 +18,17 @@ html:not([data-dorion-platform='macos']) div[class^='base'] div[class^='bar_'] {
   z-index: 9999;
   background-color: var(--background-base-lowest);
 }
+
+html,
+body,
+#app-mount {
+  /**
+   * Prevent viewport overscroll when pasting multiline text. #389
+   */
+  overflow: hidden !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overscroll-behavior: none !important;
+}
