@@ -76,7 +76,7 @@ pub fn get_platform() -> &'static str {
 }
 
 #[tauri::command]
-pub fn restart_in_safemode(app: tauri::AppHandle) {
+pub fn restart_in_safemode(app: tauri::AppHandle<crate::Runtime>) {
   let current_exe = match std::env::current_exe() {
     Ok(current_exe) => current_exe,
     Err(e) => {

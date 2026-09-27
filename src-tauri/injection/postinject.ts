@@ -1,3 +1,4 @@
+import { initResizeHelpers } from './shared/resize'
 import { applyExtraCSS } from './shared/ui'
 import { initWindowsKeybinds } from './shared/windows_keybinds'
 import { initZoomHotkeys } from './shared/zoom'
@@ -11,6 +12,7 @@ import { initZoomHotkeys } from './shared/zoom'
 
   initWindowsKeybinds()
   initZoomHotkeys()
+  initResizeHelpers()
   // Load up our extra css
   applyExtraCSS()
 

@@ -4,7 +4,7 @@ use crate::config::{get_config, set_config};
 
 use super::tray::get_tray;
 
-pub fn create_menubar(app: &tauri::AppHandle) -> Result<(), tauri::Error> {
+pub fn create_menubar(app: &tauri::AppHandle<crate::Runtime>) -> Result<(), tauri::Error> {
   let enable_tray_icon = get_config().tray_icon_enabled.unwrap_or(true);
 
   // Initial disable/enable

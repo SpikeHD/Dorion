@@ -5,7 +5,7 @@ use crate::util::http::async_client;
 use crate::util::paths::{config_is_local, updater_dir};
 
 #[tauri::command]
-pub async fn update_check(win: tauri::WebviewWindow) -> Vec<String> {
+pub async fn update_check(win: tauri::WebviewWindow<crate::Runtime>) -> Vec<String> {
   let mut to_update = vec![];
 
   log!("Checking for updates...");
@@ -21,7 +21,7 @@ pub async fn update_check(win: tauri::WebviewWindow) -> Vec<String> {
 }
 
 #[tauri::command]
-pub async fn do_update(win: tauri::WebviewWindow, to_update: Vec<String>) {
+pub async fn do_update(win: tauri::WebviewWindow<crate::Runtime>, to_update: Vec<String>) {
   let updater_path = updater_dir(&win);
   let mut updater = std::process::Command::new(updater_path);
 
@@ -66,7 +66,7 @@ pub async fn do_update(win: tauri::WebviewWindow, to_update: Vec<String>) {
 }
 
 pub async fn maybe_latest_main_release(
-  win: &tauri::WebviewWindow,
+  win: &tauri::WebviewWindow<crate::Runtime>,
 ) -> Result<bool, Box<dyn std::error::Error + Sync + Send>> {
   let url = "https://api.github.com/repos/SpikeHD/Dorion/releases/latest";
   let client = async_client();

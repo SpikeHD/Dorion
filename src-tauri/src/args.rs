@@ -37,8 +37,19 @@ pub struct Args {
 
 impl Args {
   pub fn parse() -> Self {
-    Args::parse_args_default_or_exit()
+    let args: Vec<String> = std::env::args()
+      .skip(1)
+      .filter(|arg| !is_cef_passthrough(arg))
+      .collect();
+    match Args::parse_args_default(&args) {
+      Ok(args) => args,
+      Err(_) => Args::parse_args_default_or_exit(),
+    }
   }
+}
+
+fn is_cef_passthrough(arg: &str) -> bool {
+  arg == "--no-sandbox" || arg.starts_with("--no-sandbox=")
 }
 
 // Lazy static to hold parsed args

@@ -52,15 +52,6 @@ jobs:
               "dorion-aarch64-unknown-linux-gnu-rpm")
                 new_name="Dorion_${{ inputs.version }}-1.aarch64.rpm"
                 ;;
-              "dorion-armv7-unknown-linux-gnueabihf-deb")
-                new_name="Dorion_${{ inputs.version }}_armhf.deb"
-                ;;
-              "dorion-armv7-unknown-linux-gnueabihf-portable")
-                new_name="Dorion_${{ inputs.version }}_armv7_portable.tar.gz"
-                ;;
-              "dorion-armv7-unknown-linux-gnueabihf-rpm")
-                new_name="Dorion_${{ inputs.version }}-1.armhfp.rpm"
-                ;;
               "dorion-x86_64-apple-darwin-dmg")
                 new_name="Dorion_${{ inputs.version }}_x64.dmg"
                 ;;

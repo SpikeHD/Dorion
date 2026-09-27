@@ -1,6 +1,6 @@
 use system_idle_time::get_idle_time;
 
-pub fn start_idle_watcher(win: &tauri::WebviewWindow) {
+pub fn start_idle_watcher(win: &tauri::WebviewWindow<crate::Runtime>) {
   let win = win.clone();
 
   std::thread::spawn(move || {
