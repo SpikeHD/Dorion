@@ -17,7 +17,7 @@ declare global {
         }
       }
       shell: {
-        open: (path: string) => void
+        open: (path: string) => Promise<null>
       }
       app: {
         getVersion: () => Promise<string>,

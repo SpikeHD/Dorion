@@ -54,6 +54,9 @@
           "discord"
         ]
       }
+    },
+    "shell": {
+      "open": "(?:https?://|mailto:|tel:|(?:spotify|steam|tidal|itunes|com\\.epicgames\\.launcher):[/:]{0,2})[\\w+./:%?&=+#,@!-]+"
     }
   },
   "app": {
