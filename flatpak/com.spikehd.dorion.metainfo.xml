@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.spikehd.dorion</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Dorion</name>
+  <summary>Alternative Discord client for lower-spec or storage-sensitive PCs</summary>
+
+  <description>
+    <p>
+      Dorion is an alternative Discord client aimed towards lower-spec or storage-sensitive
+      PCs. It loads the web client in a webview, so it carries none of the bundled
+      dependencies of the native client, and supports themes, plugins and more.
+    </p>
+    <ul>
+      <li>Themes, plugins, and multi-profile support</li>
+      <li>Small install size and lower RAM/VRAM use than the native client</li>
+      <li>RPC (RS) integration, soundboard, tray controls and window state</li>
+      <li>Portable mode, deep links, and hotkeys</li>
+      <li>Custom injection, so it works alongside shelter and other client mods</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">com.spikehd.dorion.desktop</launchable>
+
+  <url type="homepage">https://spikehd.github.io/projects/dorion/</url>
+  <url type="bugtracker">https://github.com/SpikeHD/Dorion/issues</url>
+  <url type="donation">https://github.com/sponsors/SpikeHD</url>
+
+  <developer id="dev.spikehd">
+    <name>SpikeHD</name>
+  </developer>
+
+  <categories>
+    <category>Network</category>
+    <category>Chat</category>
+    <category>Utility</category>
+  </categories>
+
+  <keywords>
+    <keyword>discord</keyword>
+    <keyword>client</keyword>
+    <keyword>webview</keyword>
+    <keyword>themes</keyword>
+    <keyword>plugins</keyword>
+  </keywords>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="violence-mild">mild</content_attribute>
+  </content_rating>
+
+  <releases>
+    <release version="6.13.2" date="2026-09-20"/>
+  </releases>
+</component>

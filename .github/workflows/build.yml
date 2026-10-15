@@ -323,3 +323,30 @@ jobs:
         with:
           name: dorion-${{ matrix.config.target }}-dmg
           path: src-tauri/target/${{ matrix.config.target }}/release/bundle/dmg/*.dmg
+
+  flatpak:
+    needs: build
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dorion-x86_64-unknown-linux-gnu-deb
+          path: flatpak/build
+
+      - name: (Flatpak) Stage the deb
+        run: mv flatpak/build/*.deb flatpak/build/dorion-x86_64.deb
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: com.spikehd.dorion.flatpak
+          manifest-path: flatpak/com.spikehd.dorion.yml
+          cache: false
+          upload-artifact: true
+          artifact-name: dorion-x86_64-unknown-linux-gnu-flatpak

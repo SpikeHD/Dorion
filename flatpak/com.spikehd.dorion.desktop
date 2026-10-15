@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Dorion
+Comment=Alternative Discord client for lower-spec or storage-sensitive PCs
+Exec=/app/usr/bin/Dorion
+Icon=com.spikehd.dorion
+Terminal=false
+Type=Application
+Categories=Network;Chat;
+Keywords=discord;client;browser;webview;themes;plugins;overlay;
+StartupNotify=false
+StartupWMClass=Dorion

@@ -1,38 +1,51 @@
-id: io.github.spikehd.dorion
-
+app-id: com.spikehd.dorion
 runtime: org.gnome.Platform
-runtime-version: '46'
+runtime-version: '51'
 sdk: org.gnome.Sdk
 
-command: dorion
+command: /app/usr/bin/Dorion
+
 finish-args:
   - --share=network
   - --share=ipc
-  - --socket=pulseaudio
   - --socket=wayland
   - --socket=fallback-x11
+  - --socket=pulseaudio
   - --device=dri
-  - --share=ipc
+  # tauri resolves resources from ${APPDIR}/usr/lib/Dorion
+  - --env=APPDIR=/app
 
 modules:
-  - name: binary
+  - shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json
+  - name: dorion
     buildsystem: simple
+    build-commands:
+      # The deb bundles the layout tauri resolves resources from already
+      - ar x dorion.deb
+      - tar -xf data.tar.gz
+      - mkdir -p ${FLATPAK_DEST}/usr
+      - cp -a usr/bin usr/lib ${FLATPAK_DEST}/usr/
+      # The deb's desktop file and icon point at /usr/bin which isn't the same here
+      - install -Dm0644 com.spikehd.dorion.desktop ${FLATPAK_DEST}/share/applications/com.spikehd.dorion.desktop
+      - install -Dm0644 com.spikehd.dorion.metainfo.xml ${FLATPAK_DEST}/share/metainfo/com.spikehd.dorion.metainfo.xml
+      - install -Dm0644 icon-512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.spikehd.dorion.png
+      - install -Dm0644 icon-128.png ${FLATPAK_DEST}/share/icons/hicolor/128x128/apps/com.spikehd.dorion.png
     sources:
       - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.13.2/dorion_6.13.2_amd64.deb
-        sha256: 7934AE579EC041A46D5877531FFC6CF520FB5BD1A2F583A1EBA3D7B8B9F5FF41
+        path: build/dorion-x86_64.deb
+        dest-filename: dorion.deb
         only-arches: [x86_64]
       - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.13.2/dorion_6.13.2_arm64.deb
-        sha256: 173E922B06105F714DC7804A0F51C368CFF2904BF666D7BA8677DE3C5288DB63
+        path: build/dorion-arm64.deb
+        dest-filename: dorion.deb
         only-arches: [aarch64]
       - type: file
-        url: https://github.com/SpikeHD/Dorion/releases/download/v6.13.2/dorion_6.13.2_armhf.deb
-        sha256: 9B6982DD2F256DAA0D69348A8F370331390D199F7BC9E610895F67D142A49B55
-        only-arches: [arm]
-    build-commands:
-      - ar -x *.deb
-      - tar -xf data.tar.gz
-      - 'install -Dm755 usr/bin/Dorion /app/bin/Dorion'
-      - install -Dm644 usr/share/applications/Dorion.desktop /app/share/applications/io.github.spikehd.dorion.desktop
-      - install -Dm644 usr/share/icons/hicolor/512x512/apps/Dorion.png /app/share/icons/hicolor/128x128/apps/io.github.spikehd.dorion.png
+        path: com.spikehd.dorion.desktop
+      - type: file
+        path: com.spikehd.dorion.metainfo.xml
+      - type: file
+        path: ../src-tauri/icons/icon.png
+        dest-filename: icon-512.png
+      - type: file
+        path: ../src-tauri/icons/128x128.png
+        dest-filename: icon-128.png

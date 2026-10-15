@@ -302,6 +302,25 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 All built files will be in `src-tauri/target/(release|debug)/`. Installation files (eg. `.msi`, `.deb`) are located in `bundle/`.
 
+## Flatpak
+
+The flatpak wraps the linux `.deb`, so build that first and move it into the `flatpak/` dir before building the rest:
+
+```sh
+git submodule update --init
+mkdir -p flatpak/build
+cp src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb/*.deb flatpak/build/dorion-x86_64.deb
+
+flatpak-builder --force-clean --ccache --repo=flatpak/repo flatpak/out flatpak/com.spikehd.dorion.yml
+```
+
+Then install the built flatpak and run it:
+
+```sh
+flatpak --user install -y ./flatpak/repo com.spikehd.dorion
+flatpak --user run com.spikehd.dorion
+```
+
 # Known Issues
 
 * (non-Windows) External images (UserBG, Decor, UserPFP, etc.) will not load

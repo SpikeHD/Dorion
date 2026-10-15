@@ -32,3 +32,9 @@ src-tauri/updater*
 src-tauri/gen
 
 updater/target
+
+# flatpak-builder (local builds)
+/.flatpak-builder
+/flatpak/build
+/flatpak/out
+/flatpak/repo
