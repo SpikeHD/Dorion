@@ -104,44 +104,78 @@ const INTERNAL_DOMAINS = [
   'cdn.discordapp.com'
 ]
 
+const LOCAL_PROTOCOLS = ['about:', 'blob:', 'data:', 'javascript:']
+
 function isExternal(url: string) {
   try {
     if (url.startsWith('/')) return false
 
     const parsed = new URL(url)
 
-    return !INTERNAL_DOMAINS.some(domain =>
-      parsed.hostname.endsWith(domain)
-    )
+    if (LOCAL_PROTOCOLS.includes(parsed.protocol)) return false
+
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return !INTERNAL_DOMAINS.some(domain => parsed.hostname.endsWith(domain))
+    }
+
+    return true
   } catch {
     return false
   }
+}
+
+function closedPopup(url: string): Window {
+  const obj = {
+    url,
+    closed: false,
+    name: '',
+    title: ''
+  }
+
+  const stub = new Proxy(obj, {
+    get(target, prop) {
+      if (prop === 'closed') return target.closed
+      if (prop === 'close' || prop === 'blur') {
+        return () => {
+          target.closed = true
+        }
+      }
+      if (prop in target) return Reflect.get(target, prop)
+
+      return () => stub
+    },
+    set<T>(target: T, prop: keyof T, value: T[keyof T]) {
+      target[prop] = value
+      return true
+    }
+  })
+
+  return stub as unknown as Window
 }
 
 export function proxyOpen() {
   // Make window.open become window.__TAURI__.shell.open
   window.nativeOpen = window.open
   window.open = (url: string | undefined | URL, target?: string, features?: string) => {
-
     if (!url) {
       return window.nativeOpen(url, target, features)
     }
 
     const urlStr = url.toString()
-    // If this needs to open externally, do so
-    if (urlStr !== 'about:blank' && (target === '_blank' || !target) && isExternal(urlStr)) {
-      console.log('[Proxy Open] External URL:', urlStr)
 
-      window.__TAURI__.shell.open(urlStr)
-      return null
+    // If this needs to open externally, do so
+    if ((target === '_blank' || !target) && isExternal(urlStr)) {
+      const protocol = new URL(urlStr).protocol
+      console.log(protocol === 'http:' || protocol === 'https:' ? '[Proxy Open] External URL:' : '[Proxy Open] App scheme:', urlStr)
+
+      window.__TAURI__.shell.open(urlStr).catch((e) => console.error('[Proxy Open] Failed to open externally: ', e))
+      return closedPopup(urlStr)
     }
 
-    console.log('[Proxy Open] Internal URL:', urlStr)
-    
-    const win = window.nativeOpen(urlStr, target, features)
+    console.log('[Proxy Open] In-app URL:', urlStr)
 
     // Otherwise, use the native open
-    return win
+    return window.nativeOpen(urlStr, target, features)
   }
 }
 

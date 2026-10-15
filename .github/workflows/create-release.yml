@@ -70,6 +70,9 @@ jobs:
               "dorion-x86_64-unknown-linux-gnu-deb")
                 new_name="Dorion_${{ inputs.version }}_amd64.deb"
                 ;;
+              "dorion-x86_64-unknown-linux-gnu-flatpak")
+                new_name="Dorion_${{ inputs.version }}.flatpak"
+                ;;
               "dorion-x86_64-unknown-linux-gnu-portable")
                 new_name="Dorion_${{ inputs.version }}_amd64_portable.tar.gz"
                 ;;

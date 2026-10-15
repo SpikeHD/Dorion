@@ -5199,8 +5199,8 @@ checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
 name = "rsrpc"
-version = "0.28.0"
-source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.28.0#062e0fd9fe34a475640a822facfee68296ba22e3"
+version = "0.29.0"
+source = "git+https://www.github.com/SpikeHD/rsRPC?tag=v0.29.0#8ea7a40edbfd974e35a6ab523fa03aa1411fa504"
 dependencies = [
  "aho-corasick",
  "chrono",

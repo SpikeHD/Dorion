@@ -33,3 +33,9 @@ src-tauri/gen
 
 updater/target
 src-tauri/.cef/
+
+# flatpak-builder (local builds)
+/.flatpak-builder
+/flatpak/build
+/flatpak/out
+/flatpak/repo

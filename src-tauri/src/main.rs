@@ -5,10 +5,10 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
-#[cfg(target_os = "windows")]
+#[cfg(not(target_os = "macos"))]
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::{env, str::FromStr, time::Duration};
-#[cfg(target_os = "windows")]
+#[cfg(not(target_os = "macos"))]
 use tauri::webview::NewWindowResponse;
 use tauri::{Manager, Url, WebviewWindowBuilder};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -56,7 +56,8 @@ type Runtime = tauri_runtime_cef::CefRuntime<tauri::EventLoopMessage>;
 type Runtime = tauri::Wry;
 
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
-#[cfg(target_os = "windows")]
+
+#[cfg(not(target_os = "macos"))]
 static POPOUT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(target_os = "windows")]
@@ -441,44 +442,47 @@ fn main() {
         .zoom_hotkeys_enabled(false)
         .browser_extensions_enabled(true);
 
-      if !args::is_safemode() {
+      let init_script = if args::is_safemode() {
+        "".to_string()
+      } else {
         // Preinject is bundled with "use strict" so we put it in it's own function to prevent potential client mod issues
-        win = win.initialization_script(format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}").as_str());
+        format!("console.log(window.location);if(window.__DORION_INIT__) {{throw new Error('Dorion already began initializing');}} window.__DORION_INIT__ = true; {preinject};{client_mods}")
+      };
+
+      if !init_script.is_empty() {
+        win = win.initialization_script(init_script.as_str());
       }
 
-      #[cfg(target_os = "windows")]
+      #[cfg(not(target_os = "macos"))]
       {
         let app_handle = app.handle().clone();
+        // Popouts get the injection script too
+        let popout_init = init_script;
         win = win.on_new_window(move |url, features| {
           let label = format!("popout-{}", POPOUT_COUNTER.fetch_add(1, Ordering::Relaxed));
           let app_handle = app_handle.clone();
-          let position = features.position();
-          let size = features.size();
 
-          std::thread::spawn(move || {
-            let mut builder = WebviewWindowBuilder::new(
+          let mut builder = WebviewWindowBuilder::new(
               &app_handle,
               label,
               tauri::WebviewUrl::External(url),
             )
             .data_directory(get_webdata_dir())
             .browser_extensions_enabled(true)
-            .title("Popout");
+            .title("Popout")
+            .window_features(features);
 
-            if let Some(position) = position {
-              builder = builder.position(position.x, position.y);
-            }
+          if !popout_init.is_empty() {
+            builder = builder.initialization_script(popout_init.clone());
+          }
 
-            if let Some(size) = size {
-              builder = builder.inner_size(size.width, size.height);
-            }
-
-            if let Err(e) = builder.build() {
+          match builder.build() {
+            Ok(popout) => NewWindowResponse::Create { window: popout },
+            Err(e) => {
               log!("Failed to create popout window: {:?}", e);
+              NewWindowResponse::Deny
             }
-          });
-
-          NewWindowResponse::Deny
+          }
         });
       }
 
