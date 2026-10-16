@@ -7,7 +7,7 @@ use crate::log;
 static EXTENSION_INJECTED: AtomicBool = AtomicBool::new(false);
 
 #[cfg(target_os = "windows")]
-pub fn add_extension(win: &WebviewWindow, path: std::path::PathBuf) {
+pub fn add_extension(win: &WebviewWindow<crate::Runtime>, path: std::path::PathBuf) {
   use std::path::PathBuf;
   use tauri::webview::PlatformWebview;
   use webview2_com::{
@@ -80,7 +80,7 @@ pub fn extension_injected() -> bool {
 }
 
 #[cfg(target_os = "windows")]
-pub fn load_extensions(win: &WebviewWindow) {
+pub fn load_extensions(win: &WebviewWindow<crate::Runtime>) {
   use crate::util::paths::get_extensions_dir;
   use std::fs;
 
@@ -99,6 +99,6 @@ pub fn load_extensions(win: &WebviewWindow) {
 }
 
 #[cfg(not(target_os = "windows"))]
-pub fn load_extensions(_win: &WebviewWindow) {
+pub fn load_extensions(_win: &WebviewWindow<crate::Runtime>) {
   log!("Extensions are unsupported on non-Windows platforms!");
 }

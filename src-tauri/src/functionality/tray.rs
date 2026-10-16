@@ -105,7 +105,7 @@ impl FromStr for TrayIcon {
 pub static TRAY_STATE: AtomicUsize = AtomicUsize::new(0);
 
 #[tauri::command]
-pub fn set_tray_icon(app: AppHandle, event: String) {
+pub fn set_tray_icon(app: AppHandle<crate::Runtime>, event: String) {
   log!("Setting tray icon to {}", event.as_str());
 
   let tray_icon = match event.as_str().parse::<TrayIcon>() {
@@ -127,7 +127,7 @@ pub fn set_tray_icon(app: AppHandle, event: String) {
   }
 }
 
-pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
+pub fn create_tray(app: &AppHandle<crate::Runtime>) -> Result<(), tauri::Error> {
   let open_item = MenuItemBuilder::with_id("open", "Open").build(app)?;
   let reload_item = MenuItemBuilder::with_id("reload", "Reload").build(app)?;
   let restart_item = MenuItemBuilder::with_id("restart", "Restart").build(app)?;
@@ -209,6 +209,6 @@ pub fn create_tray(app: &AppHandle) -> Result<(), tauri::Error> {
 }
 
 #[cfg(target_os = "macos")]
-pub fn get_tray(app: &AppHandle) -> Option<tauri::tray::TrayIcon> {
+pub fn get_tray(app: &AppHandle<crate::Runtime>) -> Option<tauri::tray::TrayIcon<crate::Runtime>> {
   app.tray_by_id("main")
 }

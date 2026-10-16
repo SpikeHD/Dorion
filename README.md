@@ -58,18 +58,14 @@
       <div align="center">
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2_amd64.deb">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2_armhf.deb">ARM v7</a>
-        <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2_arm64.deb">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.1/Dorion_6.13.2_arm64.deb">ARM64</a>
       </div>
     </td>
     <td width="23%">
       <div align="center">
         <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2-1.x86_64.rpm">x86_64</a>
         <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2-1.armhfp.rpm">ARM v7</a>
-        <span>|</span>
-        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.2/Dorion_6.13.2-1.aarch64.rpm">ARM64</a>
+        <a href="https://github.com/SpikeHD/dorion/releases/download/v6.13.1/Dorion_6.13.2-1.aarch64.rpm">ARM64</a>
       </div>
     </td>
   </tr>
@@ -117,16 +113,12 @@
       <div align="center">
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-unknown-linux-gnu-deb.zip">x86_64</a>
         <span>|</span>
-        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-armv7-unknown-linux-gnueabihf-deb.zip">ARM v7</a>
-        <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-unknown-linux-gnu-deb.zip">ARM64</a>
       </div>
     </td>
     <td width="23%">
       <div align="center">
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-x86_64-unknown-linux-gnu-rpm.zip">x86_64</a>
-        <span>|</span>
-        <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-armv7-unknown-linux-gnueabihf-rpm.zip">ARM v7</a>
         <span>|</span>
         <a href="https://nightly.link/SpikeHD/Dorion/workflows/build/main/dorion-aarch64-unknown-linux-gnu-rpm.zip">ARM64</a>
       </div>
@@ -283,14 +275,7 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     pnpm build:updater
     ```
 
-6. (Linux-only) Build the WebKitGTK extension
-    ```sh
-    cd src-tauri/extension_webkit
-    cmake .
-    cmake --build .
-    ```
-
-7. Build!
+6. Build!
 
     ```sh
     # Build Dorion...

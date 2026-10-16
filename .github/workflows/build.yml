@@ -39,8 +39,6 @@ jobs:
             target: 'x86_64-unknown-linux-gnu'
           - platform: ubuntu-22.04
             target: 'aarch64-unknown-linux-gnu'
-          - platform: ubuntu-22.04
-            target: 'armv7-unknown-linux-gnueabihf'
 
           - platform: macos-latest
             target: 'x86_64-apple-darwin'
@@ -89,28 +87,27 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: (Linux) ARM sources.list
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu' || matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
           # Add [arch=amd64] to the initial entries of the sources.list
           sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
 
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
 
       # ARM-linux related sources and dpkg config and such
       - name: (Linux) ARM setup
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu' || matrix.config.target == 'armv7-unknown-linux-gnueabihf'
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
           sudo dpkg --add-architecture arm64
-          sudo dpkg --add-architecture armhf
           sudo apt-get update
 
       - name: (Linux) Install dependencies
@@ -128,21 +125,8 @@ jobs:
             libayatana-appindicator3-dev \
             libzstd-dev \
             zstd \
-            librsvg2-dev
-
-      - name: (Linux) (ARMv7) Install dependencies
-        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
-        run: |
-          sudo apt-get install -y \
-            libc6:armhf \
-            libc6-dev:armhf \
-            libapparmor1:armhf \
-            libwebkit2gtk-4.1-dev:armhf \
-            libssl-dev:armhf \
-            libzstd-dev:armhf \
-            zstd:armhf \
-            gcc-arm-linux-gnueabihf \
-            g++-arm-linux-gnueabihf
+            librsvg2-dev \
+            libfuse2
 
       - name: (Linux) (ARM64) Install dependencies
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -156,7 +140,9 @@ jobs:
             libzstd-dev:arm64 \
             zstd:arm64 \
             gcc-aarch64-linux-gnu \
-            g++-aarch64-linux-gnu
+            g++-aarch64-linux-gnu \
+            libnss3-dev:arm64 \
+            libasound2-dev:arm64
 
       - name: Add target
         run: rustup target add ${{ matrix.config.target }}
@@ -166,26 +152,6 @@ jobs:
         run: pnpm build:updater
         env:
           RUSTFLAGS: -Awarnings
-
-      - name: (Linux x86_64) Build Webkit extension
-        if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: cd src-tauri/extension_webkit && cmake . && cmake --build .
-
-      - name: (Linux ARMv7) Build Webkit extension
-        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
-        run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-armv7.cmake . && cmake --build .
-        env:
-          CC: arm-linux-gnueabihf-gcc
-          CXX: arm-linux-gnueabihf-g++
-          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-
-      - name: (Linux ARM64) Build Webkit extension
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cd src-tauri/extension_webkit && cmake -DCMAKE_TOOLCHAIN_FILE=toolchain-arm64.cmake . && cmake --build .
-        env:
-          CC: aarch64-linux-gnu-gcc
-          CXX: aarch64-linux-gnu-g++
-          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
 
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
@@ -200,27 +166,16 @@ jobs:
 
       - name: (Linux) (x86_64) Build
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm,appimage -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
         env:
-          RUSTFLAGS: -Awarnings
-
-      - name: (Linux) (ARMv7) Build
-        if: matrix.config.target == 'armv7-unknown-linux-gnueabihf'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.armv7-unknown-linux-gnueabihf.linker=\'arm-linux-gnueabihf-gcc\'
-        env:
-          RUSTFLAGS: -Awarnings -L/usr/lib/arm-linux-gnueabihf
-          CC: arm-linux-gnueabihf-gcc
-          PKG_CONFIG_SYSROOT_DIR: /usr/lib/arm-linux-gnueabihf
-          PKG_CONFIG_PATH: /usr/lib/arm-linux-gnueabihf/pkgconfig
-          ZSTD_SYS_USE_PKG_CONFIG: 1
-          ZSTD_SYS_NO_VENDOR: 1
+          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
 
       - name: (Linux) (ARM64) Build
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
         env:
-          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu
-          CC: aarch64-linux-gnu-gcc
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
           ZSTD_SYS_USE_PKG_CONFIG: 1
@@ -261,7 +216,11 @@ jobs:
 
       - name: (Linux) Compress build
         if: matrix.config.platform == 'ubuntu-22.04'
-        run: cd src-tauri/target/${{ matrix.config.target }}/release && tar -czvf dorion.tar.gz Dorion .portable ./plugins ./themes ./injection ./icons ./extension_webkit
+        run: |
+          cd src-tauri/target/${{ matrix.config.target }}/release
+          rm -rf locales
+          cp -af ../../../.cef/. .
+          tar -czvf dorion.tar.gz Dorion .portable ./plugins ./themes ./injection ./icons libcef.so libEGL.so libGLESv2.so chrome_100_percent.pak chrome_200_percent.pak resources.pak icudtl.dat v8_context_snapshot.bin chrome-sandbox locales
 
       # Windows portable
       - name: (Windows) Upload portable
