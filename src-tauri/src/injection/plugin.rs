@@ -44,9 +44,10 @@ pub fn load_plugins(win: tauri::WebviewWindow, preload_only: Option<bool>) {
   let plugins_list = get_plugin_list();
   let mut plugins: HashMap<String, String> = HashMap::new();
   let plugin_files = fs::read_dir(plugins_dir).unwrap();
+  let preload_only = preload_only.unwrap_or(false);
 
   log!("Loading plugins...");
-  log!("Preload only: {:?}", preload_only.unwrap_or(false));
+  log!("Preload only: {:?}", preload_only);
 
   for plugin in plugin_files {
     let plugin = plugin.unwrap();
@@ -64,7 +65,11 @@ pub fn load_plugins(win: tauri::WebviewWindow, preload_only: Option<bool>) {
 
     let plugin_details = plugin_details.unwrap();
 
-    if preload_only.unwrap_or(false) && !plugin_details.preload || !plugin_details.enabled {
+    if preload_only && !plugin_details.preload
+      || !preload_only && plugin_details.preload
+      || !plugin_details.enabled
+    {
+      log!("Skipping plugin: {}", plugin_details.name);
       continue;
     }
 

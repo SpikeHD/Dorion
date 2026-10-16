@@ -1,12 +1,15 @@
-ul[data-list-id='guildsnav'] div[class*='itemsContainer_'] > div > div[class*='listItem_']:nth-last-child(2) {
+ul[data-list-id="guildsnav"]
+  div[class*="itemsContainer_"]
+  > div
+  > div[class*="listItem_"]:nth-last-child(2) {
   display: none !important;
 }
 
-div[class*='userProfileOuter'] {
+div[class*="userProfileOuter"] {
   --custom-user-popout-outside-components-height: 30px;
 }
 
-div[class*='inlineMediaEmbed_'] div[class*='imageContainer_'] {
+div[class*="inlineMediaEmbed_"] div[class*="imageContainer_"] {
   /*
    * For some reason, the height will stay zero until we apply another height.
    * Then, even if we remove the height property again, the height stays the same.
