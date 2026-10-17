@@ -35,3 +35,10 @@ body,
   height: 100vh !important;
   overscroll-behavior: none !important;
 }
+
+html[data-dorion-platform='macos'],
+html[data-dorion-platform='macos'] body,
+html[data-dorion-platform='macos'] #app-mount {
+  width: auto !important;
+  height: auto !important;
+}
