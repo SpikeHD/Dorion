@@ -1,4 +1,3 @@
-import { initLoadingWindowDrag } from './shared/macos_titlebar'
 import { badPostMessagePatch, proxyFetch, proxyXHR, proxyAddEventListener, proxyOpen, proxyNotification } from './shared/recreate'
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
@@ -305,6 +304,4 @@ async function displayLoadingTop() {
   loadingContainer.style.height = '100vh'
 
   document.body.appendChild(loadingContainer)
-
-  initLoadingWindowDrag(loadingContainer)
 }
