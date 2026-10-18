@@ -177,7 +177,6 @@ pub fn update_main() {
 
 #[cfg(target_os = "windows")]
 pub fn update_main_kinda() {
-  // Same as the MSI, but we just download the zip file instead and open explorer to highlight it
   let release = match get_release("SpikeHD", "Dorion") {
     Ok(release) => release,
     Err(e) => {
@@ -188,17 +187,24 @@ pub fn update_main_kinda() {
 
   println!("Latest Dorion release: {}", release.tag_name);
 
-  // Find the release that ends with ".zip", that should be the Windows release
+  let arch = if cfg!(target_arch = "aarch64") {
+    "win_arm64"
+  } else {
+    "win64"
+  };
   let mut release_name = String::new();
 
   for name in release.release_names {
-    if name.ends_with(".zip") && name.contains("win64") {
+    if name.ends_with(".zip") && name.contains(arch) {
       release_name = name;
       break;
     }
   }
 
-  let path = std::env::temp_dir();
+  if release_name.is_empty() {
+    println!("No portable package found");
+    return;
+  }
 
   println!("Downloading {}...", release_name);
 
@@ -207,40 +213,47 @@ pub fn update_main_kinda() {
     "Dorion",
     release.tag_name.clone(),
     release_name.clone(),
-    path.clone(),
+    std::env::temp_dir(),
   );
 
-  println!("Opening {:?}...", release_path.clone());
-
-  // Open the folder the zip is in and highlight
-  let mut cmd = std::process::Command::new("explorer");
-  cmd.arg("/select,");
-  cmd.arg(release_path.into_os_string().into_string().unwrap());
-
-  match cmd.spawn() {
-    Ok(_) => (),
-    Err(e) => {
-      println!("Failed to kill open release path in explorer: {}", e);
-    }
+  let install_dir = match std::env::current_exe()
+    .ok()
+    .and_then(|exe| exe.parent().map(PathBuf::from))
+  {
+    Some(dir) => dir,
+    None => return,
   };
 
-  println!("Attempting to kill Dorion process...");
+  println!("Stopping Dorion...");
+  let _ = std::process::Command::new("taskkill")
+    .args(["/F", "/IM", "Dorion.exe"])
+    .status();
+  std::thread::sleep(std::time::Duration::from_secs(2));
 
-  // Also kill the main Dorion process if we can
-  let mut cmd = std::process::Command::new("taskkill");
-  cmd.arg("/F");
-  cmd.arg("/IM");
-  cmd.arg("Dorion.exe");
+  if let Ok(exe) = std::env::current_exe() {
+    let _ = std::fs::rename(&exe, exe.with_extension("old"));
+  }
 
-  match cmd.spawn() {
-    Ok(_) => (),
-    Err(e) => {
-      println!("Failed to kill Dorion process: {}", e);
-      return;
-    }
-  };
+  println!("Extracting update...");
+  let extracted = std::process::Command::new("powershell")
+    .args([
+      "-Command",
+      &format!(
+        "Expand-Archive -Force -Path '{}' -DestinationPath '{}'",
+        release_path.display(),
+        install_dir.display()
+      ),
+    ])
+    .status()
+    .map(|status| status.success())
+    .unwrap_or(false);
 
-  std::process::exit(0);
+  if !extracted {
+    println!("Failed to extract the update");
+    return;
+  }
+
+  let _ = std::process::Command::new(install_dir.join("Dorion.exe")).spawn();
 }
 
 /**
