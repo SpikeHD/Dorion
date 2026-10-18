@@ -6,7 +6,6 @@ use crate::github::{download_release, get_release};
 #[cfg(not(target_os = "linux"))]
 mod github;
 
-// If you are reading this, you probably don't need to be. Dorion updates on it's own, silly!
 struct UpdaterArguments {
   main: bool,
   #[cfg(target_os = "windows")]
@@ -21,7 +20,6 @@ pub fn main() {
     local: pargs.contains("--local"),
   };
 
-  // This should happen second
   if args.main {
     #[cfg(target_os = "windows")]
     if args.local {
@@ -34,7 +32,6 @@ pub fn main() {
 }
 
 pub fn elevate() {
-  // This should always be run by Dorion itself, which means it will likely not have admin perms, so we request them before anything else
   #[cfg(target_os = "windows")]
   reopen_as_elevated();
 
@@ -42,17 +39,12 @@ pub fn elevate() {
   sudo::escalate_if_needed().expect("Failed to escalate as root");
 }
 
-/**
- * Check if we can already access the folder before elevating
- */
 pub fn needs_to_elevate(path: PathBuf) -> bool {
-  // Write a test file to the injection folder to see if we have perms
   let mut test_file = path;
   test_file.push("test");
 
   let write_perms = match std::fs::write(&test_file, "") {
     Ok(()) => {
-      // Delete the test file
       std::fs::remove_file(test_file).expect("Failed to remove test file");
       true
     }
@@ -73,7 +65,6 @@ pub fn reopen_as_elevated() {
   let cmd = binding.arg("-command").arg(format!(
     "Start-Process -filepath '{}' -verb runas -ArgumentList @({})",
     install.into_os_string().into_string().unwrap(),
-    // get program args (without first one) and join by ,
     std::env::args()
       .skip(1)
       .map(|arg| format!("'\"{arg}\"'"))
@@ -91,7 +82,6 @@ pub fn reopen_as_elevated() {
     }
   };
 
-  // Wait for the updater to finish
   match process.wait() {
     Ok(_) => (),
     Err(e) => {
@@ -103,9 +93,6 @@ pub fn reopen_as_elevated() {
   std::process::exit(0);
 }
 
-/**
- * Download the MSI and install
- */
 #[cfg(target_os = "windows")]
 pub fn update_main() {
   let release = match get_release("SpikeHD", "Dorion") {
@@ -118,7 +105,6 @@ pub fn update_main() {
 
   println!("Latest Dorion release: {}", release.tag_name);
 
-  // Find the release that ends with ".dmg", that's the MacOS release
   let mut release_name = String::new();
 
   for name in release.release_names {
@@ -140,7 +126,6 @@ pub fn update_main() {
     path.clone(),
   );
 
-  // Kill Dorion BEFORE we install
   println!("Attempting to kill Dorion process...");
 
   let mut cmd = std::process::Command::new("taskkill");
@@ -158,7 +143,6 @@ pub fn update_main() {
 
   println!("Installing {:?}...", release_path.clone());
 
-  // Install from the MSI
   let mut cmd = std::process::Command::new("msiexec");
   cmd.arg("/i");
   cmd.arg(release_path.into_os_string().into_string().unwrap());
@@ -192,19 +176,18 @@ pub fn update_main_kinda() {
   } else {
     "win64"
   };
-  let mut release_name = String::new();
 
-  for name in release.release_names {
-    if name.ends_with(".zip") && name.contains(arch) {
-      release_name = name;
-      break;
+  let release_name = match release
+    .release_names
+    .iter()
+    .find(|name| name.ends_with(".zip") && name.contains(arch))
+  {
+    Some(name) => name.clone(),
+    None => {
+      println!("No portable package found");
+      return;
     }
-  }
-
-  if release_name.is_empty() {
-    println!("No portable package found");
-    return;
-  }
+  };
 
   println!("Downloading {}...", release_name);
 
@@ -216,11 +199,13 @@ pub fn update_main_kinda() {
     std::env::temp_dir(),
   );
 
-  let install_dir = match std::env::current_exe()
-    .ok()
-    .and_then(|exe| exe.parent().map(PathBuf::from))
-  {
-    Some(dir) => dir,
+  let exe = match std::env::current_exe() {
+    Ok(exe) => exe,
+    Err(_) => return,
+  };
+
+  let install_dir = match exe.parent() {
+    Some(dir) => dir.to_path_buf(),
     None => return,
   };
 
@@ -230,17 +215,14 @@ pub fn update_main_kinda() {
     .status();
   std::thread::sleep(std::time::Duration::from_secs(2));
 
-  let old_updater = std::env::current_exe().ok().and_then(|exe| {
-    let old = exe.with_extension("old");
-
-    match std::fs::rename(&exe, &old) {
-      Ok(()) => Some(old),
-      Err(e) => {
-        println!("Failed to rename current updater: {}", e);
-        None
-      }
+  let old_updater = exe.with_extension("old");
+  let old_updater = match std::fs::rename(&exe, &old_updater) {
+    Ok(()) => Some(old_updater),
+    Err(e) => {
+      println!("Failed to rename current updater: {}", e);
+      None
     }
-  });
+  };
 
   println!("Extracting update...");
   let extracted = std::process::Command::new("powershell")
@@ -290,9 +272,6 @@ foreach ($i in 1..10) {
     .spawn();
 }
 
-/**
- * Download the DMG and open
- */
 #[cfg(target_os = "macos")]
 pub fn update_main() {
   let release = match get_release("SpikeHD", "Dorion") {
@@ -305,7 +284,6 @@ pub fn update_main() {
 
   println!("Latest Dorion release: {}", release.tag_name);
 
-  // Find the release that ends with ".dmg", that's the MacOS release
   let mut release_name = String::new();
 
   for name in release.release_names {
@@ -335,7 +313,6 @@ pub fn update_main() {
 
   println!("Opening {:?}...", release_path.clone());
 
-  // Open the mounted DMG
   let mut cmd = std::process::Command::new("open");
   cmd.arg(release_path);
 
@@ -349,7 +326,6 @@ pub fn update_main() {
 
   println!("Attempting to kill Dorion process...");
 
-  // Also kill the main Dorion process if we can
   let mut cmd = std::process::Command::new("pkill");
   cmd.arg("-9");
   cmd.arg("Dorion");
@@ -364,8 +340,5 @@ pub fn update_main() {
   std::process::exit(0);
 }
 
-/**
- * Do nothing, too hard to know where we were sourced from on Linux
- */
 #[cfg(target_os = "linux")]
 pub fn update_main() {}
