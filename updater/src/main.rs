@@ -6,6 +6,7 @@ use crate::github::{download_release, get_release};
 #[cfg(not(target_os = "linux"))]
 mod github;
 
+// Fun fact: this little executable is in charge of replacing itself. Try to be nice to it.
 struct UpdaterArguments {
   main: bool,
   #[cfg(target_os = "windows")]
@@ -250,6 +251,8 @@ pub fn update_main_kinda() {
   }
 }
 
+// We cannot delete the file we are currently running from, so we politely ask PowerShell
+// to do it for us once we are gone.
 #[cfg(target_os = "windows")]
 fn remove_old_updater(old_updater: &std::path::Path) {
   const SCRIPT: &str = "\
