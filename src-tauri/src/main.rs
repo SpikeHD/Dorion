@@ -222,7 +222,6 @@ fn main() {
       functionality::extension::extension_injected,
       functionality::window::minimize,
       functionality::window::toggle_maximize,
-      #[cfg(not(target_os = "macos"))]
       functionality::window::set_decorations,
       functionality::window::close,
       css_preprocess::clear_css_cache,
@@ -349,6 +348,13 @@ fn main() {
         .background_color(tauri::window::Color(47, 49, 54, 255))
         .zoom_hotkeys_enabled(false)
         .browser_extensions_enabled(true);
+
+      #[cfg(target_os = "macos")]
+      if !config.use_native_titlebar.unwrap_or(false) {
+        win = win
+          .title_bar_style(tauri::TitleBarStyle::Overlay)
+          .hidden_title(true);
+      }
 
       let init_script = if args::is_safemode() {
         "".to_string()
