@@ -230,9 +230,17 @@ pub fn update_main_kinda() {
     .status();
   std::thread::sleep(std::time::Duration::from_secs(2));
 
-  if let Ok(exe) = std::env::current_exe() {
-    let _ = std::fs::rename(&exe, exe.with_extension("old"));
-  }
+  let old_updater = std::env::current_exe().ok().and_then(|exe| {
+    let old = exe.with_extension("old");
+
+    match std::fs::rename(&exe, &old) {
+      Ok(()) => Some(old),
+      Err(e) => {
+        println!("Failed to rename current updater: {}", e);
+        None
+      }
+    }
+  });
 
   println!("Extracting update...");
   let extracted = std::process::Command::new("powershell")
@@ -254,6 +262,32 @@ pub fn update_main_kinda() {
   }
 
   let _ = std::process::Command::new(install_dir.join("Dorion.exe")).spawn();
+
+  if let Some(old) = old_updater {
+    remove_old_updater(&old);
+  }
+}
+
+#[cfg(target_os = "windows")]
+fn remove_old_updater(old_updater: &std::path::Path) {
+  const SCRIPT: &str = "\
+Wait-Process -Id {pid} -ErrorAction SilentlyContinue
+foreach ($i in 1..10) {
+  Remove-Item -LiteralPath '{path}' -Force -ErrorAction SilentlyContinue
+  if (-not (Test-Path -LiteralPath '{path}')) { break }
+  Start-Sleep -Milliseconds 300
+}";
+
+  let script = SCRIPT
+    .replace("{pid}", &std::process::id().to_string())
+    .replace(
+      "{path}",
+      &old_updater.display().to_string().replace('\'', "''"),
+    );
+
+  let _ = std::process::Command::new("powershell")
+    .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+    .spawn();
 }
 
 /**
