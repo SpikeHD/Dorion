@@ -11,6 +11,7 @@
     "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
     "format:updater": "cargo fmt --manifest-path ./updater/Cargo.toml --all",
     "lint": "eslint ./src-tauri/injection/**/*.ts",
+    "test:display-media": "node --test tests/display-media.test.mjs",
     "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
     "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
     "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
@@ -33,3 +34,4 @@
   },
   "packageManager": "pnpm@12.4.1"
 }
+

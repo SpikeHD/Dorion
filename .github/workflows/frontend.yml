@@ -23,6 +23,20 @@ env:
   CARGO_INCREMENTAL: 0
 
 jobs:
+  display-audio-tests:
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Test display audio defaults and client mod compatibility
+        run: npm run test:display-media
+
   tsc-eslint-checks:
     runs-on: ubuntu-latest
     steps:
@@ -44,3 +58,7 @@ jobs:
 
       - name: Run ESLint
         run: pnpm eslint ./src-tauri/injection/**/*.ts
+
+      - name: Type check display audio policy
+        run: pnpm exec tsc --strict --noEmit --lib ES2022,DOM --target ES2022 --module ESNext src-tauri/injection/shared/display_media.ts
+
