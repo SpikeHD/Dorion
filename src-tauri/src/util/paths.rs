@@ -206,6 +206,7 @@ pub fn profiles_dir() -> PathBuf {
     .join("profiles")
 }
 
+#[cfg(not(target_os = "linux"))]
 pub fn get_webdata_dir() -> PathBuf {
   // Grab from args first, it should take precedence
   let profile = match args::get_profile() {
