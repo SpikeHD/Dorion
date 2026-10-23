@@ -183,7 +183,7 @@ fn send_notification_internal_windows(
 
   let activation_data = additional_data.clone();
 
-  toast = toast.on_activated(move |action| {
+  toast = toast.on_activated(move |_action| {
     if let Some(win) = &win {
       open_notification_data(win, activation_data.clone());
     }

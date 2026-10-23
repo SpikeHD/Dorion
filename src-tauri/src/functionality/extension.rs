@@ -22,12 +22,14 @@ pub fn add_extension(win: &WebviewWindow<crate::Runtime>, path: std::path::PathB
         webview: PlatformWebview,
         path: PathBuf,
       ) -> Result<(), Box<dyn std::error::Error>> {
-        let profile = webview
-          .controller()
-          .CoreWebView2()?
-          .cast::<ICoreWebView2_13>()?
-          .Profile()?
-          .cast::<ICoreWebView2Profile7>()?;
+        let profile = unsafe {
+          webview
+            .controller()
+            .CoreWebView2()?
+            .cast::<ICoreWebView2_13>()?
+            .Profile()?
+            .cast::<ICoreWebView2Profile7>()?
+        };
 
         log!("Attempting to add extension {:?}", path);
 
@@ -53,9 +55,11 @@ pub fn add_extension(win: &WebviewWindow<crate::Runtime>, path: std::path::PathB
         let path_str = path.to_str().unwrap_or_default();
         let ext = HSTRING::from(path_str);
 
-        profile
-          .AddBrowserExtension(&ext, &handler)
-          .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
+        unsafe {
+          profile
+            .AddBrowserExtension(&ext, &handler)
+            .unwrap_or_else(|e| log!("Failed to add extension: {:?}", e));
+        }
 
         Ok(())
       }

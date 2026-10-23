@@ -22,7 +22,6 @@ pub fn toggle_maximize(win: tauri::WebviewWindow<crate::Runtime>) {
 }
 
 #[tauri::command]
-#[cfg(not(target_os = "macos"))]
 pub fn set_decorations(win: tauri::WebviewWindow<crate::Runtime>, enable: bool) {
   #[cfg(target_os = "macos")]
   {

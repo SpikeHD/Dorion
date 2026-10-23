@@ -138,18 +138,14 @@ pub fn set_user_agent(win: &tauri::WebviewWindow<crate::Runtime>) {
   win
     .with_webview(|webview| unsafe {
       unsafe fn inner(webview: PlatformWebview) -> Result<(), Box<dyn std::error::Error>> {
-        let wv = webview
-          .controller()
-          .CoreWebView2()?
-          .cast::<ICoreWebView2_2>()?;
-        let settings = wv.Settings()?.cast::<ICoreWebView2Settings2>()?;
-        let env = wv.Environment()?;
+        let wv = unsafe { webview.controller().CoreWebView2()? }.cast::<ICoreWebView2_2>()?;
+        let settings = unsafe { wv.Settings()? }.cast::<ICoreWebView2Settings2>()?;
+        let env = unsafe { wv.Environment()? };
         let mut browser_version = PWSTR::null();
 
-        env.BrowserVersionString(&mut browser_version)?;
+        unsafe { env.BrowserVersionString(&mut browser_version)? };
 
-        let browser_version = browser_version
-          .to_string()?
+        let browser_version = unsafe { browser_version.to_string()? }
           .chars()
           .take_while(|&c| c != '.')
           .collect::<String>();
@@ -162,7 +158,7 @@ pub fn set_user_agent(win: &tauri::WebviewWindow<crate::Runtime>) {
           Some(format!("{browser_version}.0.0.0"))
         };
 
-        settings.SetUserAgent(&HSTRING::from(useragent(browser_version)))?;
+        unsafe { settings.SetUserAgent(&HSTRING::from(useragent(browser_version)))? };
 
         Ok(())
       }

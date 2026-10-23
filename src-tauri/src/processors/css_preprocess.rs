@@ -2,6 +2,7 @@ use regex::Regex;
 use std::fs;
 
 use crate::log;
+#[cfg(not(target_os = "windows"))]
 use crate::util::http::blocking_client;
 use crate::util::paths::get_theme_dir;
 
