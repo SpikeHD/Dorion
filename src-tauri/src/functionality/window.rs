@@ -24,7 +24,21 @@ pub fn toggle_maximize(win: tauri::WebviewWindow<crate::Runtime>) {
 #[tauri::command]
 #[cfg(not(target_os = "macos"))]
 pub fn set_decorations(win: tauri::WebviewWindow<crate::Runtime>, enable: bool) {
-  win.set_decorations(enable).unwrap_or_default();
+  #[cfg(target_os = "macos")]
+  {
+    let style = if enable {
+      tauri::TitleBarStyle::Visible
+    } else {
+      tauri::TitleBarStyle::Overlay
+    };
+
+    let _ = win.set_title_bar_style(style);
+  }
+
+  #[cfg(not(target_os = "macos"))]
+  {
+    let _ = win.set_decorations(enable);
+  }
 }
 
 // Close
