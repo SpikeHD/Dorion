@@ -2,6 +2,7 @@ import { badPostMessagePatch, proxyFetch, proxyXHR, proxyAddEventListener, proxy
 import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
 import { waitForElmEx } from './shared/wait_elm'
+import { configureDisplayMedia } from './shared/display_media'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
@@ -27,6 +28,7 @@ window.Dorion = {
     return
   }
 
+  configureDisplayMedia()
   proxyXHR()
   proxyAddEventListener()
   proxyNotification()
