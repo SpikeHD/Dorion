@@ -233,12 +233,12 @@ pub fn get_cef_data_dir() -> PathBuf {
       cfg.profile.unwrap_or("default".to_string())
     }
   };
+  // Chromium profile names must be a single path component under the cache root
   let dir = dirs::cache_dir()
     .unwrap_or_else(std::env::temp_dir)
     .join("com.spikehd.dorion")
     .join("cef")
-    .join("cefdata")
-    .join(profile);
+    .join(format!("dorion-{}", profile));
 
   create_if_not_exists(&dir);
 
