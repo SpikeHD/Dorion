@@ -4,6 +4,7 @@ import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, tim
 import { waitForElmEx } from './shared/wait_elm'
 import { configureDisplayMedia } from './shared/display_media'
 import { focusGuard } from './shared/focus_guard'
+import { sdpCodecRewrite } from './shared/sdp_codec'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
@@ -53,6 +54,7 @@ window.Dorion = {
 
   if (platform === 'linux') {
     focusGuard()
+    sdpCodecRewrite()
   }
 
   const { invoke } = window.__TAURI__.core
