@@ -6,6 +6,7 @@ use livesplit_hotkey::Hotkey;
 use livesplit_hotkey::KeyCode;
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "hotkeys")]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeybindChangedEvent {
   pub keys: Vec<KeyStruct>,

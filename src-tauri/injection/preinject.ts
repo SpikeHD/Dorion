@@ -3,6 +3,8 @@ import { extraCssChangeWatch, safemodeTimer, typingAnim } from './shared/ui'
 import { cssSanitize, fetchImage, isJson, waitForApp, waitForElm, saferEval, timeout } from './shared/util'
 import { waitForElmEx } from './shared/wait_elm'
 import { configureDisplayMedia } from './shared/display_media'
+import { focusGuard } from './shared/focus_guard'
+import { sdpCodecRewrite } from './shared/sdp_codec'
 
 // Let's expose some stuff for use in plugins and such
 window.Dorion = {
@@ -49,6 +51,11 @@ window.Dorion = {
 
   const platform = await window.__TAURI__.core.invoke('get_platform')
   document.documentElement.setAttribute('data-dorion-platform', platform)
+
+  if (platform === 'linux') {
+    focusGuard()
+    sdpCodecRewrite()
+  }
 
   const { invoke } = window.__TAURI__.core
   const config = await invoke('read_config_file')

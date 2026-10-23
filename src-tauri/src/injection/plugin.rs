@@ -39,7 +39,7 @@ pub fn get_js_imports(js: &str) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn load_plugins(win: tauri::WebviewWindow, preload_only: Option<bool>) {
+pub fn load_plugins(win: tauri::WebviewWindow<crate::Runtime>, preload_only: Option<bool>) {
   let plugins_dir = get_plugin_dir();
   let plugins_list = get_plugin_list();
   let mut plugins: HashMap<String, String> = HashMap::new();

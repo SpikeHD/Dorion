@@ -65,7 +65,14 @@ pub fn clear_cache() {
 }
 
 #[cfg(target_os = "linux")]
-pub fn clear_cache() {}
+pub fn clear_cache() {
+  use crate::util::paths::get_cef_data_dir;
+
+  let dir = get_cef_data_dir();
+  if dir.exists() {
+    std::fs::remove_dir_all(&dir).unwrap_or_default();
+  }
+}
 
 pub fn maybe_clear_cache() {
   if get_config().auto_clear_cache.unwrap_or(false) {

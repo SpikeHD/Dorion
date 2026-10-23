@@ -2,6 +2,7 @@ use regex::Regex;
 use std::fs;
 
 use crate::log;
+#[cfg(not(target_os = "windows"))]
 use crate::util::http::blocking_client;
 use crate::util::paths::get_theme_dir;
 
@@ -21,7 +22,11 @@ pub async fn clear_css_cache() {
 
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
-pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) -> String {
+pub fn localize_imports(
+  win: tauri::WebviewWindow<crate::Runtime>,
+  css: String,
+  name: String,
+) -> String {
   use tauri::Emitter;
 
   use crate::config::get_config;
@@ -163,7 +168,11 @@ pub fn localize_imports(win: tauri::WebviewWindow, css: String, name: String) ->
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) -> String {
+pub fn localize_imports(
+  _win: tauri::WebviewWindow<crate::Runtime>,
+  css: String,
+  _name: String,
+) -> String {
   log!(
     "Windows no longer requires CSS imports to be localized, but it does require import shuffling!"
   );
@@ -196,7 +205,7 @@ pub fn localize_imports(_win: tauri::WebviewWindow, css: String, _name: String) 
 }
 
 #[cfg(not(target_os = "windows"))]
-pub fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
+pub fn localize_images(win: tauri::WebviewWindow<crate::Runtime>, css: String) -> String {
   use base64::{Engine as _, engine::general_purpose};
   use tauri::Emitter;
 
