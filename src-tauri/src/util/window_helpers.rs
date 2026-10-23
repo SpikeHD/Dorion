@@ -1,6 +1,9 @@
 use crate::config::{get_config, set_config};
 use crate::log;
 
+#[cfg(target_os = "linux")]
+use super::paths::get_cef_data_dir;
+#[cfg(not(target_os = "linux"))]
 use super::paths::get_webdata_dir;
 
 #[cfg(target_os = "windows")]
@@ -57,12 +60,14 @@ pub fn set_clear_cache(win: tauri::WebviewWindow<crate::Runtime>) {
 
 #[tauri::command]
 pub fn clear_cache() {
-  // Remove %appdata%/dorion/webdata
+  #[cfg(target_os = "linux")]
+  let webdata_dir = get_cef_data_dir();
+  #[cfg(not(target_os = "linux"))]
   let webdata_dir = get_webdata_dir();
 
   if webdata_dir.exists() {
     log!("Deleting cache...");
-    std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
+    std::fs::remove_dir_all(&webdata_dir).expect("Failed to remove webdata dir!");
   }
 }
 

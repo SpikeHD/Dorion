@@ -26,9 +26,13 @@ use util::{
   helpers,
   logger::log,
   notifications,
-  paths::{get_webdata_dir, is_portable},
+  paths::is_portable,
   window_helpers::{self, clear_cache_check},
 };
+#[cfg(target_os = "linux")]
+use util::paths::get_cef_data_dir;
+#[cfg(not(target_os = "linux"))]
+use util::paths::get_webdata_dir;
 
 use crate::{
   functionality::{configure::configure, extension::load_extensions, window::setup_autostart},
@@ -38,6 +42,16 @@ use crate::{
     window_helpers::ultrashow,
   },
 };
+
+#[cfg(target_os = "linux")]
+fn data_dir() -> std::path::PathBuf {
+  get_cef_data_dir()
+}
+
+#[cfg(not(target_os = "linux"))]
+fn data_dir() -> std::path::PathBuf {
+  get_webdata_dir()
+}
 
 mod args;
 mod config;
@@ -248,6 +262,10 @@ fn main() {
       command_line_args.push(("--disable-gpu-compositing".into(), None));
     }
 
+    if let Ok(port) = std::env::var("DORION_DEBUG_PORT") {
+      command_line_args.push(("remote-debugging-port".into(), Some(port)));
+    }
+
     tauri_runtime_cef::configure(tauri_runtime_cef::CefConfig {
       identifier: context.config().identifier.clone(),
       command_line_args,
@@ -429,7 +447,7 @@ fn main() {
         .resizable(true)
         .min_inner_size(800.0, 600.0)
         .disable_drag_drop_handler()
-        .data_directory(get_webdata_dir())
+        .data_directory(data_dir())
         // Prevent flickering by starting hidden, and show later
         .visible(false)
         .decorations(true)
@@ -473,7 +491,7 @@ fn main() {
               label,
               tauri::WebviewUrl::External(url),
             )
-            .data_directory(get_webdata_dir())
+            .data_directory(data_dir())
             .browser_extensions_enabled(true)
             .title("Popout")
             .window_features(features);

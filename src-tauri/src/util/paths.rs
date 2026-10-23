@@ -224,6 +224,27 @@ pub fn get_webdata_dir() -> PathBuf {
   dir
 }
 
+#[cfg(target_os = "linux")]
+pub fn get_cef_data_dir() -> PathBuf {
+  let profile = match args::get_profile() {
+    Some(p) => p,
+    None => {
+      let cfg = get_config();
+      cfg.profile.unwrap_or("default".to_string())
+    }
+  };
+  let dir = dirs::cache_dir()
+    .unwrap_or_else(std::env::temp_dir)
+    .join("com.spikehd.dorion")
+    .join("cef")
+    .join("cefdata")
+    .join(profile);
+
+  create_if_not_exists(&dir);
+
+  dir
+}
+
 pub fn updater_dir(win: &tauri::WebviewWindow<crate::Runtime>) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 
