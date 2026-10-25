@@ -3,6 +3,9 @@ pub mod configure;
 pub mod extension;
 pub mod idle;
 
+#[cfg(target_os = "windows")]
+pub mod popout;
+
 #[cfg(feature = "hotkeys")]
 #[cfg(not(target_os = "macos"))]
 pub mod hotkeys;

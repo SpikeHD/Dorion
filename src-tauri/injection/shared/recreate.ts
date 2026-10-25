@@ -34,7 +34,6 @@ export async function proxyFetch() {
       if (options.headers instanceof Headers) {
         const headers = {}
 
-        // @ts-expect-error Headers is iterable
         for (const [key, value] of options.headers.entries()) {
           // @ts-expect-error Headers is iterable
           headers[key] = value
@@ -153,15 +152,64 @@ function closedPopup(url: string): Window {
   return stub as unknown as Window
 }
 
+// Keep this in sync with https://github.com/Vendicated/Vencord/blob/main/src/main/monacoWin.html.
+const VENCORD_MONACO = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs'
+
+/** Single Quick CSS editor window. */
+let quickCssPopup: Window | null = null
+
+function patchClientModCssEditor(win: Window) {
+  let base = `${VENCORD_MONACO}/`
+  Object.defineProperty(win, 'baseUrl', {
+    configurable: true,
+    get: () => base,
+    set: (v: unknown) => {
+      if (typeof v === 'string' && v) base = v
+    },
+  })
+
+  const doc = win.document
+  const nativeWrite = doc.write.bind(doc)
+  doc.write = ((...args: string[]) => {
+    const worker = `self.MonacoEnvironment={baseUrl:${JSON.stringify(`${VENCORD_MONACO}/`)}};importScripts(${JSON.stringify(`${VENCORD_MONACO}/base/worker/workerMain.js`)});`
+    const boot = `
+      <link rel="stylesheet" href="${VENCORD_MONACO}/editor/editor.main.css" integrity="sha256-tiJPQ2O04z/pZ/AwdyIghrOMzewf+PIvEl1YKbQvsZk=" crossorigin="anonymous" referrerpolicy="no-referrer">
+      <script src="${VENCORD_MONACO}/loader.js" integrity="sha256-KcU48TGr84r7unF7J5IgBo95aeVrEbrGe04S7TcFUjs=" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script>
+        window.MonacoEnvironment = {
+          getWorkerUrl: function () {
+            return URL.createObjectURL(new Blob([${JSON.stringify(worker)}], { type: "text/javascript" }));
+          }
+        };
+        require.config({ paths: { vs: ${JSON.stringify(VENCORD_MONACO)} } });
+        require(["vs/editor/editor.main"], () => {
+          getCurrentCss().then((css) => {
+            var editor = monaco.editor.create(document.getElementById("container"), {
+              value: css,
+              language: "css",
+              theme: getTheme(),
+            });
+            editor.onDidChangeModelContent(() => setCss(editor.getValue()));
+            window.addEventListener("resize", () => editor.layout());
+          });
+        });
+      </script>`
+    return nativeWrite(
+      args
+        .join('')
+        .replace(
+          /<script>const script=document\.createElement\("script"\)[\s\S]*?document\.body\.append\(style,script\)<\/script>/,
+          boot
+        )
+    )
+  }) as typeof doc.write
+}
+
 export function proxyOpen() {
   // Make window.open become window.__TAURI__.shell.open
   window.nativeOpen = window.open
   window.open = (url: string | undefined | URL, target?: string, features?: string) => {
-    if (!url) {
-      return window.nativeOpen(url, target, features)
-    }
-
-    const urlStr = url.toString()
+    const urlStr = url?.toString() || 'about:blank'
 
     // If this needs to open externally, do so
     if ((target === '_blank' || !target) && isExternal(urlStr)) {
@@ -174,8 +222,32 @@ export function proxyOpen() {
 
     console.log('[Proxy Open] In-app URL:', urlStr)
 
-    // Otherwise, use the native open
-    return window.nativeOpen(urlStr, target, features)
+    const isQuickCss =
+      (urlStr === 'about:blank' || urlStr.startsWith('about:blank')) &&
+      typeof target === 'string' &&
+      /QuickCss/i.test(target)
+
+    if (isQuickCss && quickCssPopup) {
+      try {
+        if (!quickCssPopup.closed) {
+          return quickCssPopup
+        }
+      } catch {
+        // The old WindowProxy is no longer usable.
+      }
+      quickCssPopup = null
+    }
+
+    const win = window.nativeOpen(urlStr, target, features)
+    if (win && isQuickCss) {
+      quickCssPopup = win
+      try {
+        patchClientModCssEditor(win)
+      } catch (e) {
+        console.error('[Proxy Open] Failed to patch CSS editor popup:', e)
+      }
+    }
+    return win
   }
 }
 
