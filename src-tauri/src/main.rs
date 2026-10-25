@@ -5,7 +5,7 @@
 
 #[cfg(target_os = "macos")]
 use notify_rust::set_application;
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os = "linux")]
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::{env, str::FromStr, time::Duration};
 #[cfg(not(target_os = "macos"))]
@@ -52,7 +52,7 @@ mod window;
 
 const HASH: Option<&'static str> = std::option_env!("GIT_HASH");
 
-#[cfg(not(target_os = "macos"))]
+#[cfg(target_os = "linux")]
 static POPOUT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cfg(target_os = "windows")]
@@ -215,7 +215,11 @@ fn main() {
         .with_flags(tauri_plugin_prevent_default::Flags::FIND)
         .build(),
     )
-    .plugin(tauri_plugin_window_state::Builder::new().build())
+    .plugin(
+      tauri_plugin_window_state::Builder::new()
+        .with_filter(|label| !label.starts_with("popout-"))
+        .build(),
+    )
     .invoke_handler(tauri::generate_handler![
       should_disable_plugins,
       git_hash,
@@ -302,11 +306,17 @@ fn main() {
       }
       tauri::WindowEvent::Destroyed => {
         log!("Destroyed window");
-        functionality::cache::maybe_clear_cache();
+        if window.label() == "main" {
+          functionality::cache::maybe_clear_cache();
+        }
+        #[cfg(target_os = "windows")]
+        if window.label().starts_with("popout-") {
+          functionality::popout::on_destroyed(window.app_handle(), window.label());
+        }
       }
       tauri::WindowEvent::CloseRequested { api, .. } => {
-        // Just hide the window if the config calls for it
-        if get_config().sys_tray.unwrap_or(false) {
+        // Popouts must close for real; tray-minimize only applies to main.
+        if window.label() == "main" && get_config().sys_tray.unwrap_or(false) {
           // https://github.com/tauri-apps/tauri/issues/3084#issuecomment-1477675840
           #[cfg(target_os = "macos")]
           tauri::AppHandle::hide(window.app_handle()).unwrap_or_default();
@@ -318,10 +328,12 @@ fn main() {
 
         log!("Closing window");
 
-        window
-          .app_handle()
-          .save_window_state(StateFlags::all())
-          .unwrap_or_default();
+        if window.label() == "main" {
+          window
+            .app_handle()
+            .save_window_state(StateFlags::all())
+            .unwrap_or_default();
+        }
       }
       _ => {}
     })
@@ -367,24 +379,33 @@ fn main() {
         win = win.initialization_script(init_script.as_str());
       }
 
-      #[cfg(not(target_os = "macos"))]
+      #[cfg(target_os = "windows")]
       {
         let app_handle = app.handle().clone();
-        // Popouts get the injection script too
-        let popout_init = init_script;
+        functionality::popout::manage(&app_handle);
+        win = win.on_new_window(move |_url, features| {
+          match functionality::popout::take(&app_handle, &features) {
+            Some(popout) => NewWindowResponse::Create { window: popout },
+            None => NewWindowResponse::Deny,
+          }
+        });
+      }
+
+      #[cfg(target_os = "linux")]
+      {
+        let app_handle = app.handle().clone();
+        let popout_init = init_script.clone();
         win = win.on_new_window(move |url, features| {
           let label = format!("popout-{}", POPOUT_COUNTER.fetch_add(1, Ordering::Relaxed));
-          let app_handle = app_handle.clone();
-
           let mut builder = WebviewWindowBuilder::new(
-              &app_handle,
-              label,
-              tauri::WebviewUrl::External(url),
-            )
-            .data_directory(get_webdata_dir())
-            .browser_extensions_enabled(true)
-            .title("Popout")
-            .window_features(features);
+            &app_handle,
+            label,
+            tauri::WebviewUrl::External(url),
+          )
+          .data_directory(get_webdata_dir())
+          .browser_extensions_enabled(true)
+          .title("Popout")
+          .window_features(features);
 
           if !popout_init.is_empty() {
             builder = builder.initialization_script(popout_init.clone());
@@ -455,7 +476,10 @@ fn main() {
       configure(&win);
 
       #[cfg(target_os = "windows")]
-      window_helpers::disable_webview_keybinds(&win);
+      {
+        window_helpers::disable_webview_keybinds(&win);
+        functionality::popout::refill(app.handle());
+      }
 
       setup_autostart(app);
 
