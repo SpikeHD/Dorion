@@ -29,6 +29,7 @@ env:
 
 jobs:
   build:
+    name: Build (${{ matrix.config.target }})
     runs-on: ${{ matrix.config.platform }}
 
     strategy:
@@ -51,101 +52,9 @@ jobs:
             target: 'aarch64-pc-windows-msvc'
 
     steps:
-      - uses: actions-rust-lang/setup-rust-toolchain@v1.12
+      - uses: ./.github/actions/setup-build
         with:
-          toolchain: 1.96
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 12.4.1
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: latest
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-deps
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            src-tauri/target/${{ matrix.config.target }}/release/incremental
-            src-tauri/target/${{ matrix.config.target }}/release/deps
-            src-tauri/target/${{ matrix.config.target }}/release/build
-            src-tauri/target/${{ matrix.config.target }}/release/.fingerprint
-            updater/target/
-          key: ${{ runner.os }}-${{ matrix.config.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: (Linux) ARM sources.list
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          # Add [arch=amd64] to the initial entries of the sources.list
-          sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
-
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
-          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
-
-      # ARM-linux related sources and dpkg config and such
-      - name: (Linux) ARM setup
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo dpkg --add-architecture arm64
-          sudo apt-get update
-
-      - name: (Linux) Install dependencies
-        if: matrix.config.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev \
-            build-essential \
-            curl \
-            wget \
-            file \
-            libxdo-dev \
-            libssl-dev \
-            libgtk-3-dev \
-            libayatana-appindicator3-dev \
-            libzstd-dev \
-            zstd \
-            librsvg2-dev \
-            libfuse2
-
-      - name: (Linux) (ARM64) Install dependencies
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo apt-get install -y \
-            libc6:arm64 \
-            libc6-dev:arm64 \
-            libapparmor1:arm64 \
-            libwebkit2gtk-4.1-dev:arm64 \
-            libssl-dev:arm64 \
-            libzstd-dev:arm64 \
-            zstd:arm64 \
-            gcc-aarch64-linux-gnu \
-            g++-aarch64-linux-gnu \
-            libnss3-dev:arm64 \
-            libasound2-dev:arm64
-
-      - name: Add target
-        run: rustup target add ${{ matrix.config.target }}
+          target: ${{ matrix.config.target }}
 
       - name: (Non-Linux) Build updater
         if: matrix.config.platform != 'ubuntu-22.04'
@@ -156,23 +65,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install && pnpm shupdate
 
-      - name: Build
+      - name: Compile
         if: matrix.config.platform != 'ubuntu-22.04'
-        # If we are compiling for Windows ARM, we can only support NSIS
-        # However, I cannot phase out the MSI or a buncha package managers will explode
-        run: pnpm tauri build --target ${{ matrix.config.target }} ${{ matrix.config.target == 'aarch64-pc-windows-msvc' && '--bundles nsis' || '' }}
+        run: pnpm tauri build --no-bundle --target ${{ matrix.config.target }}
         env:
           RUSTFLAGS: -Awarnings
 
-      - name: (Linux) (x86_64) Build
+      - name: (Linux) (x86_64) Compile
         if: matrix.config.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --no-bundle --target ${{ matrix.config.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
 
-      - name: (Linux) (ARM64) Build
+      - name: (Linux) (ARM64) Compile
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --target ${{ matrix.config.target }} --bundles deb,rpm -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json --no-bundle --target ${{ matrix.config.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
         env:
           RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
           CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
@@ -180,6 +87,10 @@ jobs:
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
           ZSTD_SYS_USE_PKG_CONFIG: 1
           ZSTD_SYS_NO_VENDOR: 1
+
+      - name: (Linux) Stage CEF
+        if: matrix.config.platform == 'ubuntu-22.04'
+        run: bash scripts/bundle-cef.sh
 
       # Make empty folders for plugins and themes
       - name: (Windows) Create empty folders for plugins
@@ -195,13 +106,6 @@ jobs:
       - name: Create .portable file for portable builds
         run: cd src-tauri/target/${{ matrix.config.target }}/release && touch .portable
 
-      # paths:
-      # Windows:
-      # - src-tauri/target/${{ matrix.config.target }}/release/Dorion.exe|plugins|themes|injection|icons
-      # Ubuntu:
-      # - src-tauri/target/${{ matrix.config.target }}/release/dorion|plugins|themes|injection|icons
-      # MacOS:
-      # - src-tauri/target/${{ matrix.config.target }}/release/bundle/macos/Dorion.app
       - name: (Windows) Compress build
         if: matrix.config.platform == 'windows-latest'
         run: cd src-tauri/target/${{ matrix.config.target }}/release && 7z a -tzip -mx9 Dorion.zip
@@ -225,76 +129,210 @@ jobs:
       # Windows portable
       - name: (Windows) Upload portable
         if: matrix.config.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dorion-${{ matrix.config.target }}-portable
           path: src-tauri/target/${{ matrix.config.target }}/release/Dorion.zip
 
-      # Windows MSI
-      - name: (Windows) Upload .msi
-        if: matrix.config.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dorion-${{ matrix.config.target }}-msi
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/msi/*.msi
-
-      # Windows ARM only supports NSIS right now, but we should upload that too
-      - name: (Windows) Upload NSIS
-        if: matrix.config.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dorion-${{ matrix.config.target }}-nsis
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/nsis/*.exe
-
       # Ubuntu portable
       - name: (Linux) Upload portable
         if: matrix.config.platform == 'ubuntu-22.04'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dorion-${{ matrix.config.target }}-portable
           path: src-tauri/target/${{ matrix.config.target }}/release/dorion.tar.gz
 
-      # Ubuntu deb
-      - name: (Linux) Upload .deb
-        if: matrix.config.platform == 'ubuntu-22.04'
-        uses: actions/upload-artifact@v4
+  # Package jobs
+  bundle-linux-deb:
+    needs: build
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ['x86_64-unknown-linux-gnu', 'aarch64-unknown-linux-gnu']
+    steps:
+      - uses: ./.github/actions/setup-build
         with:
-          name: dorion-${{ matrix.config.target }}-deb
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/deb/*.deb
+          target: ${{ matrix.target }}
 
-      - name: (Linux) Upload .rpm
-        if: matrix.config.platform == 'ubuntu-22.04'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dorion-${{ matrix.config.target }}-rpm
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/rpm/*.rpm
+      - run: pnpm install
 
-      - name: (Linux) Upload .appimage
-        if: matrix.config.platform == 'ubuntu-22.04'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dorion-${{ matrix.config.target }}-appimage
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/appimage/*.AppImage
+      - name: Package .deb (x86_64)
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles deb --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
 
-      - name: (MacOS) Upload .dmg
-        if: matrix.config.platform == 'macos-latest'
-        uses: actions/upload-artifact@v4
+      - name: Package .deb (ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles deb --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
+
+      - name: Upload .deb
+        uses: actions/upload-artifact@v7
         with:
-          name: dorion-${{ matrix.config.target }}-dmg
-          path: src-tauri/target/${{ matrix.config.target }}/release/bundle/dmg/*.dmg
+          name: dorion-${{ matrix.target }}-deb
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/deb/*.deb
+
+  bundle-linux-rpm:
+    needs: build
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ['x86_64-unknown-linux-gnu', 'aarch64-unknown-linux-gnu']
+    steps:
+      - uses: ./.github/actions/setup-build
+        with:
+          target: ${{ matrix.target }}
+
+      - run: pnpm install
+
+      - name: Package .rpm (x86_64)
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles rpm --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+
+      - name: Package .rpm (ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles rpm --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
+
+      - name: Upload .rpm
+        uses: actions/upload-artifact@v7
+        with:
+          name: dorion-${{ matrix.target }}-rpm
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/rpm/*.rpm
+
+  bundle-linux-appimage:
+    needs: build
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ['x86_64-unknown-linux-gnu', 'aarch64-unknown-linux-gnu']
+    steps:
+      - uses: ./.github/actions/setup-build
+        with:
+          target: ${{ matrix.target }}
+
+      - run: pnpm install
+
+      - name: Package AppImage (x86_64)
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles appimage --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+
+      - name: Package AppImage (ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles appimage --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        env:
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
+          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
+          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
+          ZSTD_SYS_USE_PKG_CONFIG: 1
+          ZSTD_SYS_NO_VENDOR: 1
+
+      - name: Upload .appimage
+        uses: actions/upload-artifact@v7
+        with:
+          name: dorion-${{ matrix.target }}-appimage
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/appimage/*.AppImage
+
+  bundle-windows:
+    needs: build
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bundle: [msi, nsis]
+        target: ['x86_64-pc-windows-msvc', 'aarch64-pc-windows-msvc']
+        # Windows ARM only supports NSIS right now, but we should keep the MSI
+        # for x86_64, a buncha package managers will explode otherwise
+        exclude:
+          - bundle: msi
+            target: aarch64-pc-windows-msvc
+    steps:
+      - uses: ./.github/actions/setup-build
+        with:
+          target: ${{ matrix.target }}
+
+      - run: pnpm install
+
+      - name: Build updater
+        run: pnpm build:updater
+        env:
+          RUSTFLAGS: -Awarnings
+
+      - name: Package ${{ matrix.bundle }}
+        run: pnpm tauri build -c '{"build":{"beforeBuildCommand":""}}' --bundles ${{ matrix.bundle }} --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: -Awarnings
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: dorion-${{ matrix.target }}-${{ matrix.bundle }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*
+
+  bundle-macos:
+    needs: build
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ['x86_64-apple-darwin', 'aarch64-apple-darwin']
+    steps:
+      - uses: ./.github/actions/setup-build
+        with:
+          target: ${{ matrix.target }}
+
+      - run: pnpm install
+
+      - name: Build updater
+        run: pnpm build:updater
+        env:
+          RUSTFLAGS: -Awarnings
+
+      - name: Package .dmg
+        run: pnpm tauri build -c '{"build":{"beforeBuildCommand":""}}' --bundles dmg --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: -Awarnings
+
+      - name: Upload .dmg
+        uses: actions/upload-artifact@v7
+        with:
+          name: dorion-${{ matrix.target }}-dmg
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
 
   flatpak:
-    needs: build
+    # Flatpak just needs the deb to extract
+    needs: bundle-linux-deb
     runs-on: ubuntu-24.04
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
       options: --privileged
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: dorion-x86_64-unknown-linux-gnu-deb
           path: flatpak/build
