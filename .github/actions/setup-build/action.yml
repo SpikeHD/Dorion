@@ -36,10 +36,11 @@ runs:
         path: |
           src-tauri/target
           updater/target
+          src-tauri/html
           src-tauri/injection/postinject_min.js
           src-tauri/injection/preinject_min.js
           src-tauri/injection/shelter.js
-        key: ${{ runner.os }}-${{ inputs.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-${{ inputs.target }}-cargo-v2-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
           ${{ runner.os }}-${{ inputs.target }}-cargo-
 

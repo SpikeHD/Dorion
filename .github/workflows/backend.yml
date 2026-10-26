@@ -62,8 +62,6 @@ jobs:
         with:
           components: clippy
       - uses: pnpm/action-setup@v6
-        with:
-          version: latest
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-latest'

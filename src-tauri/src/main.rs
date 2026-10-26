@@ -22,6 +22,10 @@ use injection::{
 };
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
+#[cfg(target_os = "linux")]
+use util::paths::get_cef_data_dir;
+#[cfg(not(target_os = "linux"))]
+use util::paths::get_webdata_dir;
 use util::{
   helpers,
   logger::log,
@@ -29,10 +33,6 @@ use util::{
   paths::is_portable,
   window_helpers::{self, clear_cache_check},
 };
-#[cfg(target_os = "linux")]
-use util::paths::get_cef_data_dir;
-#[cfg(not(target_os = "linux"))]
-use util::paths::get_webdata_dir;
 
 use crate::{
   functionality::{configure::configure, extension::load_extensions, window::setup_autostart},
