@@ -86,8 +86,7 @@ runs:
           libayatana-appindicator3-dev \
           libzstd-dev \
           zstd \
-          librsvg2-dev \
-          libfuse2
+          librsvg2-dev
 
     - name: (Linux) (ARM64) Install dependencies
       if: ${{ inputs.target == 'aarch64-unknown-linux-gnu' }}

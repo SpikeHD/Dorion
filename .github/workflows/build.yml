@@ -220,44 +220,6 @@ jobs:
           name: dorion-${{ matrix.target }}-rpm
           path: src-tauri/target/${{ matrix.target }}/release/bundle/rpm/*.rpm
 
-  bundle-linux-appimage:
-    needs: build
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-      matrix:
-        target: ['x86_64-unknown-linux-gnu', 'aarch64-unknown-linux-gnu']
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-build
-        with:
-          target: ${{ matrix.target }}
-
-      - run: pnpm install
-
-      - name: Package AppImage (x86_64)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles appimage --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
-        env:
-          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
-
-      - name: Package AppImage (ARM64)
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles appimage --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
-        env:
-          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
-          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
-          PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
-          PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
-          ZSTD_SYS_USE_PKG_CONFIG: 1
-          ZSTD_SYS_NO_VENDOR: 1
-
-      - name: Upload .appimage
-        uses: actions/upload-artifact@v7
-        with:
-          name: dorion-${{ matrix.target }}-appimage
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/appimage/*.AppImage
-
   bundle-windows:
     needs: build
     runs-on: windows-latest
@@ -285,6 +247,7 @@ jobs:
           RUSTFLAGS: -Awarnings
 
       - name: Package ${{ matrix.bundle }}
+        shell: bash
         run: pnpm tauri build -c '{"build":{"beforeBuildCommand":""}}' --bundles ${{ matrix.bundle }} --target ${{ matrix.target }}
         env:
           RUSTFLAGS: -Awarnings

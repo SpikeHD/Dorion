@@ -64,9 +64,6 @@ jobs:
               "dorion-x86_64-pc-windows-msvc-portable")
                 new_name="Dorion_${{ inputs.version }}_win64_portable.zip"
                 ;;
-              "dorion-x86_64-unknown-linux-gnu-appimage")
-                new_name="Dorion_${{ inputs.version }}_amd64.AppImage"
-                ;;
               "dorion-x86_64-unknown-linux-gnu-deb")
                 new_name="Dorion_${{ inputs.version }}_amd64.deb"
                 ;;

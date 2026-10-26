@@ -12,6 +12,8 @@ use tauri::Manager;
 use super::helpers::is_windows_7;
 
 #[derive(serde::Deserialize, Debug, Clone)]
+// fields are read on linux only
+#[allow(dead_code)]
 pub struct AdditionalData {
   guild_id: Option<String>,
   channel_id: Option<String>,
@@ -106,6 +108,8 @@ fn send_notification_internal(
 }
 
 #[cfg(not(target_os = "windows"))]
+// args/locals are used on linux only
+#[allow(unused_variables)]
 fn send_notification_internal_other(
   app: &tauri::AppHandle<crate::Runtime>,
   title: String,
@@ -323,6 +327,8 @@ fn notification_count_inner(_window: &tauri::WebviewWindow<crate::Runtime>, amou
   }
 }
 
+// called on linux only
+#[allow(dead_code)]
 pub fn open_notification_data(
   win: &tauri::WebviewWindow<crate::Runtime>,
   additional_data: Option<AdditionalData>,
