@@ -297,6 +297,9 @@ fn main() {
         responder.deny(DenyReason::PolicyDenied);
       }
     });
+
+    tauri_runtime_cef::set_popup_policy(|req| req.url.starts_with("about:devtools"));
+    tauri_runtime_cef::set_bypass_csp_policy(|req| req.webview_label == "main");
   }
 
   let app = builder
