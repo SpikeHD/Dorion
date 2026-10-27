@@ -197,17 +197,24 @@ jobs:
 
       - run: pnpm install
 
+      - name: Use system CEF in the RPM config
+        # json_patch merge deletes keys set to null
+        run: jq '.bundle.linux.rpm.files = null | .bundle.linux.rpm.depends = ["cef"]' src-tauri/tauri.linux.conf.json > shared-cef.json
+
       - name: Package .rpm (x86_64)
         if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles rpm --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c shared-cef.json --bundles rpm --target ${{ matrix.target }} -- --config target.x86_64-unknown-linux-gnu.linker=\'x86_64-linux-gnu-gcc\'
         env:
-          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          DORION_SHARED_CEF: 1
+          # RUSTFLAGS overrides .cargo/config.toml, so repeat the rpaths
+          RUSTFLAGS: -Awarnings -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion -C link-arg=-Wl,-rpath,/usr/lib64/cef
 
       - name: Package .rpm (ARM64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c '{"build":{"beforeBuildCommand":""}}' --bundles rpm --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
+        run: pnpm tauri build -c src-tauri/tauri.linux.conf.json -c shared-cef.json --bundles rpm --target ${{ matrix.target }} -- --config target.aarch64-unknown-linux-gnu.linker=\'aarch64-linux-gnu-gcc\'
         env:
-          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion
+          DORION_SHARED_CEF: 1
+          RUSTFLAGS: -Awarnings -L/usr/lib/aarch64-linux-gnu -C link-arg=-Wl,--disable-new-dtags -C link-arg=-Wl,-rpath,$ORIGIN -C link-arg=-Wl,-rpath,$ORIGIN/../lib/dorion -C link-arg=-Wl,-rpath,/usr/lib64/cef
           CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
           PKG_CONFIG_SYSROOT_DIR: /usr/lib/aarch64-linux-gnu
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig

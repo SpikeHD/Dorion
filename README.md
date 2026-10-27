@@ -147,6 +147,7 @@
 * [Building](#building)
   * [Prerequisites](#prerequisites)
   * [Steps](#steps)
+  * [Shared CEF](#shared-cef)
 * [Known Issues](#known-issues)
 * [Troubleshooting](#troubleshooting)
   * [Things you Might be Asked to Provide](#things-you-might-be-asked-to-provide)
@@ -282,6 +283,26 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
     ```
 
 All built files will be in `src-tauri/target/(release|debug)/`. Installation files (eg. `.msi`, `.deb`) are located in `bundle/`.
+
+## Shared CEF
+
+Dorion can link against a system-installed CEF instead of bundling it. Relevant env vars:
+
+* `DORION_SHARED_CEF=1` skips `scripts/bundle-cef.sh`
+* `NIX_CEF_BINARY=1` (NixOS) has `cef-dll-sys` link against the CEF from the Nix environment
+* `FLATPAK=1` points `cef-dll-sys` at `/usr/lib`, matching the CEF runtime extension in the Flatpak manifest
+
+The runtime has to resolve `libcef.so` from the system install, e.g. with an rpath:
+
+```sh
+# Fedora
+RUSTFLAGS="-C link-arg=-Wl,-rpath,/usr/lib64/cef"
+```
+
+CEF finds its resources (locales, paks) next to `libcef.so`, so nothing else is needed!
+
+The system CEF must, however, be **at least** the version Dorion's `cef-dll-sys` is pinned at. CEF >= 152 uses API versioning but
+older CEF requires an exact version match.
 
 ## Flatpak
 

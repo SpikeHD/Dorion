@@ -3,6 +3,11 @@ set -euo pipefail
 
 # TODO: the moment shared CEF libs are available we are ditching this
 
+if [ "${DORION_SHARED_CEF:-0}" = "1" ]; then
+  echo "DORION_SHARED_CEF=1, skipping CEF bundling"
+  exit 0
+fi
+
 REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 STAGE="$REPO_ROOT/src-tauri/.cef"
 
