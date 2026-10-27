@@ -230,8 +230,8 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 
 | Feature                                        | Windows 10/11 | Windows 7[^1] | Linux            | MacOS           |
 |------------------------------------------------|---------------|---------------|------------------|-----------------|
-| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ~[^2]            | ✓               |
-| Voice                                          | ✓             | ~             | ✗[^3]            | ✓               |
+| Basics (logging in, navigation, text/DMs etc.) | ✓             | ~             | ✓                | ✓               |
+| Voice                                          | ✓             | ~             | ✓                | ✓               |
 | Themes                                         | ✓             | ~             | ✓                | ✓               |
 | Shelter                                        | ✓             | ~             | ✓                | ✓               |
 | Dorion Plugins                                 | ✓             | ~             | ✓                | ✓               |
@@ -239,10 +239,6 @@ Dorion supports all themes, BetterDiscord and others, with a [couple caveats](#k
 </div>
 
 [^1]: Windows 7 support is possible by installing API extensions, such as VxKex. It could break at any point, and if this happens, I probably won't put much effort into fixing it (PRs always welcome of course!). You may also need to manually install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) if Dorion doesn't open after installing!
-
-[^2]: Some people report Dorion freezing on Linux, particularly when GIFs are playing. This is, as far as I can tell, a bug in WebkitGTK.
-
-[^3]: Support for WebRTC is hidden behind a build-time flag that is unused in most distros, and if it were, the implementation is still incomplete. This will be available when WebkitGTK ships with WebRTC support.
 
 # Building
 
