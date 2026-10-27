@@ -19,7 +19,7 @@ pub fn available_blurs() -> Vec<&'static str> {
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
-pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
+pub fn apply_effect(win: tauri::WebviewWindow<crate::Runtime>, effect: &str) {
   use window_vibrancy::{apply_acrylic, apply_blur, apply_mica};
 
   match effect {
@@ -32,7 +32,7 @@ pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
 
 #[cfg(target_os = "macos")]
 #[tauri::command]
-pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
+pub fn apply_effect(win: tauri::WebviewWindow<crate::Runtime>, effect: &str) {
   use window_vibrancy::{NSVisualEffectMaterial, apply_vibrancy};
 
   #[allow(clippy::single_match)]
@@ -48,11 +48,11 @@ pub fn apply_effect(win: tauri::WebviewWindow, effect: &str) {
 // Linux can at least be transparent, but it's not really a blur
 #[cfg(target_os = "linux")]
 #[tauri::command]
-pub fn apply_effect(_win: tauri::WebviewWindow, _effect: &str) {}
+pub fn apply_effect(_win: tauri::WebviewWindow<crate::Runtime>, _effect: &str) {}
 
 // Might use this one day, today is not that day
 // #[tauri::command]
-// pub fn remove_effect(win: tauri::WebviewWindow) {
+// pub fn remove_effect(win: tauri::WebviewWindow<crate::Runtime>) {
 //   #[cfg(target_os = "windows")]
 //   {
 //     use window_vibrancy::{clear_acrylic, clear_blur, clear_mica};

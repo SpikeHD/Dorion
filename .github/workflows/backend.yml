@@ -34,8 +34,8 @@ jobs:
         platform: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1.8
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v2.0.0
         with:
           toolchain: 1.96
           components: rustfmt
@@ -57,13 +57,11 @@ jobs:
         platform: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rust-lang/setup-rust-toolchain@v1.8
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v2.0.0
         with:
           components: clippy
-      - uses: pnpm/action-setup@v3
-        with:
-          version: latest
+      - uses: pnpm/action-setup@v6
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-latest'
@@ -79,7 +77,7 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/bin/
@@ -95,9 +93,6 @@ jobs:
 
       - name: Create empty file named "updater" in src-tauri
         run: touch src-tauri/updater
-
-      - name: Create empty file `extension_webkit/libextension.so` in src-tauri
-        run: touch src-tauri/extension_webkit/libextension.so
 
       - name: Clippy check
         run: cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings

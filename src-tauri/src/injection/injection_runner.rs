@@ -18,7 +18,7 @@ pub async fn get_injection_js(theme_js: &str) -> Result<String, ()> {
   Ok(rewritten_all)
 }
 
-pub fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>) {
+pub fn load_plugins(win: &tauri::WebviewWindow<crate::Runtime>, plugins: HashMap<String, String>) {
   // Eval plugin imports
   for script in plugins.values() {
     let imports = crate::injection::plugin::get_js_imports(script);

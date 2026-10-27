@@ -15,11 +15,11 @@ use crate::log;
 use crate::util::paths::get_main_extension_path;
 use crate::util::url::get_client_url;
 
-pub fn configure(window: &tauri::WebviewWindow) {
+pub fn configure(window: &tauri::WebviewWindow<crate::Runtime>) {
   install_extension(window);
 }
 
-pub fn install_extension(window: &tauri::WebviewWindow) {
+pub fn install_extension(window: &tauri::WebviewWindow<crate::Runtime>) {
   // This should be the last extension loaded, the others are loaded early on
   let main_ext_res_path = window
     .app_handle()

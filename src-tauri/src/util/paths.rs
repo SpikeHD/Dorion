@@ -206,6 +206,7 @@ pub fn profiles_dir() -> PathBuf {
     .join("profiles")
 }
 
+#[cfg(not(target_os = "linux"))]
 pub fn get_webdata_dir() -> PathBuf {
   // Grab from args first, it should take precedence
   let profile = match args::get_profile() {
@@ -224,7 +225,28 @@ pub fn get_webdata_dir() -> PathBuf {
   dir
 }
 
-pub fn updater_dir(win: &tauri::WebviewWindow) -> PathBuf {
+#[cfg(target_os = "linux")]
+pub fn get_cef_data_dir() -> PathBuf {
+  let profile = match args::get_profile() {
+    Some(p) => p,
+    None => {
+      let cfg = get_config();
+      cfg.profile.unwrap_or("default".to_string())
+    }
+  };
+  // Chromium profile names must be a single path component under the cache root
+  let dir = dirs::cache_dir()
+    .unwrap_or_else(std::env::temp_dir)
+    .join("com.spikehd.dorion")
+    .join("cef")
+    .join(format!("dorion-{}", profile));
+
+  create_if_not_exists(&dir);
+
+  dir
+}
+
+pub fn updater_dir(win: &tauri::WebviewWindow<crate::Runtime>) -> PathBuf {
   let current_exe = std::env::current_exe().unwrap_or_default();
 
   if is_portable() {

@@ -1,0 +1,110 @@
+name: 'Build setup'
+description: 'Checkout, toolchains, caches, and system deps for a build target'
+
+inputs:
+  target:
+    description: 'Rust target triple'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions-rust-lang/setup-rust-toolchain@v2.0.0
+      with:
+        toolchain: 1.96
+
+    - uses: pnpm/action-setup@v6
+      with:
+        version: 12.4.1
+
+    - uses: actions/setup-node@v7
+      with:
+        node-version: latest
+
+    - uses: actions/cache@v6
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+        key: ${{ runner.os }}-${{ inputs.target }}-cargo-deps
+
+    # Full target build cache
+    - uses: actions/cache@v6
+      with:
+        path: |
+          src-tauri/target
+          updater/target
+          src-tauri/html
+          src-tauri/injection/postinject_min.js
+          src-tauri/injection/preinject_min.js
+          src-tauri/injection/shelter.js
+        key: ${{ runner.os }}-${{ inputs.target }}-cargo-v2-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ inputs.target }}-cargo-
+
+    # ARM-linux related sources and dpkg config and such
+    - name: (Linux) ARM sources.list
+      if: ${{ inputs.target == 'aarch64-unknown-linux-gnu' }}
+      shell: bash
+      run: |
+        # Add [arch=amd64] to the initial entries of the sources.list
+        sudo sed -i 's/^deb /deb [arch=amd64] /' /etc/apt/sources.list
+
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) main restricted" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates main restricted" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) universe" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates universe" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs) multiverse" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-updates multiverse" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security main restricted" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security universe" | sudo tee -a /etc/apt/sources.list
+        echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ $(lsb_release -cs)-security multiverse" | sudo tee -a /etc/apt/sources.list
+
+    - name: (Linux) ARM setup
+      if: ${{ inputs.target == 'aarch64-unknown-linux-gnu' }}
+      shell: bash
+      run: |
+        sudo dpkg --add-architecture arm64
+        sudo apt-get update
+
+    - name: (Linux) Install dependencies
+      if: ${{ runner.os == 'Linux' }}
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libwebkit2gtk-4.1-dev \
+          build-essential \
+          curl \
+          wget \
+          file \
+          libxdo-dev \
+          libssl-dev \
+          libgtk-3-dev \
+          libayatana-appindicator3-dev \
+          libzstd-dev \
+          zstd \
+          librsvg2-dev
+
+    - name: (Linux) (ARM64) Install dependencies
+      if: ${{ inputs.target == 'aarch64-unknown-linux-gnu' }}
+      shell: bash
+      run: |
+        sudo apt-get install -y \
+          libc6:arm64 \
+          libc6-dev:arm64 \
+          libapparmor1:arm64 \
+          libwebkit2gtk-4.1-dev:arm64 \
+          libssl-dev:arm64 \
+          libzstd-dev:arm64 \
+          zstd:arm64 \
+          gcc-aarch64-linux-gnu \
+          g++-aarch64-linux-gnu \
+          libnss3-dev:arm64 \
+          libasound2-dev:arm64
+
+    - name: Add target
+      shell: bash
+      run: rustup target add ${{ inputs.target }}

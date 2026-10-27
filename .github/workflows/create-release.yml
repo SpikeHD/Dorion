@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # https://github.com/actions/upload-artifact/issues/21#issuecomment-2393490651
       - name: Download latest successful build artifacts
@@ -52,15 +52,6 @@ jobs:
               "dorion-aarch64-unknown-linux-gnu-rpm")
                 new_name="Dorion_${{ inputs.version }}-1.aarch64.rpm"
                 ;;
-              "dorion-armv7-unknown-linux-gnueabihf-deb")
-                new_name="Dorion_${{ inputs.version }}_armhf.deb"
-                ;;
-              "dorion-armv7-unknown-linux-gnueabihf-portable")
-                new_name="Dorion_${{ inputs.version }}_armv7_portable.tar.gz"
-                ;;
-              "dorion-armv7-unknown-linux-gnueabihf-rpm")
-                new_name="Dorion_${{ inputs.version }}-1.armhfp.rpm"
-                ;;
               "dorion-x86_64-apple-darwin-dmg")
                 new_name="Dorion_${{ inputs.version }}_x64.dmg"
                 ;;
@@ -72,9 +63,6 @@ jobs:
                 ;;
               "dorion-x86_64-pc-windows-msvc-portable")
                 new_name="Dorion_${{ inputs.version }}_win64_portable.zip"
-                ;;
-              "dorion-x86_64-unknown-linux-gnu-appimage")
-                new_name="Dorion_${{ inputs.version }}_amd64.AppImage"
                 ;;
               "dorion-x86_64-unknown-linux-gnu-deb")
                 new_name="Dorion_${{ inputs.version }}_amd64.deb"
@@ -105,7 +93,7 @@ jobs:
           done
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ inputs.version }}
           name: v${{ inputs.version }}

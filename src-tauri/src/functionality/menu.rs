@@ -4,7 +4,7 @@ use crate::config::{get_config, set_config};
 
 use super::tray::get_tray;
 
-pub fn create_menubar(app: &tauri::AppHandle) -> Result<(), tauri::Error> {
+pub fn create_menubar(app: &tauri::AppHandle<crate::Runtime>) -> Result<(), tauri::Error> {
   let enable_tray_icon = get_config().tray_icon_enabled.unwrap_or(true);
 
   // Initial disable/enable
@@ -46,15 +46,15 @@ pub fn create_menubar(app: &tauri::AppHandle) -> Result<(), tauri::Error> {
   app.set_menu(menu).unwrap_or_default();
 
   app.on_menu_event(move |app, event| {
-    if event.id() == tray_icon_toggle.id() {
-      if let Some(tray) = get_tray(app) {
-        let mut config = get_config();
-        let enable_tray_icon = config.tray_icon_enabled.unwrap_or(true);
-        tray.set_visible(!enable_tray_icon).unwrap_or_default();
+    if event.id() == tray_icon_toggle.id()
+      && let Some(tray) = get_tray(app)
+    {
+      let mut config = get_config();
+      let enable_tray_icon = config.tray_icon_enabled.unwrap_or(true);
+      tray.set_visible(!enable_tray_icon).unwrap_or_default();
 
-        config.tray_icon_enabled = Option::from(!enable_tray_icon);
-        set_config(config);
-      }
+      config.tray_icon_enabled = Option::from(!enable_tray_icon);
+      set_config(config);
     }
   });
 
