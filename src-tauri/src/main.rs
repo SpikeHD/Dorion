@@ -174,9 +174,6 @@ fn main() {
     gpu::disable_hardware_accel_windows();
   }
 
-  #[cfg(target_os = "linux")]
-  gpu::disable_dma();
-
   log!("Are we portable? {}", is_portable());
 
   let context = tauri::generate_context!("tauri.conf.json");

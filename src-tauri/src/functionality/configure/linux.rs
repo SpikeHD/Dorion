@@ -1,5 +1,5 @@
 use crate::log;
 
 pub fn configure(_window: &tauri::WebviewWindow<crate::Runtime>) {
-  log!("Skipping WebKitGTK window configuration");
+  log!("Skipping Linux window configuration");
 }

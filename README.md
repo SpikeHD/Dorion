@@ -364,14 +364,6 @@ If you submit an issue or ask a question in the Discord, it's likely you will be
   * Fully uninstall and reinstall.
   * If you are having trouble uninstalling it, or the installer says its already installed even though you uninstalled, try deleting this registry folder and uninstalling again `Computer\HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}`
 
-## Linux
-### White/blank/frozen screen
-* Run Dorion with either, or both, of the following environment variables:
-  ```sh
-  WEBKIT_DISABLE_COMPOSITING_MODE=1
-  WEBKIT_DISABLE_DMABUF_RENDERER=1
-  ```
-
 # Using Plugins, Extensions, and Themes
 
 Plugins, extensions, and themes are relatively simple to use, the file structure looks like so on Windows:
