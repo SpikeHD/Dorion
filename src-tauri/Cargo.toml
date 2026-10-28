@@ -55,6 +55,7 @@ system-idle-time = "1.0.0"
 gtk = "0.18"
 
 [target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
 # tauri-runtime-cef's source is written against the 0.31.0-beta.2
 # drag n drop API, which beta.3 broke apparently
 winit = "=0.31.0-beta.2"

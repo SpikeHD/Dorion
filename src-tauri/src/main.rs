@@ -581,6 +581,10 @@ fn main() {
       #[cfg(target_os = "windows")]
       drop(winrt_identity_registration.take());
 
+      // tauri spawns the restart process right after this callback
+      #[cfg(target_os = "linux")]
+      helpers::mark_fds_cloexec();
+
       log!("App exited");
     }
   });

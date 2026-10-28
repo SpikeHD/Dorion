@@ -181,6 +181,7 @@ pub fn create_tray(app: &AppHandle<crate::Runtime>) -> Result<(), tauri::Error> 
       }
       "new_window" => {
         // Literally just launch another instance of the app
+        crate::util::helpers::mark_fds_cloexec();
         match Command::new(std::env::current_exe().unwrap()).spawn() {
           Ok(_) => {}
           Err(e) => {

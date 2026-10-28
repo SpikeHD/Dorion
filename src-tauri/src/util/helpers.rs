@@ -63,6 +63,23 @@ fn open_folder(path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
   Ok(())
 }
 
+/// Prevents hanging processes on close
+#[cfg(target_os = "linux")]
+pub fn mark_fds_cloexec() {
+  let Ok(fds) = std::fs::read_dir("/proc/self/fd") else {
+    return;
+  };
+
+  for fd in fds.flatten() {
+    if let Ok(num) = fd.file_name().to_string_lossy().parse::<libc::c_int>() {
+      unsafe { libc::fcntl(num, libc::F_SETFD, libc::FD_CLOEXEC) };
+    }
+  }
+}
+
+#[cfg(not(target_os = "linux"))]
+pub fn mark_fds_cloexec() {}
+
 #[tauri::command]
 pub fn get_platform() -> &'static str {
   #[cfg(target_os = "windows")]
@@ -84,6 +101,9 @@ pub fn restart_in_safemode(app: tauri::AppHandle<crate::Runtime>) {
       return;
     }
   };
+
+  // New fds created after the sweep are still inheritable
+  mark_fds_cloexec();
 
   match Command::new(current_exe).arg("--safemode").spawn() {
     Ok(_) => app.exit(0),
