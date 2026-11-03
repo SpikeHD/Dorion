@@ -168,7 +168,7 @@ I do **not** maintain any instances of Dorion in any package repositories myself
 * Windows:
   * Shovel/Scoop (Maintained by [Small-Ku](https://github.com/Small-Ku/)):
     ```sh
-    scoop bucket add turbo 'https://github.com/Small-Ku/turbo-bucket.git'
+    scoop bucket add turbo https://github.com/Small-Ku/turbo-bucket.git
     scoop install turbo/dorion
     ```
   * WinGet (Maintained by [headquarter8302](https://github.com/headquarter8302))
