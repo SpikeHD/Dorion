@@ -194,9 +194,26 @@ export function proxyNotification() {
   window.nativeNotification = window.Notification
 
   // @ts-expect-error shut up
-  window.Notification = function(...args) {
-    // Stub this
+  window.Notification = function(this: any, title?: string, options?: NotificationOptions) {
+    const target = new EventTarget()
+
+    this.title = title ?? ''
+    this.body = options?.body ?? ''
+    this.tag = options?.tag ?? ''
+    this.icon = options?.icon ?? ''
+    this.data = options?.data ?? null
+    this.silent = options?.silent ?? null
+    this.onclick = null
+    this.onclose = null
+    this.onerror = null
+    this.onshow = null
+
+    this.addEventListener = target.addEventListener.bind(target)
+    this.removeEventListener = target.removeEventListener.bind(target)
+    this.dispatchEvent = target.dispatchEvent.bind(target)
   }
+
+  window.Notification.prototype.close = function() {}
 
   window.Notification.requestPermission = async () => 'granted'
   // For checking if we have stubbed
