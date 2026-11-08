@@ -187,6 +187,22 @@ export function badPostMessagePatch() {
   }
 }
 
+interface StubbedNotification {
+  title: string
+  body: string
+  tag: string
+  icon: string
+  data: unknown
+  silent: boolean | null
+  onclick: ((ev: Event) => unknown) | null
+  onclose: ((ev: Event) => unknown) | null
+  onerror: ((ev: Event) => unknown) | null
+  onshow: ((ev: Event) => unknown) | null
+  addEventListener: EventTarget['addEventListener']
+  removeEventListener: EventTarget['removeEventListener']
+  dispatchEvent: EventTarget['dispatchEvent']
+}
+
 export function proxyNotification() {
   let permVal = 'granted'
 
@@ -194,7 +210,7 @@ export function proxyNotification() {
   window.nativeNotification = window.Notification
 
   // @ts-expect-error shut up
-  window.Notification = function(this: any, title?: string, options?: NotificationOptions) {
+  window.Notification = function(this: StubbedNotification, title?: string, options?: NotificationOptions) {
     const target = new EventTarget()
 
     this.title = title ?? ''
