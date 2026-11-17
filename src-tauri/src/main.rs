@@ -139,9 +139,19 @@ fn main() {
   logger::init(true);
 
   std::panic::set_hook(Box::new(|info| {
-    log!("Panic occurred: {:?}", info);
-  }));
+    let payload = info.payload();
+    let message = payload
+      .downcast_ref::<&str>()
+      .copied()
+      .or_else(|| payload.downcast_ref::<String>().map(String::as_str))
+      .unwrap_or("<non-string panic payload>");
+    let location = info
+      .location()
+      .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()))
+      .unwrap_or_else(|| "<unknown location>".to_string());
 
+    log!("Panic occurred at {location}: {message}");
+  }));
   #[cfg(target_os = "windows")]
   log!("Are we on Windows 7: {}", helpers::is_windows_7());
 
