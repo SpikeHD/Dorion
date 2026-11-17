@@ -139,7 +139,6 @@ fn main() {
   logger::init(true);
 
   std::panic::set_hook(Box::new(|info| {
-    // The payload is usually a &str or String; Debug-printing `info` only shows `Any { .. }`
     let payload = info.payload();
     let message = payload
       .downcast_ref::<&str>()
