@@ -113,6 +113,10 @@ pub fn window_zoom_level(win: tauri::WebviewWindow<crate::Runtime>, value: Optio
     persist_zoom(zoom);
   }
 
+  #[cfg(target_os = "linux")]
+  win.set_zoom(zoom).unwrap_or_default();
+
+  #[cfg(target_os = "macos")]
   win
     .eval(format!("document.body.style.zoom = '{zoom}'"))
     .expect("Failed to set zoom level!");
