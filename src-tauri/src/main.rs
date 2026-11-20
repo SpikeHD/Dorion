@@ -441,12 +441,9 @@ fn main() {
       {
         if let Err(err) = gtk::init() {
           log!("gtk::init failed: {}", err);
-          return Err(std::io::Error::other(
-            format!("gtk::init failed: {err}"),
-          )
-          .into());
+        } else {
+          tauri_runtime_cef::install_x_error_handlers();
         }
-        tauri_runtime_cef::install_x_error_handlers();
       }
 
       let config = get_config();
